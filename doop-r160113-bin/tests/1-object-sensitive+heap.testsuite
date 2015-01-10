@@ -1,0 +1,15 @@
+testsuite 1-object-sensitive+heap
+
+test Due to poor context for static methods, 1-object-sensitive+heap cannot distinguish two objects (1)
+  using database tests/context/Main.jar
+    ->
+  StaticFieldPointsTo(?ctx, ?site, "<Heap1: java.lang.Object o1>")
+    ->
+  ("<<initial-context>>", "Heap1.allocate/new java.lang.Object/0")
+
+test Due to poor context for static methods, 1-object-sensitive+heap cannot distinguish two objects (2)
+  using database tests/context/Main.jar
+    ->
+  StaticFieldPointsTo(?ctx, ?site, "<Heap1: java.lang.Object o2>")
+    ->
+  ("<<initial-context>>", "Heap1.allocate/new java.lang.Object/0")

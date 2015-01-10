@@ -1,0 +1,204 @@
+#! /bin/bash
+#
+# This is a clone of run-testsuites that uses the new run-bloxunit-suite instead of
+# the old logicblox-unit test suites.
+#
+
+set -e
+
+rootdir=$(pwd)
+
+function bloxunit()
+{
+  $rootdir/run-bloxunit-suite $1 $2
+}
+
+function timing()
+{
+  echo -n "... "
+  /usr/bin/time -f "(elapsed: %es)" $*
+}
+
+function report()
+{
+  echo -e '\E[01;31m'"\033[1m$1\033[0m"
+}
+
+function prepare-database()
+{
+  local jre=$1
+  local analysis=$2
+  local jar=$3
+
+  cd $rootdir
+  ./run -cache -"$jre" $analysis $jar
+}
+
+function prepare-databases()
+{
+  local runtime=$1
+  local compiler=$2
+  local analysis=$3
+
+  #for f in jars/$compiler/tests/*.jar; do
+  #  prepare-database $runtime $analysis $f
+  #done
+
+  for f in jars/$compiler/tests/hello/Reflect.jar; do
+    prepare-database $runtime $analysis $f
+  done
+
+  #for f in jars/$compiler/tests/context/*.jar; do
+  #  prepare-database $runtime $analysis $f
+  #done
+}
+
+function context-insensitive-testsuites()
+{
+  local runtime=$1
+  local compiler=$2
+
+  local outputdir=results/context-insensitive/$runtime/jars/$compiler
+
+  # generic testsuites
+  #bloxunit $outputdir basic
+  #bloxunit $outputdir method-resolution
+  #bloxunit $outputdir reachable-generic
+  #bloxunit $outputdir insensitive-heap-abstraction-generic
+  #bloxunit $outputdir generic-unix
+  bloxunit $outputdir reflection
+
+  # specific testsuites
+  #bloxunit $outputdir insensitive
+  #bloxunit $outputdir insensitive-sun-specific
+  #bloxunit $outputdir insensitive-imprecision
+}
+
+function 1-call-site-sensitive-testsuites()
+{
+  local runtime=$1
+  local compiler=$2
+
+  local outputdir=results/1-call-site-sensitive/$runtime/jars/$compiler
+
+  # generic testsuites
+  bloxunit $outputdir basic
+  bloxunit $outputdir method-resolution
+  bloxunit $outputdir reachable-generic
+  bloxunit $outputdir insensitive-heap-abstraction-generic
+  bloxunit $outputdir generic-unix
+  bloxunit $outputdir reflection
+
+  # specific testsuites
+  bloxunit $outputdir 1-call-site-sensitive
+}
+
+function 1-object-sensitive-testsuites()
+{
+  local runtime=$1
+  local compiler=$2
+
+  local outputdir=results/1-object-sensitive/$runtime/jars/$compiler
+
+  # generic testsuites
+  bloxunit $outputdir basic
+  bloxunit $outputdir method-resolution
+  bloxunit $outputdir reachable-generic
+  bloxunit $outputdir insensitive-heap-abstraction-generic
+  bloxunit $outputdir generic-unix
+  bloxunit $outputdir reflection
+
+  # specific testsuites
+  bloxunit $outputdir 1-object-sensitive
+}
+
+function 1-call-site-sensitive+heap-testsuites()
+{
+  local runtime=$1
+  local compiler=$2
+
+  prepare-database $runtime 1-call-site-sensitive+heap jars/$compiler/tests/context/Main.jar
+  local outputdir=results/1-call-site-sensitive+heap/$runtime/jars/$compiler
+
+  # generic testsuites
+  # bloxunit $outputdir basic.testsuite || echo "failed, but continuing ... "
+  # bloxunit $outputdir method-resolution.testsuite || echo "failed, but continuing ... "
+  # bloxunit $outputdir reachable-generic.testsuite || echo "failed, but continuing ... "
+
+  # specific testsuites
+  bloxunit $outputdir 1-call-site-sensitive+heap
+}
+
+function 1-object-sensitive+heap-testsuites()
+{
+  local runtime=$1
+  local compiler=$2
+
+  prepare-database $runtime 1-object-sensitive+heap jars/$compiler/tests/context/Main.jar
+  local outputdir=results/1-object-sensitive+heap/$runtime/jars/$compiler
+
+  # generic testsuites
+  # bloxunit $outputdir basic.testsuite || echo "failed, but continuing ... "
+  # bloxunit $outputdir method-resolution.testsuite || echo "failed, but continuing ... "
+  # bloxunit $outputdir reachable-generic.testsuite || echo "failed, but continuing ... "
+
+  # specific testsuites
+  bloxunit $outputdir 1-object-sensitive+heap
+}
+
+function basic()
+{
+  ./compile-tests
+
+  # context-insensitive
+  prepare-databases jre1.3 jre1.3 context-insensitive
+  context-insensitive-testsuites jre1.3 jre1.3
+}
+
+function ek()
+{
+  # 1-call-site-sensitive
+  prepare-databases jre1.3 jre1.3 1-call-site-sensitive
+  1-call-site-sensitive-testsuites jre1.3 jre1.3
+
+  # 1-object-sensitive
+  prepare-databases jre1.3 jre1.3 1-object-sensitive
+  1-object-sensitive-testsuites jre1.3 jre1.3
+
+  # 1-object-sensitive+heap
+  1-object-sensitive+heap-testsuites jre1.3 jre1.3
+
+  # 1-call-site-sensitive+heap
+  1-call-site-sensitive+heap-testsuites jre1.3 jre1.3
+}
+
+function main()
+{
+  basic
+
+#  prepare-databases jre1.4 jre1.4 context-insensitive
+#  context-insensitive-testsuites jre1.4 jre1.4
+
+#  prepare-databases jre1.5 jre1.5 context-insensitive
+#  context-insensitive-testsuites jre1.5 jre1.5
+
+#  prepare-databases jre1.6 jre1.6 context-insensitive
+#  context-insensitive-testsuites jre1.6 jre1.6
+}
+
+function reflect()
+{
+  local runtime=jre1.3
+  local compiler=jre1.3
+
+  prepare-database $runtime context-insensitive jars/$compiler/tests/hello/Reflect.jar
+  local outputdir=results/context-insensitive/$runtime/jars/$compiler
+  bloxunit $outputdir reflection
+}
+
+if test "x$1" = "x"; then
+  main
+else
+  $*
+fi
+

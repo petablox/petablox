@@ -1,0 +1,40 @@
+#include "macros.logic"
+#include "../library/common-delta.logic"
+
+/**
+ * Special calling contexts
+ */
+PlusMethodInvocationRef(?invo, "<<initial-context>>").
+PlusMethodInvocationRef(?invo, "<<jvm-startup>>").
+PlusMethodInvocationRef(?invo, "<<class-initialization>>").
+PlusMethodInvocationRef(?invo, "<<immutable>>").
+
+/* used only for Paddle compatibility */
+PlusMethodInvocationRef(?invo, "<<no-context>>").
+
+/**
+ * Special objects
+ */
++MySystemThreadGroup(?invo, ?alloc),
+#ifdef PADDLE_COMPAT
+  PlusMethodInvocationRef(?invo, "<<no-context>>"),
+#else
+  PlusMethodInvocationRef(?invo, "<<jvm-startup>>"),
+#endif
+  PlusHeapAllocationRef(?alloc, "<<system-thread-group>>", "java.lang.ThreadGroup").
+
++MyMainThreadGroup(?invo, ?alloc),
+#ifdef PADDLE_COMPAT
+  PlusMethodInvocationRef(?invo, "<<no-context>>"),
+#else
+  PlusMethodInvocationRef(?invo, "<<jvm-startup>>"),
+#endif
+  PlusHeapAllocationRef(?alloc, "<<main-thread-group>>", "java.lang.ThreadGroup").
+
++MyMainThread(?invo, ?alloc),
+#ifdef PADDLE_COMPAT
+  PlusMethodInvocationRef(?invo, "<<no-context>>"),
+#else
+  PlusMethodInvocationRef(?invo, "<<jvm-startup>>"),
+#endif
+  PlusHeapAllocationRef(?alloc, "<<main-thread>>", "java.lang.Thread").

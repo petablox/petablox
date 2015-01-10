@@ -1,0 +1,11 @@
+#include "macros.logic"
+#include "../context-sensitive-declarations.logic"
+
+MySystemThreadGroup(?type, ?heap, ?alloc) ->
+  Type(?type), HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
+
+MyMainThreadGroup(?type, ?heap, ?alloc) ->
+  Type(?type), HeapAllocationRef(?heap), HeapAllocationRef(?alloc).
+
+MyMainThread(?type, ?heap, ?alloc) ->
+  Type(?type), HeapAllocationRef(?heap), HeapAllocationRef(?alloc).

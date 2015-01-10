@@ -1,0 +1,11 @@
+testsuite Unix specific tests
+
+test UnixFileSystem constructor is reachable
+  using database tests/Reachable.jar
+  assert
+    Reachable("<java.io.UnixFileSystem: void <init>()>")
+
+test UnixFileSystem class initializer is reachable
+  using database tests/Reachable.jar
+  assert
+    Reachable("<java.io.UnixFileSystem: void <clinit>()>")

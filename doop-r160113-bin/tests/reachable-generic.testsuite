@@ -1,0 +1,97 @@
+testsuite analysis independent tests for reachability
+
+test Method g is not reachable, so field can only point to f.
+  using database tests/Reachable.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test1: java.lang.Object field>")
+    ->
+  "Test1.f/new java.lang.Object/0"
+
+test List all reachable methods in application classes
+  using database tests/Reachable.jar
+  assert
+    Reachable("<java.lang.Object: void <init>()>")
+
+test Method Base.f is not reachable when using fully on-the-fly call graph construction.
+  using database tests/Reachable.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test2: java.lang.Object field>")
+    ->
+  "Test2$Extension.f/new java.lang.Object/0"
+
+test Function g is not reachable. There should be no facts about the local variable in g.
+  using database tests/Reachable.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test3: java.lang.Object fieldNull>")
+    ->
+  empty
+
+test Sanity check for reachable Test3: f is reachable
+  using database tests/Reachable.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test3: java.lang.Object field>")
+    ->
+  "Test3.f/new java.lang.Object/0"
+
+/**
+ * Class initialization
+ */
+test New instance triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestNewInstance: void <clinit>()>")
+
+test Static method invocation triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestStaticMethod: void <clinit>()>")
+
+test Store static field triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestStoreStaticField: void <clinit>()>")
+
+test Store primitive static field triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestStorePrimStaticField: void <clinit>()>")
+
+test Store null in static field triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestStoreNullStaticField: void <clinit>()>")
+
+test Load static field triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestLoadStaticField: void <clinit>()>")
+
+test Load primitive static field triggers class initialization
+  using database tests/hello/ClassInit3.jar
+  assert
+    Reachable("<TestLoadPrimStaticField: void <clinit>()>")
+
+test New array does not trigger class initialization of the base type
+  using database tests/hello/ClassInit3.jar
+  assert
+    not Reachable("<TestNewArray: void <clinit>()>")
+
+/* TODO: does not work on JRE1.3 and JRE 1.4
+test Class constant does not trigger class initialization of the class.
+  using database tests/hello/ClassInit3.jar
+  assert
+    not Reachable("<TestClassLiteral: void <clinit>()>") */
+
+/**
+ * JVM Start-up
+ */
+test ClassLoader constructor
+  using database tests/Reachable.jar
+  assert
+    ImplicitReachable("<java.lang.ClassLoader: void <init>()>")
+    Reachable("<java.lang.ClassLoader: void <init>()>")
+
+test ThreadGroup constructor
+  using database tests/Reachable.jar
+  assert
+    Reachable("<java.lang.ThreadGroup: void <init>()>")

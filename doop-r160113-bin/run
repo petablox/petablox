@@ -1,0 +1,1024 @@
+#!/bin/bash
+
+set -e 		# Exit immediately if a command exits with a nonzero exit status
+set -u 		# Treat unset variables as an error
+#set -x 	# Print commands and their arguments as they are executed (debugging)
+
+function usage()
+{
+	analyses=`ls logic | grep sensitive | grep -v '.logic' | awk '{ print "  " $1 }'`
+	cat <<EOF
+Usage: ${C_GREEN}run [OPTION]... ANALYSIS JARFILE${C_RESET}
+
+Analysis:
+$analyses
+
+Options:
+  ${C_YELLOW}-main Class${C_RESET}       Specify the main class
+  ${C_YELLOW}-jre VERSION${C_RESET}      One of 1.3, 1.4, 1.5, 1.6 (default: system)
+  ${C_YELLOW}-jre1.3${C_RESET}           Use jre1.3 (default: system)
+  ${C_YELLOW}-jre1.4${C_RESET}           Use jre1.4 (default: system)
+  ${C_YELLOW}-jre1.5${C_RESET}           Use jre1.5 (default: system)
+  ${C_YELLOW}-jre1.6${C_RESET}           Use jre1.6 (default: system)
+  ${C_YELLOW}-os NAME${C_RESET}          Specify the operating system to simulate (win32, winnt, unix, default: unix)
+  ${C_YELLOW}-stats${C_RESET}            Load additional logic for collecting statistics
+  ${C_YELLOW}-sanity${C_RESET}           Load additional logic for sanity checks
+  ${C_YELLOW}-mem GIGABYTES${C_RESET}    Restrict memory usage (default: 1G) (32-bit Linux only)
+  ${C_YELLOW}-cache${C_RESET}            The analysis is only run if the result is not in the cache
+  ${C_YELLOW}-dynamic FILE${C_RESET}     File with tab-separated data for Config:DynamicClass (multiple occurences allowed)
+  ${C_YELLOW}-logicProfile NR${C_RESET}  Profile the execution of logic, show the top NR predicates
+  ${C_YELLOW}-logLevel LEVEL${C_RESET}   Log the execution of logic at level LEVEL (for example: all)
+  ${C_YELLOW}-logMemStats${C_RESET}      Log virtual memory statistics (currently Linux only, uses vmstat)
+  ${C_YELLOW}-client PATH${C_RESET}      Additional directory/file of client analysis to include
+  ${C_YELLOW}-phantom${C_RESET}          Allow non-existent referenced (but otherwise redundant) jars
+  ${C_YELLOW}-singleRun${C_RESET}        Perform checks to ensure no instance of bloxbatch is already running
+  ${C_YELLOW}-noColour${C_RESET}         Disable colours in script output
+
+Options for features:
+  ${C_YELLOW}-distinguish-class-string-constants${C_RESET} (default)
+       By default, the analysis only distinguishes string constants
+       that might statically resolve the use of reflection. All other
+       string constants are merged into a single representation.
+
+  ${C_YELLOW}-distinguish-all-string-constants${C_RESET}
+       The analysis distinguishes all string constants.
+
+  ${C_YELLOW}-distinguish-no-string-constants${C_RESET}
+       Merge all string constants, including those that might help to
+       resolve the use of reflection. This results in less precise
+       results for reflection, since we have to assume that
+       Class.forName applied to a string constant can load any class
+       referred to by a string constant.
+
+  ${C_YELLOW}-merge-string-buffers${C_RESET}
+       Merge all allocations of stringbuffers into a single
+       representation.
+
+       Merging string buffers can improve performance considerably,
+       depending on the kind of analysis that is selected. For
+       context-insensitive and call-site-sensitive analyses it is
+       generally useful, for object-sensitive analyses it is actually
+       harmful.
+
+  ${C_YELLOW}-no-context-repeat${C_RESET}
+       For an object-sensitive analysis that mixes caller object and 
+       receiver contexts, check if the contexts are the same and attempt
+       to maintain as many different contexts as possible.
+
+  ${C_YELLOW}-field-based-static${C_RESET}
+       Run a field-based analysis instead of a field-sensitive one.
+       The analysis is run based on the static type of the object.
+       That is in "A a = new B(); a.f;" A is used.
+
+  ${C_YELLOW}-field-based-dynamic${C_RESET}
+       Run a field-based analysis instead of a field-sensitive one.
+       The analysis is run based on the dynamic type of the object.
+       That is in "A a = new B(); a.f;" B is used.
+
+Options for benchmarks and comparisons:
+  ${C_YELLOW}-paddle-compat${C_RESET}
+       Mode for exact comparison of results to Paddle. This option
+       disables exceptions, unless enabled after this option.
+
+  ${C_YELLOW}-disable-precise-exceptions${C_RESET}
+       Disables precise exception analysis (default: enabled)
+
+  ${C_YELLOW}-enable-imprecise-exceptions${C_RESET}
+       Enables an imprecise Paddle/Spark compatible analysis of exceptions
+
+  ${C_YELLOW}-disable-merge-exceptions${C_RESET}
+       Disable representation of every exception object by a unique
+       representative of the same type.
+
+  ${C_YELLOW}-disable-reflective-methods${C_RESET}
+       Disables reflective method reasoning. 
+
+  ${C_YELLOW}-disable-reflection${C_RESET}
+       Disables reflection reasoning altogether.
+       
+Options for client analyses:
+  ${C_YELLOW}-enable-exception-flow${C_RESET}
+       Enable exception-flow analysis, which determines the exception
+       handlers that can potentially handle exceptions thrown by a
+       throw instruction.
+
+Report issues to ${C_GREEN}martin.bravenboer@acm.org${C_RESET}
+EOF
+}
+
+C_RESET=""
+C_RED=""
+C_GREEN=""
+C_YELLOW=""
+C_WHITE=""
+if echo "$*" | grep -v noColour > /dev/null 2>&1; then
+	C_RESET="$(tput sgr0)"
+	C_RED="$(tput bold)$(tput setab 0)$(tput setaf 1)"
+	C_GREEN="$(tput bold)$(tput setab 0)$(tput setaf 2)"
+	C_YELLOW="$(tput bold)$(tput setab 0)$(tput setaf 3)"
+	C_WHITE="$(tput bold)$(tput setab 0)$(tput setaf 7)"
+fi
+
+
+# Make bloxbatch available on the PATH
+if test "x${LOGICBLOX_HOME}" = "x"; then
+	printf "${C_RED}ERROR${C_WHITE}: please set the environment variable LOGICBLOX_HOME${C_RESET}\n"
+	exit 1
+fi
+
+if test ! -e "$LOGICBLOX_HOME/bin/bloxbatch"; then
+	printf "${C_RED}ERROR${C_WHITE}: \$LOGICBLOX_HOME/bin/bloxbatch does not exist. \$LOGICBLOX_HOME = %s${C_RESET}\n" "$LOGICBLOX_HOME"
+	exit 1
+fi
+
+export PATH=$LOGICBLOX_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$LOGICBLOX_HOME/bin:$LD_LIBRARY_PATH
+
+bloxbatch="$LOGICBLOX_HOME/bin/bloxbatch"
+
+# defaults for options
+CPPFLAGS_EXCEPTIONS="-DEXCEPTIONS_PRECISE"
+CPPFLAGS_PADDLE_COMPAT=""
+CPPFLAGS_CLIENT_ANALYSES=""
+CPPFLAGS_STRING_BUFFERS=""
+CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_CLASS_STRING_CONSTANTS"
+CPPFLAGS_CONTEXT=""
+CPPFLAGS_REFLECTION=""
+CPPFLAGS_FIELD_BASED_STATIC=""
+CPPFLAGS_FIELD_BASED_DYNAMIC=""
+CPPFLAGS_EXCEPTIONS_EXPERIMENTAL=""
+cache="false"
+logMemStats="false"
+sanity="false"
+stats="false"
+transformInput="false"
+ssa="false"
+classlib="system"
+mainclass=""
+os="unix"
+dynamics=""
+logicProfile=""
+logLevel=""
+refine="false"
+clientcode=""
+extlist=""
+phantom="false"
+singleRun="false"
+noColour="false"
+# skolemGraph="false"
+
+originalCommandLine="$*"
+
+# process options
+while test "${1:0:1}" = "-"; do
+  case $1 in
+    "-paddle-compat")
+      CPPFLAGS_PADDLE_COMPAT="-DPADDLE_COMPAT"
+      CPPFLAGS_EXCEPTIONS=""
+      shift 1
+      ;;
+    "-disable-precise-exceptions")
+      CPPFLAGS_EXCEPTIONS=""
+      shift 1
+      ;;
+    "-enable-imprecise-exceptions")
+      CPPFLAGS_EXCEPTIONS="-DEXCEPTIONS_IMPRECISE"
+      shift 1
+      ;;
+    "-disable-merge-exceptions")
+      CPPFLAGS_EXCEPTIONS="-DEXCEPTIONS_PRECISE -DSEPARATE_EXCEPTION_OBJECTS"
+      shift 1
+      ;;
+    "-enable-experimental-exceptions")
+      CPPFLAGS_EXCEPTIONS="-DEXCEPTIONS_EXPERIMENTAL"
+      shift 1
+      ;;
+    "-enable-exceptions-filter")
+      CPPFLAGS_EXCEPTIONS_EXPERIMENTAL="${CPPFLAGS_EXCEPTIONS_EXPERIMENTAL} -DEXCEPTIONS_FILTER"
+      shift 1
+      ;;
+    "-enable-exceptions-order")
+      CPPFLAGS_EXCEPTIONS_EXPERIMENTAL="${CPPFLAGS_EXCEPTIONS_EXPERIMENTAL} -DEXCEPTIONS_ORDER"
+      shift 1
+      ;;
+    "-enable-exceptions-range")
+      CPPFLAGS_EXCEPTIONS_EXPERIMENTAL="${CPPFLAGS_EXCEPTIONS_EXPERIMENTAL} -DEXCEPTIONS_RANGE"
+      shift 1
+      ;;
+    "-enable-exceptions-cs")
+      CPPFLAGS_EXCEPTIONS_EXPERIMENTAL="${CPPFLAGS_EXCEPTIONS_EXPERIMENTAL} -DEXCEPTIONS_CS"
+      shift 1
+      ;;
+
+    "-disable-reflective-methods")
+      CPPFLAGS_REFLECTION="${CPPFLAGS_REFLECTION} -DDISABLE_REFLECTIVE_METHS"
+      shift 1
+      ;;
+    "-disable-reflection")
+      CPPFLAGS_REFLECTION="-DDISABLE_REFLECTION -DDISABLE_REFLECTIVE_METHS"
+      shift 1
+      ;;
+
+    "-enable-exception-flow")
+      CPPFLAGS_CLIENT_ANALYSES="${CPPFLAGS_CLIENT_ANALYSES} -DCLIENT_EXCEPTION_FLOW"
+      shift 1
+      ;;
+    "-distinguish-all-string-constants")
+      CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_ALL_STRING_CONSTANTS"
+      shift 1
+      ;;
+    "-distinguish-class-string-constants")
+      CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_CLASS_STRING_CONSTANTS"
+      shift 1
+      ;;
+    "-distinguish-no-string-constants")
+      CPPFLAGS_STRING_CONSTANTS="-DDISTINGUISH_NO_STRING_CONSTANTS"
+      shift 1
+      ;;
+    "-merge-string-buffers")
+      CPPFLAGS_STRING_BUFFERS="-DMERGE_STRING_BUFFERS"
+      shift 1
+      ;;
+    "-no-context-repeat")
+      CPPFLAGS_CONTEXT="-DNO_CONTEXT_REPEAT"
+      shift 1
+      ;;
+	"-field-based-static")
+	  CPPFLAGS_FIELD_BASED_STATIC="-DFIELD_BASED_STATIC"
+	  shift 1
+	  ;;
+	"-field-based-dynamic")
+	  CPPFLAGS_FIELD_BASED_DYNAMIC="-DFIELD_BASED_DYNAMIC"
+	  shift 1
+	  ;;
+    "-transform-input")
+      transformInput="true"
+      shift 1
+      ;;
+    "-ssa")
+      ssa="true"
+      shift 1
+      ;;
+    "-cache")
+      cache="true"
+      shift 1
+      ;;
+    "-jre")
+      shift 1
+      classlib="jre$1"
+      shift 1
+      ;;
+    "-main")
+      shift 1
+      mainclass="$1"
+      shift 1
+      ;;
+    "-jre1.3" | "-jre1.4" | "-jre1.5" | "-jre1.6")
+      classlib="${1:1:6}"
+      shift 1
+      ;;
+    "-stats")
+      stats="true"
+      shift 1
+      ;;
+    "-sanity")
+      sanity="true"
+      shift 1
+      ;;
+    "-mem")
+      shift 1
+      memory="$1"
+      shift 1
+      ;;
+    "-dynamic")
+      shift 1
+      dynamics="${dynamics} $1"
+      shift 1
+      ;;
+    "-logicProfile")
+      shift 1
+      logicProfile="-logicProfile $1"
+      shift 1
+      ;;
+    "-logLevel")
+      shift 1
+      logLevel="-logLevel $1"
+      shift 1
+      ;;
+    "-logMemStats")
+      logMemStats="true"
+      shift 1
+      ;;
+    "-singleRun")
+      singleRun="true"
+      shift 1
+      ;;
+    "-noColour")
+      noColour="true"
+      shift 1
+      ;;
+    "-help" | "--help")
+      usage
+      exit 1
+      ;;
+    "-client")
+	  shift 1
+      if [ "x$clientcode" = "x" ]; then
+        CPPFLAGS_CLIENT_ANALYSES="${CPPFLAGS_CLIENT_ANALYSES} -DCLIENT_EXTENSIONS"
+      fi
+	  clientcode=$([ "x$clientcode" = "x" ] && echo "$1" || echo -e "$clientcode\n$1")
+	  # skolemGraph="true"
+	  shift 1
+	  ;;
+    "-phantom")
+      phantom="true"
+      shift 1
+      ;;
+    *)
+      echo "invalid option: $1"
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+case $classlib in
+  "jre1.3")
+    CPPFLAGS_JRE="-DJRE13"
+    ;;
+  "jre1.4")
+    CPPFLAGS_JRE="-DJRE14"
+    ;;
+  "jre1.5")
+    CPPFLAGS_JRE="-DJRE15"
+    ;;
+  "jre1.6")
+    CPPFLAGS_JRE="-DJRE16"
+    ;;
+  "system")
+    CPPFLAGS_JRE="-DJRE16"
+    ;;
+  *)
+    echo "invalid class library: $classlib"
+    usage
+    exit 1
+    ;;
+esac
+
+case $os in
+  "unix")
+    CPPFLAGS_OS="-DOS_UNIX"
+    ;;
+  "winnt")
+    CPPFLAGS_OS="-DOS_WINNT"
+    ;;
+  "win32")
+    CPPFLAGS_OS="-DOS_WIN32"
+    ;;
+  *)
+    echo "unsupported operating system: $os"
+    usage
+    exit 1
+    ;;
+esac
+
+CPPFLAGS="${CPPFLAGS_EXCEPTIONS} ${CPPFLAGS_EXCEPTIONS_EXPERIMENTAL} ${CPPFLAGS_PADDLE_COMPAT} ${CPPFLAGS_CLIENT_ANALYSES} ${CPPFLAGS_JRE} ${CPPFLAGS_OS} ${CPPFLAGS_STRING_CONSTANTS} ${CPPFLAGS_STRING_BUFFERS} ${CPPFLAGS_CONTEXT} ${CPPFLAGS_REFLECTION} ${CPPFLAGS_FIELD_BASED_STATIC} ${CPPFLAGS_FIELD_BASED_DYNAMIC}"
+
+# Requires DOOP_HOME environment variable to be set
+if [ ! "x$clientcode" = "x" ]; then
+	if test "x${DOOP_HOME}" = "x"; then
+		printf "${C_RED}ERROR${C_WHITE}: please set the environment variable DOOP_HOME${C_RESET}\n"
+		echo "error: "
+		exit 1
+	fi
+fi
+
+# process the analysis argument
+if test -e logic/$1/analysis.logic; then
+	analysis=$1
+else
+	printf "${C_RED}ERROR${C_WHITE}: unsupported analysis \"%s\"${C_RESET}\n" "$1"
+	exit 1
+fi
+
+shift 1
+arg=$1
+
+# process the jar file argument
+if test -d $arg; then
+	printf "${C_RED}ERROR${C_WHITE}: directories are currently not supported${C_RESET}\n"
+	exit 1
+else
+	deps=""
+	depargs=""
+	if test $(basename $(dirname $arg)) = "dacapo"; then
+	# for dacapo we need to link with the deps: some of the deps
+	# themselves do not have all deps (e.g. pmd).
+		benchmark=$(basename $arg .jar)
+		printf "${C_WHITE}running dacapo benchmark: ${C_GREEN}%s${C_RESET}\n" "$benchmark"
+		jars="$arg"
+		deps="$(dirname $arg)/$(basename $arg .jar)-deps.jar"
+		depargs="-l $deps"
+
+		dyn="$(dirname $arg)/$(basename $arg .jar).dynamic"
+		if test -e "${dyn}"; then
+			dynamics="${dynamics} ${dyn}"
+		fi
+
+		if test "x$mainclass" = "x"; then
+			mainclass="dacapo.$benchmark.Main"
+		fi
+	else
+		jars="$arg"
+
+		if test "x$mainclass" = "x"; then
+			jar xf $arg  META-INF/MANIFEST.MF
+			mainclass=$(grep '^Main-Class: ' META-INF/MANIFEST.MF | cut -d: -f2 | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+			rm -rf META-INF/
+			if [ "x$mainclass" = "x" ]; then
+				mainclass="$(basename $arg .jar)"
+			fi
+		fi
+	fi
+fi
+printf "${C_WHITE}Main-Class: ${C_GREEN}%s${C_RESET}\n" "$mainclass"
+
+
+elapsedTime=""
+
+function preprocess()
+{
+	cpp -CC -P $CPPFLAGS $*
+}
+
+function timing()
+{
+	echo "..."
+
+	set +e
+	/usr/bin/time -f "%e" $* > tmp/TIMING 2>&1
+	head -n -1 tmp/TIMING | sed -r 's/ERROR([^S])/'"${C_RED}ERROR${C_RESET}"'\1/g;s/code: ([a-zA-Z_]+)/'"${C_WHITE}code: ${C_RED}"'\1'"${C_RESET}"'/g'
+	if grep "ERROR" tmp/TIMING > /dev/null 2>&1; then exit; fi
+	set -e
+
+	elapsedTime=`tail -n 1 tmp/TIMING`
+	echo "elapsed time: ${elapsedTime}s"
+}
+
+function benchmark()
+{
+	timeLimit=5400
+	echo "..."
+	printf "${C_YELLOW}MBBENCH logicblox START${C_RESET}\n"
+
+	set +e
+	timeout $timeLimit /usr/bin/time -f "%e" $* > tmp/BENCH 2>&1
+	head -n -1 tmp/BENCH | sed -r 's/ERROR([^S])/'"${C_RED}ERROR${C_RESET}"'\1/g;s/code: ([a-zA-Z_]+)/'"${C_WHITE}code: ${C_RED}"'\1'"${C_RESET}"'/g'
+	if grep "ERROR" tmp/BENCH > /dev/null 2>&1; then exit; fi
+	set -e
+
+	elapsedTime=`tail -n 1 tmp/BENCH`
+	if test "X$elapsedTime" = "X" ; then
+		printf "${C_RED}Timeout after %ss${C_RESET}\n" $timeLimit ; exit
+	fi
+	printf "${C_WHITE}elapsed time: ${C_GREEN}%ss${C_RESET}\n" "$elapsedTime"
+	printf "${C_YELLOW}MBBENCH logicblox STOP${C_RESET}\n"
+}
+
+###############################################################################
+
+function singleRun()
+{
+	if test $singleRun = "true"; then
+		bloxbatchRunning=`ps -ef | grep bloxbatch | { grep -v grep || true; }`
+		if test "x${bloxbatchRunning}" != "x"; then
+			echo -n 'WARNING: Bloxbatch is already running. '
+			read -p "Continue (y/n)? "
+			if test $REPLY != "y"; then
+				echo "Terminating..."
+				exit
+			fi
+			echo
+		fi
+	fi
+}
+
+function init-analysis()
+{
+	mkdir -p tmp
+
+	preprocess logic/$analysis/declarations.logic tmp/$analysis-declarations.logic
+	preprocess logic/$analysis/delta.logic tmp/$analysis-delta.logic
+	preprocess logic/library/reflection-delta.logic tmp/reflection-delta.logic
+	preprocess logic/client/exception-flow-delta.logic tmp/exception-flow-delta.logic
+	preprocess logic/$analysis/analysis.logic tmp/$analysis.logic
+	preprocess logic/client/auxiliary-heap-allocations-delta.logic tmp/auxiliary-heap-allocations-delta.logic
+
+	# # Skolem Graph Creation
+	# if test $skolemGraph = "true"; then
+	# 	# Create temporary clone on the analysis directory
+	# 	ln "logic/graph/graph-basic.logic" logic/$analysis/
+	# 	# Preprocess file for macroexpansion to take effect
+	# 	preprocess logic/$analysis/graph-basic.logic tmp/graph-basic.logic
+	# 	# Unlink clone
+	# 	unlink logic/$analysis/graph-basic.logic
+	# 	# Preprocess the rest of the files
+	# 	preprocess logic/graph/scc/SCC-approx.logic tmp/SCC-approx.logic
+	# 	preprocess logic/graph/scc/spanning.logic tmp/spanning.logic
+	# else
+	# 	touch tmp/graph-basic.logic
+	# 	touch tmp/SCC-approx.logic
+	# 	touch tmp/spanning.logic
+	# fi
+
+	# Compute sums
+	if [ ! "x$clientcode" = "x" ]; then
+		clextsum=$(find "$DOOP_HOME/tmp/extensions/" -type f \
+			-name '*.logic' | xargs cat | sha256sum \
+			| awk '{print $1}')
+	fi
+	inputsum=$(cat $jars $deps | sha256sum | awk '{print $1}')
+	logicsum=$(cat tmp/$analysis-declarations.logic \
+				   tmp/$analysis-delta.logic \
+				   tmp/reflection-delta.logic \
+				   tmp/exception-flow-delta.logic \
+				   tmp/$analysis.logic \
+				   tmp/auxiliary-heap-allocations-delta.logic \
+				   | sha256sum | awk '{print $1}')
+
+	suffix=""
+	if test $ssa = "true"; then
+		suffix="-ssa"
+	fi
+	if test $transformInput = "true"; then
+			suffix=$suffix"-transformInput"
+	fi
+
+	cachefacts="cache/input-facts/${classlib}${suffix}/${inputsum}"
+	cachedatabase="cache/input-database/${classlib}${suffix}/${inputsum}"
+	database="cache/analysis/${logicsum}/${classlib}${suffix}/${inputsum}"
+	humandatabase="results/$analysis/${classlib}${suffix}/$arg"
+
+	metadir=$database/.doop-meta
+}
+
+function create-database()
+{
+	rm -rf $database
+
+	if test -e $cachedatabase; then
+		echo "using cached database ($cachedatabase)"
+	else
+		if test -e $cachefacts; then
+			echo "using cached facts ($cachefacts)"
+		else
+			echo -n "generating facts ($jars $depargs) in $cachefacts "
+
+			rm -rf tmp/facts
+			mkdir -p tmp/facts
+
+			sootFactGenArgs=""
+
+			if test $ssa = "true"; then
+				sootFactGenArgs="$sootFactGenArgs -ssa"
+			fi
+
+			if test $phantom = "true"; then
+				sootFactGenArgs="$sootFactGenArgs -allow-phantom"
+			fi
+
+			timing java -cp lib/sootclasses-2.3.0.jar:lib/soot-fact-generation.jar Main \
+			  -main $mainclass $sootFactGenArgs -full $(./jre-link-arguments $classlib) -d tmp/facts $jars $depargs
+
+			mkdir -p $cachefacts
+			mv tmp/facts/* $cachefacts
+		fi
+
+		mkdir -p $(dirname $cachedatabase)
+
+		echo -n "creating database in $cachedatabase "
+		timing $bloxbatch -db $cachedatabase -create -overwrite -blocks base
+
+		echo -n "loading fact declarations "
+		timing $bloxbatch -db $cachedatabase -addBlock -file logic/library/fact-declarations.logic
+
+		echo -n "loading facts "
+		rm -rf $(dirname $cachedatabase)/facts
+		ln -s $(pwd)/$cachefacts $(dirname $cachedatabase)/facts
+
+		$(pwd)/gen-import $(pwd)/tmp/fact-declarations.import
+		timing $bloxbatch -db $cachedatabase -import $(pwd)/tmp/fact-declarations.import
+
+		rm $(dirname $cachedatabase)/facts
+
+		echo "setting main class to $mainclass"
+		$bloxbatch -db $cachedatabase -execute "+MainClass(x) <- ClassType(x), Type:Value(x:\"$mainclass\")."
+	fi
+
+	mkdir -p $(dirname $database)
+	cp -R $cachedatabase $database
+}
+
+function analyze()
+{
+	for dynamic in $dynamics; do
+		cat > tmp/dynamic.import <<EOF
+option,delimiter,"	"
+option,hasColumnNames,false
+
+fromFile,"$(readlink -f $dynamic)",a,inv,b,type
+toPredicate,Config:DynamicClass,type,inv
+EOF
+		$bloxbatch -db $database -import $(pwd)/tmp/dynamic.import
+	done
+
+	echo -n "loading $analysis declarations "
+	timing $bloxbatch -db $database -addBlock -file tmp/$analysis-declarations.logic
+
+	if test "$sanity" = "true"; then
+		echo -n "loading sanity rules "
+		timing $bloxbatch -db $database -addBlock -file logic/library/sanity.logic
+	fi
+
+	echo -n "loading $analysis delta rules "
+	timing $bloxbatch -db $database -execute -file tmp/$analysis-delta.logic
+	echo -n "loading reflection delta rules "
+	timing $bloxbatch -db $database -execute -file tmp/reflection-delta.logic
+	echo -n "loading client delta rules "
+	timing $bloxbatch -db $database -execute -file tmp/exception-flow-delta.logic
+	echo -n "loading auxiliary delta rules "
+	timing $bloxbatch -db $database -execute -file tmp/auxiliary-heap-allocations-delta.logic
+
+	if test $transformInput = "true"; then
+	echo -n "preprocessing/transforming program facts: analysis"
+		timing $bloxbatch -db $database -addBlock -file logic/transform.logic
+		echo -n "preprocessing/transforming program facts: transformation"
+		timing $bloxbatch -db $database -execute -file logic/transform-delta.logic
+		echo -n "preprocessing/transforming program facts: transformation"
+		timing $bloxbatch -db $database -execute -file logic/transform-delta.logic
+		echo -n "preprocessing/transforming program facts: transformation"
+		timing $bloxbatch -db $database -execute -file logic/transform-delta.logic
+	fi
+
+	# # Skolem Graph
+	# if test $skolemGraph = "true"; then
+	# 	echo -n "loading graph construction rules "
+	# 	timing $bloxbatch -db $database -addBlock -file tmp/graph-basic.logic
+	# 	timing $bloxbatch -db $database -addBlock -file tmp/SCC-approx.logic
+	# 	timing $bloxbatch -db $database -addBlock -file tmp/spanning.logic
+	# fi
+
+	echo -n "loading $analysis rules "
+
+	if test "$logMemStats" = "true"; then
+		vmstat -n 3 > $metadir/vmstat.log &
+		vmstatPid="$!"
+		trap "kill $vmstatPid" INT TERM
+	fi
+
+	if test "$refine" = "true"; then
+		echo "loading $analysis refinement facts "
+		# despite what the bloxbatch -help says, "-importDelimited" doesn't quite work and
+		# DO NOT use -importDir, or it will treat everything in there as a script. 2+ hours of my
+		# life lost.
+
+		# Note that using Temp... relations avoids complete re-evaluation when the refinement-delta.logic
+		# is executed.
+		cat > $(pwd)/tmp/$analysis-refine-site.import <<EOF
+option,delimiter,","
+option,hasColumnNames,false
+option,quotedValues,true
+option,escapeQuotedValues,true
+
+fromFile,"$(pwd)/tmp/$analysis-TempSiteToRefine.csv",MethodInvocationRef,MethodInvocationRef,HeapAllocationRef,HeapAllocationRef
+toPredicate,SiteToRefine,MethodInvocationRef,HeapAllocationRef
+EOF
+		cat > $(pwd)/tmp/$analysis-negative-site.import <<EOF
+option,delimiter,","
+option,hasColumnNames,false
+
+fromFile,"$(pwd)/tmp/$analysis-TempNegativeSiteFilter.csv",string,string
+toPredicate,NegativeSiteFilter,string
+EOF
+		cat > $(pwd)/tmp/$analysis-refine-object.import <<EOF
+option,delimiter,","
+option,hasColumnNames,false
+option,quotedValues,true
+option,escapeQuotedValues,true
+
+fromFile,"$(pwd)/tmp/$analysis-TempObjectToRefine.csv",HeapAllocationRef,HeapAllocationRef
+toPredicate,ObjectToRefine,HeapAllocationRef
+EOF
+		cat > $(pwd)/tmp/$analysis-negative-object.import <<EOF
+option,delimiter,","
+option,hasColumnNames,false
+
+fromFile,"$(pwd)/tmp/$analysis-TempNegativeObjectFilter.csv",string,string
+toPredicate,NegativeObjectFilter,string
+EOF
+		$bloxbatch -db $database -import $(pwd)/tmp/$analysis-refine-site.import 
+		$bloxbatch -db $database -import $(pwd)/tmp/$analysis-negative-site.import 
+		$bloxbatch -db $database -import $(pwd)/tmp/$analysis-refine-object.import 
+		$bloxbatch -db $database -import $(pwd)/tmp/$analysis-negative-object.import 
+		echo "integrating $analysis refinement facts "
+#		$bloxbatch -db $database -execute "+SiteToRefine(?heap,?invocation) <- TempSiteToRefine(?heap,?invocation)."
+#		$bloxbatch -db $database -execute "+ObjectToRefine(?heap) <- TempObjectToRefine(?heap)."
+		echo "performing refined analysis $analysis "
+	fi
+
+	benchmark $bloxbatch -db $database -addBlock -file tmp/$analysis.logic $logLevel $logicProfile
+	$bloxbatch -db $database -execute "+Stats:Runtime(${elapsedTime}, \"benchmark time\")."
+
+	# Loading extensions
+	if [ ! "x$clientcode" = "x" ]; then
+		echo -n "loading client extensions"
+		for extension in $extlist; do
+			timing $bloxbatch -db $database -addBlock -file $extension $logLevel $logicProfile
+		done
+	fi
+
+	if test "$logMemStats" = "true"; then
+		kill $vmstatPid
+		trap - INT TERM
+	fi
+}
+
+function reanalyze()
+{
+	echo "loading $analysis refinement-delta rules "
+	preprocess logic/$analysis/refinement-delta.logic tmp/$analysis-refinement-delta.logic
+
+	timing $bloxbatch -db $database -execute -file tmp/$analysis-refinement-delta.logic
+	timing $bloxbatch -db $database -exportCsv TempSiteToRefine -overwrite -exportDataDir tmp -exportFilePrefix $analysis-
+	timing $bloxbatch -db $database -exportCsv TempNegativeSiteFilter -overwrite -exportDataDir tmp -exportFilePrefix $analysis-
+	timing $bloxbatch -db $database -exportCsv TempObjectToRefine -overwrite -exportDataDir tmp -exportFilePrefix $analysis-
+	timing $bloxbatch -db $database -exportCsv TempNegativeObjectFilter -overwrite -exportDataDir tmp -exportFilePrefix $analysis-
+	
+	create-database
+	write-meta
+	refine="true"
+	analyze
+}
+
+function write-meta()
+{
+	mkdir $metadir
+
+	echo "$originalCommandLine" > $metadir/command-line
+	echo "$CPPFLAGS" > $metadir/CPPFLAGS
+	echo "$classlib" > $metadir/classlib
+	echo "$analysis" > $metadir/analysis
+	echo "$jars"     > $metadir/jars
+	echo "$deps"     > $metadir/deps
+}
+
+function link-result()
+{
+	printf "${C_WHITE}making database available at ${C_GREEN}%s${C_RESET}\n" "$humandatabase"
+	mkdir -p $(dirname $humandatabase)
+	rm -rf $humandatabase
+
+	ln -s $(pwd)/$database $humandatabase
+
+	printf "${C_WHITE}making database available at ${C_GREEN}last-analysis${C_RESET}\n"
+	rm -f last-analysis
+
+	ln -s $(readlink $humandatabase) last-analysis
+}
+
+function run-stats()
+{
+	echo -n "loading statistics (simple) "
+	timing $bloxbatch -db $database -addBlock -file logic/library/statistics-simple.logic
+	$bloxbatch -db $database -execute "+Stats:Runtime($elapsedTime, \"loading statistics (simple) time\")."
+
+	if test "$stats" = "true"; then
+		echo -n "loading statistics "
+		timing $bloxbatch -db $database -addBlock -file logic/library/statistics.logic
+		$bloxbatch -db $database -execute "+Stats:Runtime($elapsedTime, \"loading statistics time\")."
+		echo "sorting predicates ..."
+		start=`date +%s`
+		$bloxbatch -db $database -addBlock -file logic/library/statistics-sort.logic
+
+		sortPredicate Stats:VarCount
+		sortPredicate Stats:InsensHeapVarCount
+		sortPredicate Stats:InsensBaseVarCount
+		sortPredicate Stats:InsensVarCount
+
+		sortPredicate Stats:ArrayCount
+		sortPredicate Stats:InsensHeapArrayCount
+		sortPredicate Stats:InsensBaseHeapArrayCount
+		sortPredicate Stats:InsensArrayCount
+
+		sortPredicate Stats:FieldCount
+		sortPredicate Stats:InsensHeapFieldCount
+		sortPredicate Stats:InsensBaseHeapFieldCount
+		sortPredicate Stats:InsensFieldCount
+
+		#sortPredicate Stats:ThrowsPerMethodCount
+		#sortPredicate Stats:InsensHeapThrowsPerMethodCount
+		#sortPredicate Stats:InsensMethodThrowsPerMethodCount
+		#sortPredicate Stats:InsensThrowsPerMethodCount
+
+		sortPredicate Stats:MethodContextCount
+		sortPredicate Stats:MethodContextCount SORT_BASE
+		#sortPredicate Stats:InsensMethodVarCount
+		#sortPredicate Stats:MethodVarCount
+
+		end=`date +%s`
+		let elapsedTime="$end - $start"
+		echo "elapsed time: ${elapsedTime}s"
+		$bloxbatch -db $database -execute "+Stats:Runtime($elapsedTime, \"sorting statistics time\")."
+	fi
+}
+
+function run-stats-cache()
+{
+	if test -e $database; then
+		echo "database is cached, not performing $analysis analysis for $jars"
+	else
+		run-stats
+	fi
+}
+
+function show-stats()
+{
+	./stats-simple $database
+	if test "$stats" = "true"; then
+		./stats $database
+	fi
+}
+
+function sortPredicate()
+{
+	input=$1
+	output=${input}Sorted
+	sortFlag=""
+	if test $# = 2; then
+		if test "x$2" = "xSORT_BASE"; then
+			output=${output}Base
+			sortFlag=$2
+		fi
+	fi
+
+	$bloxbatch -db $database -exportCsv $output -overwrite -exportDataDir tmp -exportScriptDir tmp -keepDerivedPreds
+
+	output=`echo $output | sed -r 's/:/_/g'`
+
+	if test "x$sortFlag" = "xSORT_BASE"; then
+		$bloxbatch -db $database -query $input | awk 'BEGIN { FS = "," } ; { print $NF " @ " $0 }' | sort -n | sed -r 's/^.*@[ ](.*)\,[0-9]+$/\1/' | awk '{ print FNR","$0 }' >> tmp/$output.csv
+	else
+		$bloxbatch -db $database -query $input | awk 'BEGIN { FS = "," } ; { print $NF }' | sort -n | awk '{ print FNR","$0 }' >> tmp/$output.csv
+	fi
+
+	$bloxbatch -db $database -import tmp/$output.import
+}
+
+function pollFootprint()
+{
+	monitorDir="$1/"
+	pollingInterval=10
+
+	result=`du -csh $monitorDir | tail -n 1 | awk '{ print $1 }'`
+	length=${#result}
+	size=`expr substr $result 1 $((length - 1))`
+	magn=`expr substr $result $length 1`
+
+	if [[ $magn = "M" ]]; then size=`echo "$size * 1024" | bc -q`
+	elif [[ $magn = "G" ]]; then size=`echo "$size * 1024 * 1024" | bc -q` ; fi
+
+	echo $size
+}
+
+###############################################################################
+
+# process the client argument
+if [ ! "x$clientcode" = "x" ]; then
+	# Remove old mirror
+	rm -rf "$DOOP_HOME/logic/client/extensions"
+	rm -rf "$DOOP_HOME/tmp/extensions"
+
+	# Create catalogue
+	catalogue="$DOOP_HOME/logic/client/client-extensions-catalogue.logic"
+	: > "$catalogue"
+	mkdir -p "$(dirname $catalogue)"
+
+	# Temporarily change Internal Field Separator
+	SAVEIFS=$IFS
+	IFS=$(echo -en "\n\b")
+	clientfiles=""
+
+	echo "Client Code submitted for analysis:"
+	for i in $clientcode; do echo -e "  $i"; done
+
+	# For each client argument
+	for i in $clientcode; do
+		if [ -f "$i" ]; then
+			cfile="$(readlink -f $i)"
+			cpath="$(basename $i)"
+			clientfiles=$([ "x$clientfiles" = "x" ] && echo "$cfile:$cpath" || echo -e "$clientfiles\n$cfile:$cpath")
+		elif [ -d "$i" ]; then
+			i="$(readlink -f $i)"
+			for j in $(find "$i" -type f -name '*.logic'); do
+				cfile="$j"
+				cpath="$(echo $j | sed -e 's:'$i'/\{0,1\}:'$(basename $i)'/:')"
+				clientfiles=$([ "x$clientfiles" = "x" ] && echo "$cfile:$cpath" || echo -e "$clientfiles\n$cfile:$cpath")
+			done
+		else
+			echo "error: illegal argument for client analysis \"$i\""
+			exit 1
+		fi
+	done
+
+	echo -e "Client Code files actually submitted:"
+	: $((n = `echo "$clientfiles" | wc -l` - 1))
+
+	# Iterate over client files
+	for i in $clientfiles; do
+		ofile="$(echo $i | cut -d: -f1)"
+		opath="$(echo $i | cut -d: -f2)"
+
+		# Check for duplicates
+		for j in $(echo "$clientfiles" | tail -$n); do
+			ifile="$(echo $j | cut -d: -f1)"
+			ipath="$(echo $j | cut -d: -f2)"
+			if [ "$ofile" = "$ifile" ]; then
+				echo "error: duplicate client file $ifile"
+				exit 1
+			fi
+		done
+		: $(( n-- )) 
+
+		# Create temporary clone on the analysis directory
+		mfile="$DOOP_HOME/logic/$analysis/$opath"
+		mkdir -p $(dirname $mfile)
+		ln "$ofile" "$mfile"
+
+		# Preprocess file for macroexpansion to take effect
+		pfile="$DOOP_HOME/tmp/extensions/$opath"
+		mkdir -p $(dirname $pfile)
+		preprocess "$mfile" "$pfile"
+
+		# Create extension list (be careful to maintain order)
+		extlist=$([ "x$extlist" = "x" ] && echo "$pfile" || echo -e "$extlist\n$pfile")
+
+		# Unlink clone
+		unlink "$mfile"
+
+		# Create mirrored file
+		mfile="$(dirname $catalogue)/extensions/$opath"
+		mkdair -p "$(dirname $mfile)"
+		ln "$ofile" "$mfile"
+
+		# Add to catalogue
+		# echo "#line 1 \"$ofile\"" >> "$catalogue"
+		# echo "#include \"extensions/$opath\"" >> "$catalogue"
+
+		# Print filename and mirrored location
+		echo -e "  $ofile\n    -> extensions/$opath"
+	done
+	echo "[mirrored in \"$(dirname $catalogue)/extensions\" ]"
+	IFS=$SAVEIFS
+
+	# Delete empty directories under analysis
+	find "$DOOP_HOME/logic/$analysis/" -type d -empty -delete
+fi
+
+###############################################################################
+
+singleRun
+init-analysis
+
+if test "$cache" = "true"; then
+	if test -e $database; then
+		echo "database is cached, not performing $analysis analysis for $jars"
+		run-stats-cache
+		link-result
+		show-stats
+		exit 0
+	fi
+fi
+
+create-database
+write-meta
+analyze
+
+size=$(pollFootprint $database)
+$bloxbatch -db $database -execute "+Stats:Runtime($size, \"disk footprint (KB)\")."
+printf "%-80s %'.0f\n" "disk footprint (KB)" $size
+
+run-stats
+link-result
+show-stats
+
+if test -e logic/$analysis/refinement-delta.logic; then
+	reanalyze
+
+	run-stats
+	link-result
+	show-stats
+fi
+
+size=$(pollFootprint $database)
+$bloxbatch -db $database -execute "+Stats:Runtime($size, \"disk footprint (with stats) (KB)\")."
+printf "\n%-80s %'.0f\n" "disk footprint (with stats) (KB)" $size

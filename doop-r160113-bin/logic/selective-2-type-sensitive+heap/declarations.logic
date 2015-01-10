@@ -1,0 +1,13 @@
+#include "macros.logic"
+#include "../context-sensitive-declarations.logic"
+
+// For this analysis, contexts are types, so this is
+// what the initial system objects should have.
+MySystemThreadGroup(?type, ?alloc) ->
+  InstructionRef(?type), HeapAllocationRef(?alloc).
+
+MyMainThreadGroup(?type, ?alloc) ->
+  InstructionRef(?type), HeapAllocationRef(?alloc).
+
+MyMainThread(?type, ?alloc) ->
+  InstructionRef(?type), HeapAllocationRef(?alloc).

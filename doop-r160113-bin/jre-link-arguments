@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rootdir="$(pwd)"
+doop="$rootdir"
+
+source $doop/doop.conf
+
+case "$1" in
+  "jre1.3") linkargs="-l ${doopconf_jre13}/lib/rt.jar";;
+  "jre1.4") linkargs="-l ${doopconf_jre14}/lib/rt.jar -l ${doopconf_jre14}/lib/jce.jar -l ${doopconf_jre14}/lib/jsse.jar";;
+  "jre1.5") linkargs="-l ${doopconf_jre15}/lib/rt.jar -l ${doopconf_jre15}/lib/jce.jar -l ${doopconf_jre15}/lib/jsse.jar";;
+  "jre1.6") linkargs="-l ${doopconf_jre16}/lib/rt.jar -l ${doopconf_jre16}/lib/jce.jar -l ${doopconf_jre16}/lib/jsse.jar";;
+  "system") linkargs="-lsystem";;
+  *)        echo "error: unknown jre version"; exit 1;;
+esac
+
+echo "$linkargs"

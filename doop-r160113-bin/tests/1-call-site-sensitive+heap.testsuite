@@ -1,0 +1,19 @@
+testsuite 1-call-site-sensitive+heap
+
+test Simple example where a context-sensitive heap abstraction is necessary (1)
+  using database tests/context/Main.jar
+    ->
+  StaticFieldPointsTo(?ctx, ?site, "<Heap1: java.lang.Object o1>")
+    ->
+  ( "Heap1.test/Heap1.allocate/0"
+  , "Heap1.allocate/new java.lang.Object/0"
+  )
+
+test Simple example where a context-sensitive heap abstraction is necessary (2)
+  using database tests/context/Main.jar
+    ->
+  StaticFieldPointsTo(?ctx, ?site, "<Heap1: java.lang.Object o2>")
+    ->
+  ( "Heap1.test/Heap1.allocate/1"
+  , "Heap1.allocate/new java.lang.Object/0"
+  )

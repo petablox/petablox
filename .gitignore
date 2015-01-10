@@ -1,0 +1,4 @@
+.vagrant
+provision/config.json
+doop*/externals/*
+

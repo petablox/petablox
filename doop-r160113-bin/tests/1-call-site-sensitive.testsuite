@@ -1,0 +1,325 @@
+testsuite Context-sensitive pointer analysis with 1-call-site calling context
+
+test Simple example requiring 1-call-site context sensitivity
+  using database tests/context/Simple.jar
+    ->
+  StaticFieldPointsTo(?h, "<Simple: java.lang.Object o3>")
+    ->
+  "Simple.main/new java.lang.Object/0"
+
+test Simple example requiring 1-call-site context sensitivity
+  using database tests/context/Simple.jar
+    ->
+  StaticFieldPointsTo(?h, "<Simple: java.lang.Object o4>")
+    ->
+  "Simple.main/new java.lang.Object/1"
+
+test Simple example requiring 1-call-site context sensitivity
+  using database tests/context/Simple.jar
+    ->
+  FormalParam[0, "<Simple: java.lang.Object identity(java.lang.Object)>"] = ?v,
+  VarPointsTo(?h, "Simple.main/Simple.identity/0", ?v)
+    ->
+  project h
+    ->
+  "Simple.main/new java.lang.Object/0"
+
+test Simple example requiring 1-call-site context sensitivity
+  using database tests/context/Simple.jar
+    ->
+  FormalParam[0, "<Simple: java.lang.Object identity(java.lang.Object)>"] = ?v,
+  VarPointsTo(?h, "Simple.main/Simple.identity/1", ?v)
+    ->
+  project h
+    ->
+  "Simple.main/new java.lang.Object/1"
+
+test Simple example with context erasure lets parameter point to two objects.
+  using database tests/context/Simple.jar
+    ->
+  FormalParam[0, "<Simple: java.lang.Object identity(java.lang.Object)>"] = ?v,
+  VarPointsTo(?h, _, ?v)
+    ->
+  project h
+    ->
+  "Simple.main/new java.lang.Object/0"
+  "Simple.main/new java.lang.Object/1"
+
+test Simple example requiring 2-call-site calling context
+  using database tests/context/Simple2.jar
+    ->
+  StaticFieldPointsTo(?h, "<Simple2: java.lang.Object o3>")
+    ->
+  "Simple2.main/new java.lang.Object/0"
+  "Simple2.main/new java.lang.Object/1"
+
+test Simple example requiring 2-call-site calling context
+  using database tests/context/Simple2.jar
+    ->
+  StaticFieldPointsTo(?h, "<Simple2: java.lang.Object o4>")
+    ->
+  "Simple2.main/new java.lang.Object/0"
+  "Simple2.main/new java.lang.Object/1"
+
+test The item field of Container can point to all allocations of Item
+  using database tests/context/ContainerTest1.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest1.main/new Container/0")
+    ->
+  "ContainerTest1.main/new Item/0"
+
+test The item field of Container can point to all allocations of Item
+  using database tests/context/ContainerTest1.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest1.main/new Container/1")
+    ->
+  "ContainerTest1.main/new Item/1"
+
+test The item field of Container can point to all allocations of Item
+  using database tests/context/ContainerTest2.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest2.main/new Container/0")
+    ->
+  "Container.<init>/new Item/0"
+  "ContainerTest2.main/new Item/0"
+
+test The item field of Container can point to all allocations of Item
+  using database tests/context/ContainerTest2.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest2.main/new Container/1")
+    ->
+  "Container.<init>/new Item/0"
+  "ContainerTest2.main/new Item/1"
+
+test Example requiring object sensitive analysis or 2-call-site (not 1-call-site)
+  using database tests/context/ContainerTest3.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest3.main/new Container/0")
+    ->
+  "ContainerTest3.main/new Item/0"
+  "ContainerTest3.main/new Item/1"
+
+test Example requiring object sensitive analysis or 2-call-site  (not 1-call-site)
+  using database tests/context/ContainerTest3.jar
+    ->
+  InstanceFieldPointsTo(?h, "<Container: Item item>", "ContainerTest3.main/new Container/1")
+    ->
+  "ContainerTest3.main/new Item/0"
+  "ContainerTest3.main/new Item/1"
+
+/**
+ * JVM Start-up
+ */
+test ClassLoader constructor
+  using database tests/Reachable.jar
+  assert
+    ImplicitReachable("<java.lang.ClassLoader: void <init>()>")
+    Reachable("<java.lang.ClassLoader: void <init>()>")
+    ReachableContext("<<jvm-startup>>", "<java.lang.ClassLoader: void <init>()>")
+
+test ThreadGroup constructor
+  using database tests/Reachable.jar
+  assert
+    Reachable("<java.lang.ThreadGroup: void <init>()>")
+    ReachableContext("<<jvm-startup>>", "<java.lang.ThreadGroup: void <init>()>")
+
+/**
+ * Exceptions
+ */
+test Method without any thrown exceptions (Test1)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test1.test/0", "<Test1: void test()>")
+    ->
+  empty
+
+test Method directly throwing an exception (Test2)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test2.test/1", "<Test2: void test()>")
+    ->
+  "Test2.test/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception (Test3)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test3.test/2", "<Test3: void test()>")
+    ->
+  "Test3.helper/new java.lang.Exception/0"
+
+test Method indirectly throwing two exceptions (Test4)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test4.test/3", "<Test4: void test()>")
+    ->
+  "Test4.helper1/new java.lang.Exception/0"
+  "Test4.helper2/new java.lang.Exception/0"
+
+test Method indirectly throwing two exceptions (Test5)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test5.test/4", "<Test5: void test()>")
+    ->
+  "Test5.helper1/new java.lang.Exception/0"
+  "Test5.helper2/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception via a constructor call (Test6)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test6.test/5", "<Test6: void test()>")
+    ->
+  "Test6.<init>/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception via a virtual call (Test7)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test7.test/6", "<Test7: void test()>")
+    ->
+  "Test7.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8a)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test8a.test/7", "<Test8a: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8a, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test8a.test/Test8a.helper/0", "<Test8a: void helper()>")
+    ->
+  "Test8a.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8b)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test8b.test/8", "<Test8b: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8b, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test8b.test/Test8b.helper/0", "<Test8b: void helper()>")
+    ->
+  "Test8b.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8b, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test8b.test/Test8b.helper/1", "<Test8b: void helper()>")
+    ->
+  "Test8b.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8c)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test8c.test/9", "<Test8c: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8c, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test8c.test/Test8c.helper1/0", "<Test8c: void helper1()>")
+    ->
+  "Test8c.helper1/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8c, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test8c.test/Test8c.helper2/0", "<Test8c: void helper2()>")
+    ->
+  "Test8c.helper2/new java.lang.Exception/0"
+
+test Method catching only run-time exceptions (Test9)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test9.test/10", "<Test9: void test()>")
+    ->
+  "Test9.helper/new java.lang.Exception/0"
+
+test Method catching some exceptions (Test10)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test10.test/11", "<Test10: void test()>")
+    ->
+  "Test10.helper2/new java.lang.Exception/0"
+
+test Method catching some exceptions (Test11)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test11.test/12", "<Test11: void test()>")
+    ->
+  "Test11.helper2/new java.lang.Exception/0"
+
+test Method catching all exceptions also catches IOException (Test12)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test12.test/13", "<Test12: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions also catches IOException (Test12, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Test12.test/Test12.helper/0", "<Test12: void helper()>")
+    ->
+  "Test12.helper/new java.io.IOException/0"
+
+test Thrown exception is assigned to formal parameter of handler (Test13)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test13: java.lang.Object o>")
+    ->
+  "Test13.test/new java.lang.Exception/0"
+
+test Thrown exception is caught immediately (Test13, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test13.test/14", "<Test13: void test()>")
+    ->
+  empty
+
+test Thrown exception is not caught (Test14)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test14: java.lang.Object o>")
+    ->
+  empty
+
+test Thrown exception is not caught immediately (Test14, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test14.test/15", "<Test14: void test()>")
+    ->
+  "Test14.test/new java.lang.Exception/0"
+
+test Thrown exception is assigned to formal parameter of handler (Test15)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test15: java.lang.Object o>")
+    ->
+  "Test15.helper/new java.lang.Exception/0"
+
+test Imprecision of not considering the order of exception handlers (Test16)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test16: java.lang.Object o1>")
+    ->
+  "Test16.test/new java.lang.RuntimeException/0"
+
+test Imprecision of not considering the order of exception handlers (Test16)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test16: java.lang.Object o2>")
+    ->
+  empty
+
+test Imprecision of not considering the order of exception handlers (Test17)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "Exceptions.main/Test17.test/18", "<Test17: void test()>")
+    ->
+  empty

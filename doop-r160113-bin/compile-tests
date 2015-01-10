@@ -1,0 +1,97 @@
+#! /bin/bash
+
+set -e
+
+mkdir -p jars
+jars=jars
+
+function compile_file()
+{
+  set -e
+
+  file="$1"
+  jre="$2"
+
+  inputsum=$(cat $file | sha256sum | awk '{print $1}')
+  cache="$(pwd)/cache/jars/jre$jre/$inputsum"
+
+  if test -e $cache; then
+    echo "using cached jar file for $file ( $cache )"
+  else
+    echo "compiling $file"
+
+    files="$file"
+    builddir=tmp/javac
+
+    rm -rf $builddir
+    mkdir -p $builddir
+
+    javac "$files" -d $builddir -source $jre -target $jre
+
+    rm -f tmp/cache.jar
+    jar cvf tmp/cache.jar -C $builddir .
+
+    mkdir -p $(dirname $cache)
+    cp tmp/cache.jar $cache
+    rm -rf $builddir
+  fi
+
+  jar="$jars/jre$jre/$(dirname $file)/$(basename $file .java).jar"
+  mkdir -p $(dirname $jar)
+  cp $cache $jar
+}
+
+function unpack_dacapo()
+{
+  dacapo="externals/dacapo-2006-10-MR2-xdeps.zip"
+  if test -e $dacapo; then
+    top=$(pwd)
+    rm -rf jars/dacapo
+    mkdir -p jars/dacapo
+    (cd jars/dacapo && unzip $top/$dacapo)
+    cp tests/dacapo/*.dynamic jars/dacapo
+  else
+    echo "warning: dacapo missing. If you want to run dacapo benchmark,"
+    echo "  please download dacapo-2006-10-MR2-xdeps.zip into the 'externals' subdirectory."
+    echo "  mirror: http://voxel.dl.sourceforge.net/sourceforge/dacapobench/dacapo-2006-10-MR2-xdeps.zip"
+    echo "  after downloading, please run ./compile-tests again."
+  fi
+}
+
+function copy_exception_flow()
+{
+  mkdir -p jars/exception-flow
+  cp externals/fu-benchmark/*.jar jars/exception-flow
+}
+
+for f in tests/*.java; do
+  compile_file $f "1.3"
+  compile_file $f "1.4"
+  compile_file $f "1.5"
+  compile_file $f "1.6"
+done
+
+for f in tests/hello/*.java; do
+  compile_file $f "1.3"
+  compile_file $f "1.4"
+  compile_file $f "1.5"
+  compile_file $f "1.6"
+done
+
+for f in tests/context/*.java; do
+  compile_file $f "1.3"
+  compile_file $f "1.4"
+  compile_file $f "1.5"
+  compile_file $f "1.6"
+done
+
+for f in tests/exception-flow/*.java; do
+  compile_file $f "1.3"
+  compile_file $f "1.4"
+  compile_file $f "1.5"
+  compile_file $f "1.6"
+done
+
+
+unpack_dacapo
+copy_exception_flow

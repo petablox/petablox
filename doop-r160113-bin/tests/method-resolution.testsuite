@@ -1,0 +1,97 @@
+testsuite Method resolution
+
+test Simple virtual method
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["foo", "void()", "Test1"] = ?method
+    ->
+  "<Test1: void foo()>"
+
+test Simple constructor
+    using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["<init>", "void()", "Test1"] = ?method
+    ->
+  "<Test1: void <init>()>"
+
+test Virtual method inheritance
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["foo", "void()", "Test3$Extension"] = ?method
+    ->
+  "<Test3$Base: void foo()>"
+
+test Virtual method overriding
+  using database tests/hello/VirtualMethodOverride.jar
+    ->
+  MethodLookup["foo", "java.lang.Object()", "Extension"] = ?method
+    ->
+  "<Extension: java.lang.Object foo()>"
+
+/**
+ * Native methods
+ */
+test Lookup a native method
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["foo", "void()", "Test5$Base"] = ?method
+    ->
+  "<Test5$Base: void foo()>"
+
+test Lookup a native method
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["fred", "void()", "Test5$Base"] = ?method
+    ->
+  "<Test5$Base: void fred()>"
+
+test Native methods are inherited
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["foo", "void()", "Test5$Extension"] = ?method
+    ->
+  "<Test5$Extension: void foo()>"
+
+test Java method can override native method
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["foo", "void()", "Test5$Extension"] = ?method
+    ->
+  "<Test5$Extension: void foo()>"
+
+test Native method can override Java method
+  using database tests/hello/VirtualMethod.jar
+    ->
+  MethodLookup["bar", "void()", "Test5$Extension"] = ?method
+    ->
+  "<Test5$Extension: void bar()>"
+
+/**
+ * Arrays
+ */
+
+test Lookup toString on an int array
+  using database tests/hello/Empty.jar
+    ->
+  MethodLookup["toString", "java.lang.String()", "int[]"] = ?method
+    ->
+  "<java.lang.Object: java.lang.String toString()>"
+
+test Lookup toString on a String array
+  using database tests/hello/Empty.jar
+    ->
+  MethodLookup["toString", "java.lang.String()", "java.lang.String[]"] = ?method
+    ->
+  "<java.lang.Object: java.lang.String toString()>"
+
+/* TODO: this is not according to the spec, but in the Sun JVM arrays
+   don't have a declared clone method either. The bytecode does
+   indicate a call to clone in the array class, but the Jimple code
+   turns this into a call of java.lang.Object.clone() */
+
+test Lookup clone on an int array (see TODO)
+  using database tests/hello/Empty.jar
+    ->
+  MethodLookup["clone", "java.lang.Object()", "int[]"] = ?method
+    ->
+  "<java.lang.Object: java.lang.Object clone()>"

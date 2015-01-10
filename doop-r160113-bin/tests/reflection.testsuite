@@ -1,0 +1,291 @@
+testsuite Tests for reflection
+
+test Local assignment of class constant (Test3)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test3: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class constant via method invocation (Test4)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test4: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class constant via static field assignment (Test5)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test5: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class constant via actual parameter (Test6)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test6: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class via Class.forName (Test7)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test7: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class via Class.forName (Test8)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test8: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.String"
+
+test Class initialization via Class.forName (Test9)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test9Helper: void <clinit>()>")
+
+/* TODO: JRE1.5 and JRE1.6 only
+test Class initialization via Class.forName (Test10)
+  using database tests/hello/Reflect.jar
+  assert
+    not Reachable("<Test10Helper: void <clinit>()>"). */
+
+test Class initialization via newInstance (Test11)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test11Helper: void <clinit>()>")
+
+test Class initialization via newInstance (Test12)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test12Helper: void <clinit>()>")
+
+test Retrieve a Method object (Test13)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test13: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.reflect.Method"
+
+test Invoke a static method via Method.invoke (Test14)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test14Helper: void foo()>")
+
+test Reflective static method invocation triggers class initialization (Test14)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test14Helper: void <clinit>()>")
+
+test Reflective virtual method invocation (Test15)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test15Helper: void foo()>")
+
+test Reflective virtual method invocation (Test16)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test16HelperBase: void foo()>")
+
+test Reflective virtual method invocation (Test17)
+  using database tests/hello/Reflect.jar
+  assert
+    not Reachable("<Test17HelperBase: void foo()>"),
+    Reachable("<Test17Helper: void foo()>")
+
+test Reflective private method invocation (Test18)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test18: void foo()>"),
+    not Reachable("<Test18Sub: void foo()>")
+
+test Reflective virtual method invocation (Test19)
+  using database tests/hello/Reflect.jar
+  assert
+    Reachable("<Test19Helper1: void foo()>"),
+    Reachable("<Test19Helper2: void foo()>")
+
+test Reflective virtual method invocation (Test20)
+  using database tests/hello/Reflect.jar
+  assert
+    not Reachable("<Test20Helper1: void foo()>"),
+    not Reachable("<Test20Helper2: void foo()>")
+
+test Return value of reflective static method invocation (Test21)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test21: java.lang.String o>")
+    ->
+  project heap
+    ->
+  "Test21.foo/new java.lang.String/0"
+
+test Parameter of a reflective static method invocation (Test22)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test22: java.lang.Object o>")
+    ->
+  project heap
+    ->
+  "Test22.run/new java.lang.Object/0"
+
+test Parameter of a reflective static method invocation (Test23, o1, imprecision)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test23: java.lang.Object o1>")
+    ->
+  project heap
+    ->
+  "Test23.run/new java.lang.Object/0"
+  "Test23.run/new java.lang.Object/1"
+
+test Parameter of a reflective static method invocation (Test23, o2, imprecision)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test23: java.lang.Object o2>")
+    ->
+  project heap
+    ->
+  "Test23.run/new java.lang.Object/0"
+  "Test23.run/new java.lang.Object/1"
+
+test Parameter of a reflective static method invocation (Test24, o1)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test24: java.lang.Object o1>")
+    ->
+  project heap
+    ->
+  "Test24.run/new java.lang.Integer/0"
+
+test Parameter of a reflective static method invocation (Test24, o2)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test24: java.lang.Object o2>")
+    ->
+  project heap
+    ->
+  "Test24.run/new java.lang.String/0"
+
+test Reflective static identity method invocation (Test25)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test25: java.lang.String o>")
+    ->
+  project heap
+    ->
+  "Test25.run/new java.lang.String/0"
+
+test Retrieve a Constructor object (Test26)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test26: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.reflect.Constructor"
+
+test Retrieve a Constructor object (Test27)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test27: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.reflect.Constructor"
+
+test Retrieve a Constructor object (Test28)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test28: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.reflect.Constructor"
+
+test Retrieve a Constructor object (Test29)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test29: java.lang.Object o>"),
+  HeapAllocation:Type[?heap] = ?type
+    ->
+  project type
+    ->
+  "java.lang.reflect.Constructor"
+
+test Retrieve a Constructor object (Test30)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test30: java.lang.Object o>")
+    ->
+  empty
+
+test Create object via Constructor.newInstance (Test31)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test31: java.lang.Object o1>"),
+  HeapAllocation:Type[?heap] = ?type
+   ->
+  project type
+    ->
+  "Test31"
+
+test Create object via Constructor.newInstance (Test31)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test31: java.lang.Object o2>"),
+  HeapAllocation:Type[?heap] = ?type
+   ->
+  project type
+    ->
+  "Test31"
+
+test Create object via Constructor.newInstance (Test31)
+  using database tests/hello/Reflect.jar
+  assert 
+    Reachable("<Test31: void <init>()>")
+
+test Parameter of a reflective constructor invocation (Test32, o1)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test32: java.lang.Object o1>")
+    ->
+  project heap
+    ->
+  "Test32.run/new java.lang.Integer/0"
+
+test Parameter of a reflective constructor invocation (Test32, o2)
+  using database tests/hello/Reflect.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Test32: java.lang.Object o2>")
+    ->
+  project heap
+    ->
+  "Test32.run/new java.lang.String/0"

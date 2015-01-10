@@ -1,0 +1,379 @@
+testsuite context-insensitive pointer analysis
+
+/**
+ * Static fields
+ */
+test Simple static field assigned in two methods.
+  using database tests/hello/StaticField.jar
+    ->
+  StaticFieldPointsTo(?heap, "<StaticField: java.lang.Object field>")
+    ->
+  "StaticField.g/new java.lang.Object/0"
+  "StaticField.f/new java.lang.Object/0"
+
+/**
+ * This variables
+ */
+test Simple this variable in method f.
+  using database tests/hello/This.jar
+    ->
+  ThisVar["<This: void f()>"] = ?v, VarPointsTo(?h, ?v)
+    ->
+  project h
+    ->
+  "This.main/new This/0"
+
+test Simple this variable in method f.
+  using database tests/hello/This2.jar
+    ->
+  ThisVar["<This2: void f()>"] = ?v, VarPointsTo(?h, ?v)
+    ->
+  project h
+    ->
+  "This2.main/new This2/0"
+  "This2.main/new This2/1"
+
+/**
+ * Formal parameter variables
+ */
+test Points-to information of a formal parameter of a virtual method.
+  using database tests/hello/VirtualMethodParam.jar
+    ->
+  FormalParam[0, "<VirtualMethodParam: void foo(java.lang.Object)>"] = ?v,
+  VarPointsTo(?h, ?v)
+    ->
+  project h
+    ->
+  "VirtualMethodParam.main/new java.lang.Object/0"
+
+test Points-to information of a formal parameter of a static method.
+  using database tests/hello/StaticMethod.jar
+    ->
+  FormalParam[0, "<StaticMethod: void foo(java.lang.Object)>"] = ?v,
+  VarPointsTo(?h, ?v)
+    ->
+  project h
+    -> 
+  "StaticMethod.main/new java.lang.Object/0"
+
+/**
+ * Method return variables
+ */
+test Method return variable
+  using database tests/hello/StaticMethodReturn.jar
+    ->
+  ReturnVar(?v, "<StaticMethodReturn: java.lang.Object foo()>"),
+  VarPointsTo(?h, ?v)
+    ->
+  project h
+    ->
+  "StaticMethodReturn.foo/new java.lang.Object/0"
+
+/**
+ * Inheritance
+ */
+test Simple super method call
+  using database tests/hello/Super.jar
+    ->
+  StaticFieldPointsTo(?heap, "<Super: java.lang.Object field>")
+    ->
+  "Base.foo/new java.lang.Object/0"
+
+test Invocation of private method and inheritance
+  using database tests/hello/InvokeSpecialPrivate.jar
+    ->
+  CallGraphEdge("Base.callPrivate/Base.foo/0", ?target)
+    ->
+  "<Base: java.lang.Object foo()>"
+
+test Invocation of private method and inheritance
+  using database tests/hello/InvokeSpecialPrivate.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test1: java.lang.Object extField>")
+    ->
+  "Extension.foo/new java.lang.Object/0"
+
+test Invocation of private method and inheritance
+  using database tests/hello/InvokeSpecialPrivate.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test1: java.lang.Object baseField>")
+    ->
+  "Base.foo/new java.lang.Object/0"
+
+test Method overriding
+  using database tests/hello/VirtualMethodOverride.jar
+    ->
+  StaticFieldPointsTo(?h, "<VirtualMethodOverride: java.lang.Object field>")
+    ->
+  "Extension.foo/new java.lang.Object/0"
+
+test Virtual method inheritance
+  using database tests/hello/VirtualMethod.jar
+    ->
+  ThisVar["<Test3$Base: void foo()>"] = ?v, VarPointsTo(?h, ?v)
+    ->
+  project h
+    ->
+  "Test3.test/new Test3$Extension/0"
+
+test Virtual method inheritance
+  using database tests/hello/VirtualMethod.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test4: java.lang.Object field>")
+    ->
+  "Test4$Base.foo/new java.lang.Object/0"
+
+test Call graph edge to native method
+  using database tests/hello/VirtualMethod.jar
+  assert
+    CallGraphEdge("Test5.test/Test5$Base.fred/0", "<Test5$Base: void fred()>")
+    CallGraphEdge("Test5.test/Test5$Base.foo/0", "<Test5$Extension: void foo()>")
+    CallGraphEdge("Test5.test/Test5$Base.bar/0", "<Test5$Extension: void bar()>")
+
+/**
+ * Class initializers
+ */
+test Reachability of class initializer
+  using database tests/hello/ClassInit.jar
+    ->
+  StaticFieldPointsTo(?h, "<ClassInit: java.lang.Object field>")
+    ->
+  "ClassInit.<clinit>/new java.lang.Object/0"
+
+/**
+ * Support for Paddle's this-edges option: modeling this as assignment
+ * is imprecise.
+ */
+test Precise results without this assignments
+  using database tests/hello/VirtualMethod.jar
+    ->
+  VarPointsTo(?h, "Test2Base.foo/@this")
+    ->
+  "VirtualMethod.test2/new Test2Base/0"
+
+test Precise results without this assignments
+  using database tests/hello/VirtualMethod.jar
+  assert
+    Reachable("<Test2Base: void bar()>")
+    not Reachable("<Test2: void bar()>")
+
+test Precise results without this assignments
+  using database tests/hello/VirtualMethod.jar
+    ->
+  VarPointsTo(?h, "Test2Base.bar/@this")
+    ->
+  "VirtualMethod.test2/new Test2Base/0"
+
+/**
+ * Finalization
+ */
+test Classes that don't override finalize are not registered
+  using database tests/hello/New.jar
+  assert
+   not VarPointsTo("New.main/new TestFinalize1/0",
+          "java.lang.ref.Finalizer.register/@param0")
+
+test Classes that override finalize are registered
+  using database tests/hello/New.jar
+  assert
+    VarPointsTo("New.main/new TestFinalize2/0",
+      "java.lang.ref.Finalizer.register/@param0")
+
+test Finalize method is reachable
+  using database tests/hello/New.jar
+  assert
+    Reachable("<TestFinalize2: void finalize()>")
+
+/**
+ * Exceptions
+ */
+test Method without any thrown exceptions (Test1)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test1: void test()>")
+    ->
+  empty
+
+test Method directly throwing an exception (Test2)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test2: void test()>")
+    ->
+  "Test2.test/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception (Test3)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test3: void test()>")
+    ->
+  "Test3.helper/new java.lang.Exception/0"
+
+test Method indirectly throwing two exceptions (Test4)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test4: void test()>")
+    ->
+  "Test4.helper1/new java.lang.Exception/0"
+  "Test4.helper2/new java.lang.Exception/0"
+
+test Method indirectly throwing two exceptions (Test5)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test5: void test()>")
+    ->
+  "Test5.helper1/new java.lang.Exception/0"
+  "Test5.helper2/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception via a constructor call (Test6)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test6: void test()>")
+    ->
+  "Test6.<init>/new java.lang.Exception/0"
+
+test Method indirectly throwing an exception via a virtual call (Test7)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test7: void test()>")
+    ->
+  "Test7.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8a)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8a: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8a, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8a: void helper()>")
+    ->
+  "Test8a.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8b)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8b: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8b, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8b: void helper()>")
+    ->
+  "Test8b.helper/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8c)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8c: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions (Test8c, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8c: void helper1()>")
+    ->
+  "Test8c.helper1/new java.lang.Exception/0"
+
+test Method catching all exceptions (Test8c, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test8c: void helper2()>")
+    ->
+  "Test8c.helper2/new java.lang.Exception/0"
+
+test Method catching only run-time exceptions (Test9)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test9: void test()>")
+    ->
+  "Test9.helper/new java.lang.Exception/0"
+
+test Method catching some exceptions (Test10)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test10: void test()>")
+    ->
+  "Test10.helper2/new java.lang.Exception/0"
+
+test Method catching some exceptions (Test11)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test11: void test()>")
+    ->
+  "Test11.helper2/new java.lang.Exception/0"
+
+test Method catching all exceptions also catches IOException (Test12)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test12: void test()>")
+    ->
+  empty
+
+test Method catching all exceptions also catches IOException (Test12, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test12: void helper()>")
+    ->
+  "Test12.helper/new java.io.IOException/0"
+
+test Thrown exception is assigned to formal parameter of handler (Test13)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test13: java.lang.Object o>")
+    ->
+  "Test13.test/new java.lang.Exception/0"
+
+test Thrown exception is caught immediately (Test13, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test13: void test()>")
+    ->
+  empty
+
+test Thrown exception is not caught (Test14)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test14: java.lang.Object o>")
+    ->
+  empty
+
+test Thrown exception is not caught immediately (Test14, sanity check)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test14: void test()>")
+    ->
+  "Test14.test/new java.lang.Exception/0"
+
+test Thrown exception is assigned to formal parameter of handler (Test15)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test15: java.lang.Object o>")
+    ->
+  "Test15.helper/new java.lang.Exception/0"
+
+test Imprecision of not considering the order of exception handlers (Test16)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test16: java.lang.Object o1>")
+    ->
+  "Test16.test/new java.lang.RuntimeException/0"
+
+test Imprecision of not considering the order of exception handlers (Test16)
+  using database tests/hello/Exceptions.jar
+    ->
+  StaticFieldPointsTo(?h, "<Test16: java.lang.Object o2>")
+    ->
+  empty
+
+test Imprecision of not considering the order of exception handlers (Test17)
+  using database tests/hello/Exceptions.jar
+    ->
+  ThrowPointsTo(?h, "<Test17: void test()>")
+    ->
+  empty
