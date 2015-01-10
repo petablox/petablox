@@ -11,6 +11,12 @@ node 'vagrant-petablox' {
 		name	=> 'openjdk-7-jdk'
 	}
 
+	# 32 bit libs needed for old JREs used for DOOP
+	package {'lib32z1':
+		ensure	=> installed,
+		name	=> 'lib32z1'
+	}
+
 	# python for provisioning scripts
 	package {'python3':
 		ensure	=> installed,
@@ -26,6 +32,11 @@ node 'vagrant-petablox' {
 	package {'git':
 		ensure	=> installed,
 		name	=> 'git',
+	}
+
+	package {'unzip':
+		ensure	=> installed,
+		name	=> 'unzip'
 	}
 
 	# package {'augeas':

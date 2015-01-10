@@ -7,25 +7,9 @@ import subprocess
 import hashlib
 import urllib2
 import shutil
+import stat
 
 CONFIG_JSON = '/vagrant/provision/config.json'
-
-class FlushingStream(object):
-	"""File-like object wrapper that flushes on every write."""
-	def __init__(self, stream):
-		self.stream = stream
-
-	def write(self, data):
-		self.stream.write(data)
-		self.stream.flush()
-
-	def __getattr__(self, attr):
-		return getattr(self.stream, attr)
-
-# make stdout and stderr flush eagerly so we can see progress during provisioning
-sys.stdout = FlushingStream(sys.stdout)
-sys.stderr = FlushingStream(sys.stderr)
-
 
 def main(args=None):
 	if args is None: args = sys.argv[1:]
@@ -33,15 +17,12 @@ def main(args=None):
 	with open(CONFIG_JSON) as f:
 		config = json.load(f)
 
-	print('User dir: {}'.format(os.path.expanduser('~')))
-
 	lb_path = '/vagrant/logicblox-{}'.format(config['logicblox']['version'])
 	for userdir in ('/root', '/home/vagrant'):
 		set_shell_src(lb_path, userdir=userdir)
 	start_logicblox(lb_path)
 
 	setup_doop(config['doop'])
-	doop_path = '/vagrant/{}'.format(config['doop'])
 
 
 def md5_file(file, block_size=32768):
@@ -55,29 +36,62 @@ def md5_file(file, block_size=32768):
 	return md5.hexdigest()
 
 
+def fprint(*args, **kwargs):
+	print(*args, **kwargs)
+	if 'file' in kwargs:
+		kwargs['file'].flush()
+	else:
+		sys.stdout.flush()
+
+
 def setup_doop(conf):
 	doop_path = '/vagrant/' + conf['dirname']
+	get_decapo(doop_path, conf)
+	unpack_jres(doop_path, conf['jres'])
+
+def get_decapo(doop_path, conf):
 	decapo_file = doop_path + '/externals/' + conf['decapo_zip']
 	needs_decapo = True
 	if os.path.isfile(decapo_file):
 		with open(decapo_file, 'rb') as input:
 			md5 = md5_file(input)
 		if md5 == conf['decapo_md5']:
-			print('Decapo present: {}'.format(decapo_file))
+			fprint('Decapo present: {}'.format(decapo_file))
 			needs_decapo = False
 		else:
-			print('Decapo incomplete? md5: {}, expected: {}'.format(md5, conf['decapo_md5']))
+			fprint('Decapo incomplete? md5: {}, expected: {}'.format(md5, conf['decapo_md5']))
 
 	if needs_decapo:
 		decapo_url = conf['decapo_url']
-		print('Downloading decapo to {}'.format(decapo_file))
-		print('Fetching from: {}'.format(decapo_url))
+		fprint('Downloading decapo to {}'.format(decapo_file))
+		fprint('Fetching from: {}'.format(decapo_url))
 		resp = urllib2.urlopen(decapo_url)
 		try:
 			with open(decapo_file, 'wb') as out:
 				shutil.copyfileobj(resp, out)
 		finally:
 			resp.close()
+
+def unpack_jres(doop_path, jres):
+	externals = os.path.join(doop_path, 'externals')
+	for jrebin, jredir in jres:
+		jrebin_full = os.path.join(externals, jrebin)
+
+		# ensure executable
+		mode = os.stat(jrebin_full).st_mode
+		if (mode | stat.S_IXUSR) != mode:
+			fprint('Setting exec bit on {}'.format(jrebin_full))
+			os.chmod(jrebin_full, mode | stat.S_IXUSR)
+
+		jredir_full = os.path.join(externals, jredir)
+		if os.path.isdir(jredir_full):
+			fprint('JRE exists: {}'.format(jredir_full))
+		else:
+			fprint('Unpacking JRE {} from {}'.format(jredir, jrebin_full))
+			proc = subprocess.Popen([jrebin_full, '-silent'], stdout=sys.stdout, stderr=sys.stderr, stdin=subprocess.PIPE, cwd=externals)
+			proc.communicate('yes')
+			if proc.returncode != 0:
+				fprint('Failed to unpack JRE {}'.format(jredir), file=sys.stderr)
 
 
 def start_logicblox(lb_path):
@@ -87,7 +101,7 @@ def set_shell_src(lb_path, userdir=None):
 	if userdir is None:
 		userdir = os.path.expanduser('~')
 
-	print('Creating {}/.extra_profile with path: {}'.format(userdir, lb_path))
+	fprint('Creating {}/.extra_profile with path: {}'.format(userdir, lb_path))
 	with open(userdir + '/.extra_profile', 'w') as out:
 		out.write('''
 source "{lb_path}/etc/profile.d/logicblox.sh"
