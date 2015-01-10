@@ -1,4 +1,7 @@
 .vagrant
 provision/config.json
 doop*/externals/*
+doop*/cache/*
+doop*/jars/*
+doop*/tmp/*
 

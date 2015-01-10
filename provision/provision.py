@@ -10,6 +10,23 @@ import shutil
 
 CONFIG_JSON = '/vagrant/provision/config.json'
 
+class FlushingStream(object):
+	"""File-like object wrapper that flushes on every write."""
+	def __init__(self, stream):
+		self.stream = stream
+
+	def write(self, data):
+		self.stream.write(data)
+		self.stream.flush()
+
+	def __getattr__(self, attr):
+		return getattr(self.stream, attr)
+
+# make stdout and stderr flush eagerly so we can see progress during provisioning
+sys.stdout = FlushingStream(sys.stdout)
+sys.stderr = FlushingStream(sys.stderr)
+
+
 def main(args=None):
 	if args is None: args = sys.argv[1:]
 
@@ -28,13 +45,15 @@ def main(args=None):
 
 
 def md5_file(file, block_size=32768):
-    md5 = hashlib.md5()
-    while True:
-        data = file.read(block_size)
-        if not data:
-            break
-        md5.update(data)
-    return md5.hexdigest()
+	"""Compute md5sum of file (as hex), read in chunks of block_size"""
+	md5 = hashlib.md5()
+	while True:
+		data = file.read(block_size)
+		if not data:
+			break
+		md5.update(data)
+	return md5.hexdigest()
+
 
 def setup_doop(conf):
 	doop_path = '/vagrant/' + conf['dirname']
@@ -44,17 +63,21 @@ def setup_doop(conf):
 		with open(decapo_file, 'rb') as input:
 			md5 = md5_file(input)
 		if md5 == conf['decapo_md5']:
+			print('Decapo present: {}'.format(decapo_file))
 			needs_decapo = False
+		else:
+			print('Decapo incomplete? md5: {}, expected: {}'.format(md5, conf['decapo_md5']))
 
-	decapo_url = conf['decapo_url']
-	print('Downloading decapo to {}'.format(decapo_file))
-	print('Fetching from: {}'.format(decapo_url))
-	resp = urllib2.urlopen(decapo_url)
-	try:
-		with open(decapo_file, 'wb') as out:
-			shutil.copyfileobj(resp, out)
-	finally:
-		resp.close()
+	if needs_decapo:
+		decapo_url = conf['decapo_url']
+		print('Downloading decapo to {}'.format(decapo_file))
+		print('Fetching from: {}'.format(decapo_url))
+		resp = urllib2.urlopen(decapo_url)
+		try:
+			with open(decapo_file, 'wb') as out:
+				shutil.copyfileobj(resp, out)
+		finally:
+			resp.close()
 
 
 def start_logicblox(lb_path):
