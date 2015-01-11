@@ -46,8 +46,33 @@ def fprint(*args, **kwargs):
 
 def setup_doop(conf):
 	doop_path = '/vagrant/' + conf['dirname']
+
+	link_doop_dirs(conf)
 	get_decapo(doop_path, conf)
 	unpack_jres(doop_path, conf['jres'])
+
+def link_doop_dirs(conf):
+	doop_path = '/vagrant/' + conf['dirname']
+	tmp_path = '/tmp/' + conf['dirname']
+
+	for dirname in ('cache', 'jars', 'tmp'):
+		source = os.path.join(doop_path, dirname)
+		target = os.path.join(tmp_path, dirname)
+		if not os.path.isdir(target):
+			os.makedirs(target)
+
+		needs_link = True
+		if os.path.lexists(source):
+			if not os.path.islink(source):
+				fprint('WARN: Non-symlink {} exists, test execution will fail with mmap errors!'.format(source), file=sys.stderr)
+				needs_link = False # will fail, so avoid erroring provisioning
+			elif os.readlink(source) != target:
+				os.unlink(source)
+			else:
+				needs_link = False
+		if needs_link:
+			os.symlink(target, source)
+
 
 def get_decapo(doop_path, conf):
 	decapo_file = doop_path + '/externals/' + conf['decapo_zip']

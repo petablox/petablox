@@ -1,7 +1,10 @@
 .vagrant
 provision/config.json
 doop*/externals/*
+doop*/cache
 doop*/cache/*
+doop*/jars
 doop*/jars/*
+doop*/tmp
 doop*/tmp/*
-
+logicblox-*/
