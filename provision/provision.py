@@ -8,6 +8,7 @@ import hashlib
 import urllib2
 import shutil
 import stat
+import pwd
 
 CONFIG_JSON = '/vagrant/provision/config.json'
 
@@ -55,11 +56,14 @@ def link_doop_dirs(conf):
 	doop_path = '/vagrant/' + conf['dirname']
 	tmp_path = '/tmp/' + conf['dirname']
 
+	vagrant_uid = pwd.getpwnam('vagrant').pw_uid
+
 	for dirname in ('cache', 'jars', 'tmp'):
 		source = os.path.join(doop_path, dirname)
 		target = os.path.join(tmp_path, dirname)
 		if not os.path.isdir(target):
 			os.makedirs(target)
+		os.chown(target, vagrant_uid)
 
 		needs_link = True
 		if os.path.lexists(source):
