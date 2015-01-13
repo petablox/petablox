@@ -1,0 +1,10 @@
+#! /bin/sh
+
+set -e
+
+# mkdir -p $LOGICBLOX_UNIT_HOME
+# cp build/logicblox-unit.jar $LOGICBLOX_UNIT_HOME
+# cp logicblox-unit $LOGICBLOX_UNIT_HOME
+
+cp build/logicblox-unit.jar $DOOP_HOME/lib
+cp LICENSE $DOOP_HOME/lib/LOGICBLOX-UNIT-LICENSE

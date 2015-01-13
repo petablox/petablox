@@ -1,0 +1,4 @@
+#! /bin/sh
+
+cp=$SOOT_HOME/sootclasses.jar:$SOOT_FACT_GENERATION_HOME/soot-fact-generation.jar
+java -cp $cp Main $*
