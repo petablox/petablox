@@ -20,11 +20,16 @@ def main(args=None):
 
 	lb_path = '/vagrant/logicblox-{}'.format(config['logicblox']['version'])
 	for userdir in ('/root', '/home/vagrant'):
-		set_shell_src(lb_path, userdir=userdir)
+		set_shell_src(config, userdir=userdir)
 	start_logicblox(lb_path)
 
 	setup_doop(config['doop'])
 
+def get_lb_path(config):
+	return '/vagrant/logicblox-{}'.format(config['logicblox']['version'])
+
+def get_doop_path(config):
+	return '/vagrant/{}'.format(config['doop']['dirname'])
 
 def md5_file(file, block_size=32768):
 	"""Compute md5sum of file (as hex), read in chunks of block_size"""
@@ -126,20 +131,24 @@ def unpack_jres(doop_path, jres):
 def start_logicblox(lb_path):
 	subprocess.call(['sudo', '-u', 'vagrant', '-i', '/vagrant/provision/startlb.sh', lb_path], stdout=sys.stdout, stderr=sys.stderr)
 
-def set_shell_src(lb_path, userdir=None):
+def set_shell_src(config, userdir=None):
 	if userdir is None:
 		userdir = os.path.expanduser('~')
 
-	fprint('Creating {}/.extra_profile with path: {}'.format(userdir, lb_path))
+	lb_path = get_lb_path(config)
+	doop_path = get_doop_path(config)
+
+	fprint('Creating {}/.extra_profile with paths:\nLogicblox: {}\nDoop: {}\n'.format(userdir, lb_path, doop_path))
 	with open(userdir + '/.extra_profile', 'w') as out:
 		out.write('''
 source "{lb_path}/etc/profile.d/logicblox.sh"
 export LOGICBLOX_HOME="{lb_path}/logicblox"
+export DOOP_HOME="{doop_path}"
 if [ -z "$LD_LIBRARY_PATH" ]; then
 	# work around DOOP bug requiring variable to be set
 	export LD_LIBRARY_PATH=
 fi
-		'''.format(lb_path=lb_path))
+		'''.format(lb_path=lb_path, doop_path=doop_path))
 
 	load_line = 'if [ -f ~/.extra_profile ]; then source ~/.extra_profile; fi'
 	with open(userdir + '/.profile', 'r') as input:

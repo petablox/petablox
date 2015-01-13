@@ -1,4 +1,17 @@
+## Manual Setup
+
+If you are running on Linux, you can choose to perform manual setup.  You must 
+install and start the Logicblox server and follow the directions in the Doop 
+folder's `README` file.  You need to set `DOOP_HOME` to use the install script 
+of `soot-fact-generation` and `logicblox-unit`; `LOGICBLOX_HOME` to the Logicblox 
+install location; and `LD_LIBRARY_PATH` to something (even empty, see Known Issues).
+
 ## Getting Started
+
+These instructions assume you want to use a VM to run the analyses.  We use 
+[Vagrant](https://www.vagrantup.com/) to provide the VM.  One important point 
+is that the `petablox` source folder will be mounted inside the VM under `/vagrant`.  
+See the Vagrant docs for other information.
 
 First copy `provision/config.json.default` to `provision/config.json`.  You can 
 adjust values there as needed.  This guide assumes LogicBlox version 3.10.21, but 
@@ -33,6 +46,9 @@ doopconf_jre15=$doop/externals/jre1.5.0_22
 doopconf_jre16=$doop/externals/jre1.6.0_45
 ```
 
+**Note: You must have at least JRE 1.3 to run Doop's basic test suite.  If you only 
+get one, make sure it's JRE 1.3.**
+
 **TODO: Make doop.conf setup part of provisioning.**
 
 
@@ -47,6 +63,16 @@ $ vagrant ssh
 
 Provisioning will start LogicBlox and update the `vagrant` user's 
 profile as needed for both LogicBlox and DOOP.
+
+### Running the Test Suite
+
+From this point on, follow the instructions in the `README` file inside the Doop directory.  E.g., 
+from inside the VM you can do:
+```
+$ cd /vagrant/doop-r160113-bin
+$ ./compile-tests
+$ ./run-testsuites basic
+```
 
 ### Starting LogicBlox
 If you need to start LogicBlox manually inside the VM, use:
