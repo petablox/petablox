@@ -19,26 +19,41 @@ you can change the version in `config.json` and modify the directions accordingl
 
 ### Manual Downloads
 
+All downloads can be found on the Bitbucket repository's 
+[download page](https://bitbucket.org/mayurnaik/petablox/downloads).
+
 #### LogicBlox
 
 Download LogicBlox 3.10.21 into `logicblox-3.10.21` or whichever version 
 you selected.
 
-#### JREs for DOOP
+#### JREs and benchmarks for DOOP
 
-Due to Oracle's license restrictions, provisioning doesn't acquire 
-the JREs required by DOOP automatically.  You need to download them 
-into `doop-VERSION/externals` yourself.   However, provisioning will 
-unpack them for you if they exist and match the names listed in 
+From the 
+[download page](https://bitbucket.org/mayurnaik/petablox/downloads), 
+save the JREs and Decapo benchmark files into `doop-VERSION/externals`.  
+You need the following files:
+
+- dacapo-2006-10-MR2-xdeps.zip
+- j2re-1_3_1_20-linux-i586.bin
+- j2re-1_4_2_19-linux-i586.bin
+- jre-1_5_0_22-linux-amd64.bin
+- jre-6u45-linux-x64.bin
+
+**Note: You must have at least JRE 1.3 to run Doop's basic test suite.  If you only 
+get one JRE, make sure it's JRE 1.3.**
+
+Provisioning will 
+unpack the JREs for you if they exist and match the names listed in 
 `provision/config.json`.   If you already have a running VM, you 
 can rerun `vagrant provision` from your host to unpack them, or do 
-it manually from inside the VM.
+it manually from inside the VM.  
 
 Also make sure the list inside `doop-VERSION/doop.conf` matches the JRE 
 versions you have in `provision.config.json`, something like:
 
 ```
-#! /bin/bash
+#!/bin/bash
 
 doopconf_jre13=$doop/externals/jre1.3.1_20
 doopconf_jre14=$doop/externals/j2re1.4.2_19
@@ -46,8 +61,6 @@ doopconf_jre15=$doop/externals/jre1.5.0_22
 doopconf_jre16=$doop/externals/jre1.6.0_45
 ```
 
-**Note: You must have at least JRE 1.3 to run Doop's basic test suite.  If you only 
-get one, make sure it's JRE 1.3.**
 
 **TODO: Make doop.conf setup part of provisioning.**
 
