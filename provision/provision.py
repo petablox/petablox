@@ -59,7 +59,7 @@ def setup_doop(conf):
 
 def link_doop_dirs(conf):
 	doop_path = '/vagrant/' + conf['dirname']
-	tmp_path = '/tmp/' + conf['dirname']
+	tmp_path = '/opt/' + conf['dirname']
 
 	vagrant_pwd = pwd.getpwnam('vagrant')
 
