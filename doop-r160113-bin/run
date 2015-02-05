@@ -577,7 +577,7 @@ function create-database()
 			rm -rf tmp/facts
 			mkdir -p tmp/facts
 
-			sootFactGenArgs="$SOOT_FACT_GEN_ARGS"
+			sootFactGenArgs="${SOOT_FACT_GEN_ARGS:=}"
 
 			if test $ssa = "true"; then
 				sootFactGenArgs="$sootFactGenArgs -ssa"
