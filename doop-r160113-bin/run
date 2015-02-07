@@ -587,7 +587,7 @@ function create-database()
 				sootFactGenArgs="$sootFactGenArgs -allow-phantom"
 			fi
 
-			timing java -cp lib/sootclasses-2.3.0.jar:lib/soot-fact-generation.jar Main \
+			timing java -cp lib/sootclasses-2.5.0.jar:lib/soot-fact-generation.jar Main \
 			  -main $mainclass $sootFactGenArgs -full $(./jre-link-arguments $classlib) -d tmp/facts $jars $depargs
 
 			mkdir -p $cachefacts
