@@ -1,4 +1,9 @@
 node 'vagrant-petablox' {
+	exec {'apt-update':
+		command	=> '/usr/bin/apt-get update'
+	}
+
+	Exec['apt-update'] -> Package <| |>
 
 	# java for logicblox, doop
 	package {'java7-jre': 
