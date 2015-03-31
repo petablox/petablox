@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.FileReader;
-
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.scannotation.AnnotationDB;
+
+import chord.project.ChordException;
 
 /**
  * Commonly-used utilities.
@@ -550,6 +552,25 @@ public final class Utils {
 
     public static boolean buildBoolProperty(String propName, boolean defaultVal) {
         return System.getProperty(propName, Boolean.toString(defaultVal)).equals("true");
+    }
+    
+    /**
+     * Reads a property as an <tt>enum</tt> value.  The property values are case-insensitive.
+     * 
+     * @param propName    the property name
+     * @param defaultVal  the default enum value
+     * @return
+     */
+    public static <T extends Enum<T>> T buildEnumProperty(String propName, T defaultVal) {
+        String propVal = System.getProperty(propName, null);
+        if (propVal == null)
+            return defaultVal;
+        for (T enumVal : defaultVal.getDeclaringClass().getEnumConstants()) {
+            if (enumVal.name().equalsIgnoreCase(propVal))
+                return enumVal;
+        }
+        throw new ChordException("Property " + propName + " does not specify a valid enum of type "
+            + defaultVal.getDeclaringClass().getName());
     }
     
     public static String[] split(String s, String sep, boolean trimWhiteSpace, boolean noEmptyString, int limit) {

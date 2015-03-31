@@ -103,6 +103,23 @@ public class Config {
     public final static boolean reuseRels =Utils.buildBoolProperty("chord.reuse.rels", false);
     public final static boolean reuseTraces =Utils.buildBoolProperty("chord.reuse.traces", false);
 
+    // datalog engine selection
+    public static enum DatalogEngineType {
+        BDDBDDB,
+        LOGICBLOX3,
+        LOGICBLOX4;
+    }
+
+    public final static DatalogEngineType datalogEngine =
+        Utils.buildEnumProperty("chord.datalog.engine", DatalogEngineType.BDDBDDB);
+    
+    // properties concerning LogicBlox
+    
+    public final static String logicbloxInputDelim =
+        System.getProperty("chord.logicblox.delim", "\t");
+    public final static String logicbloxCommand =
+        System.getProperty("chord.logicblox.command", "lb");
+
     // properties concerning BDDs
 
     public final static boolean useBuddy =Utils.buildBoolProperty("chord.use.buddy", false);
@@ -122,10 +139,12 @@ public class Config {
     public final static String userClassesDirName = System.getProperty("chord.user.classes.dir", outRel2Abs("user_classes"));
     public final static String instrSchemeFileName = System.getProperty("chord.instr.scheme.file", outRel2Abs("scheme.ser"));
     public final static String traceFileName = System.getProperty("chord.trace.file", outRel2Abs("trace"));
+    public final static String logicbloxWorkDirName = System.getProperty("chord.logicblox.work.dir", outRel2Abs("logicblox"));
 
     static {
         Utils.mkdirs(outDirName);
         Utils.mkdirs(bddbddbWorkDirName);
+        Utils.mkdirs(logicbloxWorkDirName);
     }
 
     // commonly-used constants
@@ -213,6 +232,8 @@ public class Config {
         System.out.println("chord.reuse.traces: " + reuseTraces);
         System.out.println("chord.use.buddy: " + useBuddy);
         System.out.println("chord.bddbddb.max.heap: " + bddbddbMaxHeap);
+        System.out.println("chord.datalog.engine: " + datalogEngine);
+        System.out.println("chord.logicblox.work.dir: " + logicbloxWorkDirName);
     }
 
     public static String outRel2Abs(String fileName) {

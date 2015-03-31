@@ -1,11 +1,14 @@
 package chord.bddbddb;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
+import chord.project.Config;
+import chord.project.Config.DatalogEngineType;
 import chord.util.IndexMap;
+import chord.util.Utils;
 
 /**
  * Generic implementation of a BDD-based domain.
@@ -16,7 +19,7 @@ import chord.util.IndexMap;
  * <li> The domain is next built in memory by repeatedly calling {@link #getOrAdd(Object)} with the argument in each call being a value
  * to be added to the domain.  If the value already exists in the domain then the call does not have any effect.  Otherwise, the value
  * is mapped to integer K in the domain where K is the number of values already in the domain. </li>
- * <li> The domain built in memory is reflected onto disk by calling {@link #save(String,boolean)}. </li>
+ * <li> The domain built in memory is reflected onto disk by calling {@link #saveToBDD(String,boolean)}. </li>
  * <li> The domain on disk can be read by a Datalog program. </li>
  * <li> The domain in memory can be read by calling any of the following:
  * <ul>
@@ -41,17 +44,18 @@ public class Dom<T> extends IndexMap<T> {
     public String getName() {
         return name;
     }
+    
     /**
      * Reflects the domain in memory onto disk.
      */
-    public void save(String dirName, boolean saveDomMap) throws IOException {
+    public void saveToBDD(String dirName, boolean saveDomMap) throws IOException {
         String mapFileName = "";
         if (saveDomMap) {
             mapFileName = name + ".map";
             File file = new File(dirName, mapFileName);
             PrintWriter out = new PrintWriter(file);
             int size = size();
-                for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 T val = get(i);
                 out.println(toUniqueString(val));
             }
@@ -64,6 +68,87 @@ public class Dom<T> extends IndexMap<T> {
         out.println(name + " " + size + " " + mapFileName);
         out.close();
     }
+    
+    /**
+     *  Saves this domain in a format suitable for loading into LogicBlox.
+     *  For a domain named <tt>N</tt>, two files will be created in <tt>chord.logicblox.work.dir</tt>: 
+     *  <tt>N.type</tt>, which contains predicate definitions and <tt>N.csv</tt>, which 
+     *  contains <tt>chord.logicblox.delim</tt>-delimited (index, string) pairs.
+     *  
+     *  @throws IOException if the information cannot be saved successfully
+     */
+    public void saveToLogicBlox(String dirName) throws IOException {
+        Utils.mkdirs(dirName);
+        final String DELIM = Config.logicbloxInputDelim;
+
+        // save the data values
+        String factsFile = name + ".csv";
+        File outFile = new File(dirName, factsFile);
+        if (!outFile.getParentFile().exists()) {
+            System.err.println("WARN: No parent directory: "
+                + outFile.getParentFile().getAbsolutePath());
+        }
+        PrintWriter out = new PrintWriter(outFile);
+        for (int i = 0, size = this.size(); i < size; ++i) {
+            out.print(i);
+            out.print(DELIM);
+            out.println(this.toUniqueString(i));
+        }
+        out.flush();
+        out.close();
+        if (out.checkError()) {
+            throw new IOException("An error occurred writing domain " + name
+                + " to " + outFile.getAbsolutePath());
+        }
+
+        // and the type declaration
+        outFile = new File(dirName, name + ".type");
+        out = new PrintWriter(outFile);
+        out.println(getLogicBloxType());
+        out.flush();
+        out.close();
+        if (out.checkError()) {
+            throw new IOException("An error occurred writing type information for " + name
+                + " to " + outFile.getAbsolutePath());
+        }
+    }
+    
+    /**
+     * Returns LogicBlox type definitions and constraints for this domain type.
+     * 
+     * @return the type string, suitable for passing to the LB engine
+     */
+    public String getLogicBloxType() {
+        final boolean isLb3 = Config.datalogEngine == DatalogEngineType.LOGICBLOX3;
+
+        String intType = isLb3 ? "uint[64]" : "int";
+
+        StringBuilder type = new StringBuilder();
+        // a new entity type
+        type.append(name).append("(x) -> .\n");
+
+        // with a constructor of (index, uniquestring)
+        type.append(name).append("_values[id, val] = x -> ").append(name)
+            .append("(x), ").append(intType).append("(id), string(val).\n")
+            .append("lang:constructor(`").append(name)
+            .append("_values).\n");
+        if (isLb3) {
+            // have to make scalable, values other than ScalableSparse are not
+            // documented
+            type.append("lang:physical:storageModel[`").append(name)
+                .append("] = \"ScalableSparse\".\n");
+        }
+
+        type.append(name).append("_values[id, val1] = x1, ").append(name)
+            .append("_values[id, val2] = x2 -> ")
+            .append("val1 = val2, x1 = x2.\n");
+        type.append(name).append("_values[id1, val] = x1, ").append(name)
+            .append("_values[id2, val] = x2 -> ")
+            .append("id1 = id2, x1 = x2.\n");
+
+        return type.toString();
+    }
+    
     // subclasses may override
     public String toUniqueString(T val) {
         return val == null ? "null" : val.toString();

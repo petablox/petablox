@@ -93,7 +93,7 @@ public class DlogInstrumenter extends JavaAnalysis {
 			if(o instanceof Dom){
 				Dom d = (Dom)o;
 				try {
-					d.save(Config.bddbddbWorkDirName, Config.saveDomMaps);
+					d.saveToBDD(Config.bddbddbWorkDirName, Config.saveDomMaps);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

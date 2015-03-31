@@ -7,10 +7,10 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import CnCHJ.api.ItemCollection;
-
 import chord.project.ClassicProject;
 import chord.bddbddb.Dom;
 import chord.program.visitors.IClassVisitor;
+import chord.project.ChordException;
 import chord.project.ICtrlCollection;
 import chord.project.IDataCollection;
 import chord.project.IStepCollection;
@@ -55,9 +55,19 @@ public class ProgramDom<T> extends Dom<T> implements ITask {
         if (Config.verbose >= 1)
             System.out.println("SAVING dom " + name + " size: " + size());
         try {
-            super.save(Config.bddbddbWorkDirName, Config.saveDomMaps);
+            switch (Config.datalogEngine) {
+            case BDDBDDB:
+                super.saveToBDD(Config.bddbddbWorkDirName, Config.saveDomMaps);
+                break;
+            case LOGICBLOX3:
+            case LOGICBLOX4:
+                super.saveToLogicBlox(Config.logicbloxWorkDirName);
+                break;
+            default:
+                throw new ChordException("Unrecognized datalog engine: " + Config.datalogEngine);
+            }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new ChordException(ex);
         }
         if (Config.classic)
             ClassicProject.g().setTrgtDone(this);
