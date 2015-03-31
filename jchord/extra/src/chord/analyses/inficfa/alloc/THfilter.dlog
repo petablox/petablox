@@ -1,0 +1,14 @@
+# name=THfilter-dlog
+
+.include "T.dom"
+.include "H.dom"
+
+.bddvarorder T0xT1_H0
+
+HT(h:H0,t:T1) input
+sub(t1:T1,t2:T0) input
+
+THfilter(t:T0,h:H0) output
+
+THfilter(t,h) :- HT(h,s), sub(s,t).
+THfilter(t,0) :- sub(_,t).

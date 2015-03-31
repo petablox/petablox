@@ -1,0 +1,6 @@
+<31!<init>:(Ljava/lang/String;)V@elevator.Elevator,exit:(I)V@java.lang.System>
+<186!<init>:(Ljava/lang/String;)V@elevator.Elevator,exit:(I)V@java.lang.System>
+<0!begin:()V@elevator.Elevator,currentThread:()Ljava/lang/Thread;@java.lang.Thread>
+<107!begin:()V@elevator.Elevator,sleep:(J)V@java.lang.Thread>
+<37!run:()V@elevator.Lift,sleep:(J)V@java.lang.Thread>
+<20!run:()V@elevator.Lift,sleep:(J)V@java.lang.Thread>

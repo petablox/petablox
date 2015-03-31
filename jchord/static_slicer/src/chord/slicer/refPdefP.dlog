@@ -1,0 +1,125 @@
+# name=refPdefP-dlog
+
+.include "M.dom"
+.include "X.dom"
+.include "E.dom"
+.include "F.dom"
+.include "P.dom"
+.include "V.dom"
+.include "U.dom"
+.include "H.dom"
+.include "Z.dom"
+.include "I.dom"
+
+
+# 36 X<E<M<P
+.bddvarorder F0_E0_E1_X0_I0xM0xP0_V0_U0_H0_Z0
+
+# 36 X<P<E<M
+#.bddvarorder X0_P0_F0_E0_E1_I0xM0_V0_U0_H0_Z0
+
+
+###
+# Relations
+###
+
+EF(e:E0,f:F0) input
+statF(f:F0) input
+instF(f:F0) input
+XG(x:X0,f:F0) input
+XE(x:X0,e:E0) input
+XU(x:X0,u:U0) input
+XP(x:X0,p:P0) input
+MPhead(m:M0,p:P0) input
+MPtail(m:M0,p:P0) input
+writeE(e:E0) input
+PE(p:P0,e:E0) input
+PI(p0:P0,i0:I0) input
+EV(e:E0,v:V0) input
+VH(v:V0,h:H0) input
+PDefReg(p:P0,u:U0) input
+PRefReg(p:P0,u:U0) input
+methArg(m:M0,u:U0,z:Z0) input
+methRet(m:M0,u:U0) input
+formalArgMX(m:M0,x:X0) input
+formalRetMX(m:M0,x:X0) input
+actualArgIX(i:I0,x:X0) input
+actualRetIX(i:I0,x:X0) input
+
+actualArgPX(p:P0,x:X0) output
+actualRetPX(p:P0,x:X0) output
+formalArgPX(p:P0,x:X0) output
+formalRetPX(p:P0,x:X0) output
+
+## x is formal-in or actual-out at program point p and is associated with register u
+formalArgOrActualRetXPU(x:X0,p:P0,u:U0) output
+## x is formal-in or actual-out at program point p and is associated with static field f
+formalArgOrActualRetXPG(x:X0,p:P0,f:F0) output
+## x is formal-in or actual-out at program point p and is associated with instance field access e
+formalArgOrActualRetXPE(x:X0,p:P0,e:E0) output
+actualArgOrFormalRetXPU(x:X0,p:P0,u:U0) output
+actualArgOrFormalRetXPG(x:X0,p:P0,f:F0) output
+actualArgOrFormalRetXPE(x:X0,p:P0,e:E0) output
+
+# p is a call site
+callP(p:P0) output
+# p is not a call site
+nonCallP(p:P0) output
+EH(e:E0,h:H0) output
+# heap location represented by e and e2 may alias each other
+mayAlias(e:E0,e2:E1) output
+
+# u/f/e is referred at program point p which is not a call site/method entry/method exit
+refPU(p:P0,u:U0) output
+refPG(p:P0,f:F0) output
+refPE(p:P0,e:E0) output
+# u is defined at p
+defPU(p:P0,u:U0) output
+defPG(p:P0,f:F0) output
+defPE(p:P0,e:E0) output
+
+
+###
+# Constraints
+###
+
+actualArgPX(p,x) :- actualArgIX(i,x), PI(p,i).
+actualRetPX(p,x) :- actualRetIX(i,x), PI(p,i).
+formalArgPX(p,x) :- formalArgMX(m,x), MPhead(m,p).
+formalRetPX(p,x) :- formalRetMX(m,x), MPtail(m,p).
+
+formalArgOrActualRetXPU(x,p,u) :- XP(x,p), XU(x,u), formalArgPX(p,x).
+formalArgOrActualRetXPU(x,p,u) :- XP(x,p), XU(x,u), actualRetPX(p,x).
+formalArgOrActualRetXPG(x,p,f) :- XP(x,p), XG(x,f), formalArgPX(p,x).
+formalArgOrActualRetXPG(x,p,f) :- XP(x,p), XG(x,f), actualRetPX(p,x).
+formalArgOrActualRetXPE(x,p,e) :- XP(x,p), XE(x,e), formalArgPX(p,x).
+formalArgOrActualRetXPE(x,p,e) :- XP(x,p), XE(x,e), actualRetPX(p,x).
+
+actualArgOrFormalRetXPU(x,p,u) :- XP(x,p), XU(x,u), actualArgPX(p,x).
+actualArgOrFormalRetXPU(x,p,u) :- XP(x,p), XU(x,u), formalRetPX(p,x).
+actualArgOrFormalRetXPG(x,p,f) :- XP(x,p), XG(x,f), actualArgPX(p,x).
+actualArgOrFormalRetXPG(x,p,f) :- XP(x,p), XG(x,f), formalRetPX(p,x).
+actualArgOrFormalRetXPE(x,p,e) :- XP(x,p), XE(x,e), actualArgPX(p,x).
+actualArgOrFormalRetXPE(x,p,e) :- XP(x,p), XE(x,e), formalRetPX(p,x).
+
+callP(p) :- PI(p,_).
+callP(p) :- MPhead(_,p).
+callP(p) :- MPtail(_,p).
+nonCallP(p) :- !callP(p).
+
+EH(e,h) :- EV(e,v), VH(v,h).
+mayAlias(e,e2) :- EF(e,f), EF(e2,f), EH(e,h), EH(e2,h).
+
+refPU(p,u) :- PRefReg(p,u), nonCallP(p).
+refPG(p,f) :- PE(p,e2), EF(e2,f), !writeE(e2), statF(f).
+refPE(p,e) :- PE(p,e2), !writeE(e2), mayAlias(e,e2).
+
+defPU(p,u) :- PDefReg(p,u).
+defPU(p,u) :- MPhead(m,p), methArg(m,u,_).
+defPG(p,f) :- PE(p,e), writeE(e), EF(e,f), statF(f).
+defPG(p,f) :- formalArgPX(p,x), XG(x,f).
+defPG(p,f) :- actualRetPX(p,x), XG(x,f).
+defPE(p,e) :- PE(p,e), writeE(e), EF(e,f), instF(f).
+defPE(p,e) :- PE(p,e), writeE(e), EF(e,0).
+defPE(p,e) :- formalArgPX(p,x), XE(x,e).
+defPE(p,e) :- actualRetPX(p,x), XE(x,e).

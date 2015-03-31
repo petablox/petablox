@@ -1,0 +1,16 @@
+#
+#    Ari Rabkin
+# name=mini-findconf-dlog
+
+.include "I.dom"
+.include "V.dom"
+.include "UV.dom"
+
+.bddvarorder I0xV0_UV0
+
+
+rawConfUVV(i:I, o:UV, in:V) input
+
+confUVV(i:I,uv:UV,v:V) output
+
+confUVV(i,uv,v) :- rawConfUVV(i,uv,v).

@@ -1,0 +1,16 @@
+#
+#
+#    Ari Rabkin
+# name=test-rel-consts
+
+.include "T.dom"
+.include "M.dom"
+
+.bddvarorder T0_M0
+
+constRel(t:T) output
+constRel("java.lang.String").
+
+#forName (method:M0)
+#forName("java.lang.Class.forName (Ljava/lang/String;)Ljava/lang/Class;"). 
+#

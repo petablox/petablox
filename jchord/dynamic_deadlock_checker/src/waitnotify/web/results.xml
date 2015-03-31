@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE results SYSTEM "results.dtd" [
+  <!ENTITY waitNotifyErrorList SYSTEM "waitNotifyErrorList.xml">
+  <!ENTITY Mlist SYSTEM "Mlist.xml">
+  <!ENTITY Elist SYSTEM "Elist.xml">
+]>
+<results>
+&waitNotifyErrorList;
+&Mlist;
+&Elist;
+</results>

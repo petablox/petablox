@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Test runner for Chord.
+  Run with "ant -quiet"
+-->
+<project name="chord-tester" default="help">
+	<property name="chord.home.dir" location="../main"/>
+	<property name="chord.test.dir" location="."/>
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${chord.home.dir}/lib/ant-contrib.jar"/>
+	<property name="test.dirs" value="elevator,tsp"/>
+    <property name="chord.main.doms" value="M,F,P,I,E,H,L,R,T"/>
+    <property name="chord.main.rels" value="cha,aryElemE,statFldE,writeE,EF,HT,PI,PL,PP,specIM,statIM,virtIM,clinitM,statM,syncM"/>
+	<property name="chord.main.doms_and_rels" value="${chord.main.doms},${chord.main.rels}"/>
+	<property name="chord.cia.rels" value="FH,HFH,IM,MM,rootM,reachableM,thrOblAbbrRootM,thrOblAbbrReachableM,thrOblAbbrIM,thrOblAbbrMM,thrSenAbbrRootM,thrSenAbbrReachableM,thrSenAbbrIM,thrSenAbbrMM"/>
+	<property name="chord.csa.rels" value="FC,CFC,CICM,CMCM,rootCM,reachableCM,thrOblAbbrRootCM,thrOblAbbrReachableCM,thrOblAbbrCICM,thrOblAbbrCMCM,thrSenAbbrRootCM,thrSenAbbrReachableCM,thrSenAbbrCICM,thrSenAbbrCMCM,epsilonM,kcfaSenM,kobjSenM,ctxtCpyM,CC,CH,CI"/>
+
+	<target name="help">
+		<echo>
+		compile  Compile testing infrastructure
+		test-all Test all Chord components
+				Optional properties:
+				- test.dirs       (comma-separated list of directories under bench/ to be included; default="${test.dirs}")
+		test     Test only chosen Chord components
+				Optional properties:
+				- test.dirs       (comma-separated list of directories under bench/ to be included; default="${test.dirs}")
+				- test.main       (test basic program domains and relations; default=false)
+				- test.cia        (test 0-CFA may alias and call graph analyses; default=false)
+				- test.csa.0cfa   (test context-sensitive adaptor for 0-CFA may alias and call graph analyses; default=false)
+				- test.csa.kobj   (test k-object-sensitive may alias and call graph analyses; default=false)
+				- test.csa.kcfa   (test k-CFA may alias and call graph analyses; default=false)
+				- test.csa.hybrid (test hybrid context-sensitive may alias and call graph analyses; default=false)
+				- test.dynamic    (test dynamic analyses; default=false)
+		</echo>
+	</target>
+
+	<!--
+		Test all Chord components.
+	-->
+	<target name="test-all">
+		<property name="test.main" value="true"/>
+		<property name="test.cia" value="true"/>
+		<property name="test.csa.0cfa" value="true"/>
+		<property name="test.csa.kobj" value="true"/>
+		<property name="test.csa.kcfa" value="true"/>
+		<property name="test.csa.hybrid" value="true"/>
+		<property name="test.dynamic" value="true"/>
+		<antcall target="test"/>
+	</target>
+
+	<!--
+		Test only chosen Chord components.
+	-->
+	<target name="test">
+		<for param="testdir">
+			<dirset dir="bench" includes="${test.dirs}"/>
+			<sequential>
+				<ant dir="@{testdir}" target="clean"/>
+				<ant dir="@{testdir}" target="compile"/>
+				<if>
+					<isset property="test.scope"/>
+					<then>
+						<antcall target="test-scope">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.main"/>
+					<then>
+						<antcall target="test-main">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.cia"/>
+					<then>
+						<antcall target="test-cia">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.csa.0cfa"/>
+					<then>
+						<antcall target="test-csa-0cfa">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.csa.kobj"/>
+					<then>
+						<antcall target="test-csa-kobj">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.csa.kcfa"/>
+					<then>
+						<antcall target="test-csa-kcfa">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.csa.hybrid"/>
+					<then>
+						<antcall target="test-csa-hybrid">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<isset property="test.dynamic"/>
+					<then>
+						<antcall target="test-dynamic">
+							<param name="testdir" value="@{testdir}"/>
+						</antcall>
+					</then>
+				</if>
+			</sequential>
+		</for>
+	</target>
+
+	<!--
+		INTERNAL TARGETS
+	-->
+
+	<!--
+		Test program scope construction.
+	-->
+	<target name="test-scope">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-scope ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.build.scope" value="true"/>
+		</ant>
+		<antcall target="subset">
+			<param name="arg1" location="${testdir}/correct_output/methods.txt"/>
+			<param name="arg2" location="${testdir}/chord_output/methods.txt"/>
+		</antcall> 
+	</target>
+
+	<!--
+		Test basic program domains and relations.
+	-->
+	<target name="test-main">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-main ON: ${testdir}"/>
+		<echo message="Generating following domains and relations: ${chord.main.doms_and_rels}."/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.run.analyses" value="${chord.main.doms_and_rels}"/>
+			<property name="chord.print.rels" value="${chord.main.rels}"/>
+		</ant>
+		<antcall target="compare-doms">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/main"/>
+			<param name="domnames" value="${chord.main.doms}"/>
+		</antcall>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/main"/>
+			<param name="relnames" value="${chord.main.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-main ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test 0-CFA may-alias and call-graph analyses.
+	-->
+	<target name="test-cia">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-cia ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.run.analyses" value="cipa-0cfa-dlog"/>
+			<property name="chord.print.rels" value="${chord.cia.rels}"/>
+		</ant>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/cia"/>
+			<param name="relnames" value="${chord.cia.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-cia ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test context-sensitive adaptor for 0-CFA may-alias and call-graph analyses.
+	-->
+	<target name="test-csa-0cfa">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-csa-0cfa ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.run.analyses" value="cspa-0cfa-dlog"/>
+			<property name="chord.print.rels" value="${chord.csa.rels}"/>
+		</ant>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/csa_0cfa"/>
+			<param name="relnames" value="${chord.csa.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-csa-0cfa ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test k-object-sensitive may-alias and call-graph analyses.
+	-->
+	<target name="test-csa-kobj">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-csa-kobj ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.inst.ctxt.kind" value="co"/>
+			<property name="chord.kobj.k" value="1"/>
+			<property name="chord.run.analyses" value="cspa-kobj-dlog"/>
+			<property name="chord.print.rels" value="${chord.csa.rels}"/>
+		</ant>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/csa_kobj"/>
+			<param name="relnames" value="${chord.csa.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-csa-kobj ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test k-CFA may-alias and call-graph analyses.
+	-->
+	<target name="test-csa-kcfa">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-csa-kcfa ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.inst.ctxt.kind" value="cs"/>
+			<property name="chord.kcfa.k" value="1"/>
+			<property name="chord.run.analyses" value="cspa-kcfa-dlog"/>
+			<property name="chord.print.rels" value="${chord.csa.rels}"/>
+		</ant>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/csa_kcfa"/>
+			<param name="relnames" value="${chord.csa.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-csa-kcfa ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test hybrid context-sensitive may-alias and call-graph analyses.
+	-->
+	<target name="test-csa-hybrid">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-csa-hybrid ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.inst.ctxt.kind" value="co"/>
+			<property name="chord.stat.ctxt.kind" value="cs"/>
+			<property name="chord.kobj.k" value="1"/>
+			<property name="chord.kcfa.k" value="1"/>
+			<property name="chord.run.analyses" value="cspa-hybrid-dlog"/>
+			<property name="chord.print.rels" value="${chord.csa.rels}"/>
+		</ant>
+		<antcall target="compare-rels">
+			<param name="testdir" value="${testdir}"/>
+			<param name="correctdir" value="${testdir}/correct_output/csa_hybrid"/>
+			<param name="relnames" value="${chord.csa.rels}"/>
+		</antcall>
+		<echo message="===== FINISHED test-csa-hybrid ON: ${testdir}"/>
+	</target>
+
+	<!--
+		Test dynamic analyses.
+	-->
+	<target name="test-dynamic">
+		<fail unless="testdir"/>
+		<echo message="===== STARTING test-dynamic ON: ${testdir}"/>
+		<ant dir="${chord.home.dir}" target="run">
+			<property name="chord.work.dir" value="${testdir}"/>
+			<property name="chord.reuse.scope" value="true"/>
+			<property name="chord.ext.java.analysis.path" value="${chord.test.dir}/classes"/>
+			<property name="chord.ext.dlog.analysis.path" value="${chord.test.dir}/src"/>
+			<property name="chord.run.analyses" value="dynamic-test-java"/>
+			<property name="chord.scope.exclude" value="java.,javax.,com.,org.,sun."/>
+		</ant>
+		<antcall target="eqlist">
+			<param name="arg1" location="${testdir}/correct_output/trace.txt"/>
+			<param name="arg2" location="${testdir}/chord_output/trace.txt"/>
+		</antcall>
+		<echo message="===== FINISHED test-dynamic ON: ${testdir}"/>
+	</target>
+
+	<!--
+	params: testdir, correctdir, domnames
+	-->
+	<target name="compare-doms">
+		<for param="domname" list="${domnames}">
+			<sequential>
+				<antcall target="subset">
+				<param name="arg1" location="${correctdir}/@{domname}.map"/>
+				<param name="arg2" location="${testdir}/chord_output/bddbddb/@{domname}.map"/>
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
+	<!--
+	params: testdir, correctdir, relnames
+	-->
+	<target name="compare-rels">
+		<for param="relname" list="${relnames}">
+			<sequential>
+				<antcall target="subset">
+					<param name="arg1" location="${correctdir}/@{relname}.txt"/>
+					<param name="arg2" location="${testdir}/chord_output/@{relname}.txt"/>
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
+	<!--
+		params: arg1, arg2
+	-->
+	<target name="eqlist">
+		<java classname="FileCmp" fork="true" classpath="classes">
+			<arg line="-eqlist ${arg1} ${arg2}"/> 
+		</java>
+	</target>
+
+	<!--
+		params: arg1, arg2
+	-->
+	<target name="eqset">
+		<java classname="FileCmp" fork="true" classpath="classes">
+			<arg line="-eqset ${arg1} ${arg2}"/> 
+		</java>
+	</target>
+
+	<!--
+		params: arg1, arg2
+	-->
+	<target name="subset">
+		<java classname="FileCmp" fork="true" classpath="classes">
+			<arg line="-subset ${arg1} ${arg2}"/> 
+		</java>
+	</target>
+
+	<target name="compile">
+		<ant dir="${chord.home.dir}" target="compile"/>
+		<mkdir dir="classes"/>
+		<javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+				source="1.5" target="1.5" srcdir="src" destdir="classes">
+			<classpath>
+				<pathelement location="${chord.home.dir}/chord.jar"/>
+				<pathelement location="lib/soot.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="run">
+		<path id="chord_ext_java_analysis_path">
+			<pathelement location="classes"/>
+			<pathelement location="lib/soot.jar"/>
+		</path>
+		<property name="chord.ext.java.analysis.path" refid="chord_ext_java_analysis_path"/>
+		<property name="chord.ext.dlog.analysis.path" location="src"/>
+		<ant dir="${chord.home.dir}" target="run"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="classes"/>
+	</target>
+</project>
+

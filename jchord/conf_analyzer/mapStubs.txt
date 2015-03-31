@@ -1,0 +1,4 @@
+java.util.HashMap conf_analyzer.stubs.ModelMap
+java.util.TreeMap conf_analyzer.stubs.ModelMap
+java.util.Map conf_analyzer.stubs.ModelMap
+java.util.LinkedHashMap conf_analyzer.stubs.ModelMap

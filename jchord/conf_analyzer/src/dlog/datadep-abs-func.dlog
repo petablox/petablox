@@ -1,0 +1,312 @@
+# name=datadep-abs-func-dlog
+
+.include "T.dom"
+.include "F.dom"
+.include "M.dom"
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "U.dom"
+.include "Opt.dom"
+
+.bddvarorder I0xM0_T0_V0xV1_Opt0_H0_F0_F1_Z1_Z0xU0xU1xOpt1
+
+
+
+APIMethod(i:I) input
+APIReadOnly(i:I) input
+extraSummary(m:M) input
+scopeExcludedT(t:T) input
+
+#primConversion(u:U,i:I,v:V) input
+#primToRefConversion(v:V,i:I,u:U) input
+#passThru(v:V0,i:I,u:V1) input
+
+
+IM(i:I,m:M) input
+reachableI(i:I) input
+reachableM(m:M) input
+instI(i:I) input
+VH(v:V,h:H) input
+HI(h:H,i:I) input
+VT(v:V, t:T) input
+clsTH(t:T0,h:H0) input
+scopeExcludedM(m:M) input
+MPrimCmp(m:M, u1:U, u2:U) input
+IColSize(i:I,u:U,v:V) input
+
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkArg0(i:I0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+
+MmethPrimArg(m:M0,n:Z0,u:U0) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+OptNames(o:Opt,site:I) input
+OptNameWithCC(o:Opt,site:I)
+confCall(i:I) output
+confConf(o:Opt0,site:I,pos:Z,s:Opt1) output
+
+
+UcU(l:U,r:U)
+restVV(v1:V,v2:V)  output
+
+excludedCall(i:I)
+
+
+###  Flow relations
+objVarAsgnInst(l:V,r:V) input
+getInstFldInst(l:V,b:V,f:F) input
+putInstFldInst(b:V,f:F,r:V) input
+putStatFldInst(f:F,r:V) input
+getStatFldInst(l:V,f:F) input
+
+primDataDep(l:U0,r:U1) input
+
+getInstFldPrimInst(l:U0,b:V,f:F) input
+putInstFldPrimInst(b:V,f:F,r:U) input
+getStatFldPrimInst(l:U,f:F)  input
+putStatFldPrimInst(f:F,r:U) input
+
+checkCastInst(l:V,t:T,r:V) input
+
+localMustAlias(v:V,u:V) output
+
+
+#### Collection model
+RIRetrieve(o:V,c:V) input
+IInsert(i:I,c:V,o:V) input
+RIInsert(c:V,o:V) input
+RINewColl(c:V,o:V) input
+
+colHoldsConf(collectionSrc:H,site:Opt) output
+vColHoldsConf(collection:V,site:Opt) output
+taintingCall(call:I,site:Opt) output
+
+Mclones(m:M,l:V,i:I,r:V) input
+clones(l:V,r:V)
+
+# purity related
+
+functDep(m:M,z:Z) input
+MrefLambdaDep(m:M,z:Z,v:V) input
+MprimLambdaDep(m:M,z:Z,u:U) input
+
+
+###Core outputs
+statHF(f:F,site:Opt) output
+instHF(b:H,f:F,site:Opt) output
+
+refCdep(v:V,site:Opt) output
+primCdep(u:U,site:Opt) output
+
+# super-context-sensitive analysis needs these three
+absoluteRefCdep(v:V,site:Opt) output
+absolutePrimCdep(u:U,site:Opt) output
+absoluteReturn(m:M,name:Opt) output
+
+confMethCall(i:I,z:Z,site:Opt) output
+#confReturn(m:M, site:Opt) output
+confArg(m:M,z:Z, site:Opt) output
+returnsConf(i:I,v:V,site:Opt) output
+
+summarized(m:M)
+summarizedFlowThru(m:M,z:Z) input
+summarizedCallArg(i:I,z:Z)
+
+##Just output for debugging
+trimmedIM(i:I,m:M) output
+taintMeth(m:M,opt:Opt) output
+taintedSubfield(v:V,b:V,f:F,opt:Opt) output
+
+
+########## Rules
+
+#commented out purely for debugging...but doesn't seem needed?
+#vColHoldsConf(col,objSite) :- VH(col, hST),colHoldsConf(hST,objSite).
+colHoldsConf(colH,site) :- VH(v,colH),vColHoldsConf(v,site).
+vColHoldsConf(newCol,site) :- RINewColl(newCol, oldCol),vColHoldsConf(oldCol,site).
+
+vColHoldsConf(colV,site) :- RIInsert(colV,v),refCdep(v,site).
+
+
+clones(l,r) :- reachableM(m),Mclones(m,l,_,r).
+
+confCall(i) :- OptNames(_,i).
+
+localMustAlias(v,u) :- objVarAsgnInst(u,v).
+localMustAlias(v,u) :- objVarAsgnInst(v,u).
+
+summarized(m) :- summarizedFlowThru(m,_).
+summarizedCallArg(i,z) :- IM(i,m),summarizedFlowThru(m,z).
+
+restVV(u,v) :- IinvkArg(i,z,v), summarizedCallArg(i,z),IinvkRet(i,0,u).
+UcU(u,v) :- IinvkPrimArg(i,z,v), summarizedCallArg(i,z),IinvkPrimRet(i,0,u).
+
+refCdep(v,site) :- restVV(v,u),refCdep(u,site).
+primCdep(v,site) :- UcU(v,u),primCdep(u,site).
+
+## Args flow in
+UcU(v,u) :- IinvkPrimArg(i,z,u), IM(i,m), MmethPrimArg(m,z,v).
+restVV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+
+### Functional purity-related
+
+refCdep(v,name) :- absoluteRefCdep(v,name).
+primCdep(v,name) :- absolutePrimCdep(v,name).
+
+#  Absolute returns propagate up
+absoluteReturn(m,name) :- MmethRet(m,_,v),absoluteRefCdep(v,name).
+absoluteReturn(m,name) :- MmethPrimRet(m,_,v),absolutePrimCdep(v,name).
+
+
+###  JUST FOR TEST:
+#make all returns absolute to measure gain from functional summary
+
+absoluteReturn(m,name) :- MmethRet(m,_,v),refCdep(v,name).
+absoluteReturn(m,name) :- MmethPrimRet(m,_,v),primCdep(v,name).
+
+###
+
+optReadCall(i) :- OptNames(_,i).
+trimmedIM(i,m) :- IM(i,m),!extraSummary(m),!optReadCall(i).
+
+#propagate labels up
+absoluteRefCdep(v,name) :- IinvkRet(i,_,v), trimmedIM(i,m), absoluteReturn(m,name).
+absolutePrimCdep(v,name) :- IinvkPrimRet(i,_,v), trimmedIM(i,m), absoluteReturn(m,name).
+
+#  apply the model
+
+passedThru(i,z) :- functDep(m,z),IM(i,m),!optReadCall(i).
+
+callLabel(i,name) :-  IinvkArg(i,z,u), passedThru(i,z), refCdep(u,name).
+callLabel(i,name) :-  IinvkPrimArg(i,z,u), passedThru(i,z), primCdep(u,name).
+
+refCdep(v,name) :- callLabel(i,name),IinvkRet(i,_,v).
+primCdep(u,name) :- callLabel(i,name),IinvkPrimRet(i,_,u).
+
+## Rules that create absolute labels
+
+absoluteRefCdep(v,site) :- statHF(f,site),getStatFldInst(v,f).
+absoluteRefCdep(v,site) :- instHF(bh,f,site),getInstFldInst(v,b,f), VH(b,bh). split
+
+absolutePrimCdep(v,site) :- statHF(f,site),getStatFldPrimInst(v,f).
+absolutePrimCdep(v,site) :- instHF(bh, f,site),getInstFldPrimInst(v,b,f), VH(b,bh). split
+
+absoluteRefCdep(v,name) :- IinvkRet(site,0,v),OptNameWithCC(name,site).
+absolutePrimCdep(u,name) :- IinvkPrimRet(site,0,u),OptNameWithCC(name,site).
+
+
+absoluteRefCdep(v,site) :- vColHoldsConf(colV,site),RIRetrieve(v,colV).
+absolutePrimCdep(u,site) :- vColHoldsConf(colV,site),IColSize(i,u,colV),reachableI(i).
+
+## (Replace lambdas with arguments)
+
+methArgLabel(m,z,opt) :-  refCdep(v,opt), MmethArg(m,z,v).
+methArgLabel(m,z,opt) :-  primCdep(v,opt), MmethPrimArg(m,z,v).
+
+refCdep(v,opt) :- methArgLabel(m,z,opt),MrefLambdaDep(m,z,v).
+primCdep(v,opt) :- methArgLabel(m,z,opt),MprimLambdaDep(m,z,v).
+
+#stores
+
+statHF(f,i) :- putStatFldInst(f,r),refCdep(r,i).
+statHF(f,i) :- putStatFldPrimInst(f,r),primCdep(r,i).
+
+instHF(bh,f,i) :- putInstFldInst(b,f,r),refCdep(r,i),VH(b,bh). split
+instHF(bh,f,i) :- putInstFldPrimInst(b,f,r),primCdep(r,i),VH(b,bh).  split
+
+
+## Propagate absolute labels.
+#every rule here should have a duplicate in funcFind
+
+absoluteRefCdep(v,site) :- clones(v,r),absoluteRefCdep(r,site).
+absoluteRefCdep(v,site) :- localMustAlias(v,u),absoluteRefCdep(u,site).
+absoluteRefCdep(v,site) :- objVarAsgnInst(v,u),absoluteRefCdep(u,site).
+absolutePrimCdep(v,site) :- primDataDep(v,u),absolutePrimCdep(u,site).
+
+#treat arrays and elements interchangeably
+absoluteRefCdep(b,site)  :- putInstFldInst(b,0,r), absoluteRefCdep(r,site).
+absoluteRefCdep(l,site) :- getInstFldInst(l,b,0), absoluteRefCdep(b,site).
+
+#  why are these commented out?
+#absoluteRefCdep(b,site)  :- putInstFldPrimInst(b,0,r), absolutePrimCdep(r,site).
+#absolutePrimCdep(l,site) :- getInstFldPrimInst(l,b,0), absoluteRefCdep(b,site).
+
+absolutePrimCdep(v,site) :- getInstFldPrimInst(v,b,_),absoluteRefCdep(b,site).
+
+#Absolute labels propagate through summarized calls
+absCallLabel(i,name) :-  IinvkArg(i,z,u), passedThru(i,z), absoluteRefCdep(u,name).
+absCallLabel(i,name) :-  IinvkPrimArg(i,z,u), passedThru(i,z), absolutePrimCdep(u,name).
+absoluteRefCdep(v,name) :- absCallLabel(i,name),IinvkRet(i,_,v).
+absolutePrimCdep(u,name) :- absCallLabel(i,name),IinvkPrimRet(i,_,u).
+
+
+## Conf flows through API calls
+
+looseSummary(i) :- extraSummary(m),IM(i,m).
+looseSummary(i) :- APIMethod(i).
+
+allocated(u) :- VH(u,_).
+insertUnalloc(i,u) :- IInsert(i,_,u),!allocated(u),reachableI(i).
+taintingCall(i, opt) :- absoluteRefCdep(u,opt),IinvkArg(i,_,u),looseSummary(i). split
+taintingCall(i, opt) :- absolutePrimCdep(u,opt),IinvkPrimArg(i,_,u),looseSummary(i). split
+taintingCall(i, opt) :- absoluteRefCdep(u,opt),insertUnalloc(i,u).
+
+#taint this and return value from args
+absoluteRefCdep(v,opt) :- taintingCall(i, opt),IinvkRet(i,_,v).
+absolutePrimCdep(v,opt) :- taintingCall(i, opt),IinvkPrimRet(i,_,v).
+absoluteRefCdep(v,opt) :- taintingCall(i, opt),IinvkArg(i,0,v),instI(i),!APIReadOnly(i).
+
+#propagate other labels
+
+#Collections normally don't get tainted; this handles cases where, e.g.
+# a collection is returned from an API call
+refCdep(v,site) :- RIRetrieve(v,colV),refCdep(colV,site).
+
+
+##Below is dangerous; a tainted ref with a conf field can infect everything.
+#  Acceptable in some more restricted sense, perhaps. Which types are field-insensitive?
+# 
+# Not clear why we need this, if we model Paths as a unitary API type
+# Note that we already have a specialized version this rule for collections and arrays
+#refCdep(v,site) :- getInstFldInst(v,b,_),refCdep(b,site).
+taintedSubfield(v,b,f,opt) :- getInstFldInst(v,b,f),refCdep(b,opt),f!=0.
+   
+#refCdep(v,site) :- clones(v,r),instHF(h1,f,site).
+
+#
+# Want to allow mutable references to external types
+
+
+mutatingCall(i) :- instI(i),APIMethod(i),!APIReadOnly(i).
+callAddsTaint(i, opt) :- mutatingCall(i),IinvkPrimArg(i,_,v),primCdep(v,opt).
+callAddsTaint(i, opt) :- mutatingCall(i),IinvkArg(i,z,v),refCdep(v,opt),z!=0.
+mutatedThis(v, opt) :- IinvkArg0(i,v),callAddsTaint(i,opt).
+
+taintedOpaqueRef(v, opt) :- mutatedThis(v,opt),VT(v,t),scopeExcludedT(t).
+instHF(h, f, opt) :- getInstFldInst(l, b, f),VH(b,h),taintedOpaqueRef(l, opt).
+#statHF(f, opt) :- getStatFldInst(b, f),taintedOpaqueRef(b, opt).
+
+####Debugging
+
+
+returnsConf(i,v,site) :- IinvkRet(i,_,v),refCdep(v,site),!APIMethod(i).
+
+confConf(o,i,z,s) :-  OptNames(o,i),IinvkArg(i,z,v),refCdep(v,s).
+confConf(o,i,z,s) :-  OptNames(o,i),IinvkPrimArg(i,z,v),primCdep(v,s).
+
+#apply conf-conf dependency
+OptNameWithCC(name,site) :- OptNames(name,site).
+
+#comment out next two lines to disable conf-conf dependency
+OptNameWithCC(name,site) :- optReadCall(site),IinvkPrimArg(site,_,v),primCdep(v,name).
+OptNameWithCC(name,site) :- optReadCall(site),IinvkArg(site,_,v),refCdep(v,name).
+
+
+taintMeth(m,opt) :- taintingCall(i, opt),IM(i,m).

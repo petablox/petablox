@@ -1,0 +1,105 @@
+# name=reachingdef-dlog
+
+.include "M.dom"
+.include "B.dom"
+.include "X.dom"
+.include "E.dom"
+.include "F.dom"
+.include "P.dom"
+.include "V.dom"
+.include "U.dom"
+.include "H.dom"
+.include "Z.dom"
+.include "I.dom"
+
+.bddvarorder X0_X1_M0_E0_E1_F0_P0_P1_V0_H0_U0_Z0_I0_B0_B1
+
+###
+# Relations
+###
+#
+
+IM(i:I0,m:M0) input
+MI(m:M0,i:I0) input
+MP(m:M0,p:P0) input
+
+postDomBB(b0:B0,b1:B1) input
+cdepBB(b0:B0,b1:B1) input
+PPCDep(p0:P0,p1:P1) input
+refs(m:M0,e:E0) input
+mods(m:M0,e:E0) input
+EF(e:E0,f:F0) input
+statF(f:F0) input
+instF(f:F0) input
+XG(x:X0,f:F0) input
+XE(x:X0,e:E0) input
+XU(x:X0,u:U0) input
+XP(x:X0,p:P0) input
+MPhead(m:M0,p:P0) input
+MPtail(m:M0,p:P0) input
+writeE(e:E0) input
+PP(p0:P0,p1:P1) input
+PE(p:P0,e:E0) input
+PI(p0:P0,i0:I0) input
+EV(e:E0,v:V0) input
+VH(v:V0,h:H0) input
+PDefReg(p:P0,u:U0) input
+PRefReg(p:P0,u:U0) input
+MArg(m:M0,u:U0,z:Z0) input
+MRet(m:M0,u:U0) input
+formalArg(m:M0,x:X0) input
+formalRet(m:M0,x:X0) input
+actualArg(i:I0,x:X0) input
+actualRet(i:I0,x:X0) input
+
+formalArgOrActualRetXPU(x:X0,p:P0,u:U0) input
+formalArgOrActualRetXPG(x:X0,p:P0,f:F0) input
+formalArgOrActualRetXPE(x:X0,p:P0,e:E0) input
+actualArgOrFormalRetXPU(x:X0,p:P0,u:U0) input
+actualArgOrFormalRetXPG(x:X0,p:P0,f:F0) input
+actualArgOrFormalRetXPE(x:X0,p:P0,e:E0) input
+
+callP(p:P0) input
+EH(e:E0,h:H0) input
+mayAlias(e:E0,e2:E1) input
+
+refPU(p:P0,u:U0) input
+refPG(p:P0,f:F0) input
+refPE(p:P0,e:E0) input
+defPU(p:P0,u:U0) input
+defPG(p:P0,f:F0) input
+defPE(p:P0,e:E0) input
+
+outPU(p:P0,p2:P1,u:U0) input
+outPG(p:P0,p2:P1,f:F0) input
+outPE(p:P0,p2:P1,e:E0) input
+
+inPU(p:P0,p2:P1,u:U0) input
+inPG(p:P0,p2:P1,f:F0) input
+inPE(p:P0,p2:P1,e:E0) input
+
+PPDataDep(p1:P0,p2:P1) input
+XPDataDep(x:X0,p:P0) input
+PXDataDep(p:P0,x:X0) input
+XXDataDep(x1:X0,x2:X1) input
+
+linkageEntry(x0:X0,x1:X1) input
+linkageExit(x0:X0,x1:X1) input
+
+PPCtrlDep(p1:P0,p2:P1) input
+PXCtrlDep(p:P0,x:X0) input
+Seeds(p:P0) input
+NewInitPP(p1:P0,p2:P1) input
+SupInitPP(p1:P0,p2:P1) input
+
+XXPathEdge(x1:X0,x2:X1) input
+PXPathEdge(p:P0,x:X0) input
+SummaryEdge(x1:X0,x2:X1) input
+
+instI(i:I0) input
+
+Pmarked(p:P0) input
+Xmarked(x:X0) input
+PSlice(p:P0) input
+XSlice(x:X0) input
+MSlice(m:M0) input

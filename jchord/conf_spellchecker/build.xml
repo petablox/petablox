@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="conf_spellchecker" default="compile">
+	<property name="chord.home.dir" location="../main"/>
+	<property name="version" value="0.1"/>
+
+
+	<target name="compile">
+		<mkdir dir="classes"/>
+		<javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+			source="1.5" target="1.5" srcdir="src/java" destdir="classes">
+			<classpath>
+				<pathelement location="${chord.home.dir}/chord.jar"/>
+				<pathelement location="classes"/>
+				<fileset dir="lib" includes="*.jar"/>
+			</classpath>
+			</javac>
+		<jar destfile="confspellcheck-${version}.jar">
+			<fileset dir="classes"/>
+			<fileset dir="src/java"/>
+			<file file="COPYING"/>
+			<manifest>
+				<attribute name="Main-Class" value="edu.berkeley.confspell.SpellcheckConf"/>
+				<attribute name="Class-Path" value="lib/hadoop-0.20.2-core.jar lib/log4j-1.2.15.jar lib/commons-logging-api-1.0.4.jar"/>
+		  </manifest>
+   </jar>
+	</target>
+	
+		<target name="javadoc">
+			<javadoc destdir="javadoc">
+				<fileset dir="src/java">
+					<include name="**/*.java"/>
+				</fileset>
+			</javadoc>
+			<copy todir="javadoc" flatten="true">
+				<fileset dir="src">
+					<include name="**/*.dlog"/>
+					<include name="**/*.datalog"/>
+				</fileset>
+			</copy>
+		</target>
+		
+		<target name="dist" depends="javadoc,compile">
+					<jar destfile="confspellcheck-${version}-sources.jar">
+								<fileset dir="src/java"/>
+					</jar>
+					<jar destfile="confspellcheck-${version}-javadoc.jar">
+								<fileset dir="javadoc"/>
+					</jar>
+		</target>
+
+<!--
+	<target name="run" depends="paths">
+		<property name="chord.run.analyses" value="atomizer-java"/> 
+		<ant dir="${chord.home.dir}" target="run"/>
+	</target> -->
+
+	<target name="clean">
+		<delete dir="classes"/>
+		<delete dir="javadoc"/>
+	</target>
+		
+</project>

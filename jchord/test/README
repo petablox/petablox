@@ -1,0 +1,5 @@
+Directory structure:
+- src: source code of utilities needed to run tests
+- bench: benchmarks on which tests are run
+- tests: regression test cases
+- 

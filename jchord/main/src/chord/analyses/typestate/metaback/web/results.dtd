@@ -1,0 +1,39 @@
+<!ENTITY % Hlist SYSTEM "Hlist.dtd">
+<!ENTITY % Vlist SYSTEM "Vlist.dtd">
+<!ENTITY % Mlist SYSTEM "Mlist.dtd">
+<!ENTITY % Ilist SYSTEM "Ilist.dtd">
+<!ELEMENT results (resultlist, Hlist, Vlist, Mlist, Ilist)>
+<!ELEMENT resultlist (provenQs,impoQs,timedQs,explodedQs,iterExceedQs)>
+<!ELEMENT provenQs (group)*> 
+<!ELEMENT group (TVS, (Query)*)>
+<!ELEMENT TVS (V)*>
+<!ELEMENT V ANY>
+<!ELEMENT Query (I, H)>
+<!ELEMENT I ANY>
+<!ELEMENT H ANY>
+<!ELEMENT impoQs (Query)*> 
+<!ELEMENT timedQs (Query)*>
+<!ELEMENT explodedQs (Query)*>
+<!ELEMENT iterExceedQs (Query)*>
+<!ATTLIST provenQs
+	num		CDATA	#REQUIRED>
+<!ATTLIST TVS
+	num		CDATA	#REQUIRED>
+<!ATTLIST I
+	Iid		IDREF	#REQUIRED>
+<!ATTLIST V
+	Vid		IDREF	#REQUIRED>
+<!ATTLIST H
+	Hid		IDREF	#REQUIRED>
+<!ATTLIST impoQs
+	num		CDATA	#REQUIRED>
+<!ATTLIST timedQs
+	num		CDATA	#REQUIRED>
+<!ATTLIST explodedQs
+	num		CDATA	#REQUIRED>
+<!ATTLIST iterExceedQs
+	num		CDATA	#REQUIRED>
+%Hlist;
+%Vlist;
+%Mlist;
+%Ilist;

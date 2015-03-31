@@ -1,0 +1,24 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Context-insensitive may-alias/call-graph analysis.
+
+# Author:  Ariel Rabkin (asrabkin@cs.berkeley.edu)
+# name=external-this-broad
+
+.include "T.dom"
+.include "M.dom"
+.include "V.dom"
+.include "Z.dom"
+
+.bddvarorder M0_T0_V0_Z0
+
+MentryPoints(m:M) input
+MmethArg(m:M0,n:Z0,v:V0) input
+instM(m:M) input
+
+externalThis(v:V) output
+
+externalThis(v) :- MmethArg(m,0,v),MentryPoints(m),instM(m).

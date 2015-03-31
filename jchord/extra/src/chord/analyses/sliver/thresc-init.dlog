@@ -1,0 +1,21 @@
+# Thread-escape analysis.
+# name=thresc-init-dlog
+
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_Z0_E0xE1
+
+checkExcludedT(t:T) input
+TM(t:T,m:M) input
+ME(m:M,e:E) input
+EV(e:E,v:V) input
+
+queryE(e:E) output
+queryE(e) :- !checkExcludedT(t), TM(t,m), ME(m,e), EV(e,_).

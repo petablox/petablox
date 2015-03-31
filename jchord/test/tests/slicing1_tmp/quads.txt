@@ -1,0 +1,124 @@
+*** Class: T
+Method: <clinit>:()V@T
+	0#1
+	3#2
+	4#3
+	7#4
+	12#5
+	15#6
+Control flow graph for <clinit>:()V@T:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB1 (EXIT))
+1: NEW T0, A
+2: MOVE_A T1, T0
+3: INVOKESTATIC_V <init>:()V@A, (T1)
+4: PUTSTATIC_A T0, .g
+5: PUTSTATIC_I IConst: 99999, .g2
+6: RETURN_V
+
+BB1 (EXIT)	(in: BB2, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 2
+Method: main:([Ljava/lang/String;)V@T
+	0#1
+	3#2
+	4#3
+	7#4
+	8#5
+	11#6
+	12#7
+	15#8
+	18#9
+	22#10
+	25#11
+	27#12
+	31#13
+	34#14
+	37#15
+	68#16
+	71#17
+	72#18
+	75#19
+	40#20
+	43#21
+	44#22
+	47#23
+	49#24
+	52#25
+	53#26
+	56#27
+	62#28
+	65#29
+	-1#34
+	79#30
+	82#31
+	86#32
+	89#33
+Control flow graph for main:([Ljava/lang/String;)V@T:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB3, BB4)
+1: NEW T15, A
+2: MOVE_A T16, T15
+3: INVOKESTATIC_V <init>:()V@A, (T16)
+4: MOVE_A R3, T15
+5: NEW T17, A
+6: MOVE_A T18, T17
+7: INVOKESTATIC_V <init>:()V@A, (T18)
+8: MOVE_A R4, T17
+9: PUTFIELD_A R3, .f1, R4
+10: GETFIELD_I T19, R4, .f2
+11: MOVE_I R8, T19
+12: PUTSTATIC_A R3, .g
+13: GETFIELD_I T20, R4, .f2
+14: MOVE_I R9, T20
+15: IFCMP_A R0, AConst: null, EQ, BB4
+
+BB4	(in: BB2, out: BB5)
+16: NEW T26, A
+17: MOVE_A T27, T26
+18: INVOKESTATIC_V <init>:()V@A, (T27)
+19: MOVE_A R28, T26
+
+BB3	(in: BB2, out: BB5)
+20: NEW T21, A
+21: MOVE_A T22, T21
+22: INVOKESTATIC_V <init>:()V@A, (T22)
+23: MOVE_A R11, T21
+24: NEW T23, A
+25: MOVE_A T24, T23
+26: INVOKESTATIC_V <init>:()V@A, (T24)
+27: MOVE_A R25, T23
+28: PUTFIELD_A R11, .f1, R25
+29: GOTO BB5
+
+BB5	(in: BB3, BB4, out: BB1 (EXIT))
+34: PHI R29, (R25, R28), { BB3, BB4 }
+30: GETFIELD_I T30, R29, .f2
+31: MOVE_I R14, T30
+32: PUTSTATIC_I R14, .g2
+33: RETURN_V
+
+BB1 (EXIT)	(in: BB5, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 31
+*** Class: A
+Method: <init>:()V@A
+	1#1
+	6#2
+	9#3
+Control flow graph for <init>:()V@A:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB1 (EXIT))
+1: INVOKESTATIC_V <init>:()V@java.lang.Object, (R0)
+2: PUTFIELD_I R0, .f2, IConst: 5
+3: RETURN_V
+
+BB1 (EXIT)	(in: BB2, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 1

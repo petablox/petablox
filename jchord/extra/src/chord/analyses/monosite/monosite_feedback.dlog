@@ -1,0 +1,31 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=monosite-feedback-dlog
+
+.include "C.dom"
+.include "M.dom"
+.include "I.dom"
+.include "F.dom"
+.include "V.dom"
+
+.bddvarorder F0_M0xI0_V0_C0xC1
+
+###
+# Relations
+###
+
+polySite(i:I) input
+toBeRefinedCICM(c:C,i:I,d:C,m:M) output
+toBeRefinedCVC(c:C,v:V,d:C) output
+toBeRefinedFC(f:F,c:C) output
+toBeRefinedCFC(c:C,f:F,d:C) output
+
+toBeRefinedCICM(_,i,_,_) :- polySite(i).
+
+toBeRefinedCVC(c,_,_) :- c<0.
+toBeRefinedFC(f,_) :- f<0.
+toBeRefinedCFC(c,_,_) :- c<0.

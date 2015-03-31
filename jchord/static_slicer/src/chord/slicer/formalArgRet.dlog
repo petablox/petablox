@@ -1,0 +1,25 @@
+# name = formalArgRet-dlog
+#
+# Relation containing each tuple (m, x) such that x is formalArg/Ret of method m.
+#
+.include "M.dom"
+.include "P.dom"
+.include "X.dom"
+
+.bddvarorder M0_P0_X0
+
+# Relations
+###
+
+MPhead(m:M0,p:P0) input
+MPtail(m:M0,p:P0) input
+XP(x:X0,p:P0) input
+formalArgMX(m:M0,x:X0) output
+formalRetMX(m:M0,x:X0) output
+
+###
+# Constraints
+###
+
+formalArgMX(m,x) :- XP(x,p), MPhead(m,p).
+formalRetMX(m,x) :- XP(x,p), MPtail(m,p).

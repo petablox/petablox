@@ -1,0 +1,22 @@
+***** SEED: <<main:([Ljava/lang/String;)V@T, null>, g:LA;@T>
+***** SLICE: (incorrect, must include constructor of A)
+	0!main:([Ljava/lang/String;)V@T (T.java:5) [<A T15> = new A]
+	7!main:([Ljava/lang/String;)V@T (T.java:5) [R3 = T15]
+	27!main:([Ljava/lang/String;)V@T (T.java:9) [g:LA;@T = <A R3>]
+
+***** SEED: <<main:([Ljava/lang/String;)V@T, null>, g2:I@T>
+***** SLICE:
+	37!main:([Ljava/lang/String;)V@T (T.java:12) [15  IFCMP_A                 R0,	AConst: null,	EQ,	BB4]
+
+	6!<init>:()V@A (T.java:35) [<A R0>.f2:I@A = IConst: 5]
+
+	68!main:([Ljava/lang/String;)V@T (T.java:17) [<A T26> = new A]
+	75!main:([Ljava/lang/String;)V@T (T.java:17) [R28 = T26]
+
+	49!main:([Ljava/lang/String;)V@T (T.java:14) [<A T23> = new A]
+	56!main:([Ljava/lang/String;)V@T (T.java:14) [R25 = T23]
+
+	-1!main:([Ljava/lang/String;)V@T (T.java:0) [34  PHI                     R29,	(R25, R28),	{ BB3, BB4 }]
+	79!main:([Ljava/lang/String;)V@T (T.java:18) [<int T30> = <A R29>.f2:I@A]
+	82!main:([Ljava/lang/String;)V@T (T.java:18) [R14 = T30]
+	86!main:([Ljava/lang/String;)V@T (T.java:19) [g2:I@T = <int R14>]

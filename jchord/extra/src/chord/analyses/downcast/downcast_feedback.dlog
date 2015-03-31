@@ -1,0 +1,44 @@
+# Copyright (c) 2008-2009, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=downcast-feedback-dlog
+
+.include "H.dom"
+.include "T.dom"
+.include "V.dom"
+.include "C.dom"
+.include "I.dom"
+.include "M.dom"
+.include "F.dom"
+
+.bddvarorder F0_I0xM0_T0_V0_T1_H0xC0xC1
+
+###
+# Relations
+###
+
+CVC(c:C,v:V,o:C) input
+CH(c:C,h:H) input
+sub(s:T1,t:T0) input
+HT(h:H0,t:T1) input
+ptsVH(v:V,h:H) input
+ptsVT(v:V,t:T) input
+downcast(v:V,t:T) input
+
+toBeRefinedPtsVT(v:V,t:T)
+toBeRefinedPtsVH(v:V,h:H)
+toBeRefinedCICM(c:C,i:I,d:C,m:M) output
+toBeRefinedCVC(c:C,v:V,d:C) output
+toBeRefinedFC(f:F,c:C) output
+toBeRefinedCFC(c:C,f:F,d:C) output
+
+toBeRefinedPtsVT(v,t2) :- downcast(v,t), ptsVT(v,t2), !sub(t2,t).
+toBeRefinedPtsVH(v,h) :- toBeRefinedPtsVT(v,t), ptsVH(v,h), HT(h,t).
+toBeRefinedCVC(c,v,o) :- toBeRefinedPtsVH(v,h), CH(o,h), CVC(c,v,o).
+
+toBeRefinedCICM(c,_,_,_) :- c<0.
+toBeRefinedFC(f,_) :- f<0.
+toBeRefinedCFC(c,_,_) :- c<0.

@@ -1,0 +1,51 @@
+This directory holds a configuration spellcheck tool, being developed by Ari Rabkin at UC Bekeley. (Contact asrabkin@gmail.com for details)
+
+The checker has two basic tasks. First, to make sure that every option set in a configuration file is an option actually supported by the program in question. Second, to check that the values specified for the option make sense. (In case, e.g., a user confuses a numeric from boolean parameter).
+
+USAGE
+
+The checker can be used in two ways, either embedded in an existing program, or invoked as a standalone tool.  This section will discuss only the use as a standalone tool. Consult the Javadoc for how to embed confspell.
+
+
+The command line syntax is as follows:
+
+ java -jar confspellcheck.jar <dictionary file> [conf files list]
+files list should be a list of files, interspersed with optional type tags, specifying the type of the following file.
+Valid tags include -hadoop and -prop, for Hadoop and Java Properties files, respectively.
+
+Example:
+	java -jar confspellcheck.jar example/hadoop20.dict -hadoop  example/hdfs-default.xml
+
+This will read the dictionary, read the config file, report options, and flag mismatches.
+
+
+If the command line tool is invoked without any configuration files specified, it will dump the contents of the dictionary file.
+
+NOTE
+
+If you want to process Hadoop options, you need to have several Hadoop jars in your classpath. (In particular, you need Hadoop core, log4j, and commons-logging-api.) By default, the confspell jar will look in a directory with relative path "lib" for these jars. so you're 
+
+
+DICTIONARY FORMAT
+
+Each line of the dictionary files consists of a regular expression, followed by an option type, followed by an optional annotation. These sections are separated by a single tab character.
+
+Each regular expression may match one or more valid options. (This is to cover cases like Hadoop's fs.x.impl, where x can be any string).
+
+The list of valid option types is as follows:
+	Address
+	Boolean
+	ClassName
+	File
+	Fraction
+	Integral
+	NetworkInterface
+	Portno
+	Special
+	URI
+	URL	
+
+Most of these are self-explanatory. Special means that the option must be one of a small number of string options. The list of valid options goes in the annotation field. It should be comma-separated and wrapped in {}.
+
+If a dictionary includes a type not on that list, the checker will assume that all values are acceptable for that option.
+

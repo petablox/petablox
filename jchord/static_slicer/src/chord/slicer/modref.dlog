@@ -1,0 +1,35 @@
+# name=modref-dlog
+#
+# mods(m,e) : all statements e that define an instance field, a static field, 
+#		or an array element in method m.
+# refs(m,e_ : all statements e that read an instance field, a static field,
+#		or an array element in method m.
+
+.include "M.dom"
+.include "I.dom"
+.include "E.dom"
+
+.bddvarorder E0_M0xM1xI0
+
+###
+# Relations
+###
+MI(m:M0,i:I0) input
+IM(i:I0,m:M0) input
+ME(m:M,e:E0) input
+writeE(e:E0) input
+
+reachable(m:M0,m2:M1) output
+
+mods(m:M0,e:E0) output
+refs(m:M0,e:E0) output
+
+
+###
+# Constraints
+###
+reachable(m,m2) :- m=m2.
+reachable(m,m3) :- reachable(m,m2), MI(m2,i), IM(i,m3).
+
+mods(m,e) :- reachable(m,n), ME(n,e), writeE(e).
+refs(m,e) :- reachable(m,n), ME(n,e), !writeE(e).

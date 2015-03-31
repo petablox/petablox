@@ -1,0 +1,32 @@
+# Thread-escape analysis.
+# name=thresc-sliver-dlog
+
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "C.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_C0xC1xC2xC3_Z0_E0xE1
+
+# Relations from pointer analysis
+inQueryE(e:E) input
+reachableCM(c:C,m:M) input
+VCA(v:V,e:C,a:C) input
+FA(f:F,a:C) input
+AFA(a1:C,f:F,a2:C) input
+
+EV(e:E,v:V) input # Statement e accesses variable v
+MmethArg(m:M0,n:Z0,v:V0) input
+
+escA(a:C) output       # abstract object is escaping
+outQueryE(e:E) output  # whether e is thread escaping?
+
+escA(a) :- FA(_,a). # objects (base case)
+escA(a) :- reachableCM(c,1), MmethArg(1,0,v), VCA(v,c,a). # in context c, Thread.start() this points to a [NAME=ts]
+escA(a) :- escA(b), AFA(b,_,a). # objects (transitive)
+outQueryE(e) :- inQueryE(e), EV(e,v), VCA(v,_,a), escA(a). # queries

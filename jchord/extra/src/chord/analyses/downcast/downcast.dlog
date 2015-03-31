@@ -1,0 +1,44 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=downcast-dlog
+
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "C.dom"
+
+.bddvarorder M0_T0_V0xV1_T1_C0xH0xC1
+
+###
+# Relations
+###
+
+MobjVarAsgnInst(m:M,l:V,r:V) input
+reachableCM(c:C,m:M) input
+reachableLR(l:V,r:V)
+CVC(c:C,v:V,o:C) input
+CH(c:C,h:H) input
+sub(s:T1,t:T0) input
+VT(v:V0,t:T0) input
+HT(h:H0,t:T1) input
+ptsVH(v:V,h:H) output
+ptsVT(v:V,t:T) output
+downcast(v:V,t:T) output
+unsafeDowncast(v:V,t:T) output
+safeDowncast(v:V,t:T) output
+
+reachableLR(l,r) :- MobjVarAsgnInst(m,l,r), reachableCM(_,m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
+
+downcast(r,t) :- reachableLR(l,r), \
+	VT(l,t), VT(r,t2), !sub(t2,t).
+
+unsafeDowncast(v,t) :- downcast(v,t), ptsVT(v,t2), !sub(t2,t).
+safeDowncast(v,t) :- downcast(v,t), !unsafeDowncast(v,t).

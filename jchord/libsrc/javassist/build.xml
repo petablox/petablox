@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="compile">
+    <target name="compile">
+        <mkdir dir="classes"/>
+        <javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+            source="1.5" target="1.5" srcdir="src" destdir="classes"/>
+    </target>
+    <target name="jar" depends="compile">
+        <jar jarfile="javassist.jar">
+            <fileset dir="classes">
+                <include name="**/*.class"/>
+            </fileset>
+        </jar>   
+    </target>
+    <target name="clean">
+        <delete dir="classes"/>
+        <delete file="javassist.jar"/>
+    </target>
+</project>

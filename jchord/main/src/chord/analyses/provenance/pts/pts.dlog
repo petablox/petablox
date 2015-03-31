@@ -1,0 +1,31 @@
+# name=pro-pts-dlog
+
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "C.dom"
+
+.bddvarorder M0_V0xV1_C0xH0xC1
+
+###
+# Relations
+###
+
+reachableCM(c:C,m:M) input
+checkExcludedH(h:H) input
+checkExcludedV(v:V) input
+CVC(c:C,v:V,o:C) input
+CH(c:C,h:H) input
+MV(m:M, v:V) input
+MH(m:M, h:H) input
+
+reachableV(v:V)
+reachableH(h:H)
+
+ptsVH(v:V,h:H) output
+
+reachableV(v) :- MV(m,v),reachableCM(_,m).
+reachableH(h) :- MH(m,h),reachableCM(_,m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

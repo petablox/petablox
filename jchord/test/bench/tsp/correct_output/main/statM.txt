@@ -1,0 +1,14 @@
+<main:([Ljava/lang/String;)V@Tsp>
+<<clinit>:()V@Tsp>
+<read_tsp:(Ljava/lang/String;)I@Tsp>
+<<clinit>:()V@TspSolver>
+<LEFT_CHILD:(I)I@TspSolver>
+<MakeTourString:(I[I)V@TspSolver>
+<RIGHT_CHILD:(I)I@TspSolver>
+<calc_bound:(I)I@TspSolver>
+<find_solvable_tour:()I@TspSolver>
+<get_tour:(I)I@TspSolver>
+<less_than:(LPrioQElement;LPrioQElement;)Z@TspSolver>
+<new_tour:(II)I@TspSolver>
+<set_best:(I[I)V@TspSolver>
+<split_tour:(I)V@TspSolver>

@@ -1,0 +1,22 @@
+1. Run the following IN DIRECTORY mantis:
+
+ant -Dchord.work.dir=<dir1> -Dchord.run.analyses=mantis-java run
+
+This will instrument application code and dump it to <dir1>/user_classes/.
+
+2. Create a fresh directory <dir2> with a fresh chord.properties, and <dir1>/user_classes/
+from previous command copied to <dir2>/classes/, and run the following IN DIRECTORY static_slicer:
+
+ant -Dchord.work.dir=<dir2> -Dchord.run.analyses=jslice-java run
+
+You can also run qslice-java instead of jslice-java if you want to debug the quad slice
+instead of directly generating the jasmin slice.
+
+This will generate *.j files in <dir2>/chord_output/
+
+3. Run Jasmin on the generated *.j files to produce *.class files by running the following
+IN DIRECTORY static_slicer:
+
+java -jar lib/jasmin-r3505.jar <list of .j files>"
+
+This Jasmin is compiled from Soot (www.sable.mcgill.ca/soot/) svn reposotory (Rev. 3505).

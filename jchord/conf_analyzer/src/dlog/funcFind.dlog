@@ -1,0 +1,151 @@
+#
+#
+#    Ari Rabkin
+# name=funcFind-dlog
+
+.include "I.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "M.dom"
+.include "U.dom"
+.include "F.dom"
+
+.bddvarorder I0_M0_V0_Z0_Z1_F0_V1_U0_I1_U1
+
+
+# holistic information about the program
+
+reachableM(m:M) input
+IM(i:I,m:M) input
+extraSummary(m:M) input
+
+#Relations about program points
+
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+MmethPrimArg(m:M0,n:Z0,u:U0) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+objVarAsgnInst(l:V,r:V) input
+primDataDep(l:U0,r:U1) input
+
+getInstFldPrimInst(l:U0,b:V,f:F) input
+putInstFldPrimInst(b:V,f:F,r:U) input
+
+putInstFldInst(b:V,f:F,r:V) input
+getInstFldInst(l:V,b:V,f:F) input
+
+MV(m:M,v:V) input
+MU(m:M,u:U) input
+
+# Conftrack specific
+
+APIMethod(i:I) input
+APIReadOnly(i:I) input
+
+
+implicitRetFlow(ctrlVar:V, m:M) input
+implicitRetFlowU(ctrlVar:U, m:M) input
+
+# intermediates
+
+locMustAlias(v:V,u:V)
+passedThruRef(i:I,v:V)
+passedThruPrim(i:I,u:U)
+
+taintingCall(i:I, z:Z)
+
+###### Outputs
+#if m's return value depends functionally on arg z
+functDep(m:M,z:Z) output
+
+#tuples where v depends on arg z of its method
+refLambdaDep(z:Z,v:V)
+primLambdaDep(z:Z,u:U)
+
+MrefLambdaDep(m:M,z:Z,v:V) output
+MprimLambdaDep(m:M,z:Z,u:U) output
+
+## Do this here, not because it's tied to funcFind but because this means it 
+#happens just once at the right time.
+instI(i:I) input
+
+#virtIM(i:I0,m:M0) input
+#virtI(i:I0) output
+#virtI(i) :- virtIM(i,_).
+
+
+############   Rules
+
+#lambdas start at method start
+refLambdaDep(z,v) :- MmethArg(m,z,v),reachableM(m).
+primLambdaDep(z,v) :- MmethPrimArg(m,z,v),reachableM(m).
+
+locMustAlias(v,u) :- objVarAsgnInst(u,v).
+locMustAlias(v,u) :- objVarAsgnInst(v,u).
+
+
+# we have a functional dependence if a lambda reaches function exit
+functDep(m,z) :- MmethRet(m,_,v),refLambdaDep(z,v).
+functDep(m,z) :- MmethPrimRet(m,_,v),primLambdaDep(z,v).
+
+# rules that move lambdas
+refLambdaDep(z,v) :- objVarAsgnInst(v,u),refLambdaDep(z,u).
+refLambdaDep(z,v) :- locMustAlias(v,u),refLambdaDep(z,u).
+
+primLambdaDep(z,v) :- primDataDep(v,u),primLambdaDep(z,u).
+
+# Recursive rule: 
+
+passedThruRef(i,v) :- IinvkArg(i,z2,v), IM(i,m), functDep(m,z2).
+refLambdaDep(z,v) :- IinvkRet(i,_,v),passedThruRef(i,u),refLambdaDep(z,u).
+
+passedThruPrim(i,v) :- IinvkPrimArg(i,z2,v), IM(i,m), functDep(m,z2).
+primLambdaDep(z,v) :- IinvkPrimRet(i,_,v),passedThruPrim(i,u),primLambdaDep(z,u).
+
+####  Model for API
+
+# (i,z) is in taintingCall if call site i is marked by arg z to this method
+
+looseSummary(i) :- extraSummary(m),IM(i,m).
+looseSummary(i) :- APIMethod(i).
+
+taintingCall(i, z) :- refLambdaDep(z,u),IinvkArg(i,_,u),looseSummary(i). split
+taintingCall(i, z) :- primLambdaDep(z,u),IinvkPrimArg(i,_,u),looseSummary(i). split
+
+#partlyTaintingCall(i,z) :- ReadOnlyCall(i),refLambdaDep(z,u),IinvkArg(i,_,u).
+#partlyTaintingCall(i,z) :- ReadOnlyCall(i),primLambdaDep(z,u),IinvkPrimArg(i,_,u).
+
+#	taint return values
+refLambdaDep(z,v) :- taintingCall(i, z),IinvkRet(i,_,v).
+primLambdaDep(z,v) :- taintingCall(i, z),IinvkPrimRet(i,_,v).
+#	taint this
+refLambdaDep(z,v) :- taintingCall(i, z),IinvkArg(i,0,v),instI(i),!APIReadOnly(i).
+
+## Probably we don't have functional dependence on collections?
+#refLambdaDep(z,v) :- IRetrieve(_,v,colV),refLambdaDep(zcolV).
+
+#treat arrays and elements interchangeably
+refLambdaDep(z,b)  :- putInstFldInst(b,0,r), refLambdaDep(z,r).
+refLambdaDep(z,l) :- getInstFldInst(l,b,0), refLambdaDep(z,b).
+
+#refLambdaDep(z,b)  :- putInstFldPrimInst(b,0,r), primLambdaDep(z,r).
+#refLambdaDep(z,l) :- getInstFldInst(l,b,0), refLambdaDep(z,b).
+
+#prim fields too
+primLambdaDep(z,v) :- getInstFldPrimInst(v,b,_),refLambdaDep(z,b).
+
+functDep(m,z) :- implicitRetFlow(v,m), refLambdaDep(z,v).
+functDep(m,z) :- implicitRetFlowU(u,m), primLambdaDep(z,u).
+
+
+
+##  Augment values before returning
+
+MrefLambdaDep(m,z,v) :- refLambdaDep(z,v),MV(m,v).
+MprimLambdaDep(m,z,v) :- primLambdaDep(z,v),MU(m,v).

@@ -1,0 +1,36 @@
+# name=ultimateRacePairs-dlog
+
+.include "E.dom"
+.include "F.dom"
+
+.bddvarorder F0_E0xE1
+
+###
+# Relations
+###
+
+startingRacePairs(e1:E0,e2:E1) input
+aliasingRacePairs(e1:E0,e2:E1) input
+parallelRacePairs(e1:E0,e2:E1) input
+unguardedRacePairs(e1:E0,e2:E1) input
+combinedRacePairs(e1:E0,e2:E1) input
+escE(e:E0) input
+racePairs1(e1:E0,e2:E1) output
+racePairs2(e1:E0,e2:E1) output
+racePairs3(e1:E0,e2:E1) output
+racePairs4(e1:E0,e2:E1) output
+racePairs5(e1:E0,e2:E1) output
+ultimateRacePairs(e1:E0,e2:E1) output
+
+###
+# Constraints
+###
+
+racePairs1(e1,e2) :- startingRacePairs(e1,e2), escE(e1), escE(e2).
+racePairs2(e1,e2) :- racePairs1(e1,e2), aliasingRacePairs(e1,e2).
+racePairs3(e1,e2) :- racePairs2(e1,e2), parallelRacePairs(e1,e2).
+racePairs4(e1,e2) :- racePairs3(e1,e2), unguardedRacePairs(e1,e2).
+racePairs5(e1,e2) :- racePairs4(e1,e2), combinedRacePairs(e1,e2).
+
+ultimateRacePairs(e1,e2) :- racePairs5(e1,e2).
+

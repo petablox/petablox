@@ -1,0 +1,43 @@
+Jasmin
+======
+
+To run Jasmin: "java -jar jasmin-r3505.jar <list of .j files>"
+
+Jasmin is compiled from Soot (www.sable.mcgill.ca/soot/) svn reposotory (Rev. 3505).
+
+MantisInstrumentor
+==================
+
+Instruments each class C with the following:
+
+1. For each ItIntCmp quad in each method of this class (say located at bytecode
+   index XXX in method with index YYY in domain M), add static fields
+   C.bXXXmYYY_bef and C.bXXXmYYY_aft of type iny to the class and increment them
+   immediately before and immediately after that quad.
+
+   The following conditional branch bytecode instructions are covered by the
+   IfIntCmp quad:
+   - if_acmpeq, if_acmpne
+   - if_icmpeq, if_icmpne, if_icmplt, if_icmpgt, if_icmple, if_icmpge
+   - ifeq, iflt, ifle, ifne, ifgt, ifge
+   - ifnull, ifnonnull
+
+   The only ones not considered are tableswitch and lookupswitch.  Support for
+   these will be added later.
+
+2. For each MethodCall expression in each method of this class (say located at
+   bytecode index XXX in method with index YYY in domain M) which returns a
+   result of primitive type:
+   - bool: add static fields C.bXXXmYYY_true and C.bXXXmYYY_false of type int
+     to this class and increment them depending on whether the result is true
+     or false, respectively.
+   - byte/short/int/long: add static fields C.bXXXmYYY_long_sum and 
+     C.bXXXmYYY_long_freq of type long and int, respectively, to this class and
+     add the result value to the sum field and increment the freq field.
+   - float/double: add static fields C.bXXXmYYY_double_sum and
+     C.bXXXmYYY_double_freq of type double and int, respectively, to this class
+     and add the result value to the sum field and increment the freq field.
+
+TODO: Perhaps it is not necessary to instrument method calls which return a
+result of type boolean, since some branch being instrumented will be conditioned
+on it.

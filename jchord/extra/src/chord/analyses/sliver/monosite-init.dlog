@@ -1,0 +1,22 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=monosite-init-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "T.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_Z0_E0xE1_P0xP1
+
+checkExcludedT(t:T) input
+TM(t:T,m:M) input
+MI(m:M,i:I) input
+virtIM(i:I,m:M) input
+
+queryI(i:I) output
+
+queryI(i) :- !checkExcludedT(t), TM(t,m), MI(m,i), virtIM(i,_). # Any call site with a virtual target

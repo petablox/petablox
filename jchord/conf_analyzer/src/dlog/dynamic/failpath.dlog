@@ -1,0 +1,25 @@
+#
+#
+#    Ari Rabkin
+# name=failpath-dlog
+
+
+.include "I.dom"
+.include "M.dom"
+
+.bddvarorder I0_M0
+
+FailurePath(i:I0) input
+IM(i:I,m:M) input
+MI(m:M,i:I) input
+
+failPathI(i:I) output
+failPathM(m:M0) output
+failPathIM(i:I,m:M) output
+
+#methods called on failure path
+failPathM(m) :- MI(m,i),FailurePath(i).
+#invokes in methods on failure path
+failPathI(i) :- MI(m,i),failPathM(m).
+#calls from failure path
+failPathIM(i,m) :- IM(i,m),failPathI(i).

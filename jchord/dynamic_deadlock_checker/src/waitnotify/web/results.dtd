@@ -1,0 +1,10 @@
+<!ENTITY % Mlist SYSTEM "Mlist.dtd">
+<!ENTITY % Elist SYSTEM "Elist.dtd">
+<!ELEMENT results (waitNotifyErrorList, Mlist, Elist)>
+<!ELEMENT waitNotifyError EMPTY> 
+<!ATTLIST waitNotifyError
+	e1idList	IDREFS	#REQUIRED
+	e2idList	IDREFS	#REQUIRED
+	kind		CDATA	#REQUIRED>
+%Mlist;
+%Elist;

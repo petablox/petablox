@@ -1,0 +1,181 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# name=cspa-sliver-dlog
+# Call-graph, pointer analysis.  This part is common to all slivers-based analyses.
+# This is the part that depends on the slivers-based heap abstraction (domain C).
+# Author: Percy Liang (pliang@cs.berkeley.edu)
+
+.include "C.dom"
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_C0xC1xC2xC3_Z0_E0xE1
+
+### Relations
+
+# Program
+HT(h:H0,t:T1) input # Allocation site h has type t
+sub(t1:T1,t2:T0) input # t1 is a subtype of t2
+MI(m:M,i:I) input # Method m contains call site i
+MH(m:M,h:H) input # Method m contains allocation site h
+MV(m:M,v:V) input # Method m contains variable v
+statIM(i:I,m:M) input # invokestatic call site i resolves to static method m
+specIM(i:I,m:M) input # invokespecial call site i resolves to instance method m
+IM(i:I,m:M) input
+IHM(i:I,h:H,m:M) input
+classT(t:T) input
+staticTM(t:T,m:M) input
+staticTF(t:T,f:F) input
+clinitTM(t:T,m:M) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkArg0(i:I0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+MmethArg(m:M0,n:Z0,v:V0) input
+MmethRet(m:M0,n:Z0,v:V1) input
+VHfilter(v:V,h:H) input
+statM(m:M) input
+
+clsForNameIT(i:I0,t:T0) input
+objNewInstIH(i:I0,h:H0) input
+objNewInstIM(i:I0,m:M0) input
+conNewInstIH(i:I0,h:H0) input
+conNewInstIM(i:I0,m:M0) input
+aryNewInstIH(i:I0,h:H0) input
+
+# Program statements
+MobjValAsgnInst(m:M,l:V,h:H)     input # in m, l = new h
+MobjVarAsgnInst(m:M,l:V,r:V)     input # in m, l = r
+MgetInstFldInst(m:M,l:V,b:V,f:F) input # in m, l = b.f
+MputInstFldInst(m:M,b:V,f:F,r:V) input # in m, b.f = r
+MgetStatFldInst(m:M,l:V,f:F)     input # in m, l = STATIC.f
+MputStatFldInst(m:M,f:F,r:V)     input # in m, STATIC.f = r
+
+RobjValAsgnInst(c:C,l:V,h:H) output
+RobjVarAsgnInst(c:C,l:V,r:V) output
+RgetInstFldInst(c:C,l:V,b:V,f:F) output
+RputInstFldInst(c:C,b:V,f:F,r:V) output
+RgetStatFldInst(c:C,l:V,f:F) output
+RputStatFldInst(c:C,f:F,r:V) output
+
+### Java -> Datalog
+CH(c:C,h:H) input
+CI(c:C,i:I) input
+CC(c:C,c:C) input
+objI(i:I) input # whether to use object sensitivity
+
+CfromHC(cm:C,h:H,c:C) output
+CfromIC(cm:C,i:I,c:C) output
+CfromHC(cm,h,c) :- CC(c,cm), CH(cm,h).
+CfromIC(ci,i,c) :- CC(c,ci), CI(ci,i).
+
+# Intermediate relations
+objM(m:M) output
+MspcMethArg(m:M,v:V) output
+MordMethArg(m:M,z:Z,v:V) output
+argIVMV(i:I0,u:V1,m:M0,v:V0) output
+retIVMV(i:I0,u:V0,m:M0,v:V1) output
+CIA(c:C,i:I,a:C) output
+CIH(c:C,i:I,h:H) output
+ICM(i:I,c:C,m:M) output
+CIany(c:C,i:I) output
+reachableCI(c:C,i:I) output
+reachableCM(c:C,m:M) output
+VCfromVC(v1:V0,e1:C0,v2:V1,e2:C1) output # contextual variable (v1,e1) points to everything that (v2,e2) points to
+CICM(ci:C,i:I,cm:C,m:M) output # in context ci, call site i can call method m in context cm
+VAfilter(v:V,a:C) output    # variable v is allowed to point to abstract object a based on type information
+VCA(v:V,e:C,a:C) output     # contextual variable (v,e) can point to abstract object a
+FA(f:F,a:C) output          # static field f can point to abstract object a OR a is the this argument of a call to Thread.start()
+AFA(a1:C,f:F,a2:C) output   # abstract object a1 can point to abstract object a2 via field f
+reachableT(t:T) output
+
+### Constraints
+
+VAfilter(v,a) :- VHfilter(v,h), CH(a,h).
+
+### Reachability
+
+reachableCM(0,0). # main method
+reachableCM(0,m)  :- clinitTM(t,m), reachableT(t). # class initializers
+reachableCM(cm,m) :- CICM(_,_,cm,m).               # target method reachable
+reachableCI(c,i)  :- reachableCM(c,m), MI(m,i).    # call site
+
+### Inter-procedural (call site i in context ci resolves to method m in context cm)
+
+CIA(c,i,a) :- IinvkArg0(i,v), VCA(v,c,a).
+CIH(c,i,h) :- CIA(c,i,a), CH(a,h).
+CIany(c,i) :- CIH(c,i,_).
+
+ICM(i,c,m) :- IHM(i,h,m), CH(c,h).
+
+CICM(c,i,d,m) :- !objI(i), reachableCI(c,i), IHM(i,h,m) , CfromIC(d,i,c), CIH(c,i,h).           # call-site-based [NAME=call]
+CICM(c,i,d,m) :- !objI(i), reachableCI(c,i), specIM(i,m), CfromIC(d,i,c), CIany(c,i).           # call-site-based [NAME=call]
+CICM(c,i,d,m) :- !objI(i), reachableCI(c,i), statIM(i,m), CfromIC(d,i,c).                       # call-site-based [NAME=call]
+
+CICM(c,i,d,m) :-  objI(i), reachableCI(c,i), ICM(i,d,m) , CIA(c,i,d).  # object-based - instance methods: use "this" [NAME=callI]
+CICM(c,i,d,m) :-  objI(i), reachableCI(c,i), specIM(i,m), CIA(c,i,d).  # object-based
+CICM(c,i,d,m) :-  objI(i), reachableCI(c,i), statIM(i,m), c=d.         # object-based - static methods: copy context [NAME=callS]
+
+### Inter-procedural (connect variables)
+
+objM(m) :- objI(i), IM(i,m), !statM(m).
+
+MspcMethArg(m,v)   :- MmethArg(m,0,v), objM(m).
+MordMethArg(m,0,v) :- MmethArg(m,0,v), !MspcMethArg(m,v).
+MordMethArg(m,z,v) :- MmethArg(m,z,v), z!=0.
+
+argIVMV(i,vi,m,vm) :- IM(i,m), IinvkArg(i,z,vi), MordMethArg(m,z,vm).
+retIVMV(i,vi,m,vm) :- IM(i,m), IinvkRet(i,z,vi), MmethRet(m,z,vm).
+
+VCA(v,c,a) :- reachableCM(c,m), MspcMethArg(m,v), a=c.
+VCfromVC(vm,cm,vi,ci) :- argIVMV(i,vi,m,vm), CICM(ci,i,cm,m). # pass in arguments [NAME=arg]
+VCfromVC(vi,ci,vm,cm) :- retIVMV(i,vi,m,vm), CICM(ci,i,cm,m). # return arguments [NAME=ret]
+VCA(v,c,a) :- VCfromVC(v,c,vv,cc), VCA(vv,cc,a), VAfilter(v,a). # If vv->a, then v->a
+
+### Intra-procedural statements
+
+RobjValAsgnInst(c,l,h) :- reachableCM(c,m), MobjValAsgnInst(m,l,h).
+RobjVarAsgnInst(c,l,r) :- reachableCM(c,m), MobjVarAsgnInst(m,l,r).
+RgetInstFldInst(c,l,b,f) :- reachableCM(c,m), MgetInstFldInst(m,l,b,f).
+RgetStatFldInst(c,l,f) :- reachableCM(c,m), MgetStatFldInst(m,l,f).
+RputInstFldInst(c,b,f,r) :- reachableCM(c,m), MputInstFldInst(m,b,f,r).
+RputStatFldInst(c,f,r) :- reachableCM(c,m), MputStatFldInst(m,f,r).
+
+VCA(l,c,a)  :- RobjValAsgnInst(c,l,h),   CfromHC(a,h,c).            # in context c, l = new h    [NAME=new]
+VCA(l,c,a)  :- RobjVarAsgnInst(c,l,r),   VCA(r,c,a), VAfilter(l,a). # in context c, l = r        [NAME=var]
+VCA(l,c,aa) :- RgetInstFldInst(c,l,b,f), VCA(b,c,a), AFA(a,f,aa). split  # in context c, l = b.f      [NAME=hr]
+VCA(l,c,a)  :- RgetStatFldInst(c,l,f),   FA(f,a).                   # in context c, l = STATIC.f [NAME=gr]
+AFA(a,f,aa) :- RputInstFldInst(c,b,f,r), VCA(b,c,a), VCA(r,c,aa). split  # in context c, b.f = r      [NAME=hw]
+FA(f,a)     :- RputStatFldInst(c,f,r),   VCA(r,c,a).                # in context c, STATIC.f = r [NAME=gw]
+
+### Reflection handling rules
+
+reachableCM(c,m) :- reachableCI(c,i), objNewInstIM(i,m).
+reachableCM(c,m) :- reachableCI(c,i), conNewInstIM(i,m).
+
+VCA(v,c,o)  :- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CfromHC(o,h,c).
+VCA(v,c,o)  :- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CfromHC(o,h,c).
+VCA(v,c,o2) :- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VCA(u,c,o), AFA(o,0,o2).
+VCA(v,c,o)  :- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CfromHC(o,h,c).
+VCA(v,c,o)  :- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CfromHC(o,h,c).
+VCA(v,c,o)  :- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CfromHC(o,h,c).
+
+### Rules propagating reachableT
+
+reachableT(t) :- reachableCI(_,i), conNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableCI(_,i), objNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableCI(_,i), clsForNameIT(i,t).
+
+reachableT(t) :- reachableCM(_,m), MobjValAsgnInst(m,_,h), HT(h,t).
+reachableT(t) :- reachableCM(_,m), staticTM(t,m).
+reachableT(t) :- reachableCM(_,m), MputStatFldInst(m,f,_), staticTF(t,f).
+reachableT(t) :- reachableCM(_,m), MgetStatFldInst(m,_,f), staticTF(t,f).
+reachableT(t) :- classT(t), reachableT(s), sub(s,t).

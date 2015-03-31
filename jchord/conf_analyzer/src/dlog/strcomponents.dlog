@@ -1,0 +1,121 @@
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=strcomponents-dlog
+
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "K.dom"
+.include "StrConst.dom"
+.include "UV.dom"
+.include "U.dom"
+
+
+.bddvarorder I0xStrConst0_H0_Z0_Z1_V0_V1_UV0_V2_U0_K0
+
+
+
+logStmt(i:I) input
+SBNew(i:I) input
+
+confUVV(i:I, o:UV, in:V) input
+objVarAsgnInst(l:V,r:V) input
+confWrites(i:I, o:UV, in:V) input
+
+SBAppendU(i:I, v0:V0,c:U0,z:K0) input
+SBAppendV(i:I, v0:V0,c:V1,z:K0) input
+
+toString(i:I,l:V,r:V) input
+IinvkArg0(i:I0,v:V1) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+VConst(v:V0, cst:StrConst) input
+Constructs(i:I,v:V) input
+VV(v1:V,v2:V) input
+reachableI(i:I) input
+UVV(u:UV,v:V) input
+UVU(uv:UV,u:U) input
+#passThru(v:V0,i:I,u:V1) input
+StrPass(i:I,v:V0,v2:V1) input
+
+RConstructs(i:I,v:V)
+RIinvkRet(i:I0,n:Z0,v:V0)
+VConstFlow(v:V0, cst:StrConst) output
+RlogStmt(i:I)
+
+
+strCtorParm(v:V0,cst:V1)
+
+logString(i:I, str:StrConst, z:K) output
+
+
+vHoldsV(v:V, str:V1, z:K) output
+vHoldsU(v:V, str:U, z:K) output
+
+logVHolds(i:I, cmpt:V, z:K) output
+logVHoldsU(i:I, cmpt:U, z:K) output
+
+
+vLen(v:V, z:K)
+confOptName(i:I, str:StrConst, z:K) output
+confOptLen(i:I,z:K) output
+confOpts(i:I) output
+
+confWritesByName(i:I, str:StrConst, z:K) output
+confOptWriteLen(i:I,z:K) output
+confOptWrites(i:I) output
+
+RConstructs(i,v) :- Constructs(i,v),reachableI(i).
+RIinvkRet(i, z, v) :- reachableI(i),IinvkRet(i, z, v).
+RlogStmt(i) :- reachableI(i),logStmt(i). 
+
+VConstFlow(v,cst) :-  objVarAsgnInst(v,v2),VConstFlow(v2,cst).
+VConstFlow(v,cst) :-  VV(v,v2),VConstFlow(v2,cst).
+VConstFlow(v,cst) :-  VConst(v,cst).
+#VConstFlow(v,cst) :- passThru(v,_,u), VConstFlow(u,cst).
+
+
+#strCtorParm(v,sv) :- RConstructs(i,v),IinvkArg(i,_,sv),VConstFlow(sv,_). split
+#strCtorParm(v,0) :- RConstructs(i,v),IinvkArg(i,_,sv),!VConstFlow(sv,_). split
+
+strCtorParm(v,sv) :- RConstructs(i,v),IinvkArg(i,_,sv),SBNew(i). split
+
+RStrPass(out,vold) :- reachableI(i),StrPass(i,out,vold).
+vHoldsV(out,str,z) :- RStrPass(out,vold),vHoldsV(vold,str,z).
+vHoldsU(out,str,z) :- RStrPass(out,vold),vHoldsU(vold,str,z).
+
+
+vHoldsV(v,str,0) :- strCtorParm(v2,str),objVarAsgnInst(v2,v).
+vHoldsV(v,str,z) :- RIinvkRet(i, _, v), SBAppendV(i, _, str,z).
+#vHoldsV(v,str,z) :- RIinvkRet(i, _, v), IinvkArg0(i,vold),vHoldsV(vold,str,z). 
+vHoldsV(v,str,z) :- vHoldsV(v2,str,z),objVarAsgnInst(v,v2).
+vHoldsV(v,str,z) :- vHoldsV(v2,str,z),VV(v,v2).
+
+vHoldsU(v,u,z) :- RIinvkRet(i, _, v), SBAppendU(i, _, u,z).
+#vHoldsU(v,u,z) :- RIinvkRet(i, _, v), IinvkArg0(i,vold),vHoldsU(vold,u,z). 
+vHoldsU(v,u,z) :- vHoldsU(v2,u,z),objVarAsgnInst(v,v2).
+vHoldsU(v,u,z) :- VV(v,v2),vHoldsU(v2,u,z).
+
+
+vLen(v,z) :- RIinvkRet(i, _, v), SBAppendU(i, _, _,z). 
+vLen(v,z) :- RIinvkRet(i, _, v), SBAppendV(i, _, _,z). 
+vLen(v,z) :- toString(_,v,vold),vLen(vold,z).
+
+logVHolds(i,vstr,z) :- vHoldsV(v,vstr,z),IinvkArg(i,_,v),RlogStmt(i).
+logVHoldsU(i,u,z) :- vHoldsU(v,u,z),IinvkArg(i,_,v),RlogStmt(i).
+
+
+logString(i,str,z) :- logVHolds(i,vstr,z),VConstFlow(vstr,str).
+logString(i,str,0) :- VConstFlow(v,str),IinvkArg(i,_,v),RlogStmt(i).
+
+
+confOptName(i,str,z) :- vHoldsV(v,vstr,z),confUVV(i,_,v),VConstFlow(vstr,str).
+confOptName(i,str,0) :- VConstFlow(v,str),confUVV(i,_,v).
+confOptLen(i,z) :- confUVV(i,_,v),vLen(v,z).
+confOpts(i) :- confOptName(i,_,_).
+
+
+confWritesByName(i,str,z) :- vHoldsV(v,vstr,z),confWrites(i,_,v),VConstFlow(vstr,str).
+confWritesByName(i,str,0) :- VConstFlow(v,str),confWrites(i,_,v).
+confOptWriteLen(i,z) :- confWrites(i,_,v),vLen(v,z).
+confOptWrites(i) :- confWritesByName(i,_,_).

@@ -1,0 +1,51 @@
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=mini-str-dlog
+
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "K.dom"
+.include "StrConst.dom"
+.include "UV.dom"
+
+.bddvarorder I0xStrConst0_H0_Z0_Z1_V0_V1_UV0_V2_K0
+
+confUVV(i:I, o:UV, in:V) input
+confWrites(i:I, o:UV, in:V) input
+
+objVarAsgnInst(l:V,r:V) input
+VV(v1:V,v2:V) input
+
+VConst(v:V0, cst:StrConst) input
+#passThru(v:V0,i:I,u:V1) input
+
+
+VConstFlow(v:V0, cst:StrConst) output
+
+confOptName(i:I, str:StrConst, z:K) output
+confOptLen(i:I,z:K) output
+confOpts(i:I) output
+
+confWritesByName(i:I, str:StrConst, z:K) output
+confOptWriteLen(i:I,z:K) output
+confOptWrites(i:I) output
+
+#################################
+
+VConstFlow(v,cst) :-  objVarAsgnInst(v,v2),VConstFlow(v2,cst).
+VConstFlow(v,cst) :-  VV(v,v2),VConstFlow(v2,cst).
+VConstFlow(v,cst) :-  VConst(v,cst).
+#VConstFlow(v,cst) :- passThru(v,_,u), VConstFlow(u,cst).
+
+
+#confOptName(i,str,z) :- vHolds(v,vstr,z),confUVV(i,_,v),VConstFlow(vstr,str).
+confOptName(i,str,0) :- VConstFlow(v,str),confUVV(i,_,v).
+confOptLen(i,0) :- confOptName(i,_,_).
+confOpts(i) :- confOptName(i,_,_).
+
+
+#confWritesByName(i,str,z) :- vHolds(v,vstr,z),confWrites(i,_,v),VConstFlow(vstr,str).
+confWritesByName(i,str,0) :- VConstFlow(v,str),confWrites(i,_,v).
+confOptWriteLen(i,0) :- confWrites(i,_,_).
+confOptWrites(i) :- confWritesByName(i,_,_).

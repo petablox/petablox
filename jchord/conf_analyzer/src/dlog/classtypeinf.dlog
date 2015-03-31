@@ -1,0 +1,61 @@
+#
+#    Ari Rabkin
+# name=classname-type-inf-dlog
+
+
+.include "V.dom"
+.include "StrConst.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "H.dom"
+.include "T.dom"
+.include "M.dom"
+.include "F.dom"
+.include "Opt.dom"
+
+.bddvarorder I0_Z0_StrConst0_Opt0_M0_V0_F0_H0_V1_V2_T0
+
+
+IM(i:I,m:M) input
+
+objVarAsgnInst(l:V,r:V) input
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+reachableI(i:I) input
+reachableM(m:M) input
+
+refFlow(v:V,site:Opt) input
+checkCastInst(l:V,t:T,r:V) input
+
+classnameFlowEdge(m:M,z:Z) input
+
+augFlow(v:V,site:Opt) output
+castTypes(t:T,site:Opt, v:V) output
+
+unsummarizedCall(i:I,m:M)
+
+summarized(m:M)
+
+summarizedCallArg(i:I,z:Z) output
+summaryEdgeV(u:V,v:V) output
+restVV(u:V,v:V) output
+
+
+summarized(m) :- classnameFlowEdge(m,_).
+unsummarizedCall(i,m) :- IM(i, m),!summarized(m).
+
+summarizedCallArg(i,z) :- IM(i, summarized),classnameFlowEdge(summarized,z).
+
+
+restVV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+restVV(u,v) :- IinvkRet(i,z,u), unsummarizedCall(i,m), MmethRet(m,z,v).
+restVV(u,v) :- IinvkArg(i,z,v), summarizedCallArg(i,z),IinvkRet(i,0,u).
+
+augFlow(v,site) :- refFlow(v,site).
+#,classOpts(site).
+augFlow(u,site) :- restVV(u,v),augFlow(v, site).
+augFlow(v,site) :- objVarAsgnInst(v,u),augFlow(u,site).
+
+castTypes(t,site,v) :- augFlow(v,site),checkCastInst(_,t,v).

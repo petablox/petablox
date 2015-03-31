@@ -1,0 +1,22 @@
+Implementation of dynamic atomicity checker (Atomizer) donated by
+Zhifeng Lai from Hong Kong University of Science and Technology.
+
+Message from Zhifeng:
+
+I implemented almost all the features (including extensions and optimizations)
+described in Cormac's POPL04 and SCP08 papers except for the followings:
+
+- I did not implement the "protected locks" heuristics in Section 4.3. The
+heuristics requires to prove that each thread always holds some lock m1
+before acquiring another lock m2. I think this cannot be done through a
+single execution.
+
+- I only implemented one of the heuristics ("Synch") for inferring atomic
+blocks. This heuristics assumes that all synchronized blocks and
+synchronized methods should be atomic. This heuristics is more commonly
+used.
+
+- I did not implement a dynamic alias analysis. Instead, I assume that each
+fields of an object has a unique memory address. Performing dynamic alias
+analysis may introduce some degree of false positives. We can consider
+whether or not to implement this later.

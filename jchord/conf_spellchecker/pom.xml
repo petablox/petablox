@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.googlecode.jchord</groupId>
+  <artifactId>confspellcheck</artifactId>
+  <packaging>jar</packaging>
+  <name>Configuration spellchecker</name>
+  <version>0.1</version>
+  <description>The spellcheck library for use in configuration spellcheck. Small and dependency-free.</description>
+  <url>http://code.google.com/p/jchord/</url>
+  <licenses>
+    <license>
+      <name>Two-clause BSD-style license.</name>
+      <url>http://www.freebsd.org/copyright/freebsd-license.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>http://jchord.googlecode.com/svn/trunk/conf_spellchecker/</url>
+    <connection>scm:svn:http://jchord.googlecode.com/svn/trunk/conf_spellchecker/</connection>
+    <developerConnection>scm:svn:https://jchord.googlecode.com/svn/trunk/conf_spellchecker/</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <id>asrabkin</id>
+      <name>Ariel Rabkin</name>
+      <email>asrabkin@gmail.com</email>
+    </developer>
+  </developers>
+  <dependencies/>
+  
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
+  
+  <build>
+    <plugins>
+<!--
+<plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <configuration>
+              <target>dist</target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+		</executions>
+		</plugin> -->
+		
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>        
+          <compilerArguments><cp> lib/hadoop-0.20.2-core.jar:lib/log4j-1.2.15.jar:lib/commons-logging-api-1.0.4.jar</cp></compilerArguments>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  <sourceDirectory>src</sourceDirectory>
+	</build>
+</project>

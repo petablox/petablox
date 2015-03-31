@@ -1,0 +1,16 @@
+396!calc_bound:(I)I@TspSolver
+163!calc_bound:(I)I@TspSolver
+402!calc_bound:(I)I@TspSolver
+302!find_solvable_tour:()I@TspSolver
+272!find_solvable_tour:()I@TspSolver
+55!find_solvable_tour:()I@TspSolver
+16!find_solvable_tour:()I@TspSolver
+308!find_solvable_tour:()I@TspSolver
+30!get_tour:(I)I@TspSolver
+36!get_tour:(I)I@TspSolver
+192!new_tour:(II)I@TspSolver
+198!new_tour:(II)I@TspSolver
+49!set_best:(I[I)V@TspSolver
+56!set_best:(I[I)V@TspSolver
+333!split_tour:(I)V@TspSolver
+341!split_tour:(I)V@TspSolver

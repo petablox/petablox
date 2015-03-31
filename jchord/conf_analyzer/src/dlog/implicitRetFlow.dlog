@@ -1,0 +1,84 @@
+#
+#
+#    Ari Rabkin
+# name=ret-ctrldep-dlog
+
+.include "V.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "M.dom"
+.include "P.dom"
+.include "U.dom"
+.include "UV.dom"
+
+
+.bddvarorder I0_Z0_M0_V0_U0_UV0_V1_P0_U1
+
+
+objVarAsgnInst(l:V,r:V) input
+objVarAsgnPrimInst(l:U,r:U) input
+
+
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+PobjVarAsgnInst(p:P0,l:V0,r:V1) input
+
+nullRet(m:M0, pt:P0) input
+PReturn(m:M0, pt:P0) input
+
+PPrimConstAssign(p:P,u:U) input
+PConstAssign(p:P,v:V) input
+
+nullConst(p:P, v:V) input
+PControlDep(p:P, uv:UV) input
+UVV(uv:UV,v:V) input
+UVU(uv:UV,u:U) input
+
+primRefDep(u:UV,v:V) input
+
+#PControlDepV(p:P, v:V) output
+#PControlDepU(p:P, u:U) output
+
+
+assignDependsOn(controlVar:UV, dest:V) output
+assignDependsOnU(controlVar:UV, dest:U) output
+
+implicitRetFlow(ctrlVar:V, m:M) output
+implicitRetFlowU(ctrlVar:U, m:M) output
+
+
+#PControlDepV(p,v) :- PControlDep(p,uv),primRefDep(uv,v).
+#PControlDepV(p,v) :- PControlDep(p,uv),UVV(uv,v).
+#PControlDepU(p,u) :- PControlDep(p,uv),UVU(uv,u).
+
+			#Can also restrict to null, or broaden to all constants
+assignDependsOn(ctrl, dest) :- PControlDep(pt, ctrl),PConstAssign(pt,dest).
+assignDependsOn(ctrl, dest2) :- assignDependsOn(ctrl, dest1),objVarAsgnInst(dest2, dest1).
+
+assignDependsOnU(ctrl, dest) :- PControlDep(pt, ctrl),PPrimConstAssign(pt,dest).
+assignDependsOnU(ctrl, dest2) :- assignDependsOnU(ctrl, dest1),objVarAsgnPrimInst(dest2, dest1).
+
+###  These are key
+	#Where a reference-type is returned, controlled by either prim or ref
+implicitRetFlow(ctrl, m) :- assignDependsOn(ctrlUV, dest), MmethRet(m,_,dest),primRefDep(ctrlUV,ctrl).
+implicitRetFlow(ctrl, m) :- assignDependsOn(ctrlUV, dest), MmethRet(m,_,dest),UVV(ctrlUV,ctrl).
+implicitRetFlowU(ctrl, m) :- assignDependsOn(ctrlUV, dest), MmethRet(m,_,dest),UVU(ctrlUV,ctrl).
+
+	#where a primitive is returned
+implicitRetFlow(ctrl, m) :- assignDependsOnU(ctrlUV, dest), MmethPrimRet(m,_,dest),primRefDep(ctrlUV,ctrl).
+implicitRetFlow(ctrl, m) :- assignDependsOnU(ctrlUV, dest), MmethPrimRet(m,_,dest),UVV(ctrlUV,ctrl).
+implicitRetFlowU(ctrl, m) :- assignDependsOnU(ctrlUV, dest), MmethPrimRet(m,_,dest),UVU(ctrlUV,ctrl).
+
+
+	#direct return, either prim or ref
+implicitRetFlow(ctrl, m) :- PControlDep(pt, ctrlUV), PReturn(m,pt),UVV(ctrlUV,ctrl).
+implicitRetFlow(ctrl, m) :- PControlDep(pt, ctrlUV), PReturn(m,pt),primRefDep(ctrlUV,ctrl).
+implicitRetFlowU(ctrl, m) :- PControlDep(pt, ctrlUV), PReturn(m,pt),UVU(ctrlUV,ctrl).
+
+
+###  Scratch
+
+
+
+
+implicitRetFlow(0,0).

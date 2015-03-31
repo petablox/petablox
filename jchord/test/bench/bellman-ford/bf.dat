@@ -1,0 +1,6 @@
+# this is an instance for the Bellman-Ford algorithm from Figure 24.4
+s  t 6  y 7
+t  x 5  y 8  z -4
+x  t -2  
+y  x -3  z 9
+z  x 7  s 2 

@@ -1,0 +1,218 @@
+#
+#
+#    Ari Rabkin
+# name=conf-flow-dlog
+
+
+.include "V.dom"
+.include "StrConst.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "H.dom"
+.include "T.dom"
+.include "M.dom"
+.include "F.dom"
+.include "UV.dom"
+.include "U.dom"
+.include "Opt.dom"
+
+.bddvarorder I0_Z0_StrConst0_Opt0_M0_V0_F0_H0_V1_V2_UV0_U0_U1_T0_Opt1
+
+
+
+APIMethod(i:I) input
+getTime(u:U, i:I) input
+primConversion(u:U,i:I,v:V) input
+primToRefConversion(v:V,i:I,u:U) input
+
+IM(i:I,m:M) input
+reachableI(i:I) input
+reachableM(m:M) input
+VH(v:V,h:H) input
+HI(h:H,i:I) input
+scopeExcludedM(m:M) input
+MPrimCmp(m:M, u1:U, u2:U) input
+unresolvedInvk(i:I) input
+enumT(t:T) input
+
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+
+
+confUVV(i:I, o:UV, in:V) input
+OptNames(o:Opt,site:I) input
+confCall(i:I)
+UVV(u:UV,v:V) input
+UVU(uv:UV,u:U) input
+
+primDataDep(l:U0,r:U1) input
+getInstFldPrimInst(l:U0,b:V,f:F) input
+putInstFldPrimInst(b:V,f:F,r:U) input
+getStatFldPrimInst(l:U,f:F) input
+putStatFldPrimInst(f:F,r:U) input
+
+MmethPrimArg(m:M0,n:Z0,u:U0) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+UcU(l:U,r:U)
+restVV(v1:V,v2:V)  output
+restIM(i:I,m:M)
+enumCast(t:T,v:V)
+enumOpts(site:Opt,t:T) output
+
+objVarAsgnInst(l:V,r:V) input
+#objValAsgnInst(l:V,h:H) input
+getInstFldInst(l:V,b:V,f:F) input
+putInstFldInst(b:V,f:F,r:V) input
+putStatFldInst(f:F,r:V) input
+getStatFldInst(l:V,f:F) input
+checkCastInst(l:V,t:T,r:V) input
+
+excludedCall(i:I)
+
+statFieldHolds(f:F,site:Opt) output
+instFieldHolds(b:H,f:F,site:Opt) output
+
+summarized(m:M)
+summarizedFlowThru(m:M,z:Z) input
+summarizedCallArg(i:I,z:Z)
+
+refAPIOpt(i:I0,n:Z0,v:V) output
+primAPIOpt(i:I0,n:Z0,u:U) output
+refFlow(v:V,site:Opt) output
+primFlow(u:U,site:Opt) output
+timeVar(u:U) output
+timeConf(site:Opt) output
+primCVar(u:U,site:Opt)
+
+stringCompare(i:I, v1:V, v2:V) input
+StrSplit(i:I, v1:V, v2:V) input
+VConstFlow(v:V0, cst:StrConst) input
+passThru(v:V0,i:I,u:V1) input
+allowableOpts(site:Opt, str:StrConst) output
+
+IRetrieve(i:I,o:V,c:V) input
+IInsert(i:I,c:V,o:V) input
+INewColl(i:I,c:V,o:V) input
+
+collHolds(collectionSrc:H,site:Opt)
+vColHolds(collection:V,site:Opt) output
+
+confMethCall(i:I,z:Z,site:Opt) output
+confReturn(m:M, site:Opt) output
+confArg(m:M,z:Z, site:Opt) output
+confConf(o:Opt0,site:I,pos:Z,s:Opt1) output
+
+
+##
+#Below rule is problematic
+#collHolds(hST,opt) :- HI(hST,site),confUVV(site,_,_),OptNames(opt,site).
+vColHolds(col,site) :- VH(col, hST),collHolds(hST,site).
+collHolds(newH,site) :- VH(v,newH),vColHolds(v,site).
+
+vColHolds(newCol,site) :- INewColl(_,newCol, oldCol),vColHolds(oldCol,site).
+
+confCall(i) :- confUVV(i,_,_).
+
+###Uncomment next five lines for summary flowthroguh
+#summarized(m) :- summarizedFlowThru(m,_).
+#summarizedCallArg(i,z) :- IM(i,m),summarizedFlowThru(m,z).
+#restIM(i,m) :- IM(i,m),!confCall(i),!summarized(m).
+#restVV(u,v) :- IinvkArg(i,z,v), summarizedCallArg(i,z),IinvkRet(i,0,u).
+#UcU(u,v) :- IinvkPrimArg(i,z,v), summarizedCallArg(i,z),IinvkPrimRet(i,0,u).
+
+
+#restIM(i,m) :- IM(i,m).
+
+##These lines are non-summary flowthrough
+restIM(i,m) :- IM(i,m),!confCall(i).
+refFlow(v,site) :- passThru(v,_,u),refFlow(u,site).
+refFlow(v,site) :- primFlow(u,site),primToRefConversion(v,_,u).
+
+
+## Args flow in
+UcU(v,u) :- IinvkPrimArg(i,z,u), IM(i,m), MmethPrimArg(m,z,v).
+restVV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+
+#But return values don't flow out through restricted summarized calls
+UcU(u,v) :- IinvkPrimRet(i,z,u), restIM(i,m), MmethPrimRet(m,z,v).  
+restVV(u,v) :- IinvkRet(i,z,u), restIM(i,m), MmethRet(m,z,v).
+
+primFlow(u,0) :- getTime(u,_).
+refFlow(v,opt) :- confUVV(site,u,_),UVV(u,v),OptNames(opt,site).
+primFlow(u,opt) :- confUVV(site,uv,_),UVU(uv,u),OptNames(opt,site).
+
+statFieldHolds(f,i) :- putStatFldInst(f,r),refFlow(r,i).
+statFieldHolds(f,i) :- putStatFldPrimInst(f,r),primFlow(r,i).
+
+instFieldHolds(bh,f,i) :- putInstFldInst(b,f,r),refFlow(r,i),VH(b,bh). split
+instFieldHolds(bh,f,i) :- putInstFldPrimInst(b,f,r),primFlow(r,i),VH(b,bh).  split
+
+refFlow(v,site) :- objVarAsgnInst(v,u),refFlow(u,site).
+refFlow(v,site) :- checkCastInst(v,_,u),refFlow(u,site).
+refFlow(v,site) :- restVV(v,u),refFlow(u,site).
+refFlow(v,site) :- StrSplit(_,v,u),refFlow(u,site).
+
+refFlow(v,site) :- statFieldHolds(f,site),getStatFldInst(v,f).
+refFlow(v,site) :- instFieldHolds(bh,f,site),getInstFldInst(v,b,f), VH(b,bh). split
+
+##This is saying that subfields of tainted objects get tainted
+#refFlow(v,site) :- getInstFldInst(v,b,_),refFlow(b,site).
+
+
+# We already have collection-aware points-to.
+#This is here to handle cases where the conf method itself returns a collection
+refFlow(v,site) :- vColHolds(colV,site),IRetrieve(_,v,colV).
+vColHolds(colV,site) :- IInsert(_,colV,v),refFlow(v,site).
+refFlow(v,site) :- IRetrieve(_,v,colV),refFlow(colV,site).
+# Handle case where we iterate over a returned conf
+refFlow(v,site) :- refFlow(prevV,site),INewColl(_,v,prevV).
+
+primFlow(v,site) :- primDataDep(v,u),primFlow(u,site).
+primFlow(v,site) :- UcU(v,u),primFlow(u,site).
+primFlow(v,site) :- statFieldHolds(f,site),getStatFldPrimInst(v,f).
+primFlow(v,site) :- instFieldHolds(bh, f,site),getInstFldPrimInst(v,b,f), VH(b,bh). split
+primFlow(v,site) :- getInstFldPrimInst(v,b,_),refFlow(b,site).
+
+primFlow(u,site) :- refFlow(v,site),primConversion(u,_,v).
+
+enumCast(t,v) :- checkCastInst(_,t,v),enumT(t).
+enumOpts(site,t) :- enumCast(t,v),refFlow(v,site).
+
+excludedCall(i) :- scopeExcludedM(m),IM(i,m).
+excludedCall(i) :- unresolvedInvk(i).
+
+refAPIOpt(i,z,v) :- excludedCall(i),IinvkArg(i,z,v). 
+primAPIOpt(i,z,v) :- excludedCall(i),IinvkPrimArg(i,z,v). 
+
+confMethCall(i,z,site) :- refAPIOpt(i,z,v),refFlow(v,site).
+confMethCall(i,z,site) :- primAPIOpt(i,z,v),primFlow(v,site).
+
+
+timeVar(v) :- primFlow(v,0).
+#primFlow(v,tSite),getTime(_,tSite).
+primCVar(v,confSite) :- primFlow(v,confSite),OptNames(confSite,_).
+
+timeConf(confSite) :- primCVar(v,confSite),timeVar(v),primDataDep(v,_). 
+timeConf(confSite) :- primCVar(v,confSite),timeVar(v2),MPrimCmp(_,v,v2 ). split
+
+allowableOpts(site,str) :- stringCompare(_,v1,v2), refFlow(v1,site), VConstFlow(v2,str).
+allowableOpts(site,str) :- stringCompare(_,v1,v2), refFlow(v2,site), VConstFlow(v1,str).
+
+
+#  Purely debug
+
+
+confConf(o,i,z,s) :-  OptNames(o,i),IinvkArg(i,z,v),refFlow(v,s).
+confConf(o,i,z,s) :-  OptNames(o,i),IinvkPrimArg(i,z,v),primFlow(v,s).
+
+
+confReturn(m,site) :- MmethPrimRet(m,0,v),primFlow(v,site).
+confReturn(m,site) :- MmethRet(m,0,v),refFlow(v,site).
+
+confArg(m,z,site) :- MmethArg(m,z,v),refFlow(v,site).
+confArg(m,z,site) :- MmethPrimArg(m,z,v),primFlow(v,site).

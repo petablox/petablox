@@ -1,0 +1,22 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=monosite-sliver-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "C.dom"
+
+.bddvarorder F0_I0xI1xI2xM0xM1_T0_V0xV1_T1_H0xH1_C0xC1xC2xC3_Z0_E0xE1_P0xP1
+
+inQueryI(i:I) input
+CICM(c:C,i:I,d:C,m:M) input
+
+insvIM(i:I,m:M) output
+outQueryI(i:I) output
+
+insvIM(i,m) :- CICM(_,i,_,m).
+outQueryI(i) :- inQueryI(i), insvIM(i,m1), insvIM(i,m2), m1!=m2.

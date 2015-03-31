@@ -1,0 +1,14 @@
+# name=ITM-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "T.dom"
+
+.bddvarorder I0xT1xM0xM1
+
+virtIM(i:I,m:M) input
+cha(n:M1,t:T1,m:M0) input
+
+ITM(i:I,t:T1,m:M) output
+
+ITM(i,t,m2) :- virtIM(i,m1), cha(m1,t,m2).

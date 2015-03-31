@@ -1,0 +1,8 @@
+<5!checkDown:(I)Z@elevator.Controls,8!checkDown:(I)Z@elevator.Controls>
+<5!checkUp:(I)Z@elevator.Controls,8!checkUp:(I)Z@elevator.Controls>
+<7!claimDown:(Ljava/lang/String;I)Z@elevator.Controls,16!claimDown:(Ljava/lang/String;I)Z@elevator.Controls>
+<7!claimUp:(Ljava/lang/String;I)Z@elevator.Controls,16!claimUp:(Ljava/lang/String;I)Z@elevator.Controls>
+<5!getDownPeople:(I)Ljava/util/Vector;@elevator.Controls,8!getDownPeople:(I)Ljava/util/Vector;@elevator.Controls>
+<5!getUpPeople:(I)Ljava/util/Vector;@elevator.Controls,8!getUpPeople:(I)Ljava/util/Vector;@elevator.Controls>
+<5!pushDown:(II)V@elevator.Controls,8!pushDown:(II)V@elevator.Controls>
+<5!pushUp:(II)V@elevator.Controls,8!pushUp:(II)V@elevator.Controls>

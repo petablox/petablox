@@ -1,0 +1,6 @@
+<Worker:()V@TspSolver,TspSolver,Worker:()V@TspSolver>
+<recursive_solve:(I)V@TspSolver,TspSolver,recursive_solve:(I)V@TspSolver>
+<run:()V@TspSolver,TspSolver,run:()V@TspSolver>
+<visit_nodes:(I)V@TspSolver,TspSolver,visit_nodes:(I)V@TspSolver>
+<run:()V@java.lang.Runnable,TspSolver,run:()V@TspSolver>
+<run:()V@java.lang.Thread,TspSolver,run:()V@TspSolver>

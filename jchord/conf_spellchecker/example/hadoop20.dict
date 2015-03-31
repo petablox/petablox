@@ -1,0 +1,394 @@
+$LD_LIBRARY_PATH	
+.*chain.reducer|chain.mapper.mapper.config..*	
+.*chain.reducer|chain.mapper.reducer.config	
+.*jobTracker/.*.jar	
+.*jobTracker/.*.xml	
+.*localRunner/.*.xml	
+CONF-.*aggregator.descriptor..*	
+CONF-.*aggregator.descriptor.num	Integral
+CONF-.*chain.reducer|chain.mapper.mapper.class..*	ClassName	org.apache.hadoop.mapred.Mapper org.apache.hadoop.conf.Configurable
+CONF-.*chain.reducer|chain.mapper.reducer.class	ClassName	org.apache.hadoop.mapred.Reducer org.apache.hadoop.conf.Configurable
+CONF-.*chain.reducer|chain.mapper.reducer.config|.mapper.config.	
+CONF-.*chain.reducer|chain.mapper.size	Integral
+CONF-.*fs..*.impl	ClassName	org.apache.hadoop.fs.FileSystem org.apache.hadoop.fs.LocalFileSystem org.apache.hadoop.fs.ChecksumFileSystem org.apache.hadoop.conf.Configurable
+CONF-.*fs.ftp.password..*	
+CONF-.*fs.ftp.user..*	
+CONF-.*hadoop.rpc.socket.factory.class..*	ClassName
+CONF-.*mapred.queue..*.		{*}
+CONF-.*mo.namedOutput..*.format	ClassName
+CONF-.*mo.namedOutput..*.key	ClassName
+CONF-.*mo.namedOutput..*.value	ClassName
+CONF-aggregate.max.num.unique.values	Integral
+CONF-chain.mapper.byValue	Boolean
+CONF-chain.mapper.output.key.class	ClassName
+CONF-chain.mapper.output.value.class	ClassName
+CONF-chain.reducer.byValue	Boolean
+CONF-chain.reducer.output.key.class	ClassName
+CONF-chain.reducer.output.value.class	ClassName
+CONF-dfs.access.time.precision	Time
+CONF-dfs.balance.bandwidthPerSec	Integral
+CONF-dfs.balancer.movedWinWidth	Integral
+CONF-dfs.block.size	Integral
+CONF-dfs.blockreport.initialDelay	Integral
+CONF-dfs.blockreport.intervalMsec	Time
+CONF-dfs.client.block.write.locateFollowingBlock.retries	Integral
+CONF-dfs.client.block.write.retries	Integral
+CONF-dfs.client.max.block.acquire.failures	Integral
+CONF-dfs.data.dir	File
+CONF-dfs.datanode.dns.interface	NetworkInterface
+CONF-dfs.datanode.dns.nameserver		{default}
+CONF-dfs.datanode.du.reserved	Integral
+CONF-dfs.datanode.handler.count	Integral
+CONF-dfs.datanode.https.address	Address
+CONF-dfs.datanode.ipc.address	Address
+CONF-dfs.datanode.max.xcievers	Integral
+CONF-dfs.datanode.numblocks	Integral
+CONF-dfs.datanode.scan.period.hours	Time
+CONF-dfs.datanode.simulateddatastorage	Boolean
+CONF-dfs.datanode.socket.write.timeout	Time
+CONF-dfs.datanode.startup	Special	{null}
+CONF-dfs.datanode.transferTo.allowed	Boolean
+CONF-dfs.default.chunk.view.size	Integral
+CONF-dfs.df.interval	Time
+CONF-dfs.heartbeat.interval	Time
+CONF-dfs.hosts	File
+CONF-dfs.hosts.exclude	File
+CONF-dfs.https.address	Address
+CONF-dfs.https.client.keystore.resource	
+CONF-dfs.https.enable	Boolean
+CONF-dfs.https.need.client.auth	Boolean
+CONF-dfs.https.server.keystore.resource	
+CONF-dfs.max-repl-streams	Integral
+CONF-dfs.max.objects	Integral
+CONF-dfs.name.dir	File
+CONF-dfs.name.edits.dir	File
+CONF-dfs.namenode.decommission.interval	Time
+CONF-dfs.namenode.decommission.nodes.per.interval	Integral
+CONF-dfs.namenode.handler.count	Integral
+CONF-dfs.namenode.startup	Special	{null}
+CONF-dfs.network.script	
+CONF-dfs.permissions	Boolean
+CONF-dfs.permissions.supergroup	
+CONF-dfs.read.prefetch.size	Integral
+CONF-dfs.replication	Integral
+CONF-dfs.replication.considerLoad	Boolean
+CONF-dfs.replication.interval	Time
+CONF-dfs.replication.max	Time
+CONF-dfs.replication.min	Integral
+CONF-dfs.replication.pending.timeout.sec	Time
+CONF-dfs.safemode.extension	Time
+CONF-dfs.safemode.threshold.pct	Fraction
+CONF-dfs.socket.timeout	Time
+CONF-dfs.support.append	Boolean
+CONF-dfs.umask	Integral
+CONF-dfs.upgrade.permission	Integral
+CONF-dfs.web.ugi	
+CONF-dfs.write.packet.size	Integral
+CONF-fs.checkpoint.dir	File
+CONF-fs.checkpoint.edits.dir	File
+CONF-fs.checkpoint.period	Time
+CONF-fs.checkpoint.size	Integral
+CONF-fs.default.name	URI
+CONF-fs.ftp.host	Address
+CONF-fs.ftp.host.port	Portno
+CONF-fs.inmemory.size.mb	Integral
+CONF-fs.kfs.metaServerHost	
+CONF-fs.kfs.metaServerPort	Integral
+CONF-fs.local.block.size	Integral
+CONF-fs.s3.awsAccessKeyId	
+CONF-fs.s3.awsSecretAccessKey	
+CONF-fs.s3.buffer.dir	File
+CONF-fs.s3.maxRetries	Integral
+CONF-fs.s3.sleepTimeSeconds	Integral
+CONF-fs.trash.interval	Time
+CONF-hadoop.http.filter.initializers	ClassName	org.apache.hadoop.http.FilterInitializer org.apache.hadoop.conf.Configurable
+CONF-hadoop.job.history.location	
+CONF-hadoop.job.history.user.location		{none}
+CONF-hadoop.job.ugi	
+CONF-hadoop.native.lib	Boolean
+CONF-hadoop.net.static.resolutions	
+CONF-hadoop.pipes.command-file.keep	Boolean
+CONF-hadoop.pipes.executable	
+CONF-hadoop.pipes.executable.interpretor	
+CONF-hadoop.pipes.java.mapper	Boolean
+CONF-hadoop.pipes.java.recordreader	Boolean
+CONF-hadoop.pipes.java.recordwriter	Boolean
+CONF-hadoop.pipes.java.reducer	Boolean
+CONF-hadoop.pipes.partitioner	ClassName	org.apache.hadoop.mapred.Partitioner org.apache.hadoop.conf.Configurable
+CONF-hadoop.rpc.socket.factory.class.default	ClassName
+CONF-hadoop.security.authorization	Boolean
+CONF-hadoop.security.authorization.policyprovider	ClassName	org.apache.hadoop.security.authorize.PolicyProvider org.apache.hadoop.conf.Configurable
+CONF-hadoop.socks.server	Integral list
+CONF-hadoop.util.hash.type	Special	{murmur,jenkins}
+CONF-heartbeat.recheck.interval	Time
+CONF-io.bytes.per.checksum	Integral
+CONF-io.compression.codecs	
+CONF-io.file.buffer.size	Integral
+CONF-io.map.index.interval	Integral
+CONF-io.map.index.skip	Integral
+CONF-io.mapfile.bloom.error.rate	Fraction
+CONF-io.mapfile.bloom.size	Integral
+CONF-io.seqfile.compress.blocksize	Integral
+CONF-io.seqfile.compression.type	Special	{null}
+CONF-io.serializations	ClassName
+CONF-io.skip.checksum.errors	Boolean
+CONF-io.sort.factor	Integral
+CONF-io.sort.mb	Integral
+CONF-io.sort.record.percent	Fraction
+CONF-io.sort.spill.percent	Fraction
+CONF-ipc.client.connect.max.retries	Integral
+CONF-ipc.client.connection.maxidletime	Time
+CONF-ipc.client.idlethreshold	Integral
+CONF-ipc.client.kill.max	Integral
+CONF-ipc.client.tcpnodelay	Boolean
+CONF-ipc.ping.interval	Integral
+CONF-ipc.server.listen.queue.size	Integral
+CONF-ipc.server.tcpnodelay	Boolean
+CONF-job.end.notification.url	
+CONF-job.end.retry.attempts	Integral
+CONF-job.end.retry.interval	Time
+CONF-job.local.dir	
+CONF-jobclient.output.filter	Special	{null}
+CONF-keep.failed.task.files	Boolean
+CONF-keep.task.files.pattern	Regex
+CONF-key.value.separator.in.input.line	
+CONF-local.cache.size	Integral
+CONF-map.input.file	
+CONF-map.output.key.field.separator	
+CONF-map.output.key.value.fields.spec	Integral list
+CONF-map.sort.class	ClassName	org.apache.hadoop.util.IndexedSorter org.apache.hadoop.conf.Configurable
+CONF-mapred.acls.enabled	Boolean
+CONF-mapred.cache.archives	
+CONF-mapred.cache.archives.timestamps	
+CONF-mapred.cache.files	
+CONF-mapred.cache.files.timestamps	
+CONF-mapred.cache.localArchives	
+CONF-mapred.cache.localFiles	
+CONF-mapred.child.java.opts	
+CONF-mapred.child.tmp	
+CONF-mapred.child.ulimit	
+CONF-mapred.cluster.average.blacklist.threshold	Fraction
+CONF-mapred.cluster.map.memory.mb	Integral
+CONF-mapred.cluster.max.map.memory.mb	Integral
+CONF-mapred.cluster.max.reduce.memory.mb	Integral
+CONF-mapred.cluster.reduce.memory.mb	Integral
+CONF-mapred.combiner.class	ClassName	org.apache.hadoop.mapred.Reducer org.apache.hadoop.conf.Configurable
+CONF-mapred.compress.map.output	Boolean
+CONF-mapred.create.symlink		{yes}
+CONF-mapred.data.field.separator	
+CONF-mapred.debug.out.lines	Integral
+CONF-mapred.hosts	File
+CONF-mapred.hosts.exclude	File
+CONF-mapred.inmem.merge.threshold	Integral
+CONF-mapred.input.dir	
+CONF-mapred.input.dir.formats	ClassName list
+CONF-mapred.input.dir.mappers	ClassName list
+CONF-mapred.input.format.class	ClassName	org.apache.hadoop.mapred.InputFormat org.apache.hadoop.conf.Configurable
+CONF-mapred.input.pathFilter.class	ClassName	org.apache.hadoop.fs.PathFilter org.apache.hadoop.conf.Configurable
+CONF-mapred.jar	
+CONF-mapred.jdbc.driver.class	ClassName
+CONF-mapred.jdbc.input.class	ClassName	org.apache.hadoop.hdfs.protocol.DatanodeID org.apache.hadoop.hdfs.server.common.GenerationStamp org.apache.hadoop.hdfs.server.namenode.CheckpointSignature org.apache.hadoop.io.BinaryComparable org.apache.hadoop.io.BooleanWritable org.apache.hadoop.io.ByteWritable org.apache.hadoop.io.DoubleWritable org.apache.hadoop.io.FloatWritable org.apache.hadoop.io.IntWritable org.apache.hadoop.io.LongWritable org.apache.hadoop.io.MD5Hash org.apache.hadoop.conf.Configurable org.apache.hadoop.io.UTF8 org.apache.hadoop.io.VIntWritable org.apache.hadoop.io.VLongWritable java.io.Serializable org.apache.hadoop.io.Writable org.apache.hadoop.mapreduce.ID org.apache.hadoop.mapred.JVMId org.apache.hadoop.io.Text org.apache.hadoop.io.WritableComparable org.apache.hadoop.io.BytesWritable org.apache.hadoop.mapred.join.TupleWritable org.apache.hadoop.mapred.lib.db.DBWritable org.apache.hadoop.io.NullWritable org.apache.hadoop.mapreduce.JobID org.apache.hadoop.mapreduce.TaskAttemptID org.apache.hadoop.mapreduce.TaskID org.apache.hadoop.util.bloom.Key
+CONF-mapred.jdbc.input.conditions	
+CONF-mapred.jdbc.input.count.query	
+CONF-mapred.jdbc.input.field.names	
+CONF-mapred.jdbc.input.orderby	
+CONF-mapred.jdbc.input.query	
+CONF-mapred.jdbc.input.table.name	
+CONF-mapred.jdbc.output.field.names	
+CONF-mapred.jdbc.output.table.name	
+CONF-mapred.jdbc.password	
+CONF-mapred.jdbc.url	
+CONF-mapred.jdbc.username	
+CONF-mapred.job.classpath.archives	
+CONF-mapred.job.classpath.files	
+CONF-mapred.job.map.memory.mb	Integral
+CONF-mapred.job.name	
+CONF-mapred.job.priority	Special	{null}
+CONF-mapred.job.queue.name	
+CONF-mapred.job.reduce.input.buffer.percent	Fraction
+CONF-mapred.job.reduce.memory.mb	Integral
+CONF-mapred.job.reduce.total.mem.bytes	Integral
+CONF-mapred.job.reuse.jvm.num.tasks	Integral
+CONF-mapred.job.shuffle.input.buffer.percent	Fraction
+CONF-mapred.job.shuffle.merge.percent	Fraction
+CONF-mapred.job.split.file	
+CONF-mapred.job.tracker	Address	{local}
+CONF-mapred.job.tracker.handler.count	Integral
+CONF-mapred.job.tracker.persist.jobstatus.active	Boolean
+CONF-mapred.job.tracker.persist.jobstatus.dir	
+CONF-mapred.job.tracker.persist.jobstatus.hours	Time
+CONF-mapred.jobinit.threads	Integral
+CONF-mapred.jobtracker.completeuserjobs.maximum	Integral
+CONF-mapred.jobtracker.instrumentation	ClassName	org.apache.hadoop.mapred.JobTrackerInstrumentation
+CONF-mapred.jobtracker.job.history.block.size	Integral
+CONF-mapred.jobtracker.maxtasks.per.job	Integral
+CONF-mapred.jobtracker.restart.recover	Boolean
+CONF-mapred.jobtracker.retirejob.check	Time
+CONF-mapred.jobtracker.retirejob.interval	Time
+CONF-mapred.jobtracker.taskScheduler	ClassName	org.apache.hadoop.mapred.TaskScheduler org.apache.hadoop.conf.Configurable
+CONF-mapred.jobtracker.taskScheduler.maxRunningTasksPerJob	Integral
+CONF-mapred.jobtracker.taskalloc.capacitypad	Fraction
+CONF-mapred.join.expr	
+CONF-mapred.join.keycomparator	ClassName
+CONF-mapred.line.input.format.linespermap	Integral
+CONF-mapred.linerecordreader.maxlength	Integral
+CONF-mapred.local.dir	File
+CONF-mapred.local.dir.minspacekill	Integral
+CONF-mapred.local.dir.minspacestart	Integral
+CONF-mapred.map.max.attempts	Integral
+CONF-mapred.map.multithreadedrunner.class	ClassName	org.apache.hadoop.mapreduce.Mapper org.apache.hadoop.conf.Configurable
+CONF-mapred.map.multithreadedrunner.threads	Integral
+CONF-mapred.map.output.compression.codec	ClassName
+CONF-mapred.map.runner.class	ClassName	org.apache.hadoop.mapred.MapRunnable org.apache.hadoop.conf.Configurable
+CONF-mapred.map.task.debug.script	
+CONF-mapred.map.tasks	Time
+CONF-mapred.map.tasks.speculative.execution	Boolean
+CONF-mapred.mapoutput.key.class	ClassName	org.apache.hadoop.io.Writable org.apache.hadoop.io.WritableComparable org.apache.hadoop.conf.Configurable
+CONF-mapred.mapoutput.value.class	ClassName	org.apache.hadoop.io.Writable org.apache.hadoop.conf.Configurable
+CONF-mapred.mapper.class	ClassName	org.apache.hadoop.mapred.Mapper org.apache.hadoop.conf.Configurable
+CONF-mapred.mapper.new-api	Boolean
+CONF-mapred.mapper.regex	
+CONF-mapred.mapper.regex.group	Integral
+CONF-mapred.max.map.failures.percent	Integral
+CONF-mapred.max.reduce.failures.percent	Integral
+CONF-mapred.max.split.size	Integral
+CONF-mapred.max.tracker.blacklists	Integral
+CONF-mapred.max.tracker.failures	Integral
+CONF-mapred.merge.recordsBeforeProgress	Integral
+CONF-mapred.min.split.size	Integral
+CONF-mapred.output.committer.class	ClassName	org.apache.hadoop.mapred.FileOutputCommitter org.apache.hadoop.mapred.OutputCommitter org.apache.hadoop.conf.Configurable
+CONF-mapred.output.compress	Boolean
+CONF-mapred.output.compression.codec	ClassName
+CONF-mapred.output.compression.type	Special	{null}
+CONF-mapred.output.dir	
+CONF-mapred.output.format.class	ClassName	org.apache.hadoop.mapred.OutputFormat org.apache.hadoop.conf.Configurable
+CONF-mapred.output.key.class	ClassName	org.apache.hadoop.io.Writable org.apache.hadoop.io.WritableComparable org.apache.hadoop.conf.Configurable
+CONF-mapred.output.key.comparator.class	ClassName	org.apache.hadoop.io.RawComparator org.apache.hadoop.conf.Configurable
+CONF-mapred.output.value.class	ClassName	org.apache.hadoop.io.Writable org.apache.hadoop.conf.Configurable
+CONF-mapred.output.value.groupfn.class	ClassName	org.apache.hadoop.io.RawComparator org.apache.hadoop.conf.Configurable
+CONF-mapred.outputformat.numOfTrailingLegs	Integral
+CONF-mapred.partitioner.class	ClassName	org.apache.hadoop.mapred.Partitioner org.apache.hadoop.conf.Configurable
+CONF-mapred.pipes.user.inputformat	ClassName	org.apache.hadoop.mapred.InputFormat org.apache.hadoop.conf.Configurable
+CONF-mapred.queue.names	
+CONF-mapred.reduce.copy.backoff	Time
+CONF-mapred.reduce.max.attempts	Integral
+CONF-mapred.reduce.parallel.copies	Integral
+CONF-mapred.reduce.slowstart.completed.maps	Fraction
+CONF-mapred.reduce.task.debug.script	
+CONF-mapred.reduce.tasks	Time
+CONF-mapred.reduce.tasks.speculative.execution	Boolean
+CONF-mapred.reducer.class	ClassName	org.apache.hadoop.mapred.Reducer org.apache.hadoop.conf.Configurable
+CONF-mapred.reducer.new-api	Boolean
+CONF-mapred.seqbinary.output.key.class	ClassName
+CONF-mapred.seqbinary.output.value.class	ClassName
+CONF-mapred.skip.attempts.to.start.skipping	Integral
+CONF-mapred.skip.map.auto.incr.proc.count	Boolean
+CONF-mapred.skip.map.max.skip.records	Integral
+CONF-mapred.skip.on	Boolean
+CONF-mapred.skip.out.dir		{none}
+CONF-mapred.skip.reduce.auto.incr.proc.count	Boolean
+CONF-mapred.skip.reduce.max.skip.groups	Integral
+CONF-mapred.submit.replication	Integral
+CONF-mapred.system.dir	
+CONF-mapred.task.cache.levels	Integral
+CONF-mapred.task.default.maxvmem	Integral
+CONF-mapred.task.id	Time list
+CONF-mapred.task.is.map	Boolean
+CONF-mapred.task.limit.maxvmem	Integral
+CONF-mapred.task.maxvmem	Integral
+CONF-mapred.task.partition	Integral
+CONF-mapred.task.profile	Boolean
+CONF-mapred.task.profile.params	
+CONF-mapred.task.profile.reduces|mapred.task.profile.maps	IntRange
+CONF-mapred.task.timeout	Time
+CONF-mapred.tasktracker.dns.interface	NetworkInterface
+CONF-mapred.tasktracker.dns.nameserver		{default}
+CONF-mapred.tasktracker.events.batchsize	Integral
+CONF-mapred.tasktracker.expiry.interval	Time
+CONF-mapred.tasktracker.indexcache.mb	Integral
+CONF-mapred.tasktracker.instrumentation	ClassName	org.apache.hadoop.mapred.TaskTrackerInstrumentation
+CONF-mapred.tasktracker.map.tasks.maximum	Time
+CONF-mapred.tasktracker.memory_calculator_plugin	ClassName	org.apache.hadoop.util.MemoryCalculatorPlugin org.apache.hadoop.conf.Configurable
+CONF-mapred.tasktracker.pmem.reserved	
+CONF-mapred.tasktracker.procfsbasedprocesstree.sleeptime-before-sigkill	Integral
+CONF-mapred.tasktracker.reduce.tasks.maximum	Time
+CONF-mapred.tasktracker.taskmemorymanager.monitoring-interval	Time
+CONF-mapred.tasktracker.vmem.reserved	
+CONF-mapred.text.key.comparator.options	
+CONF-mapred.text.key.partitioner.options	
+CONF-mapred.textoutputformat.separator	
+CONF-mapred.used.genericoptionsparser	Boolean
+CONF-mapred.userlog.limit.kb	Integral
+CONF-mapred.userlog.retain.hours	Time
+CONF-mapred.working.dir	
+CONF-mapreduce.combine.class	ClassName	org.apache.hadoop.mapreduce.Reducer org.apache.hadoop.conf.Configurable
+CONF-mapreduce.inputformat.class	ClassName	org.apache.hadoop.mapreduce.InputFormat org.apache.hadoop.conf.Configurable
+CONF-mapreduce.map.class	ClassName	org.apache.hadoop.mapreduce.Mapper org.apache.hadoop.conf.Configurable
+CONF-mapreduce.outputformat.class	ClassName	org.apache.hadoop.mapreduce.OutputFormat org.apache.hadoop.conf.Configurable
+CONF-mapreduce.partitioner.class	ClassName	org.apache.hadoop.mapreduce.Partitioner org.apache.hadoop.conf.Configurable
+CONF-mapreduce.reduce.class	ClassName	org.apache.hadoop.mapreduce.Reducer org.apache.hadoop.conf.Configurable
+CONF-min.num.spills.for.combine	Integral
+CONF-mo.config.namedOutput	
+CONF-mo.namedOutputs	
+CONF-num.key.fields.for.partition	Integral
+CONF-reduce.output.key.value.fields.spec	Integral list
+CONF-sequencefile.filter.class	ClassName	org.apache.hadoop.mapred.SequenceFileInputFilter$Filter org.apache.hadoop.conf.Configurable
+CONF-sequencefile.filter.frequency	Integral
+CONF-sequencefile.filter.regex	
+CONF-session.id	
+CONF-slave.host.name	
+CONF-ssl.client.keystore.keypassword	
+CONF-ssl.client.keystore.location	
+CONF-ssl.client.keystore.password	
+CONF-ssl.client.keystore.type	
+CONF-ssl.client.truststore.location	
+CONF-ssl.client.truststore.password	
+CONF-ssl.client.truststore.type	
+CONF-ssl.server.keystore.keypassword	
+CONF-ssl.server.keystore.location	
+CONF-ssl.server.keystore.password	
+CONF-ssl.server.keystore.type	
+CONF-ssl.server.truststore.location	
+CONF-ssl.server.truststore.password	
+CONF-ssl.server.truststore.type	
+CONF-task.memory.mgmt.enabled	Boolean
+CONF-tasktracker.contention.tracking	Boolean
+CONF-tasktracker.http.threads	Integral
+CONF-tmparchives	
+CONF-tmpfiles	
+CONF-tmpjars	
+CONF-topology.node.switch.mapping.impl	ClassName	org.apache.hadoop.net.DNSToSwitchMapping org.apache.hadoop.conf.Configurable
+CONF-topology.script.file.name	
+CONF-topology.script.number.args	Integral
+CONF-total.order.partitioner.max.trie.depth	Integral
+CONF-total.order.partitioner.natural.order	Boolean
+CONF-total.order.partitioner.path		{_partition.lst}
+CONF-user.name	
+CONF-webinterface.private.actions	Boolean
+PROP-cTime	Time
+PROP-distributedUpgradeState	Boolean
+PROP-distributedUpgradeVersion	Integral
+PROP-hadoop.log.dir	File
+PROP-hadoop.policy.file	
+PROP-java.class.path	
+PROP-java.home	
+PROP-java.io.tmpdir	
+PROP-java.library.path	
+PROP-layoutVersion	Integral
+PROP-line.separator	
+PROP-namespaceID	Integral
+PROP-os.name	
+PROP-path.separator	
+PROP-storageID	
+PROP-storageType	Special	{null}
+PROP-user.dir	File
+PROP-user.home	
+PROP-user.name	
+dfs.datanode.address|dfs.datanode.port|dfs.datanode.bindAddress	Address
+dfs.datanode.http.address|dfs.datanode.info.port|dfs.datanode.info.bindAddress	Address
+dfs.http.address|dfs.info.port|dfs.info.bindAddress	Address
+dfs.secondary.http.address|dfs.secondary.info.port|dfs.secondary.info.bindAddress	Address
+hadoop.job.ugi	
+mapred.job.tracker.http.address|mapred.job.tracker.info.port|mapred.job.tracker.info.bindAddress	Address
+mapred.task.tracker.http.address|tasktracker.http.port|tasktracker.http.bindAddress	Address
+mapred.task.tracker.report.address|mapred.task.tracker.report.port|mapred.task.tracker.report.bindAddress	Address

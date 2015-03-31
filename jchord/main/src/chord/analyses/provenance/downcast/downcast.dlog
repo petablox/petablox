@@ -1,0 +1,39 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=pro-downcast-dlog
+
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "C.dom"
+
+.bddvarorder M0_T0_V0xV1_T1_C0xH0xC1
+
+###
+# Relations
+###
+
+MobjVarAsgnInst(m:M,l:V,r:V) input
+reachableCM(c:C,m:M) input
+reachableCast(t:T,v:V)
+CVC(c:C,v:V,o:C) input
+CH(c:C,h:H) input
+sub(s:T1,t:T0) input
+HT(h:H0,t:T1) input
+McheckCastInst(m:M, v1:V, t:T, v2:V) input
+checkExcludedM(m:M) input
+ptsVH(v:V,h:H) output
+ptsVT(v:V,t:T) output
+unsafeDowncast(v:V,t:T) output
+
+reachableCast(t,v2) :- McheckCastInst(m,_,t,v2), reachableCM(_,m), !checkExcludedM(m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
+
+unsafeDowncast(v,t1) :- reachableCast(t1,v), ptsVT(v,t2), !sub(t2,t1).

@@ -1,0 +1,91 @@
+
+
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=ftrack-dlog
+
+.include "F.dom"
+.include "M.dom"
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "K.dom"
+
+.bddvarorder I0xM0xM1_T0_V0xV1_E0_H0_F0_Z0_F1_UV0_K0
+
+
+MmethArg(m:M0,n:Z0,v:V0) input
+MmethRet(m:M0,n:Z0,v:V1) input
+IinvkArg0(i:I0,v:V1) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+MI(m:M,i:I) input
+statIM(i:I,m:M) input
+specIM(i:I,m:M) input
+virtIM(i:I,m:M) input
+MobjValAsgnInst(m:M,l:V,h:H) input
+MobjVarAsgnInst(m:M,l:V,r:V) input
+MgetInstFldInst(m:M,l:V,b:V,f:F) input
+MputInstFldInst(m:M,b:V,f:F,r:V) input
+MgetStatFldInst(m:M,l:V,f:F) input
+MputStatFldInst(m:M,f:F,r:V) input
+SBAppendV(i:I, v0:V,v1:V1,z:K) input
+IRetrieve(i:I,o:V,c:V) input
+IInsert(i:I,c:V,o:V) input
+
+reachableI(i:I) input
+reachableM(m:M) input
+IM(i:I,m:M) input
+
+toString(i:I,l:V0,v:V1) input
+
+logStmt(i:I) input
+ 
+logF(i:I,f:F) output
+fFrom(v:V, f:F)
+fTo(v:V, f:F) 
+fCopy(v:V, f:F) output
+fEquiv(f1:F0, f2:F1) output
+sContains(v:V, f:F) output
+
+objValAsgnInst(l:V,h:H) 
+objVarAsgnInst(l:V,r:V) 
+getInstFldInst(l:V,b:V,f:F) 
+putInstFldInst(b:V,f:F,r:V) 
+getStatFldInst(l:V,f:F) 
+putStatFldInst(f:F,r:V) 
+VV(v1:V,v2:V)
+
+
+objValAsgnInst(l,h)   :- reachableM(m), MobjValAsgnInst(m,l,h).
+objVarAsgnInst(l,r)   :- reachableM(m), MobjVarAsgnInst(m,l,r).
+getInstFldInst(l,b,f) :- reachableM(m), MgetInstFldInst(m,l,b,f).
+putInstFldInst(b,f,r) :- reachableM(m), MputInstFldInst(m,b,f,r).
+getStatFldInst(l,f)   :- reachableM(m), MgetStatFldInst(m,l,f).
+putStatFldInst(f,r)   :- reachableM(m), MputStatFldInst(m,f,r).
+
+VV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+VV(u,v) :- IinvkRet(i,z,u), IM(i,m), MmethRet(m,z,v).
+
+fCopy(v,f) :- fFrom(v,f).
+fCopy(v,f) :- fTo(v,f).
+
+fFrom(v,f) :- getStatFldInst(v,f).
+fFrom(v,f) :- getInstFldInst(v,_,f).
+
+fFrom(v2,f) :- VV(v2,v),fFrom(v,f).
+fFrom(v2,f) :- objVarAsgnInst(v2,v),fFrom(v,f).
+fFrom(v2,f) :- IRetrieve(_,v2,cv),fFrom(cv,f).
+
+fEquiv(f,f2) :- fFrom(v,f),putStatFldInst(f2,v).
+fEquiv(f,f2) :- fFrom(v,f),putInstFldInst(_,f2,v).
+
+fTo(v,f) :- putStatFldInst(f,v).
+fTo(v,f) :- putInstFldInst(_,f,v).
+fTo(v,f) :- VV(v2,v),fTo(v2,f).
+
+#sContains(v,f) :- IinvkRet(i,_,v),SBAppendV(i,_,v2,_),fCopy(v2,f). split
+sContains(v,f) :- IinvkRet(i,_,v),SBAppendV(i,v2,_,_),sContains(v2,f). split
+sContains(v,f) :- toString(_,v,v0),sContains(v0,f).
+
+logF(i,f) :- logStmt(i),IinvkArg(i,1,v),sContains(v,f).

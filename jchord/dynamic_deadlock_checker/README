@@ -1,0 +1,7 @@
+Pallavi Joshi's source code for the generalized dynamic deadlock
+detection algoritnm presented in the paper:
+
+An Effective Dynamic Analysis for Detecting Generalized Deadlocks  
+Pallavi Joshi, Mayur Naik, Koushik Sen, and David Gay 
+FSE'10: ACM Symposium on Foundations of Software Engineering 
+http://berkeley.intel-research.net/mnaik/pubs/fse10/paper.pdf

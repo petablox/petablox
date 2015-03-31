@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="compile">
+  <property name="debuglevel" value="source,lines,vars"/>
+  <property name="target" value="1.5"/>
+  <property name="source" value="1.5"/>
+  <target name="clean">
+    <delete dir="classes"/>
+    <delete dir="dacapo/classes"/>
+    <delete dir="scratch"/>
+    <delete dir="chord_output"/>
+  </target>
+  <target name="compile">
+    <ant dir="dacapo"/>
+    <mkdir dir="classes"/>
+    <javac debug="true" debuglevel="${debuglevel}" source="${source}" target="${target}"
+			srcdir="adaptor" destdir="classes" includeAntRuntime="false">
+        <classpath>
+            <pathelement location="dacapo/classes"/>
+            <pathelement location="jar/lucene-core-2.4.jar"/>
+        </classpath>
+    </javac>
+  </target>
+</project>

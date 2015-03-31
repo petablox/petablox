@@ -1,0 +1,47 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# name=cspa-sliver-init-dlog
+# Call-graph, pointer analysis.  This part is common to all slivers-based analyses.
+# This is the part *independent* of the slivers-based heap abstraction (domain C).
+# Author: Percy Liang (pliang@cs.berkeley.edu)
+
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_Z0_E0xE1
+
+### Relations
+
+# Static program inputs.
+MI(m:M,i:I) input # Method m contains call site i
+MH(m:M,h:H) input # Method m contains allocation site h
+statIM(i:I,m:M) input # Call site i resolves to static method m
+IinvkArg(i:I0,n:Z0,v:V1) input
+
+# Computed from 0-CFA.
+IM(i:I,m:M) input # call site i can resolve to method m
+VH(v:V,h:H) input # Whether variable v can point to an object allocated at h
+reachableM(m:M) input # method m is reachable
+
+# Output one-time relations.
+reachableH(h:H) output # allocation site h is reachable
+skipMM(m:M,n:M) output # m can reach n via a sequence of calls where m is instance method, rest (if any) are static methods
+HtoM(h:H,m:M) output # h can be the "this" argument calling method that skips to m
+
+### Constraints
+
+reachableH(h) :- reachableM(m), MH(m,h).
+
+# For object-based refinement
+skipMM(m,n) :- m=n, !statIM(_,m).
+skipMM(m,n) :- skipMM(m,q), MI(q,i), statIM(i,n). # Can extend q to n using static method
+HtoM(h,n)   :- IinvkArg(i,0,v), VH(v,h), reachableH(h), IM(i,m), skipMM(m,n).

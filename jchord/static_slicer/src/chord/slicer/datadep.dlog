@@ -1,0 +1,114 @@
+# name=datadep-dlog
+
+# Relation that represents data dependency among vertices in a SDG
+# X : vertices that represent actual-in/out, formal-in/out in a SDG
+# P : vertices for other program points
+
+.include "X.dom"
+.include "E.dom"
+.include "F.dom"
+.include "P.dom"
+.include "U.dom"
+
+# most significant: P,X,E,U
+#1m23s X < E < P < U
+#.bddvarorder E0xE1_X0xX1_P0xP1xP2_U0_F0
+
+#.bddvarorder E0xE1_X0xX1_P0xP1xP2_U0_F0_M0
+#.bddvarorder E0xE1_X0xX1_M0_P0xP1xP2_U0_F0
+
+#.bddvarorder X0xX1_P0xP1xP2_E0xE1_U0_F0
+#.bddvarorder E0xE1_X0xX1_P0xP1xP2_U0_F0
+#.bddvarorder P0xP1xP2_E0xE1_X0xX1_U0_F0
+
+# P < E is very important for inPE :- outPE, PP rule to converge
+# UxP is also very important
+.bddvarorder U0xP0xP1xP2_E0xE1_X0xX1_F0
+
+###
+# Relations
+###
+
+PP(p0:P0,p1:P1) input
+
+## x is formal-in or actual-out at program point p and is associated with register u
+formalArgOrActualRetXPU(x:X0,p:P0,u:U0) input
+## x is formal-in or actual-out at program point p and is associated with static field f
+formalArgOrActualRetXPG(x:X0,p:P0,f:F0) input
+## x is formal-in or actual-out at program point p and is associated with instance field access e
+formalArgOrActualRetXPE(x:X0,p:P0,e:E0) input
+actualArgOrFormalRetXPU(x:X0,p:P0,u:U0) input
+actualArgOrFormalRetXPG(x:X0,p:P0,f:F0) input
+actualArgOrFormalRetXPE(x:X0,p:P0,e:E0) input
+
+# heap location represented by e and e2 may alias each other
+mayAlias(e:E0,e2:E1) input
+
+# u/f/e is referred at program point p which is not a call site/method entry/method exit
+refPU(p:P0,u:U0) input
+refPG(p:P0,f:F0) input
+refPE(p:P0,e:E0) input
+nonCallP(p:P0) input
+
+# u is defined at p
+defPU(p:P0,u:U0) input
+defPG(p:P0,f:F0) input
+defPE(p:P0,e:E0) input
+
+# u defined at p2 flows out from p
+outPU(p:P0,p2:P1,u:U0) output
+outPG(p:P0,p2:P1,f:F0) output
+outPE(p:P0,p2:P1,e:E0) output
+
+# u defined at p2 flows into p
+inPU(p:P0,p2:P1,u:U0) output
+inPG(p:P0,p2:P1,f:F0) output
+inPE(p:P0,p2:P1,e:E0) output
+
+# PPDataDep(p1:P0,p2:P1) means there is data dependency from p1 to p2
+# This is the case where something defined by a program point p1 is used by another program point p2
+# XPDataDep(x:X0,p:P0) means there is data dependency from x to p2
+# This is the case where something defined by actual-out or formal-in (x) is used by a program point p
+# PXDataDep(p:P0,x:X0) means there is data dependency from p1 to x
+# This is the case where something defined by program point P (p) is used by actual-in or formal-out (x)
+# XXDataDep(x1:X0,x2:X1) means there is data dependency from x1 to x2
+# This is the case where something defined by actual-out or formal-in (x1) is used by actual-in or formal-out (x2)
+PPDataDep(p1:P0,p2:P1) output
+XPDataDep(x:X0,p:P0) output
+PXDataDep(p:P0,x:X0) output
+XXDataDep(x1:X0,x2:X1) output
+
+XMayAlias(x:X,p:P,e:E) output
+
+###
+# Constraints
+###
+
+outPU(p,p2,u) :- p=p2, defPU(p,u).
+outPU(p,p2,u) :- inPU(p,p2,u), !defPU(p,u).
+outPG(p,p2,f) :- p=p2, defPG(p,f).
+outPG(p,p2,f) :- inPG(p,p2,f), !defPG(p,f).
+outPE(p,p2,e) :- p=p2, defPE(p,e).
+outPE(p,p2,e) :- inPE(p,p2,e).
+
+inPU(p,p2,u) :- outPU(p3,p2,u), PP(p3,p).
+inPG(p,p2,f) :- outPG(p3,p2,f), PP(p3,p).
+inPE(p,p2,e) :- outPE(p3,p2,e), PP(p3,p).
+
+PPDataDep(p1,p2) :- inPU(p2,p1,u), refPU(p2,u), nonCallP(p1).
+PPDataDep(p1,p2) :- inPG(p2,p1,f), refPG(p2,f), nonCallP(p1).
+PPDataDep(p1,p2) :- inPE(p2,p1,e), refPE(p2,e), nonCallP(p1).
+
+XPDataDep(x,p) :- inPU(p,p2,u), refPU(p,u), formalArgOrActualRetXPU(x,p2,u).
+XPDataDep(x,p) :- inPG(p,p2,f), refPG(p,f), formalArgOrActualRetXPG(x,p2,f).
+XPDataDep(x,p) :- inPE(p,p2,e), refPE(p,e), formalArgOrActualRetXPE(x,p2,e).
+
+PXDataDep(p,x) :- inPU(p2,p,u), nonCallP(p), actualArgOrFormalRetXPU(x,p2,u).
+PXDataDep(p,x) :- inPG(p2,p,f), nonCallP(p), actualArgOrFormalRetXPG(x,p2,f).
+PXDataDep(p,x) :- inPE(p2,p,e), nonCallP(p), XMayAlias(x,p2,e).
+
+XXDataDep(x1,x2) :- inPU(p2,p,u), formalArgOrActualRetXPU(x1,p,u), actualArgOrFormalRetXPU(x2,p2,u).
+XXDataDep(x1,x2) :- inPG(p2,p,f), formalArgOrActualRetXPG(x1,p,f), actualArgOrFormalRetXPG(x2,p2,f).
+XXDataDep(x1,x2) :- inPE(p2,p,e), formalArgOrActualRetXPE(x1,p,e), XMayAlias(x2,p2,e).
+
+XMayAlias(x2,p2,e) :- actualArgOrFormalRetXPE(x2,p2,e2), mayAlias(e,e2).

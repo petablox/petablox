@@ -1,0 +1,53 @@
+#  Author:  Ari Rabkin
+# name=confdep-dlog
+
+
+.include "V.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "H.dom"
+.include "M.dom"
+.include "UV.dom"
+.include "U.dom"
+.include "Opt.dom"
+
+
+.bddvarorder I0_I1_Z0_Opt0_M0_V0_H0_V1_V2_UV0_U0
+
+###
+# Relations
+###
+
+
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+refCdep(v:V,src:Opt) input
+primCdep(u:U,src:Opt) input
+primRefDep(u:UV,v:V) input
+primControlDep(i:I,u:UV) input 
+APIMethod(i:I) input
+IM(i:I,m:M) input
+UVU(uv:UV,u:U) input
+UVV(uv:UV,v:V) input
+
+
+cOnLine(i:I0, src:Opt) output
+confControlDep(i:I0, src:Opt) output
+uvConfDep(u:UV,src:Opt) output
+
+
+# Named prim, but actually takes UV.
+# This is needed to handle, e.g., dependence on pointers being non-null
+# also array length
+uvConfDep(u,opt) :- primRefDep(u,v),refCdep(v,opt).
+uvConfDep(u,opt) :- UVV(u,v),refCdep(v,opt).
+#uvConfDep(u,opt) :- UVU(u,v),primCdep(v,opt).
+
+
+confControlDep(i,opt) :- uvConfDep(u,opt),primControlDep(i,u).
+confControlDep(i,opt) :- primCdep(u,opt),UVU(uv,u),primControlDep(i,uv).
+
+cOnLine(i,opt) :- IinvkArg(i,_,v),refCdep(v,opt).
+cOnLine(i,opt) :- IinvkPrimArg(i,_,u),primCdep(u,opt).
+cOnLine(i,opt) :- confControlDep(i,opt).
+

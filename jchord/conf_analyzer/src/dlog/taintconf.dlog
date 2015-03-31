@@ -1,0 +1,40 @@
+#  Author:  Ari Rabkin
+# name=taintconf-dlog
+
+
+.include "V.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "H.dom"
+.include "M.dom"
+.include "UV.dom"
+.include "U.dom"
+.include "Opt.dom"
+.include "T.dom"
+
+.bddvarorder I0_Z0_Opt0_T0_T1_M0_V0_H0_V1_U0
+
+
+VT(v:V0,t:T0) input
+MV(m:M,v:V) input
+TM(t:T,m:M) input
+
+refCdep(v:V,src:Opt) input
+primCdep(u:U,src:Opt) input
+sub(t1:T1,t2:T0) input
+
+taintconf(v:V,o:Opt) output
+
+confT(t:T)
+confT("org.apache.hadoop.conf.Configuration").
+confT("java.lang.Properties").
+
+confT(t) :- sub(t,t2),confT(t2).
+
+confM(m) :- TM(t,m),confT(t).
+insideConf(v) :- MV(m,v),confM(m).
+
+confV(v) :- VT(v,t),confT(t),!insideConf(v).
+
+
+taintconf(v,o) :- refCdep(v,o),confV(v).

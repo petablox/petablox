@@ -1,0 +1,31 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=threadH-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "V.dom"
+.include "H.dom"
+.include "Z.dom"
+
+.bddvarorder I0xM0_V0_H0_Z0
+
+###
+# Relations
+###
+
+thrOblAbbrIM(i:I0,m:M0) input
+MmethArg(m:M0,z:Z0,v:V0) input
+VH(v:V0,h:H0) input
+threadH(h:H0) output
+
+###
+# Constraints
+###
+
+threadH(h) :- MmethArg(1,0,v), thrOblAbbrIM(_,1), VH(v,h).
+

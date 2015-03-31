@@ -1,0 +1,54 @@
+#
+#
+#    Ari Rabkin
+# name=findconf-dlog
+
+.include "I.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "M.dom"
+.include "UV.dom"
+
+.bddvarorder I0xZ0_Z1_V0_V1_M0_UV0_I1
+
+
+rawConfUVV(i:I, o:UV, in:V) input
+IM(i:I,m:M) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+objVarAsgnInst(l:V,r:V) input
+IinvkRetUV(i:I0,n:Z0,uv:UV0) input
+reachableI(i:I) input
+
+argCopies(m:M0,n:Z0,u:V0)
+confCallArg(i:I,v:V,base:I)
+
+confWrapper(i:I,base:I) output
+confUVV(i:I,uv:UV,v:V) output
+mConfArgs(m:M,z:Z,base:I) output
+confMethod(m:M) output
+
+# (m,z,v) is in argCopies if v is a copy of the z'th argument to m.
+argCopies(m,z,v)  :- MmethArg(m,z,v).
+argCopies(m,z,v2) :- argCopies(m,z,v),objVarAsgnInst(v2,v).
+
+# tuples (m,z,base) where arg z of method m is a config option name ultimately passed to base
+mConfArgs(m,z,base) :- argCopies(m,z,v),confCallArg(_,v,base).
+
+#(i,v) is a conf call arg where v is passed to a conf method at call site i
+confCallArg(i,v,base) :- IM(i,m),mConfArgs(m,z,base),IinvkArg(i,z,v). split
+
+# ...or if it's a reachable call to the base conf. (note we're joining rawConfUVV
+# with itself to ensure i == base on the output side
+confCallArg(i,v,base) :- rawConfUVV(i,_,v),rawConfUVV(base,_,v),reachableI(i).
+
+#m wraps m2 if m2 is a conf method and m calls it. This is slightly approximate.
+confWrapper(i, base) :- confCallArg(i,_,base).
+
+#If a method has a conf call argument, its return value is a conf return val
+confUVV(i,uv,v) :- confCallArg(i,v,_),IinvkRetUV(i,0,uv).
+#confUVV(0,0,0).   
+#main's arg is a special conf value
+
+
+confMethod(m) :- mConfArgs(m,_,_).

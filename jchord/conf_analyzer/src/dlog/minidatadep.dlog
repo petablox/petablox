@@ -1,0 +1,19 @@
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=minidatadep-dlog
+
+
+.include "V.dom"
+.include "U.dom"
+.include "Opt.dom"
+
+.bddvarorder Opt0_V0_U0
+
+
+refFlow(v:V,site:Opt) input
+primFlow(u:U,site:Opt) input
+
+refCdep(v:V,site:Opt) output
+primCdep(u:U,site:Opt) output
+
+primCdep(v,o) :- primFlow(v,o).
+refCdep(v,o) :- refFlow(v,o).

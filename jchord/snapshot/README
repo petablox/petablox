@@ -1,0 +1,9 @@
+Framework for dynamically evaluating precision of static heap
+abstractions on benchmarks and properties as presented in the
+following paper:
+
+Percy Liang, Omer Tripp, Mayur Naik, and Mooly Sagiv.  A Dynamic
+Evaluation of the Precision of Static Heap Abstractions.  In
+Proceedings of the ACM Conference on Object-Oriented Programming,
+Systems, Languages, and Applications (OOPSLA'10).
+

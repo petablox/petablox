@@ -1,0 +1,12 @@
+# name=reachableFromM-dlog
+
+.include "M.dom"
+
+.bddvarorder M0xM1
+
+MM(m1:M0,m2:M1) input
+
+reachableFromM(m1:M0,m2:M1) output
+
+reachableFromM(m0,m1) :- MM(m0,m1).
+reachableFromM(m0,m2) :- reachableFromM(m0,m1), MM(m1,m2).

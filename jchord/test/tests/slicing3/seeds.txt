@@ -1,0 +1,2 @@
+main:([Ljava/lang/String;)V@T
+g:Ljava/lang/Object;@T

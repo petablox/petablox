@@ -1,0 +1,188 @@
+#
+#
+#    Ari Rabkin
+# name=fcs-cs-datadep-dlog
+
+
+.include "V.dom"
+.include "Opt.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "H.dom"
+.include "U.dom"
+.include "M.dom"
+.include "F.dom"
+.include "P.dom"
+.include "C.dom"
+
+.bddvarorder I0xM0_T0_V0xV1_Opt0_H0xC0_F0_F1xC1_Z1_Z0xU0xU1xOpt1_P0
+
+###
+# Relations
+###
+
+MmethArg(m:M0,n:Z0,v:V0) input
+MmethRet(m:M0,n:Z0,v:V1) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+
+MmethPrimArg(m:M0,n:Z0,v:U0) input
+MmethPrimRet(m:M0,n:Z0,v:U0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+MprimDataDep(m:M,l:U0,r:U1) input
+PobjVarAsgnInst(p:P0,l:V0,r:V1) input
+
+
+MgetInstFldInst(m:M,l:V,b:V,f:F) input
+MputInstFldInst(m:M,b:V,f:F,r:V) input
+
+MgetInstFldPrimInst(m:M,l:U,b:V,f:F) input
+MputInstFldPrimInst(m:M,b:V,f:F,r:U) input
+
+#only compute these on failure path
+getInstFldInst(l:V,b:V,f:F)
+getInstFldPrimInst(l:U0,b:V,f:F) 
+
+#needed for arrays on data path
+putInstFldInst(b:V,f:F,r:V) input
+
+
+
+objVarAsgnInst(l:V,r:V)
+primDataDep(l:U0,r:U1)
+
+
+# Call graph
+
+instI(i:I0) input
+
+IM(i:I,m:M) input
+MI(m:M,i:I) input
+VH(v:V,h:H) input
+#MV(m:M,v:V) input
+#MU(m:M,u:U) input
+
+
+#### Inputs from regular data-dependence analysis
+absoluteReturn(m:M,name:Opt) input
+functDep(m:M,z:Z) input
+
+
+absCVOpt(c:C,v:V,opt:Opt) input
+absCUOpt(c:C,u:U,opt:Opt) input
+
+CVOpt(c:C,v:V,opt:Opt) input
+CUOpt(c:C,u:U,opt:Opt) input
+
+reachableCM(c:C,m:M) input
+CICM(c:C,i:I,c2:C,m:M) input
+
+
+
+### 
+OptNames(o:Opt,site:I) input
+APIMethod(i:I) input
+extraSummary(m:M) input
+APIReadOnly(i:I) input
+
+#Failure path
+FailurePath(i:I0) input
+failPathM(m:M) input
+failPathI(i:I) input
+failPathIM(i:I,m:M) input
+failContext(c:C) output
+
+
+## Intermediates
+BeforeFail(p:P) input
+looseSummary(i:I)
+taintingCall(i:I, opt:Opt)
+callLabel(i:I, opt:Opt)
+
+straceBase(m:M) output
+
+VVSCS(v:V0,u:V1) output
+UUSCS(u:U0,v:U1) output
+
+#chief outputs
+
+refCdepSCS(v:V,cst:Opt) output
+primCdepSCS(u:U,cst:Opt) output
+
+
+######### Build the failure path; find the relevant basic ops
+
+
+
+#methods on the failure path, excluding the base
+calledOnFail(m) :- failPathIM(i,m),FailurePath(i).
+straceBase(m) :- failPathM(m),!calledOnFail(m).
+
+failContext(c) :- reachableCM(c,m),straceBase(m).
+failContext(c2) :- failContext(c),failPathIM(i,m),CICM(c,i,c2,m).
+#failPathV(v) :- MV(m,v),failPathM(m).
+#failPathU(u) :- MU(m,u),failPathM(m).
+
+
+getInstFldInst(l,b,f) :- failPathM(m), MgetInstFldInst(m,l,b,f).
+getInstFldPrimInst(l,b,f) :- failPathM(m), MgetInstFldPrimInst(m,l,b,f).
+
+objVarAsgnInst(l,r) :-  BeforeFail(p),PobjVarAsgnInst(p,l,r).
+primDataDep(l,r) :- failPathM(m), MprimDataDep(m,l,r).
+
+## Copy-in return values from off-path and field reads
+
+#refCdepSCS(v,name) :- absoluteRefCdep(v,name),failPathV(v).
+#primCdepSCS(u,name) :- absolutePrimCdep(u,name),failPathU(u).
+
+refCdepSCS(v,name) :- absCVOpt(c,v,name),failContext(c).
+primCdepSCS(u,name) :- absCUOpt(c,u,name),failContext(c).
+
+
+## Copy in args from the head of the path, if any
+
+refCdepSCS(v,opt) :- MmethArg(m,_,v),straceBase(m),CVOpt(_,v,opt).
+primCdepSCS(v,opt) :- MmethPrimArg(m,_,v),straceBase(m),CUOpt(_,v,opt).
+
+### Copy args down
+VVSCS(v,u) :- IinvkArg(i,z,u),failPathIM(i,m),failPathM(m),MmethArg(m,z,v). split
+UUSCS(v,u) :- IinvkPrimArg(i,z,u),failPathIM(i,m),failPathM(m),MmethPrimArg(m,z,v). split
+
+refCdepSCS(v,cst) :- VVSCS(v,u),refCdepSCS(u,cst).
+primCdepSCS(v,cst) :- UUSCS(v,u),primCdepSCS(u,cst).
+
+### Basic intra-procedure flow. 
+#Note that must-alias is here computed only on the fail path
+localMustAlias(v,u) :- PobjVarAsgnInst(p,u,v),BeforeFail(p).
+localMustAlias(v,u) :- PobjVarAsgnInst(p,v,u),BeforeFail(p).
+
+refCdepSCS(v,site) :- localMustAlias(v,u),refCdepSCS(u,site).
+refCdepSCS(v,site) :- objVarAsgnInst(v,u),refCdepSCS(u,site).
+primCdepSCS(v,site) :- primDataDep(v,u),primCdepSCS(u,site).
+
+
+##### Apply summary-based model to propagate vars on path
+passedThru(i,z) :- functDep(m,z),failPathIM(i,m).
+
+callLabel(i,name) :-  IinvkArg(i,z,u), passedThru(i,z), refCdepSCS(u,name).
+callLabel(i,name) :-  IinvkPrimArg(i,z,u), passedThru(i,z), primCdepSCS(u,name).
+
+refCdepSCS(v,name) :- callLabel(i,name),IinvkRet(i,_,v).
+primCdepSCS(u,name) :- callLabel(i,name),IinvkPrimRet(i,_,u).
+
+looseSummary(i) :- extraSummary(m),failPathIM(i,m).
+looseSummary(i) :- APIMethod(i),failPathI(i).
+
+taintingCall(i, opt) :- refCdepSCS(u,opt),IinvkArg(i,_,u),looseSummary(i). split
+taintingCall(i, opt) :- primCdepSCS(u,opt),IinvkPrimArg(i,_,u),looseSummary(i). split
+
+#taint this and return value from args
+refCdepSCS(v,opt) :- taintingCall(i, opt),IinvkRet(i,_,v).
+primCdepSCS(v,opt) :- taintingCall(i, opt),IinvkPrimRet(i,_,v).
+refCdepSCS(v,opt) :- taintingCall(i, opt),IinvkArg(i,0,v),instI(i),!APIReadOnly(i).
+
+## Apply array rule
+refCdepSCS(b,site)  :- putInstFldInst(b,0,r), refCdepSCS(r,site).
+refCdepSCS(l,site) :- getInstFldInst(l,b,0), refCdepSCS(b,site).

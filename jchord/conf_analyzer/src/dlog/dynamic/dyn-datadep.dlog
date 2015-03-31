@@ -1,0 +1,112 @@
+# name=dyn-datadep
+
+.include "T.dom"
+.include "F.dom"
+.include "M.dom"
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "Opt.dom"
+.include "U.dom"
+
+.bddvarorder I0xM0xM1_T0_V0xV1_Opt0_T1_H0_F0_H1_Z0xU0xU1
+
+
+### Inputs from alias analysis or dyn analyses
+dynCUse(i:I0, z:Z0, c:Opt) input
+nullI(i:I) input
+
+reachableM(m:M) input
+VH(v:V,h:H) input
+FH(f:F,h:H) input
+IinvkArg0(i:I0,v:V1) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+
+IM(i:I,m:M) input
+VV(v1:V,v2:V) input
+
+
+objValAsgnInst(l:V,h:H) input
+objVarAsgnInst(l:V,r:V) input
+getInstFldInst(l:V,b:V,f:F) input
+putInstFldInst(b:V,f:F,r:V) input
+getStatFldInst(l:V,f:F) input
+putStatFldInst(f:F,r:V) input
+checkCastInst(l:V,t:T,r:V) input
+
+
+#####Conf related
+APIMethod(i:I) input
+
+OptNames(o:Opt,site:I) input
+
+#Don't know if we need this; those entries should still be in OptNames
+nullConf(v:V,o:Opt) input
+
+statHF(f:F,site:Opt) output
+instHF(b:H,f:F,site:Opt) output
+
+refCdep(v:V,site:Opt) output
+primCdep(u:U,site:Opt) output
+
+nullCV( v:V0, c:Opt) output
+
+
+#####Primitive tracking
+
+MmethPrimArg(m:M0,n:Z0,u:U0) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+
+objVarAsgnPrimInst(l:U0,r:U1) input
+primDataDep(l:U0,r:U1) input
+getInstFldPrimInst(l:U0,b:V,f:F) input
+putInstFldPrimInst(b:V,f:F,r:U) input
+getStatFldPrimInst(l:U,f:F) input
+putStatFldPrimInst(f:F,r:U) input
+UcU(l:U,r:U)
+
+####Prim tracking
+
+UcU(v,u) :- IinvkPrimArg(i,z,u), IM(i,m), MmethPrimArg(m,z,v).
+UcU(u,v) :- IinvkPrimRet(i,z,u), IM(i,m), MmethPrimRet(m,z,v).
+
+primCdep(v,name) :- IinvkPrimRet(site, 0, v),OptNames(name,site).
+primCdep(l,opt) :- primCdep(r,opt),objVarAsgnPrimInst(l,r).
+primCdep(l,opt) :- primDataDep(l,r),primCdep(r,opt).
+primCdep(u,opt) :- IinvkPrimRet(i,_,u),dynCUse(i,_,opt),APIMethod(i).
+primCdep(l,opt) :- getInstFldPrimInst(l,b,f), VH(b,h1), instHF(h1,f,opt). split
+primCdep(u,opt) :- getStatFldPrimInst(u,f), statHF(f,opt).
+
+#  If this is tainted, then API call on this should return tainted param
+# Duplicate with APIMethod rule above?
+##primCdep(u,h,cst) :- refCdep(v,opt),IinvkPrimRet(i,_,u),IinvkArg(i,0,v),APIMethod(i).
+
+#Only wory about prim fields -- we have object tracking for the reference types
+instHF(h1,f,opt) :- putInstFldPrimInst(b,f,r), VH(b,h1), primCdep(r,opt). split
+statHF(f,opt) :- putStatFldPrimInst(f,r), primCdep(r,opt).
+
+# Needed for null propagation?
+statHF(f,opt) :- putStatFldInst(f,r), refCdep(r,opt).
+
+# Propagate null values.
+#
+nullCV(v,opt) :- nullConf(v,opt).
+nullCV(v,opt) :- nullI(i),dynCUse(i,_,opt),IinvkRet(i,0,v).
+nullCV(v,opt) :- VV(v,v2),nullCV(v2,opt).
+nullCV(v,opt) :- objVarAsgnInst(v,u),nullCV(u,opt).
+
+#nulls should only go forward so next two lines are unneeded
+#nullCV(v,opt) :- objVarAsgnInst(u,v),nullCV(u,opt).
+#nullCV(v,opt) :- objVarAsgnInst(u,v),nullCV(u,opt).
+#nullCV(v,opt) :- checkCastInst(u,_,v),nullCV(u,opt).
+
+
+refCdep(v,opt) :- IinvkRet(site, 0, v),OptNames(opt,site).
+refCdep(v,opt) :-  nullCV(v,opt).
+refCdep(v,opt)  :- dynCUse(i,z,opt),IinvkArg(i,z,v).
+refCdep(v,opt)  :- dynCUse(i,_,opt),IinvkRet(i,0,v).

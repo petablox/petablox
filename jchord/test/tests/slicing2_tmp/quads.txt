@@ -1,0 +1,108 @@
+*** Class: T
+Method: main:([Ljava/lang/String;)V@T
+	0#1
+	3#2
+	4#3
+	7#4
+	11#5
+	19#6
+	22#7
+	25#8
+	15#9
+	16#10
+	28#11
+	31#12
+	34#13
+	71#14
+	74#15
+	77#16
+	80#17
+	60#18
+	65#20
+	65#19
+	68#21
+	83#22
+	86#23
+	89#24
+	92#25
+Control flow graph for main:([Ljava/lang/String;)V@T:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB3, BB4)
+1: NEW T5, A
+2: MOVE_A T6, T5
+3: INVOKESTATIC_V <init>:()V@A, (T6)
+4: PUTSTATIC_A T5, .g
+5: IFCMP_A R0, AConst: null, EQ, BB4
+
+BB4	(in: BB2, out: BB5)
+6: GETSTATIC_A T7, .g
+7: GETFIELD_I T8, T7, .f2
+8: PUTSTATIC_I T8, .g2
+
+BB3	(in: BB2, out: BB5)
+9: MOVE_I R4, IConst: 4
+10: GOTO BB5
+
+BB5	(in: BB3, BB4, out: BB8, BB6, BB7)
+11: GETSTATIC_A T9, .g
+12: GETFIELD_I T10, T9, .f3
+13: LOOKUPSWITCH T10, BB8, { 10, 20 }, { BB6, BB7 }
+
+BB7	(in: BB5, out: BB9)
+14: GETSTATIC_A T13, .g
+15: GETFIELD_I T14, T13, .f3
+16: PUTSTATIC_I T14, .g2
+17: GOTO BB9
+
+BB6	(in: BB5, out: BB9)
+18: GETSTATIC_A T11, .out
+20: MOVE_A T12, AConst: "Hello"
+19: INVOKEVIRTUAL_V println:(Ljava/lang/String;)V@java.io.PrintStream, (T11, T12)
+21: GOTO BB9
+
+BB8	(in: BB5, out: BB9)
+22: GETSTATIC_I T15, .g2
+23: INVOKESTATIC_I T16, foo:(I)I@T, (T15)
+24: PUTSTATIC_I T16, .g2
+
+BB9	(in: BB6, BB7, BB8, out: BB1 (EXIT))
+25: RETURN_V
+
+BB1 (EXIT)	(in: BB9, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 17
+Method: foo:(I)I@T
+	2#1
+	3#2
+Control flow graph for foo:(I)I@T:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB1 (EXIT))
+1: ADD_I T1, R0, IConst: 1
+2: RETURN_I T1
+
+BB1 (EXIT)	(in: BB2, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 2
+*** Class: A
+Method: <init>:()V@A
+	1#1
+	6#2
+	11#3
+	14#4
+Control flow graph for <init>:()V@A:
+BB0 (ENTRY)	(in: <none>, out: BB2)
+
+BB2	(in: BB0 (ENTRY), out: BB1 (EXIT))
+1: INVOKESTATIC_V <init>:()V@java.lang.Object, (R0)
+2: PUTFIELD_I R0, .f2, IConst: 3
+3: PUTFIELD_I R0, .f3, IConst: 4
+4: RETURN_V
+
+BB1 (EXIT)	(in: BB2, out: <none>)
+
+Exception handlers: []
+Register factory: Registers: 1

@@ -1,0 +1,34 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=downcast-sliver-dlog
+
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "P.dom"
+.include "C.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_C0xC1xC2xC3_Z0_E0xE1_P0xP1
+
+inQueryP(p:P) input
+PobjVarAsgnInst(p:P,l:V,r:V) input
+sub(s:T1,t:T0) input
+VT(v:V0,t:T0) input
+HT(h:H0,t:T1) input
+
+VCA(v:V,c:C,o:C) input
+CH(c:C,h:H) input
+
+ptsVH(v:V,h:H) output
+ptsVT(v:V,t:T) output
+outQueryP(p:P) output
+
+ptsVH(v,h) :- VCA(v,_,o), CH(o,h). # variable v can point to some object allocated at site h
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t). # variable v can point to some object with type t
+
+outQueryP(p) :- inQueryP(p), PobjVarAsgnInst(p,l,r), VT(l,t), ptsVT(r,t2), !sub(t2,t). # l has type t but r can point to some object that's not a subtype

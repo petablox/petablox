@@ -1,0 +1,133 @@
+# Race detector.
+# name=race-sliver-dlog
+
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "P.dom"
+.include "C.dom"
+.include "D.dom"
+
+.bddvarorder F0_D0xD1xD2xD3xD4_P0xP1xP2_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_C0xC1xC2xC3_Z0_E0xE1
+
+# Relations from pointer analysis
+inQueryEE(e1:E,e2:E) input
+reachableCM(c:C,m:M) input
+CICM(ci:C,i:I,cm:C,m:M) input
+VCA(v:V,e:C,a:C) input
+FA(f:F,a:C) input
+AFA(a1:C,f:F,a2:C) input
+MmethArg(m:M0,n:Z0,v:V0) input
+
+### Relations
+
+# relations capturing basic program facts
+ME(m:M0,e:E0) input
+MI(m:M,i:I) input
+statF(f:F0) input
+EF(e:E0,f:F0) input
+EV(e:E0,v:V0) input
+PE(p:P0,e:E0) input
+PP(p:P0,q:P1) input
+MPhead(m:M0,p:P0) input
+MPtail(m:M0,p:P0) input
+PI(p:P0,i:I0) input
+
+# relation defining reachable abstract threads
+threadDHM(t:D,h:H,m:M) input
+
+# relations needed to compute startingRaceHext
+CH(c:C,h:H) input
+threadDCM(t:D,c:C,m:M) output
+thrSenAbbrRootCM(c:C0,m:M0) output
+thrSenAbbrReachableCM(c:C0,m:M0)  output
+thrSenAbbrCICM(c:C0,i:I0,d:C1,m:M0)  output
+reachableTCMZ(t:D0,c:C0,m:M0) output
+reachableTCE(t:D0,c:C0,e:E0) output
+startingRaceHext(t1:D0,c1:C0,e1:E0,t2:D1,c2:C1,e2:E1) output
+
+# relations needed to compute escapingRaceHext
+statE(e:E0) output
+CEC(c:C0,e:E0,o:C1) output
+escA(a:C) output
+escapingRaceHext(t1:D0,c1:C0,e1:E0,t2:D1,c2:C1,e2:E1) output
+
+# relations needed to compute parallelRaceHext
+threadDC(t:D,c:C) output
+ForkPMcs(caller:C,p1:P,callee:C)  output
+ForkPHcs(caller:C,p1:P,callee:C,p2:P)  output
+NonForkPMcs(caller:C,p1:P,callee:C,m2:M) output
+NonForkPHcs(caller:C,p1:P,callee:C,p2:P) output
+NonForkPTcs(caller:C,p1:P,callee:C,p2:P) output
+PathEdgeZ(c:C,p:P,this:D,sThat:D,tThat:D) output
+SummEdgeZ(c:C,p:P,this:D,sThat:D,tThat:D) output
+mhpZ(c:C0,p:P0,t1:D0,t2:D1) output
+mheZ(c:C0,e:E0,t1:D0,t2:D1) output
+parallelRaceHext(t1:D0,c1:C0,e1:E0,t2:D1,c2:C1,e2:E1) output
+
+# final race queries 
+outQueryEE(e1:E0,e2:E1) output
+ 
+### Constraints
+
+escA(a) :- FA(_,a). # objects (base case)
+escA(a) :- reachableCM(c,1), MmethArg(1,0,v), VCA(v,c,a). # in context c, Thread.start() this points to a [NAME=ts]
+escA(a) :- escA(b), AFA(b,_,a). # objects (transitive)
+
+thrSenAbbrRootCM(0,0).
+thrSenAbbrRootCM(d,1) :- thrSenAbbrReachableCM(c,m), MI(m,i), CICM(c,i,d,1).
+thrSenAbbrReachableCM(c,m) :- thrSenAbbrRootCM(c,m).
+thrSenAbbrReachableCM(d,n) :- thrSenAbbrCICM(_,_,d,n).
+thrSenAbbrCICM(c,i,d,n) :- thrSenAbbrReachableCM(c,m), MI(m,i), CICM(c,i,d,n), n!=1.
+
+threadDCM(1,0,0).
+threadDCM(b,c,1) :- threadDHM(b,h,1), reachableCM(c,1), MmethArg(1,0,v), VCA(v,c,o), CH(o,h).
+reachableTCMZ(t,c,m) :- threadDCM(t,c,m).
+reachableTCMZ(t,d,n) :- reachableTCMZ(t,c,m), MI(m,i), thrSenAbbrCICM(c,i,d,n).
+reachableTCE(t,c,e) :- reachableTCMZ(t,c,m), ME(m,e).
+
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- inQueryEE(e1,e2), reachableTCE(t1,c1,e1), reachableTCE(t2,c2,e2).
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- inQueryEE(e1,e2), reachableTCE(t1,c1,e1), reachableTCE(t2,c2,e2), e1=e2, c1<c2.
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- inQueryEE(e1,e2), reachableTCE(t1,c1,e1), reachableTCE(t2,c2,e2), e1=e2, c1=c2, t1<=t2.
+
+###
+
+statE(e) :- EF(e,f), statF(f).
+CEC(c,e,o) :- EV(e,v), VCA(v,c,o), escA(o).
+
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- startingRaceHext(t1,c1,e1,t2,c2,e2), CEC(c1,e1,o), CEC(c2,e2,o).
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- startingRaceHext(t1,c1,e1,t2,c2,e2), statE(e1), statE(e2).
+
+###
+
+NonForkPMcs(c,p,d,m) :- CICM(c,i,d,m), m!=1, PI(p,i).
+NonForkPHcs(c,p,d,h) :- NonForkPMcs(c,p,d,m), MPhead(m,h).
+NonForkPTcs(c,p,d,t) :- NonForkPMcs(c,p,d,m), MPtail(m,t).
+ForkPMcs(c,p,d) :- CICM(c,i,d,1), PI(p,i).
+ForkPHcs(c,p,d,h) :- ForkPMcs(c,p,d), MPhead(1,h).
+threadDC(t,c) :- threadDCM(t,c,1).
+
+PathEdgeZ(0,0,1,0,0).
+PathEdgeZ(c,q,t,t1,t2) :- PathEdgeZ(c,p,t,t1,t2), PP(p,q).
+PathEdgeZ(d,q,t,t1,t2) :- NonForkPHcs(c,p,d,q), PathEdgeZ(c,p,t,_,t2), t1=t2.
+SummEdgeZ(c,p,t,t1,t2) :- NonForkPTcs(c,p,d,q), PathEdgeZ(d,q,t,t1,t2).
+PathEdgeZ(c,r,t,t1,t3) :- SummEdgeZ(c,p,t,t2,t3), PathEdgeZ(c,p,t,t1,t2), PP(p,r).
+PathEdgeZ(c,r,t,t1,t2) :- ForkPMcs(c,p,d), PathEdgeZ(c,p,t,t1,_), PP(p,r), threadDC(t2,d).
+PathEdgeZ(c,r,t,t1,t3) :- ForkPMcs(c,p,d), PathEdgeZ(c,p,t,t1,_), PP(p,r), threadDC(t2,d), PathEdgeZ(d,q,t2,0,t3), MPtail(1,q).
+PathEdgeZ(d,h,x,y,z) :- ForkPHcs(c,p,d,h), PathEdgeZ(c,p,y,_,_), threadDC(x,d), z=y. split
+PathEdgeZ(d,h,x,y,z) :- ForkPHcs(c,p,d,h), PathEdgeZ(c,p,_,_,y), threadDC(x,d), z=y. split
+PathEdgeZ(e,h,x,y,z) :- ForkPHcs(c,p,d,h), PathEdgeZ(c,p,_,_,x), threadDC(x,e), threadDC(y,d), z=y. split
+
+mhpZ(c,p,t1,t2) :- PathEdgeZ(c,p,t1,_,t2), t1!=0, t2!=0.
+mheZ(c,e,t1,t2) :- mhpZ(c,p,t1,t2), PE(p,e).
+
+parallelRaceHext(t1,c1,e1,t2,c2,e2) :- escapingRaceHext(t1,c1,e1,t2,c2,e2), mheZ(c1,e1,t1,t2), mheZ(c2,e2,t2,t1).
+
+###
+
+outQueryEE(e1,e2) :- parallelRaceHext(_,_,e1,_,_,e2).

@@ -1,0 +1,29 @@
+#
+#
+#    Ari Rabkin
+# name=defaultConfOptions-dlog
+
+
+.include "V.dom"
+.include "StrConst.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "M.dom"
+.include "U.dom"
+.include "Opt.dom"
+.include "PConst.dom"
+
+.bddvarorder M0xStrConst0xPConst0_Opt0_V0_V1_U0_U1
+
+
+objVarAsgnInst(l:V,r:V) input
+VConstFlow(v:V0, cst:StrConst) input
+objVarAsgnPrimInst(l:U0,r:U1) input
+primConst(u:U, cst:PConst) input
+
+UConstFlow(u:U,cst:PConst) output
+
+#defaultV(v,cst) :- VConstFlow(v,cst).
+
+UConstFlow(u,cst) :- primConst(u,cst).
+UConstFlow(u,cst) :- UConstFlow(u2,cst),objVarAsgnPrimInst(u,u2).

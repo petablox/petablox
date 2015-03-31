@@ -1,0 +1,3 @@
+main:([Ljava/lang/String;)V@T
+g:LA;@T
+g2:I@T

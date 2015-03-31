@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE results SYSTEM "results.dtd" [
+  <!ENTITY resultlist SYSTEM "anaresult.xml">
+  <!ENTITY Hlist SYSTEM "Hlist.xml">
+  <!ENTITY Vlist SYSTEM "Vlist.xml">
+  <!ENTITY Mlist SYSTEM "Mlist.xml"> 
+  <!ENTITY Ilist SYSTEM "Ilist.xml">
+]>
+<results>
+&resultlist;
+&Hlist;
+&Vlist;
+&Mlist;
+&Ilist;
+</results>

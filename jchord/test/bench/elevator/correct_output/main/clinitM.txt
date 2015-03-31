@@ -1,0 +1,1 @@
+<<clinit>:()V@elevator.Lift>

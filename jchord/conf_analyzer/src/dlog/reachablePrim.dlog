@@ -1,0 +1,48 @@
+#
+#
+#    Ari Rabkin
+# name=reachablePrim-dlog
+
+
+##  Inputs
+
+.include "I.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "M.dom"
+.include "U.dom"
+.include "F.dom"
+
+.bddvarorder I0_M0_Z0_V0_F0_U0_I1_U1
+
+
+##Inputs
+reachableM(m:M) input
+
+MobjVarAsgnPrimInst(m:M,l:U0,r:U1) input
+MprimDataDep(m:M,l:U0,r:U1) input
+
+MgetStatFldPrimInst(m:M,l:U0,f:F) input
+MputStatFldPrimInst(m:M,f:F,r:U0) input
+MgetInstFldPrimInst(m:M,l:U,b:V,f:F) input
+MputInstFldPrimInst(m:M,b:V,f:F,r:U) input
+
+
+###Outputs
+
+objVarAsgnPrimInst(l:U0,r:U1) output
+primDataDep(l:U0,r:U1) output
+getInstFldPrimInst(l:U0,b:V,f:F) output
+putInstFldPrimInst(b:V,f:F,r:U) output
+getStatFldPrimInst(l:U,f:F) output
+putStatFldPrimInst(f:F,r:U) output
+
+###########  Rules
+
+##Prim tracking
+objVarAsgnPrimInst(l,r) :- reachableM(m), MobjVarAsgnPrimInst(m,l,r).
+primDataDep(l,r) :- reachableM(m), MprimDataDep(m,l,r).
+getStatFldPrimInst(l,f)   :- reachableM(m), MgetStatFldPrimInst(m,l,f).
+putStatFldPrimInst(f,r)   :- reachableM(m), MputStatFldPrimInst(m,f,r).
+getInstFldPrimInst(l,b,f) :- reachableM(m), MgetInstFldPrimInst(m,l,b,f).
+putInstFldPrimInst(b,f,r) :- reachableM(m), MputInstFldPrimInst(m,b,f,r).

@@ -1,0 +1,77 @@
+# name=datadep-debug-dlog
+
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "U.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "Opt.dom"
+
+.bddvarorder I0xI1xM0xM1_H0_T0_V0xV1_Opt0_T1_F0_Z0xU0xU1
+
+
+### Inputs
+
+refCdep(v:V,site:Opt) input
+primCdep(u:U,site:Opt) input
+scopeExcludedM(m:M) input
+APIMethod(i:I) input
+IM(i:I,m:M) input
+VH(v:V,h:H) input
+
+
+MmethPrimArg(m:M0,n:Z0,u:U0) input
+MmethPrimRet(m:M0,n:Z0,u:U0) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+IinvkPrimRet(i:I0,n:Z0,u:U0) input
+
+MmethRet(m:M0,n:Z0,v:V1) input
+MmethArg(m:M0,n:Z0,u:V0) input
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkRet(i:I0,n:Z0,v:V0) input
+
+APIMeth(m:M)
+
+argCdep(m:M, z:Z, opt:Opt)  output
+IargCdep(i:I, z:Z, opt:Opt)  output
+IretDep(i:I, opt:Opt)  output
+MretDep(m:M,opt:Opt) output
+
+putInstFldInst(b:V,f:F,r:V) input
+putInstFldPrimInst(b:V,f:F,r:U) input
+
+
+unmodeledM(m:M) output
+unallocated(v:V) output
+failedWrite(v:V, f:F, opt:Opt) output
+
+####Debugging
+
+argCdep(m, z, opt) :- MmethArg(m,z,v),refCdep(v,opt).
+argCdep(m, z, opt) :- MmethPrimArg(m,z,v),primCdep(v,opt).
+
+IargCdep(i, z, opt) :- IinvkArg(i,z,v),refCdep(v,opt).
+IargCdep(i, z, opt) :- IinvkPrimArg(i,z,v),primCdep(v,opt).
+IretDep(i,opt) :- IinvkRet(i,_,v),refCdep(v,opt).
+IretDep(i,opt) :- IinvkPrimRet(i,_,v),primCdep(v,opt).
+
+MretDep(m,opt) :- MmethRet(m,_,v),refCdep(v,opt).
+MretDep(m,opt) :- MmethPrimRet(m,_,v),primCdep(v,opt).
+
+
+# Method actually taking a tain
+#
+APIMeth(m) :- IM(i,m),APIMethod(i).
+
+scopeExcludeArgMeth(m) :- scopeExcludedM(m),argCdep(m, _,_).
+
+unmodeledM(m) :- scopeExcludeArgMeth(m),!APIMeth(m).
+
+allocated(v) :- VH(v,_).
+unallocated(v) :- !allocated(v).
+
+failedWrite(b, f, opt) :- putInstFldInst(b,f,r),refCdep(r,opt),unallocated(b). split
+failedWrite(b, f, opt) :- putInstFldPrimInst(b,f,r),primCdep(r,opt),unallocated(b). split

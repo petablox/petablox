@@ -1,0 +1,18 @@
+
+#
+#    Ari Rabkin
+# name=pctrldep-dlog
+
+
+.include "I.dom"
+.include "P.dom"
+.include "UV.dom"
+
+.bddvarorder I0xP0xUV0
+
+PControlDep(p:P, uv:UV) input
+PI(p:P, i:I) input
+
+primControlDep(i:I,u:UV) output 
+
+primControlDep(i,u) :- PI(p,i), PControlDep(p,u).

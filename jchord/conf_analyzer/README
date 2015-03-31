@@ -1,0 +1,55 @@
+This directory holds a configuration analyzer tool, being developed by Ari Rabkin at UC Bekeley. (Contact asrabkin@gmail.com for details)
+
+The primary purpose of this tool is to extract spellcheck dictionaries, suitable for use with the associated configuration spellcheck tool.
+
+The examples directory has a number of example configurations, for extracting options from several open-source programs, particularly in the Hadoop ecosystem.
+
+
+
+EXAMPLE:
+
+To use the configuration analyzer on Hadoop, there are three steps.
+First, in the directory conf_analyzer, type "ant compile".
+
+Next, update examples/hadoop20/chord.properties to specify where to find the Hadoop jars to analyze.
+
+Last, in the directory conf_analyzer type "ant run -Dchord.work.dir=`pwd`/examples/hadoop20/" 
+
+You need the `pwd` because Chord expects an absolute path to its work dir.
+
+The result will be stored [by default] in "chord_output/options.dict".
+
+WHEN THINGS GO WRONG:
+
+Under the work directory, there should be an (automatically created) directory named chord_output.  The file log.txt in that directory will tell you what's gone wrong, if something has.
+
+The file conf_dependency.txt has a great deal of information about why the analyzer found the type it did.
+
+CORE OPTIONS:
+
+There are four key options to set in customizing the analyzer.
+
+chord.class.path specifies where the analyzer will look for code. It should be a list of jars or of directories holding classes.  Option names wrapped in ${name} will be macro-expanded.
+
+chord.ext.scope.exclude specifies what code to ignore. Generally, you should try to ignore as much library and JVM code as you can, since it will result in the analysis going substantially faster.
+
+chord.main.class specifies where to start analyzing. It should be the full name of a class containing a main method.
+
+chord.entrypoints.file, if set, is the name of a file containing additional start locations. See below for a discussion of format.
+
+OTHER OPTIONS
+
+There are other relevant options, too.
+
+dictionary.name is the name of the output file. (It'll be generated in chord_output inside chord.work.dir) The default is "options.dict".
+
+If set, only options that are read by classes starting with prefix dictionary.scope will be in the dictionary.
+
+
+ENTRYPOINTS FORMAT
+
+The entrypoints file can hold three kinds of entries: methods, concrete classes, and interfaces/abstract classes
+
+ *  (A fully qualified method name is of the form <name>:<desc>@<classname>.)
+ *  If a concrete (non-abstract) class is listed, all public methods of that class will be added as entry points.
+ *  If an interface or abstract class is listed, all public methods of all concrete instances of that interface/class will be added as entry points.

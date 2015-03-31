@@ -1,0 +1,68 @@
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=logconfdep-dlog
+
+.include "T.dom"
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "U.dom"
+.include "Z.dom"
+.include "K.dom"
+.include "StrConst.dom"
+.include "Opt.dom"
+
+.bddvarorder T0xI0xStrConst0_Opt0_H0_K0_Z0_V0_V1_U0
+
+#  WE'RE ONLY HANDLING LOCAL CONTROL DEPENDENCE
+#    There's also load-dependence, where a log statement depends on its container
+# class being loaded.  Can find container class easily. Find options that potentially
+# affect variables of that type. Use that to find load dependence.
+#
+#  Also standard interprocedural control-flow dependence. Maybe use RHS solver to 
+#  catch these cases?
+#
+
+
+logStmt(i:I) input
+logVHolds(i:I, cmpt:V, z:K) input
+logVHoldsU(i:I, cmpt:U, z:K) input
+
+refCdep(v:V,site:Opt) input
+primCdep(u:U,site:Opt) input
+confControlDep(i:I0, src:Opt) input
+
+IinvkArg(i:I0,n:Z0,v:V1) input
+IinvkPrimArg(i:I0,n:Z0,u:U0) input
+
+VT(v:V,t:T) input
+
+logArg(i:I, cmpt:V, z:K)
+
+reachableI(i:I) input
+RlogStmt(i:I) output
+
+strBuild(t:T)
+
+logFieldDataDep(logStmt:I0, fld:K, src:Opt) output
+logConfDep(logStmt:I0, src:Opt) output
+
+
+## Suppose we have code like   log(a+b), where b depends on an option
+# The first param to the logger will really be a stringbuilder. 
+#need to make sure it doesn't depend. So we filter out deps when the first
+# parameter is a string builder
+
+strBuild("java.lang.StringBuilder").
+
+logDepFiltered(v) :- VT(v,t),strBuild(t).
+
+RlogStmt(i) :- logStmt(i),reachableI(i).
+
+logArg(i,v,z) :- logVHolds(i,v,z),RlogStmt(i).
+logPrimArg(i,z,u) :- logVHoldsU(i,u,z),RlogStmt(i).
+
+
+logConfDep(logStmt, opt) :-  RlogStmt(logStmt),confControlDep(logStmt, opt).
+
+logFieldDataDep(i,z,src) :- logArg(i,v,z),refCdep(v,src),!logDepFiltered(v).
+logFieldDataDep(i,z,src) :- logPrimArg(i,z,u),primCdep(u,src).

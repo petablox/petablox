@@ -1,0 +1,25 @@
+# Author: Ari Rabkin (asrabkin@gmail.com)
+# name=logs-dlog
+
+.include "I.dom"
+
+# .include "DomConst.dom"
+
+.bddvarorder I0
+
+
+
+Error(i:I) input
+Warn(i:I) input
+Info(i:I) input
+Debug(i:I) input
+println(i:I) input
+
+logStmt(i:I) output
+
+logStmt(i) :- Error(i).
+logStmt(i) :- Warn(i).
+logStmt(i) :- Info(i).
+logStmt(i) :- Debug(i).
+logStmt(i) :- println(i).
+

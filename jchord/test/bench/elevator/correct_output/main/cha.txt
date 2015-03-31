@@ -1,0 +1,11 @@
+<checkDown:(I)Z@elevator.Controls,elevator.Controls,checkDown:(I)Z@elevator.Controls>
+<checkUp:(I)Z@elevator.Controls,elevator.Controls,checkUp:(I)Z@elevator.Controls>
+<claimDown:(Ljava/lang/String;I)Z@elevator.Controls,elevator.Controls,claimDown:(Ljava/lang/String;I)Z@elevator.Controls>
+<claimUp:(Ljava/lang/String;I)Z@elevator.Controls,elevator.Controls,claimUp:(Ljava/lang/String;I)Z@elevator.Controls>
+<getDownPeople:(I)Ljava/util/Vector;@elevator.Controls,elevator.Controls,getDownPeople:(I)Ljava/util/Vector;@elevator.Controls>
+<getUpPeople:(I)Ljava/util/Vector;@elevator.Controls,elevator.Controls,getUpPeople:(I)Ljava/util/Vector;@elevator.Controls>
+<pushDown:(II)V@elevator.Controls,elevator.Controls,pushDown:(II)V@elevator.Controls>
+<pushUp:(II)V@elevator.Controls,elevator.Controls,pushUp:(II)V@elevator.Controls>
+<run:()V@elevator.Lift,elevator.Lift,run:()V@elevator.Lift>
+<run:()V@java.lang.Runnable,elevator.Lift,run:()V@elevator.Lift>
+<run:()V@java.lang.Thread,elevator.Lift,run:()V@elevator.Lift>

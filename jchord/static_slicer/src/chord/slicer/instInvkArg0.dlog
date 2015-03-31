@@ -1,0 +1,37 @@
+# name=instInvkArg0-dlog
+#
+# Relation containing tuple(p,x) such that p is a instance method invocation and
+#  x is its first parameter   
+#
+.include "P.dom"
+.include "X.dom"
+.include "I.dom"
+.include "U.dom"
+.include "Z.dom"
+
+# 1s
+.bddvarorder P0_I0_U0_X0_Z0
+
+
+###
+# Relations
+###
+
+PI(p0:P0,i0:I0) input
+invkArg(i:I0,u:U0,z:Z0) input
+XU(x:X0,u:U0) input
+instI(i:I0) input
+
+XP(x:X0,p:P0) input
+
+instInvkArg0NoXP(p:P0,x:X0)
+instInvkArg0(p:P0,x:X0) output
+
+
+###
+# Constraints
+###
+
+instInvkArg0NoXP(p,x) :- instI(i), invkArg(i,u,0), XU(x,u), PI(p,i).
+instInvkArg0(p,x) :- instInvkArg0NoXP(p,x), XP(x,p).
+

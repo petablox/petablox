@@ -1,0 +1,7 @@
+This file holds a (hopefully) current list of known bugs, limitations, and imprecisions.
+
+1) We don't track string constants through fields. This limits completeness of results in finding conf options.
+
+2) We don't really handle Map.get/put correctly.
+
+3) Option name inference is wrong if there are multiple pieces for multiple option names at same call

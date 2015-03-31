@@ -1,0 +1,26 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=downcast-init-dlog
+
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "P.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_Z0_E0xE1_P0xP1
+
+PobjVarAsgnInst(p:P,l:V,r:V) input
+reachableM(m:M) input
+MP(m:M,p:P) input
+VT(v:V,t:T) input
+sub(s:T1,t:T0) input
+checkExcludedT(t:T) input
+TM(t:T,m:M) input
+queryP(p:P) output
+
+queryP(p) :- !checkExcludedT(t), TM(t,m), reachableM(m), MP(m,p), PobjVarAsgnInst(p,l,r), VT(l,t), VT(r,t2), !sub(t2,t).

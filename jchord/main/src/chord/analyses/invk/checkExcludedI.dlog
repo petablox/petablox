@@ -1,0 +1,13 @@
+# name=checkExcludedI-dlog
+
+.include "I.dom"
+.include "M.dom"
+
+.bddvarorder I0_M0
+
+MI(m:M0,i:I0) input
+checkExcludedM(m:M0) input
+checkExcludedI(i:I0) output
+
+checkExcludedI(i) :- MI(m,i), checkExcludedM(m).
+

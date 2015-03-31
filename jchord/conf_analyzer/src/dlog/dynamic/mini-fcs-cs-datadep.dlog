@@ -1,0 +1,56 @@
+# name=mini-fcs-cs-datadep-dlog
+
+.include "T.dom"
+.include "F.dom"
+.include "M.dom"
+.include "I.dom"
+.include "H.dom"
+.include "V.dom"
+.include "Z.dom"
+.include "U.dom"
+.include "C.dom"
+.include "Opt.dom"
+
+.bddvarorder I0xM0_T0_V0xV1_Opt0_H0xC0_F0_F1xC1_Z1_Z0xU0xU1xOpt1
+
+#  Dataflow, restricted to just the failure path.
+# Instead of the complicated absolute-relative flow scheme,
+# just uses the call context
+#
+
+CVOpt(c:C,v:V,opt:Opt) input
+CUOpt(c:C,u:U,opt:Opt) input
+
+reachableCM(c:C,m:M) input
+CICM(c:C,i:I,c2:C,m:M) input
+
+#Failure path
+FailurePath(i:I0) input
+failPathM(m:M) input
+failPathI(i:I) input
+failPathIM(i:I,m:M) input
+#BeforeFail(p:P) input
+
+## Intermediates
+
+failContext(c:C) output
+straceBase(m:M) output
+
+### Outputs
+
+
+refCdepSCS(v:V,cst:Opt) output
+primCdepSCS(u:U,cst:Opt) output
+
+####
+
+#Build failure path
+calledOnFail(m) :- failPathIM(i,m),FailurePath(i).
+straceBase(m) :- failPathM(m),!calledOnFail(m).
+
+failContext(c) :- reachableCM(c,m),straceBase(m).
+failContext(c2) :- failContext(c),failPathIM(i,m),CICM(c,i,c2,m).
+
+
+refCdepSCS(v,opt) :- CVOpt(c,v,opt),failContext(c).
+primCdepSCS(v,opt) :- CUOpt(c,v,opt),failContext(c).

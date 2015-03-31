@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="conf_analyzer" default="compile">
+	<property name="chord.home.dir" location="../main"/>
+
+<!--
+	<target name="paths">
+		<path id="chord_java_analysis_path">
+			<pathelement location="${chord.home.dir}/classes"/>
+			<pathelement location="classes"/>
+			<fileset dir="lib" includes="*.jar"/>
+      <pathelement location="../conf_spellchecker/classes"/>
+      
+		</path>
+	<path id="chord_dlog_analysis_path">
+	     <pathelement location="../main/src"/>
+	    <pathelement location="src/dlog"/>
+	</path>
+		<property name="chord.java.analysis.path" refid="chord_java_analysis_path"/> 
+		<property name="chord.dlog.analysis.path" refid="chord_dlog_analysis_path"/>
+	</target>-->
+	
+	<target name="compile-deps"  description="Compile upstream chord dependencies">
+		<ant dir="${chord.home.dir}" target="compile"/>
+    <ant antfile="build.xml" dir="../conf_spellchecker" target="compile"/>
+ </target>
+
+	<target name="compile" depends="compile-deps">
+		<mkdir dir="classes"/>
+		<javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+			source="1.5" target="1.5" srcdir="src/java" destdir="classes">
+			
+			<classpath>
+				<pathelement location="${chord.home.dir}/chord.jar"/>
+				<pathelement location="../conf_spellchecker/classes"/>
+				<fileset dir="lib" includes="*.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile">
+			<jar destfile="conf_analyzer.jar" basedir="classes" includes="**/*.class" duplicate="fail">
+					<fileset dir="src">
+				<include name="**/*.txt"/>
+				<include name="**/*.dlog"/>
+				<include name="**/*.datalog"/>
+				<include name="**/*.xsl"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+			</fileset>
+		</jar>
+	</target>
+	
+		<target name="compile-test">
+        <taskdef resource="net/sf/antcontrib/antlib.xml"
+            classpath="${chord.home.dir}/tools/ant-contrib.jar"/>
+        <antfetch dir="${chord.home.dir}" target="paths" return="chord.main.class.path"/>
+		<mkdir dir="classes"/>
+		<javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+			source="1.5" target="1.5" srcdir="test/src" destdir="classes">
+			<classpath>
+				<pathelement location="${chord.home.dir}/chord.jar"/>
+				<pathelement location="classes"/>
+				<fileset dir="lib" includes="*.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="analyze">
+		<property name="chord.run.analyses" value="ShowConfOptions"/> 
+		<property name="chord.ext.java.analysis.path" location="classes"/>
+		<property name="chord.ext.dlog.analysis.path" location="src"/>
+		<ant dir="${chord.home.dir}" target="run"/>
+	</target> 
+	
+	<target name="run">
+		<property name="chord.ext.java.analysis.path" location="classes"/>
+		<property name="chord.ext.dlog.analysis.path" location="src"/>
+		<ant dir="${chord.home.dir}" target="run"/>
+	</target> 
+	
+	<target name="exec">
+		<property name="chord.ext.java.analysis.path" location="classes"/>
+		<property name="chord.ext.dlog.analysis.path" location="src"/>
+		<ant dir="${chord.home.dir}" target="run"/>
+	</target> 
+
+	<target name="clean">
+		<delete dir="classes"/>
+	</target>
+</project>

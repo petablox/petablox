@@ -1,0 +1,45 @@
+# Race detector.  Just output the set of queries.
+# name=race-init-dlog
+
+.include "E.dom"
+.include "F.dom"
+.include "H.dom"
+.include "I.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "Z.dom"
+
+.bddvarorder F0_I0xI1xM0xM1_T0_V0xV1_T1_H0xH1_Z0_E0xE1
+
+### Relations
+
+thrOblAbbrReachableM(m:M0) input
+TM(t:T,m:M) input
+EF(e:E0,f:F0) input
+writeE(e:E0) input
+checkExcludedT(t:T) input
+ME(m:M,e:E) input
+
+relevantM(m:M0) output
+relevantE(e:E0) output
+onlyWr(e:E) output
+rdOrWr(e:E) output
+queryEE(e1:E0,e2:E1) output
+
+### Constraints
+
+relevantM(m) :- thrOblAbbrReachableM(m), TM(t,m), !checkExcludedT(t).
+relevantE(e) :- relevantM(m), ME(m,e).
+relevantEF(e,f) :- relevantE(e), EF(e,f).
+
+onlyWr(e) :- writeE(e).
+rdOrWr(_).
+
+###
+# Constraints
+###
+
+queryEE(e1,e2) :- onlyWr(e1), rdOrWr(e2), e1<e2, relevantEF(e1,f), relevantEF(e2,f).
+queryEE(e1,e2) :- rdOrWr(e1), onlyWr(e2), e1<e2, relevantEF(e1,f), relevantEF(e2,f).
+queryEE(e1,e2) :- onlyWr(e1), onlyWr(e2), e1=e2, relevantEF(e1,f), relevantEF(e2,f).
