@@ -80,15 +80,17 @@ public class Dom<T> extends IndexMap<T> {
     public void saveToLogicBlox(String dirName) throws IOException {
         Utils.mkdirs(dirName);
         final String DELIM = Config.logicbloxInputDelim;
+        final boolean isLb3 = Config.datalogEngine == DatalogEngineType.LOGICBLOX3;
+
+        String intType = isLb3 ? "uint[64]" : "int";
 
         // save the data values
-        String factsFile = name + ".csv";
-        File outFile = new File(dirName, factsFile);
-        if (!outFile.getParentFile().exists()) {
+        File factsFile = new File(dirName, name + ".csv");
+        if (!factsFile.getParentFile().exists()) {
             System.err.println("WARN: No parent directory: "
-                + outFile.getParentFile().getAbsolutePath());
+                + factsFile.getParentFile().getAbsolutePath());
         }
-        PrintWriter out = new PrintWriter(outFile);
+        PrintWriter out = new PrintWriter(factsFile);
         for (int i = 0, size = this.size(); i < size; ++i) {
             out.print(i);
             out.print(DELIM);
@@ -98,18 +100,37 @@ public class Dom<T> extends IndexMap<T> {
         out.close();
         if (out.checkError()) {
             throw new IOException("An error occurred writing domain " + name
-                + " to " + outFile.getAbsolutePath());
+                + " to " + factsFile.getAbsolutePath());
         }
 
         // and the type declaration
-        outFile = new File(dirName, name + ".type");
-        out = new PrintWriter(outFile);
+        File typeFile = new File(dirName, name + ".type");
+        out = new PrintWriter(typeFile);
         out.println(getLogicBloxType());
         out.flush();
         out.close();
         if (out.checkError()) {
             throw new IOException("An error occurred writing type information for " + name
-                + " to " + outFile.getAbsolutePath());
+                + " to " + typeFile.getAbsolutePath());
+        }
+        
+        // and an import file
+        File importFile = new File(dirName, name + ".import");
+        out = new PrintWriter(importFile);
+        out.println("_in(" + (isLb3 ? "" : "offset; ") + "id, val) -> " + (isLb3 ? "" : intType + "(offset), ") + intType + "(id), string(val).");
+        out.println("lang:physical:filePath[`_in] = \"" + factsFile.getAbsolutePath() + "\".");
+        if (isLb3)
+            out.println("lang:physical:storageModel[`_in] = \"DelimitedFile\".");
+        else
+            out.println("lang:physical:fileMode[`_in] = \"import\".");
+        out.println("lang:physical:delimiter[`_in] = \"" + DELIM + "\".");
+        out.println();
+        out.println("+" + name + "(x), +" + name + "_values[id, val] = x <- _in(" + (isLb3 ? "" : "_; ") + "id, val).");
+        out.flush();
+        out.close();
+        if (out.checkError()) {
+            throw new IOException("An error occurred writing import logic for " + name
+                + " to " + importFile.getAbsolutePath());
         }
     }
     
@@ -136,17 +157,30 @@ public class Dom<T> extends IndexMap<T> {
             // have to make scalable, values other than ScalableSparse are not
             // documented
             type.append("lang:physical:storageModel[`").append(name)
-                .append("] = \"ScalableSparse\".\n");
+                .append("] = \"ScalableSparse\".\n")
+                .append("lang:physical:capacity[`").append(name).append("] = ").append(getLogicBloxCapacity()).append(".\n");
         }
 
-        type.append(name).append("_values[id, val1] = x1, ").append(name)
-            .append("_values[id, val2] = x2 -> ")
-            .append("val1 = val2, x1 = x2.\n");
-        type.append(name).append("_values[id1, val] = x1, ").append(name)
-            .append("_values[id2, val] = x2 -> ")
-            .append("id1 = id2, x1 = x2.\n");
+        // enforce uniqueness
+        // FIXME disabled for now, makes import slow to a crawl
+//        type.append(name).append("_values[id, val1] = x1, ").append(name)
+//            .append("_values[id, val2] = x2 -> ")
+//            .append("val1 = val2, x1 = x2.\n");
+//        type.append(name).append("_values[id1, val] = x1, ").append(name)
+//            .append("_values[id2, val] = x2 -> ")
+//            .append("id1 = id2, x1 = x2.\n");
 
         return type.toString();
+    }
+    
+    /**
+     * Returns the capacity of LogicBlox predicates for LB 3, which 
+     * is 2^20 by default (subclasses may override).
+     * 
+     * @return the entity capacity
+     */
+    public long getLogicBloxCapacity() {
+        return 1L << 20;
     }
     
     // subclasses may override
