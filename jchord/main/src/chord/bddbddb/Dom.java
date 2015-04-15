@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import chord.logicblox.LogicBloxUtils;
 import chord.project.Config;
 import chord.project.Config.DatalogEngineType;
 import chord.util.IndexMap;
@@ -132,6 +133,9 @@ public class Dom<T> extends IndexMap<T> {
             throw new IOException("An error occurred writing import logic for " + name
                 + " to " + importFile.getAbsolutePath());
         }
+        
+        LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);
     }
     
     /**

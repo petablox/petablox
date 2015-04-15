@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import chord.logicblox.LogicBloxUtils;
 import chord.project.analyses.DlogAnalysis;
 import chord.project.analyses.ProgramDom;
 import chord.project.analyses.ProgramRel;
@@ -72,6 +73,15 @@ public class ClassicProject extends Project {
         TaskParser taskParser = new TaskParser();
         if (!taskParser.run())
             abort();
+        
+        switch (Config.datalogEngine) {
+        case LOGICBLOX3:
+        case LOGICBLOX4:
+            LogicBloxUtils.initializeWorkspace(Config.logicbloxWorkspace);
+            break;
+        case BDDBDDB:
+            break;
+        }
 
         // build nameToTaskMap
         Map<String, Class<ITask>> nameToJavaTaskMap = taskParser.getNameToJavaTaskMap();

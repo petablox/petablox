@@ -115,10 +115,19 @@ public class Config {
     
     // properties concerning LogicBlox
     
+    /** <tt>chord.logicblox.delim</tt> : the input delimiter in domain export files. */
     public final static String logicbloxInputDelim =
         System.getProperty("chord.logicblox.delim", "\t");
+    /** <tt>chord.logicblox.command</tt> : the main logicblock command (default: <tt>lb</tt>) */
     public final static String logicbloxCommand =
         System.getProperty("chord.logicblox.command", "lb");
+    public final static String logicbloxWorkspace;
+    static {
+        String ws = System.getProperty("chord.logicblox.workspace", "chord");
+        // TODO : Generate a name by default
+        logicbloxWorkspace = ws;
+    }
+    
 
     // properties concerning BDDs
 

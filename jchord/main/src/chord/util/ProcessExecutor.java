@@ -2,15 +2,16 @@ package chord.util;
 
 import static chord.util.ExceptionUtil.fail;
 
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.TimerTask;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Utility to execute a system command specified as a string in a separate process.
@@ -18,6 +19,29 @@ import java.util.Timer;
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public final class ProcessExecutor {
+    
+    public static class Result {
+        private final int exitCode;
+        private final String output;
+        private final String error;
+        public Result(int exitCode, String output, String error) {
+            this.exitCode = exitCode;
+            this.output = output;
+            this.error = error;
+        }
+        
+        public int getExitCode() {
+            return exitCode;
+        }
+        
+        public String getError() {
+            return error;
+        }
+        
+        public String getOutput() {
+            return output;
+        }
+    }
 	/**
 	 * Executes a given system command specified as a string in a separate process.
 	 * <p>
@@ -120,14 +144,85 @@ public final class ProcessExecutor {
         return exitValue;
     }
 
-    public static final Process executeAsynch(String[] cmdarray, String[] envp, File dir) throws Throwable {
+    public static final Process executeAsynch(String[] cmdarray, String[] envp, File dir) throws IOException {
+        return executeAsynch(cmdarray, envp, dir, System.out, System.err);
+    }
+    
+    /**
+     * Executes a process asynchronously.
+     * 
+     * @param cmdarray the commands to run
+     * @param envp     the environment
+     * @param dir      the working directory, may be <code>null</code>
+     * @param outStream the stream for output, may not be <code>null</code>
+     * @param errStream the stream for standard error, may not be <code>null</code>
+     * @return the process handle
+     * @throws IOException
+     * @throws NullPointerException if a required argument is <code>null</code>
+     * @see Runtime#exec(String[], String[], File)
+     */
+    public static Process executeAsynch(String[] cmdarray, String[] envp, File dir, 
+            PrintStream outStream, PrintStream errStream) throws IOException {
+        if( outStream == null ) throw new NullPointerException("outStream is null");
+        if( errStream == null ) throw new NullPointerException("errStream is null");
+        
         Process proc = Runtime.getRuntime().exec(cmdarray, envp, dir);
-        StreamGobbler err = new StreamGobbler(proc.getErrorStream(), System.err);
-        StreamGobbler out = new StreamGobbler(proc.getInputStream(), System.out);
+        StreamGobbler err = new StreamGobbler(proc.getErrorStream(), errStream);
+        StreamGobbler out = new StreamGobbler(proc.getInputStream(), outStream);
         err.start();
         out.start();
         return proc;
-    }  
+    }
+    
+    
+    /**
+     * Executes a command and captures the complete result.
+     * 
+     * @param cmds the command and any arguments
+     * @param envp the environment
+     * @param dir  the working directory, may be <code>null</code>
+     * @param timeout the time to wait before aborting, or a negative number to wait forever
+     * @return the result
+     * 
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static Result executeCaptureOutput(String... cmds) 
+            throws IOException, InterruptedException {
+        return executeCaptureOutput(cmds, null, null, -1);
+    }
+    
+    /**
+     * Executes a command and captures the complete result.
+     * 
+     * @param cmds the command and any arguments
+     * @param envp the environment
+     * @param dir  the working directory, may be <code>null</code>
+     * @param timeout the time to wait before aborting, or a negative number to wait forever
+     * @return the result
+     * 
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static Result executeCaptureOutput(String[] cmds, String[] envp, File dir, int timeout) 
+            throws IOException, InterruptedException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        
+        Process proc = executeAsynch(cmds, envp, dir, 
+            new PrintStream(out, true, "UTF-8"),
+            new PrintStream(err, true, "UTF-8"));
+        TimerTask killOnDelay = null;
+        if (timeout > 0) {
+            Timer t = new Timer();
+            killOnDelay = new KillOnTimeout(proc);
+            t.schedule(killOnDelay, timeout);
+        }
+        int exitValue = proc.waitFor();
+        if (timeout > 0)
+            killOnDelay.cancel();
+        return new Result(exitValue, out.toString("UTF-8"), out.toString("UTF-8"));
+    }
   
     private static class StreamGobbler extends Thread {
         private final InputStream is;

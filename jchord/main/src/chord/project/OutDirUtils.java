@@ -1,18 +1,18 @@
 package chord.project;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 import chord.util.IndexMap;
-import chord.util.Utils;
 import chord.util.ProcessExecutor;
+import chord.util.Utils;
 
 /**
  * Common operations on files in the directory specified by system property
@@ -128,6 +128,24 @@ public class OutDirUtils {
             Messages.fatal(PROCESS_FAILED, cmd, ex.getMessage());
         }
         if (Config.verbose >= 1) Messages.log(PROCESS_FINISHED, cmd);
+    }
+    
+    public static ProcessExecutor.Result executeCaptureWithFailOnError(String... cmdarray) {
+        boolean verbose = Config.verbose >= 1;
+        String cmd = Utils.join(Arrays.asList(cmdarray), " ");
+        ProcessExecutor.Result result = null;
+        if (verbose) Messages.log(PROCESS_STARTING, cmd);
+        try {
+            result = ProcessExecutor.executeCaptureOutput(cmdarray);
+            if (result.getExitCode() != 0) {
+                Messages.error("Failed process standard output:\n%s", result.getError());
+                throw new ChordException("Process failed with retcode=" + result.getExitCode());
+            }
+        } catch (Exception e) {
+            Messages.fatal(PROCESS_FAILED, cmd, e.getMessage());
+        }
+        if (verbose) Messages.log(PROCESS_FINISHED, cmd);
+        return result;
     }
 
     public static final void executeWithWarnOnError(List<String> cmdlist, int timeout) {
