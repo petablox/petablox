@@ -1,5 +1,6 @@
 package chord.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileOutputStream;
@@ -609,5 +610,20 @@ public final class Utils {
         
 //        return input.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;")
 //            .replace("'", "&apos;").replaceAll("\"", "&quot;");
+    }
+    
+    /**
+     * Silently close a resource, returning any thrown exception.
+     * @param c the resource to close, may be <code>null</code>
+     * @return the thrown exception or <code>null</code>
+     */
+    public static IOException close(Closeable c) {
+        try {
+            if (c != null)
+                c.close();
+        } catch (IOException e) {
+            return e;
+        }
+        return null;
     }
 }
