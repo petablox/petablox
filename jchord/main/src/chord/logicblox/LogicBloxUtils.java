@@ -1,20 +1,12 @@
 package chord.logicblox;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
-import chord.project.ChordException;
 import chord.project.Config;
 import chord.project.Messages;
 import chord.project.OutDirUtils;
 import chord.util.ProcessExecutor;
 import chord.util.Timer;
-import chord.util.Utils;
 
 /**
  * Utilities for interacting with the LogicBlox engine.
@@ -22,8 +14,6 @@ import chord.util.Utils;
  * @author Jake Cobb <tt>&lt;jake.cobb@gatech.edu&gt;</tt>
  */
 public class LogicBloxUtils {
-    private static final String PROCESS_STARTING = "Starting command: '%s'";
-    private static final String PROCESS_FINISHED = "Finished command: '%s'";
     
     public static void initializeWorkspace() { 
         initializeWorkspace(Config.logicbloxWorkspace); 

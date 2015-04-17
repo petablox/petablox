@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 import java.util.jar.JarFile;
@@ -27,6 +28,7 @@ import chord.project.analyses.ProgramRel;
 import chord.project.ITask;
 import chord.util.Utils;
 import chord.bddbddb.RelSign;
+import chord.core.DatalogMetadata;
 
 /**
  * A Chord project comprising a set of tasks and a set of targets
@@ -49,6 +51,21 @@ public class TaskParser {
         "ERROR: TaskParser: Ignoring Dlog analysis '%s'; errors were found while parsing it (see above).";
     private static final String IGNORE_JAVA_TASK =
         "ERROR: TaskParser: Ignoring Java analysis '%s'; errors were found in its @Chord annotation (see above).";
+    
+    private static final Pattern datalogFilePattern;
+    static {
+        switch (Config.datalogEngine) {
+        case BDDBDDB:
+            datalogFilePattern = Pattern.compile("\\.(dlog|datalog)$", Pattern.CASE_INSENSITIVE);
+            break;
+        case LOGICBLOX3:
+        case LOGICBLOX4:
+            datalogFilePattern = Pattern.compile("\\.logic$", Pattern.CASE_INSENSITIVE);
+            break;
+        default:
+            throw new ChordException("Unhandled datalog engine type: " + Config.datalogEngine);
+        }
+    }
 
     private final Map<String, Class<ITask>> nameToJavaTaskMap =
         new HashMap<String, Class<ITask>>();
@@ -228,7 +245,7 @@ public class TaskParser {
                     processDlogAnalysis(subFile);
                 else {
                     String subFileName = subFile.getAbsolutePath();
-                    if (subFileName.endsWith(".dlog") || subFileName.endsWith(".datalog")) {
+                    if (datalogFilePattern.matcher(subFileName).find()) {
                         processDlogAnalysis(subFileName);
                     }
                 }
@@ -242,7 +259,7 @@ public class TaskParser {
                     while (e.hasMoreElements()) {
                         JarEntry je = (JarEntry) e.nextElement();
                         String fileName2 = je.getName();
-                        if (fileName2.endsWith(".dlog") || fileName2.endsWith(".datalog")) {
+                        if (datalogFilePattern.matcher(fileName2).find()) {
                             InputStream is = jarFile.getInputStream(je);
                             String fileName3 = OutDirUtils.copyResourceByPath(fileName2, is, "dlog");
                             processDlogAnalysis(fileName3);
@@ -254,7 +271,7 @@ public class TaskParser {
                     while (e.hasMoreElements()) {
                         ZipEntry ze = (ZipEntry) e.nextElement();
                         String fileName2 = ze.getName();
-                        if (fileName2.endsWith(".dlog") || fileName2.endsWith(".datalog")) {
+                        if (datalogFilePattern.matcher(fileName2).find()) {
                             InputStream is = zipFile.getInputStream(ze);
                             String fileName3 = OutDirUtils.copyResourceByPath(fileName2, is, "dlog");
                             processDlogAnalysis(fileName3);
@@ -269,8 +286,15 @@ public class TaskParser {
 
     private void processDlogAnalysis(String fileName) {
         DlogAnalysis task = new DlogAnalysis();
-        boolean success = task.parse(fileName);
-        if (!success) {
+        DatalogMetadata meta = null;
+        try {
+            meta = task.parse(fileName);
+            if (!meta.hasNoErrors()) {
+                ignoreDlogTask(fileName);
+                return;
+            }
+        } catch (IOException e) {
+            Messages.log("%s", e.getMessage());
             ignoreDlogTask(fileName);
             return;
         }

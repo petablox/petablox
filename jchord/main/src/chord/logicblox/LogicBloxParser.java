@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 
 import chord.bddbddb.RelSign;
 import chord.core.DatalogMetadata;
+import chord.core.IDatalogParser;
 import chord.project.ChordException;
 import chord.project.Messages;
 import chord.util.Utils;
@@ -41,7 +43,7 @@ import chord.util.Utils;
  * 
  * @author Jake Cobb <tt>&lt;jake.cobb@gatech.edu&gt;</tt>
  */
-public class LogicBloxParser {
+public class LogicBloxParser implements IDatalogParser {
     private static final Pattern metaCommentPattern = 
         Pattern.compile("^\\s*//\\s*:(inputs|outputs|domains|name):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE);
     private static final Pattern relationSignaturePattern =
@@ -152,7 +154,9 @@ public class LogicBloxParser {
             numMap.put(domain, num + 1);
         }
         
-        return new RelSign(domNames, /* LB has no domain order concept */ null);
+        // LB has no concept of var order, so we just make one up
+        String varOrder = Utils.join(Arrays.asList(domNames), "x"); 
+        return new RelSign(domNames, varOrder);
     }
 
 }

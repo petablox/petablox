@@ -17,11 +17,12 @@ public class DatalogMetadata {
     private Map<String, RelSign> consumedRels;
     private Map<String, RelSign> producedRels;
     private String dlogName;
+    private List<String> minorDomNames;
+    
+    /** The BDD variable order, not applicable for LogicBlox. */
+    private String bddOrder;
     
     private boolean hasNoErrors = true;
-    
-    // number of line currently being parsed in the datalog program
-    private int lineNum;
 
     public DatalogMetadata() {
     }
@@ -65,5 +66,32 @@ public class DatalogMetadata {
     public void setDlogName(String dlogName) {
         this.dlogName = dlogName;
     }    
+    
+    public void setHasNoErrors(boolean hasNoErrors) {
+        this.hasNoErrors = hasNoErrors;
+    }
+    
+    public boolean hasNoErrors() { return hasNoErrors; }
+    
+    public void setMinorDomNames(List<String> minorDomNames) {
+        this.minorDomNames = minorDomNames;
+    }
+    
+    public List<String> getMinorDomNames() {
+        return minorDomNames;
+    }
+    
+    /**
+     * Returns the BDD variable order.  This returns <code>null</code> for 
+     * if this is produced for LogicBlox.
+     * @return
+     */
+    public String getBddOrder() {
+        return bddOrder;
+    }
+    
+    public void setBddOrder(String bddOrder) {
+        this.bddOrder = bddOrder;
+    }
 
 }

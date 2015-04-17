@@ -153,6 +153,7 @@
 				<include name="**/*.txt"/>
 				<include name="**/*.dlog"/>
 				<include name="**/*.datalog"/>
+				<include name="**/*.logic"/>
 				<include name="**/*.xsl"/>
 				<include name="**/*.xml"/>
 				<include name="**/*.dtd"/>
