@@ -40,14 +40,14 @@ def convert(dlog_path, logic_path=None, verbose=0):
                 continue
 
             # convert domain includes
-            m = re.search(r'\.include "(?P<dom>\w+\.dom)"', line)
+            m = re.search(r'\.include "(?P<dom>\w+)\.dom"', line)
             if m:
                 if v: print('Found domains: {}'.format(line.rstrip()))
                 output('// :domains: {}'.format(m.group('dom')))
                 continue
 
             # convert input, output and intermediate relation declarations
-            m = re.search(r'^(?P<relname>[^(]+)\((?P<relsig>[^)]+)\) ?(?P<type>input|output|)$', line)
+            m = re.search(r'^(?P<relname>[^(]+)\((?P<relsig>[^)]+)\) ?(?P<type>input|output|)\s*(#|$)', line)
             if m:
                 if v: print('Found relation: {}'.format(line.rstrip()))
                 rtype = m.group('type')
