@@ -48,6 +48,10 @@ public class LogicBloxParser implements IDatalogParser {
         Pattern.compile("^\\s*//\\s*:(inputs|outputs|domains|name):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE);
     private static final Pattern relationSignaturePattern =
         Pattern.compile("([a-zA-Z_:]+)\\(([^\\)]+)\\)");
+    
+    // for error messages
+    private File currentFile;
+    private String currentRelation;
 
     public LogicBloxParser() {
     }
@@ -57,6 +61,7 @@ public class LogicBloxParser implements IDatalogParser {
     public DatalogMetadata parseMetadata(File file) throws IOException {
         BufferedReader in = null;
         try {
+            currentFile = file;
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             
             DatalogMetadata metadata = new DatalogMetadata();
@@ -102,6 +107,8 @@ public class LogicBloxParser implements IDatalogParser {
             // by standard, utf-8 is always supported
             throw new ChordException("UTF-8 not supported?", e);
         } finally {
+            currentRelation = null;
+            currentFile = null;
             Utils.close(in);
         }
     }
@@ -118,6 +125,7 @@ public class LogicBloxParser implements IDatalogParser {
         while (sigMatcher.find()) {
             String relName = sigMatcher.group(1),
                     sigData = sigMatcher.group(2);
+            currentRelation = relName;
             RelSign sign = parseRelationSignature(sigData);
             if (signMap.containsKey(relName)) {
                 Messages.warn("%s has multiple signatures, replacing %s with %s.", relName, signMap.get(relName), sign);
@@ -127,7 +135,9 @@ public class LogicBloxParser implements IDatalogParser {
     }
     
     /**
-     * Parses the domain names out of a signature list, assigning minor numbers in order 
+     * Parses the domain names out of a signature list.
+     *   
+     * <p>Unless manually specified, minor numbers are assigned in order 
      * of occurrence of a particular name starting from 0.
      * <p>
      * For a list should be of the form:<br />
@@ -135,28 +145,62 @@ public class LogicBloxParser implements IDatalogParser {
      * Will return a signature with:<br />
      * <tt>A0, B0, A1</tt>
      * <p>
-     * The returned signature will not have a domain order (which is a BDD-specific concept).
+     * If any minor number is specified for a given relation, then all minor numbers must 
+     * be specified.
+     * <p>
+     * The returned signature will have an arbitrary domain order (which is a BDD-specific concept).
      * 
-     * @param signature
-     * @return
+     * @param signature the signature to parse
+     * @return the relation signature
      */
     private RelSign parseRelationSignature(String signature) {
-        HashMap<String, Integer> numMap = new HashMap<String, Integer>();
-        
         String[] sigParts = signature.split(",");
-        String[] domNames = new String[sigParts.length];
-        for (int i = 0; i < sigParts.length; ++i) {
-            String domain = sigParts[i].trim();
-            Integer num = numMap.get(domain);
-            if (num == null)
-                num = 0;
-            domNames[i] = domain + num;
-            numMap.put(domain, num + 1);
+        for (int i = 0; i < sigParts.length; ++i)
+            sigParts[i] = sigParts[i].trim();
+        
+        String[] domNames;
+        if (areMinorsSpecified(sigParts)) {
+            domNames = sigParts;
+        } else {
+            HashMap<String, Integer> numMap = new HashMap<String, Integer>();
+            domNames = new String[sigParts.length];
+            for (int i = 0; i < sigParts.length; ++i) {
+                String domain = sigParts[i];
+                Integer num = numMap.get(domain);
+                if (num == null)
+                    num = 0;
+                domNames[i] = domain + num;
+                numMap.put(domain, num + 1);
+            }
         }
         
         // LB has no concept of var order, so we just make one up
         String varOrder = Utils.join(Arrays.asList(domNames), "x"); 
         return new RelSign(domNames, varOrder);
+    }
+    
+    /**
+     * Checks whether all or no minor numbers are specified.  If they 
+     * are only partially specified an exception is thrown.
+     * 
+     * @param domains the domain specs to check
+     * @return <code>true</code> if all minors are specified or <code>false</code> is none are
+     * @throws ChordException if minors are only partially specified
+     */
+    private boolean areMinorsSpecified(String[] domains) {
+        String first = domains[0];
+        boolean firstHasMinors = Character.isDigit(first.charAt(first.length() - 1));
+        for (int i = 1; i < domains.length; ++i) {
+            String sigPart = domains[i];
+            boolean hasMinor = Character.isDigit(sigPart.charAt(sigPart.length() - 1));
+            if (hasMinor != firstHasMinors) {
+               throw new ChordException(String.format(
+                   "Minor domains only partially specified for relation %s in %s", 
+                   currentRelation, currentFile
+               ));
+            }
+        }
+        return firstHasMinors;
     }
 
 }
