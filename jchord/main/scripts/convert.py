@@ -4,9 +4,11 @@ import sys
 import re
 import datetime
 from collections import OrderedDict
+import argparse
 
 
-def convert(dlog_path, logic_path=None):
+def convert(dlog_path, logic_path=None, verbose=0):
+    v = verbose >= 1; vv = verbose >= 2
     if logic_path is None:
         logic_path = re.sub(r'\.dlog$', '.logic', dlog_path)
     if logic_path == dlog_path:
@@ -18,6 +20,8 @@ def convert(dlog_path, logic_path=None):
         def output(msg, *args, **kwargs):
             if args or kwargs:
                 msg = msg.format(*args, **kwargs)
+            if vv:
+                print('Output: {}'.format(msg))
             print(msg, file=lfile)
 
         output('// Created by convert.py from {} on {}'.format(dlog_path, datetime.datetime.now()))
@@ -38,12 +42,14 @@ def convert(dlog_path, logic_path=None):
             # convert domain includes
             m = re.search(r'\.include "(?P<dom>\w+\.dom)"', line)
             if m:
+                if v: print('Found domains: {}'.format(line.rstrip()))
                 output('// :domains: {}'.format(m.group('dom')))
                 continue
 
             # convert input, output and intermediate relation declarations
             m = re.search(r'^(?P<relname>[^(]+)\((?P<relsig>[^)]+)\) ?(?P<type>input|output|)$', line)
             if m:
+                if v: print('Found relation: {}'.format(line.rstrip()))
                 rtype = m.group('type')
                 if not rtype:
                     output('// convert.py: following intermediate relation converted to output relation')
@@ -70,15 +76,33 @@ def convert(dlog_path, logic_path=None):
 
 def parseSigParts(relsig):
     parts = [s.strip().split(':') for s in relsig.split(',')]
-    parts = [(p[0], re.sub(r'[0-9]+$', '', p[1])) for p in parts]
+    parts = [[p[0], re.sub(r'[0-9]+$', '', p[1])] for p in parts]
+
+    # can't assume variable names are unique in input file, make sure they are in the output
+    suffixes = {}
+    for i, part in enumerate(parts):
+        var, dom = part
+        if var not in suffixes:
+            suffixes[var] = 1
+        else:
+            suffix = suffixes[var]
+            parts[i][0] = var + str(suffix)
+            suffixes[var] = suffix + 1
+
     return parts
 
+def _parser():
+    p = argparse.ArgumentParser(description='Convert BDD-style datalog files to LogicBlox format.')
+    p.add_argument('files', nargs='+')
+    p.add_argument('--verbose', '-v', action='count')
+    return p
 
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
-    for arg in args:
-        convert(arg)
+    args = _parser().parse_args(args)
+    for arg in args.files:
+        convert(arg, verbose=args.verbose)
 
 if __name__ == '__main__':
     main()
