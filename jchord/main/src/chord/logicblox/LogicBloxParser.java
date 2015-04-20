@@ -65,7 +65,7 @@ public class LogicBloxParser implements IDatalogParser {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             
             DatalogMetadata metadata = new DatalogMetadata();
-            metadata.setFileName(file.getName());
+            metadata.setFileName(file.getAbsolutePath());
             
             HashSet<String> domNames = new HashSet<String>();
 
