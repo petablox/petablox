@@ -47,7 +47,7 @@ public class LogicBloxParser implements IDatalogParser {
     private static final Pattern metaCommentPattern = 
         Pattern.compile("^\\s*//\\s*:(inputs|outputs|domains|name):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE);
     private static final Pattern relationSignaturePattern =
-        Pattern.compile("([a-zA-Z_:]+)\\(([^\\)]+)\\)");
+        Pattern.compile("([a-zA-Z][^!=:\\-\\s<>(),]+)\\(([^\\)]+)\\)");
     
     // for error messages
     private File currentFile;
