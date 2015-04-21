@@ -4,26 +4,36 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.PrintWriter;
-import java.io.PrintStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import chord.project.Config;
-
-import chord.util.tuple.integer.*;
-
-import chord.util.tuple.object.*;
-
 import net.sf.javabdd.BDD;
 import net.sf.javabdd.BDDDomain;
 import net.sf.javabdd.BDDException;
 import net.sf.javabdd.BDDFactory;
+import chord.logicblox.LogicBloxExporter;
+import chord.logicblox.LogicBloxUtils;
+import chord.project.ChordException;
+import chord.project.Config;
+import chord.project.Config.DatalogEngineType;
+import chord.util.Utils;
+import chord.util.tuple.integer.IntHext;
+import chord.util.tuple.integer.IntPair;
+import chord.util.tuple.integer.IntPent;
+import chord.util.tuple.integer.IntQuad;
+import chord.util.tuple.integer.IntTrio;
+import chord.util.tuple.object.Hext;
+import chord.util.tuple.object.Pair;
+import chord.util.tuple.object.Pent;
+import chord.util.tuple.object.Quad;
+import chord.util.tuple.object.Trio;
 
 /**
  * Generic implementation of a BDD-based relation.
@@ -50,7 +60,7 @@ import net.sf.javabdd.BDDFactory;
  *       </ul>
  *   </li>
  *   <li>
- *    The relation built in memory is reflected onto disk by calling {@link #save(String)}, which also
+ *    The relation built in memory is reflected onto disk by calling {@link #saveToBDD(String)}, which also
  *       removes the relation from memory (i.e., BDDs allocated for the relation in memory are freed).
  *   </li>
  *   <li>
@@ -288,10 +298,11 @@ public class Rel {
         factory.done();
         bdd = null;
     }
+    
     /**
      * Copies the relation from memory to disk and frees it from memory.
      */
-    public void save(String dirName) {
+    public void saveToBDD(String dirName) {
         if (bdd == null)
             throw new RuntimeException("");
         try {
@@ -314,6 +325,20 @@ public class Rel {
         }
         close();
     }
+    
+    /**
+     * Saves the relation to disk in LogicBlox format.
+     * 
+     * @param dirName the directory name
+     */
+    public void saveToLogicBlox(String dirName) {
+        if (bdd == null)
+            throw new ChordException("bdd not initialized");
+        LogicBloxExporter exporter = new LogicBloxExporter();
+        exporter.setWorkDir(dirName);
+        exporter.saveRelation(this);
+    }
+    
     public void print(String dirName) {
         if (bdd == null)
             throw new RuntimeException("");

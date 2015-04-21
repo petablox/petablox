@@ -75,7 +75,15 @@ public class ProgramRel extends Rel implements ITask {
     public void save() {
         if (Config.verbose >= 1)
             System.out.println("SAVING rel " + name + " size: " + size());
-        super.save(Config.bddbddbWorkDirName);
+        switch (Config.datalogEngine) {
+        case BDDBDDB:
+            super.saveToBDD(Config.bddbddbWorkDirName);
+            break;
+        case LOGICBLOX3:
+        case LOGICBLOX4:
+            super.saveToLogicBlox(Config.logicbloxWorkDirName);
+            break;
+        }
         if (Config.classic)
             ClassicProject.g().setTrgtDone(this);
     }
