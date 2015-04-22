@@ -169,6 +169,22 @@ public class LogicBloxExporter {
         }
     }
     
+    
+    /**
+     * Builds the import relation definitions used to import delimited-file data to LogicBlox.
+     * <p>
+     * This declares a predicate <code>_in</code> using the variable list and type constraints 
+     * given.  It also handles LB 3 vs LB 4 differences and various <code>lang:physical:*</code> 
+     * declarations that are required.
+     * <p>
+     * For example, use <code>varList</code> = "v1, v2" and <code>typeConstraints</code> = 
+     * "int(v1), string(v2)".  
+     * 
+     * @param varList           the list of input predicate variables
+     * @param typeConstraints   the type constraints of these variables
+     * @param factsFile         the delimited file containing the data to import
+     * @return the import relation definitions
+     */
     private String createImportRelation(String varList, String typeConstraints, File factsFile) {
         StringBuilder sb = new StringBuilder("_in(");
         final boolean isLB3 = isLB3();
@@ -187,6 +203,15 @@ public class LogicBloxExporter {
         return sb.toString();
     }
     
+    /**
+     * Builds the type constraints for the domains of a relation.
+     * 
+     * Return values look like:<br />
+     * <code>D0(d0), D1(d1), ...</code>
+     * 
+     * @param relation the relation to generate a type constraint string for
+     * @return the type constraints
+     */
     private String getDomainConstraints(Rel relation) {
         StringBuilder sb = new StringBuilder();
         Dom<?>[] doms = relation.getDoms();
@@ -198,6 +223,14 @@ public class LogicBloxExporter {
         return sb.toString();
     }
     
+    /**
+     * Creates a list of generic variables numbered from 0, e.g. 
+     * "v0, v1, ..." if <code>varPrefix</code> is "v".
+     * 
+     * @param varPrefix the variable prefix
+     * @param size      the length of the variable sequence
+     * @return the variable list
+     */
     private String makeVarList(String varPrefix, int size) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; ++i)

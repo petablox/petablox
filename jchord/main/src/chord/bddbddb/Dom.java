@@ -179,12 +179,12 @@ public class Dom<T> extends IndexMap<T> {
     
     /**
      * Returns the capacity of LogicBlox predicates for LB 3, which 
-     * is 2^20 by default (subclasses may override).
+     * is the size of this domain by default.
      * 
      * @return the entity capacity
      */
     public long getLogicBloxCapacity() {
-        return 1L << 20;
+        return this.size();
     }
     
     // subclasses may override
