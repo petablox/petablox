@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import chord.logicblox.LogicBloxExporter;
 import chord.logicblox.LogicBloxUtils;
 import chord.project.Config;
 import chord.project.Config.DatalogEngineType;
@@ -78,113 +79,10 @@ public class Dom<T> extends IndexMap<T> {
      *  
      *  @throws IOException if the information cannot be saved successfully
      */
-    public void saveToLogicBlox(String dirName) throws IOException {
-        Utils.mkdirs(dirName);
-        final String DELIM = Config.logicbloxInputDelim;
-        final boolean isLb3 = Config.datalogEngine == DatalogEngineType.LOGICBLOX3;
-
-        String intType = isLb3 ? "uint[64]" : "int";
-
-        // save the data values
-        File factsFile = new File(dirName, name + ".csv");
-        if (!factsFile.getParentFile().exists()) {
-            System.err.println("WARN: No parent directory: "
-                + factsFile.getParentFile().getAbsolutePath());
-        }
-        PrintWriter out = new PrintWriter(factsFile);
-        for (int i = 0, size = this.size(); i < size; ++i) {
-            out.print(i);
-            out.print(DELIM);
-            out.println(this.toUniqueString(i));
-        }
-        out.flush();
-        out.close();
-        if (out.checkError()) {
-            throw new IOException("An error occurred writing domain " + name
-                + " to " + factsFile.getAbsolutePath());
-        }
-
-        // and the type declaration
-        File typeFile = new File(dirName, name + ".type");
-        out = new PrintWriter(typeFile);
-        out.println(getLogicBloxType());
-        out.flush();
-        out.close();
-        if (out.checkError()) {
-            throw new IOException("An error occurred writing type information for " + name
-                + " to " + typeFile.getAbsolutePath());
-        }
-        
-        // and an import file
-        File importFile = new File(dirName, name + ".import");
-        out = new PrintWriter(importFile);
-        out.println("_in(" + (isLb3 ? "" : "offset; ") + "id, val) -> " + (isLb3 ? "" : intType + "(offset), ") + intType + "(id), string(val).");
-        out.println("lang:physical:filePath[`_in] = \"" + factsFile.getAbsolutePath() + "\".");
-        if (isLb3)
-            out.println("lang:physical:storageModel[`_in] = \"DelimitedFile\".");
-        else
-            out.println("lang:physical:fileMode[`_in] = \"import\".");
-        out.println("lang:physical:delimiter[`_in] = \"" + DELIM + "\".");
-        out.println();
-        out.println("+" + name + "(x), +" + name + "_values[id, val] = x <- _in(" + (isLb3 ? "" : "_; ") + "id, val).");
-        out.flush();
-        out.close();
-        if (out.checkError()) {
-            throw new IOException("An error occurred writing import logic for " + name
-                + " to " + importFile.getAbsolutePath());
-        }
-        
-        LogicBloxUtils.addBlock(typeFile);
-        LogicBloxUtils.execFile(importFile);
-    }
-    
-    /**
-     * Returns LogicBlox type definitions and constraints for this domain type.
-     * 
-     * @return the type string, suitable for passing to the LB engine
-     */
-    public String getLogicBloxType() {
-        final boolean isLb3 = Config.datalogEngine == DatalogEngineType.LOGICBLOX3;
-
-        String intType = isLb3 ? "uint[64]" : "int";
-
-        StringBuilder type = new StringBuilder();
-        // a new entity type
-        type.append(name).append("(x) -> .\n");
-
-        // with a constructor of (index, uniquestring)
-        type.append(name).append("_values[id, val] = x -> ").append(name)
-            .append("(x), ").append(intType).append("(id), string(val).\n")
-            .append("lang:constructor(`").append(name)
-            .append("_values).\n");
-        if (isLb3) {
-            // have to make scalable, values other than ScalableSparse are not
-            // documented
-            type.append("lang:physical:storageModel[`").append(name)
-                .append("] = \"ScalableSparse\".\n")
-                .append("lang:physical:capacity[`").append(name).append("] = ").append(getLogicBloxCapacity()).append(".\n");
-        }
-
-        // enforce uniqueness
-        // FIXME disabled for now, makes import slow to a crawl
-//        type.append(name).append("_values[id, val1] = x1, ").append(name)
-//            .append("_values[id, val2] = x2 -> ")
-//            .append("val1 = val2, x1 = x2.\n");
-//        type.append(name).append("_values[id1, val] = x1, ").append(name)
-//            .append("_values[id2, val] = x2 -> ")
-//            .append("id1 = id2, x1 = x2.\n");
-
-        return type.toString();
-    }
-    
-    /**
-     * Returns the capacity of LogicBlox predicates for LB 3, which 
-     * is the size of this domain by default.
-     * 
-     * @return the entity capacity
-     */
-    public long getLogicBloxCapacity() {
-        return this.size();
+    public void saveToLogicBlox(String dirName) {
+        LogicBloxExporter exporter = new LogicBloxExporter();
+        exporter.setWorkDir(dirName);
+        exporter.saveDomain(this);
     }
     
     // subclasses may override
