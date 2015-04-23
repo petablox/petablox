@@ -19,11 +19,9 @@ import net.sf.javabdd.BDDDomain;
 import net.sf.javabdd.BDDException;
 import net.sf.javabdd.BDDFactory;
 import chord.logicblox.LogicBloxExporter;
-import chord.logicblox.LogicBloxUtils;
+import chord.logicblox.LogicBloxImporter;
 import chord.project.ChordException;
 import chord.project.Config;
-import chord.project.Config.DatalogEngineType;
-import chord.util.Utils;
 import chord.util.tuple.integer.IntHext;
 import chord.util.tuple.integer.IntPair;
 import chord.util.tuple.integer.IntPent;
@@ -238,10 +236,11 @@ public class Rel {
         initialize();
         bdd = factory.zero();
     }
+    
     /**
      * Copies this relation from disk to memory.
      */
-    public void load(String dirName) {
+    public void loadFromBDDBDDB(String dirName) {
         initialize();
         try {
             File file = new File(dirName, name + ".bdd");
@@ -289,6 +288,14 @@ public class Rel {
             throw new RuntimeException(ex);
         }
     }
+    
+    public void loadFromLogicBlox(String workspace) {
+        initialize();
+        LogicBloxImporter importer = new LogicBloxImporter();
+        importer.setWorkspace(workspace);
+        importer.importRelation(this);
+    }
+    
     /**
      * Frees this relation from memory.
      */
@@ -677,24 +684,24 @@ public class Rel {
     protected void checkRange(Object val, int domIdx) {
         int idx = doms[domIdx].indexOf(val);
         if (idx == -1)
-            throw new RuntimeException("Cannot find value '" + val +
+            throw new ChordException("Cannot find value '" + val +
                 "' in domain #" + domIdx + " named '" + doms[domIdx] +
                 "' in relation named '" + name + "'.");
         int size = doms[domIdx].size();
         if (idx >= size) {
-            throw new RuntimeException("Object " + val + " has out of range index " + idx +
+            throw new ChordException("Object " + val + " has out of range index " + idx +
                 " in domain #" + domIdx + " named '" + doms[domIdx] + "' of size " + size +
                 " in relation named '" + name + "'.");
         }
     }
     protected void checkRange(int idx, int domIdx) {
         if (idx == -1)
-            throw new RuntimeException("Cannot find value" +
+            throw new ChordException("Cannot find value" +
                 " in domain #" + domIdx + " named '" + doms[domIdx] +
                 "' in relation named '" + name + "'.");
         int size = doms[domIdx].size();
         if (idx >= size) {
-            throw new RuntimeException("Value has out of range index " + idx +
+            throw new ChordException("Value has out of range index " + idx +
                 " in domain #" + domIdx + " named '" + doms[domIdx] + "' of size " + size +
                 " in relation named '" + name + "'.");
         }
@@ -1966,18 +1973,67 @@ public class Rel {
     public void add(Object[] vals) {
         if (bdd == null)
             throw new RuntimeException("");
-        throw new UnsupportedOperationException();
+        if (vals == null) throw new NullPointerException("vals is null");
+        int size = vals.length;
+        int[] indexes = new int[size];
+        for (int i = 0; i < size; ++i)
+            indexes[i] = doms[i].indexOf(vals[i]);
+        add(indexes);
     }
+    
     public void add(int[] idxs) {
         if (bdd == null)
             throw new RuntimeException("");
-        throw new UnsupportedOperationException();
+        if (idxs == null) throw new NullPointerException("idxs is null");
+        int size = idxs.length;
+        if (size < 1) throw new IllegalArgumentException("Invalid size: " + size);
+        switch (size) {
+        // delegate to unrolled instances if possible
+        case 1: add(idxs[0]); break;
+        case 2: add(idxs[0], idxs[1]); break;
+        case 3: add(idxs[0], idxs[1], idxs[2]); break;
+        case 4: add(idxs[0], idxs[1], idxs[2], idxs[3]); break;
+        case 5: add(idxs[0], idxs[1], idxs[2], idxs[3], idxs[4]); break;
+        case 6: add(idxs[0], idxs[1], idxs[2], idxs[3], idxs[4], idxs[5]); break;
+        default:
+            try {
+                BDD tmp = domBdds[0].ithVar(idxs[0]);
+                for (int i = 1; i < size; ++i) {
+                    tmp = tmp.andWith(domBdds[i].ithVar(i));
+                }
+                bdd.orWith(tmp);
+            } catch (BDDException e) {
+                for (int i = 0; i < size; ++i)
+                    checkRange(idxs[i], i);
+                throw new ChordException(e);
+            }
+        }
     }
+    
     public boolean contains(Object[] vals) {
         if (bdd == null)
             throw new RuntimeException("");
-        throw new UnsupportedOperationException();
+        if (vals == null) throw new NullPointerException("vals is null");
+        
+        final int size = vals.length;
+        switch (size) {
+        case 0: throw new ChordException("vals must have at least one element.");
+        // delegate to unrolled versions if possible
+        case 1: return contains(vals[0]);
+        case 2: return contains(vals[0], vals[1]);
+        case 3: return contains(vals[0], vals[1], vals[2]);
+        case 4: return contains(vals[0], vals[1], vals[2], vals[3]);
+        case 5: return contains(vals[0], vals[1], vals[2], vals[3], vals[4]);
+        case 6: return contains(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
+        default:
+            BDD tmp = domBdds[0].ithVar(doms[0].indexOf(vals[0]));
+            for (int i = 1; i < size; ++i) {
+                tmp = tmp.andWith(domBdds[i].ithVar(doms[i].indexOf(vals[i])));
+            }
+            return !bdd.id().andWith(tmp).isZero();
+        }
     }
+    
     public AryNIterable getAryNValTuples() {
         if (bdd == null)
             throw new RuntimeException("");

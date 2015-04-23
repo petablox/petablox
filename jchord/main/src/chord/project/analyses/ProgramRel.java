@@ -1,23 +1,17 @@
 package chord.project.analyses;
 
-import java.util.List;
-import java.io.File;
-
-import chord.project.ClassicProject;
 import chord.bddbddb.Rel;
 import chord.bddbddb.RelSign;
 import chord.program.visitors.IClassVisitor;
+import chord.project.ChordException;
+import chord.project.ClassicProject;
 import chord.project.Config;
-import chord.project.ICtrlCollection;
-import chord.project.IDataCollection;
 import chord.project.IStepCollection;
+import chord.project.ITask;
+import chord.project.Messages;
 import chord.project.ModernProject;
 import chord.project.VisitorHandler;
 import chord.util.Utils;
-import chord.project.Messages;
-import chord.project.ITask;
-
-import CnCHJ.api.ItemCollection;
 
 /**
  * Generic implementation of a program relation (a specialized kind of Java task).
@@ -88,7 +82,17 @@ public class ProgramRel extends Rel implements ITask {
             ClassicProject.g().setTrgtDone(this);
     }
     public void load() {
-        super.load(Config.bddbddbWorkDirName);
+        switch (Config.datalogEngine) {
+        case BDDBDDB:
+            super.loadFromBDDBDDB(Config.bddbddbWorkDirName);
+            break;
+        case LOGICBLOX3:
+        case LOGICBLOX4:
+            super.loadFromLogicBlox(Config.logicbloxWorkspace);
+            break;
+        default:
+            throw new ChordException("Unhandled datalog engine: " + Config.datalogEngine);
+        }
     }
     public void fill() {
         if (this instanceof IClassVisitor) {

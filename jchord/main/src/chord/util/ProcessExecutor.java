@@ -224,10 +224,10 @@ public final class ProcessExecutor {
         return new Result(exitValue, out.toString("UTF-8"), out.toString("UTF-8"));
     }
   
-    private static class StreamGobbler extends Thread {
+    public static class StreamGobbler extends Thread {
         private final InputStream is;
         private final PrintStream os;
-        private StreamGobbler(InputStream is, PrintStream os) {
+        public StreamGobbler(InputStream is, PrintStream os) {
             this.is = is;
             this.os = os;
             this.setDaemon(true);

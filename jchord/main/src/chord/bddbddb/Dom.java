@@ -6,11 +6,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import chord.logicblox.LogicBloxExporter;
-import chord.logicblox.LogicBloxUtils;
-import chord.project.Config;
-import chord.project.Config.DatalogEngineType;
 import chord.util.IndexMap;
-import chord.util.Utils;
 
 /**
  * Generic implementation of a BDD-based domain.
@@ -21,7 +17,8 @@ import chord.util.Utils;
  * <li> The domain is next built in memory by repeatedly calling {@link #getOrAdd(Object)} with the argument in each call being a value
  * to be added to the domain.  If the value already exists in the domain then the call does not have any effect.  Otherwise, the value
  * is mapped to integer K in the domain where K is the number of values already in the domain. </li>
- * <li> The domain built in memory is reflected onto disk by calling {@link #saveToBDD(String,boolean)}. </li>
+ * <li> The domain built in memory is reflected onto disk by calling either 
+ *     {@link #saveToBDD(String,boolean)} or {@link #saveToLogicBlox(String)}. </li>
  * <li> The domain on disk can be read by a Datalog program. </li>
  * <li> The domain in memory can be read by calling any of the following:
  * <ul>
@@ -77,7 +74,7 @@ public class Dom<T> extends IndexMap<T> {
      *  <tt>N.type</tt>, which contains predicate definitions and <tt>N.csv</tt>, which 
      *  contains <tt>chord.logicblox.delim</tt>-delimited (index, string) pairs.
      *  
-     *  @throws IOException if the information cannot be saved successfully
+     *  @throws ChordException if an error occurs
      */
     public void saveToLogicBlox(String dirName) {
         LogicBloxExporter exporter = new LogicBloxExporter();
