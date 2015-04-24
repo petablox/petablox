@@ -2,6 +2,8 @@ package chord.project;
 
 import java.io.File;
 import java.io.IOException;
+
+import chord.logicblox.LogicBloxUtils;
 import chord.util.Utils;
 
 /**
@@ -123,8 +125,9 @@ public class Config {
         System.getProperty("chord.logicblox.command", "lb");
     public final static String logicbloxWorkspace;
     static {
-        String ws = System.getProperty("chord.logicblox.workspace", "chord");
-        // TODO : Generate a name by default
+        String ws = System.getProperty("chord.logicblox.workspace");
+        if (ws == null)
+            ws = LogicBloxUtils.generateWorkspaceName(new File(Config.workDirName).getAbsolutePath());
         logicbloxWorkspace = ws;
     }
     
