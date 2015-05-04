@@ -1,0 +1,14 @@
+// Created by convert.py from ./src/chord/analyses/alloc/checkExcludedH.dlog on 2015-04-20 13:08:42.231350
+// :name: checkExcludedH-dlog
+
+// :domains: M
+// :domains: H
+
+
+// :inputs: checkExcludedM(M)
+// :inputs: MH(M,H)
+// :outputs: checkExcludedH(H)
+checkExcludedH(h) -> H(h).
+
+checkExcludedH(h) <- MH(m,h), checkExcludedM(m).
+

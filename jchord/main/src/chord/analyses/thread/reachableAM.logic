@@ -1,0 +1,37 @@
+// Created by convert.py from ./src/chord/analyses/thread/reachableAM.dlog on 2015-04-20 13:08:42.317509
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: reachableAM-dlog
+
+// :domains: M
+// :domains: I
+// :domains: A
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: IM(I,M)
+// :inputs: threadAM(A,M)
+// :inputs: MI(M,I)
+// :inputs: threadStartI(I)
+
+// :outputs: reachableAM(A,M)
+reachableAM(t,m) -> A(t), M(m).
+// :outputs: threadReachableM(M)
+threadReachableM(m) -> M(m).
+
+// ###
+// # Constraints
+// ###
+
+reachableAM(t,m) <- threadAM(t,m).
+reachableAM(t,n) <- reachableAM(t,m), MI(m,i), IM(i,n), !threadStartI(i).
+
+threadReachableM(m) <- reachableAM(_,m).
+

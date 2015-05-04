@@ -1,0 +1,100 @@
+// Created by convert.py from ./src/chord/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.dlog on 2015-04-20 13:08:42.284082
+// :name: kobj-bit-init-dlog_XZ89_
+// :domains: I
+// :domains: M
+// :domains: K
+// :domains: C
+// :domains: H
+// :domains: V
+
+
+// #Input relations
+// :inputs: initCOC(C,H,C)
+// :inputs: initCHC(C,H,C)
+// :inputs: truncCKC(C,K,C)
+// :inputs: HK(H,K)
+// :inputs: OK(H,K)
+// :inputs: roots(M)
+// :inputs: IM(I,M)
+// :inputs: VH(V,H)
+// :inputs: MI(M,I)
+// :inputs: MH(M,H)
+// :inputs: CL(C,K)
+// :inputs: IinvkArg0(I0,V1)
+// :inputs: statM(M)
+// :inputs: AllowH(H,K)
+// :inputs: DenyH(H,K)
+// :inputs: AllowO(H,K)
+// :inputs: DenyO(H,K)
+// :inputs: thisMV(M,V)
+
+// #Output relations
+// :outputs: CHC_1(C,H,C)
+CHC_1(c,h,c1) -> C(c), H(h), C(c1).
+// :outputs: HM(H,M)
+HM(h,m) -> H(h), M(m).
+// :outputs: CM(C,M)
+CM(c,m) -> C(c), M(m).
+// :outputs: CHC_2(C,H,C)
+CHC_2(c,h,c1) -> C(c), H(h), C(c1).
+// :outputs: COC(C,H,C)
+COC(c,h,c1) -> C(c), H(h), C(c1).
+// :outputs: CHC(C,H,C)
+CHC(c,h,c1) -> C(c), H(h), C(c1).
+// :outputs: COC_2(C,H,C)
+COC_2(c1,h,c3) -> C(c1), H(h), C(c3).
+// :outputs: COC_1(C,H,C)
+COC_1(c1,h,c2) -> C(c1), H(h), C(c2).
+
+// #Instrumented relations
+// :outputs: CM_XZ89_8_11(C,M,C,H)
+CM_XZ89_8_11(c,m,v_XZ89_0,h) -> C(c), M(m), C(v_XZ89_0), H(h).
+// :outputs: CM_XZ89_9_11(C,M,M,I)
+CM_XZ89_9_11(c,m1,m0,i) -> C(c), M(m1), M(m0), I(i).
+// :outputs: COC_2_XZ89_6_11(C,H,C,C,K,K)
+COC_2_XZ89_6_11(c1,h,c3,c2,l1,l2) -> C(c1), H(h), C(c3), C(c2), K(l1), K(l2).
+// :outputs: COC_XZ89_7_11(C,H,C,K)
+COC_XZ89_7_11(c1,h,c2,l) -> C(c1), H(h), C(c2), K(l).
+// :outputs: CM_XZ89_12_11(M)
+CM_XZ89_12_11(m) -> M(m).
+// :outputs: CHC_1_XZ89_10_11(C,H,C,M)
+CHC_1_XZ89_10_11(c1,h,c2,m) -> C(c1), H(h), C(c2), M(m).
+// :outputs: COC_1_XZ89_11_11(C,H,C,M)
+COC_1_XZ89_11_11(c1,h,c2,m) -> C(c1), H(h), C(c2), M(m).
+// :outputs: CHC_2_XZ89_2_11(C,H,C,C,K,K)
+CHC_2_XZ89_2_11(c1,h,c3,c2,l1,l2) -> C(c1), H(h), C(c3), C(c2), K(l1), K(l2).
+// :outputs: CHC_XZ89_1_11(C,H,C,K)
+CHC_XZ89_1_11(c1,h,c2,l) -> C(c1), H(h), C(c2), K(l).
+// :outputs: COC_XZ89_5_11(C,H,C,K)
+COC_XZ89_5_11(c1,h,c2,l) -> C(c1), H(h), C(c2), K(l).
+// :outputs: CHC_XZ89_3_11(C,H,C,K)
+CHC_XZ89_3_11(c1,h,c2,l) -> C(c1), H(h), C(c2), K(l).
+
+// #Original rules
+HM(h,m) <- thisMV(m,v), VH(v,h).
+CM(0,m) <- roots(m).
+CM(c,m) <- COC(_,h,c), HM(h,m).
+CM(c,m1) <- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+AllowH(_,0).
+CHC_1(c1,h,c2) <- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+CHC(c1,h,c2) <- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2(c1,h,c3) <- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC(c1,h,c2) <- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+AllowO(_,0).
+COC_1(c1,h,c2) <- MH(m,h), CM(c1,m), initCOC(c1,h,c2).
+COC(c1,h,c2) <- COC_1(c1,h,c2), CL(c2,l), AllowO(h,l).
+COC_2(c1,h,c3) <- COC_1(c1,h,c2), CL(c2,l1), DenyO(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+COC(c1,h,c2) <- COC_2(c1,h,c2), CL(c2,l), AllowO(h,l).
+
+// #Instrumented rules
+CHC_XZ89_1_11(c1,h,c2,l) <- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2_XZ89_2_11(c1,h,c3,c2,l1,l2) <- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC_XZ89_3_11(c1,h,c2,l) <- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+COC_XZ89_5_11(c1,h,c2,l) <- COC_1(c1,h,c2), CL(c2,l), AllowO(h,l).
+COC_2_XZ89_6_11(c1,h,c3,c2,l1,l2) <- COC_1(c1,h,c2), CL(c2,l1), DenyO(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+COC_XZ89_7_11(c1,h,c2,l) <- COC_2(c1,h,c2), CL(c2,l), AllowO(h,l).
+CM_XZ89_8_11(c,m,v_XZ89_0,h) <- COC(v_XZ89_0,h,c), HM(h,m).
+CM_XZ89_9_11(c,m1,m0,i) <- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+CHC_1_XZ89_10_11(c1,h,c2,m) <- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+COC_1_XZ89_11_11(c1,h,c2,m) <- MH(m,h), CM(c1,m), initCOC(c1,h,c2).
+CM_XZ89_12_11(m) <- roots(m).

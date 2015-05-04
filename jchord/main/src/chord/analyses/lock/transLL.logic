@@ -1,0 +1,27 @@
+// Created by convert.py from ./src/chord/analyses/lock/transLL.dlog on 2015-04-20 13:08:42.252890
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: transLL-dlog
+
+// :domains: L
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: LL(L,L)
+// :outputs: transLL(L,L)
+transLL(l1,l2) -> L(l1), L(l2).
+
+// ###
+// # Constraints
+// ###
+
+transLL(l1,l2) <- LL(l1,l2).
+transLL(l1,l2) <- transLL(l1,l3), transLL(l3,l2).
+

@@ -1,0 +1,72 @@
+// Created by convert.py from ./src/chord/analyses/deadlock/nongrded_include.dlog on 2015-04-20 13:08:42.239867
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: deadlock-nongrded-include-dlog
+
+// :domains: I
+// :domains: M
+// :domains: V
+// :domains: A
+// :domains: L
+// :domains: H
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: threadAM(A,M)
+// :inputs: reachableAM(A,M)
+// :inputs: threadStartI(I)
+// :inputs: MI(M,I)
+// :inputs: IM(I,M)
+// :inputs: ML(M,L)
+// :inputs: syncLH(L,H)
+// :inputs: transLL(L,L)
+// :inputs: transLI(L,I)
+
+// convert.py: following intermediate relation converted to output relation
+// :outputs: syncH(H)
+syncH(h) -> H(h).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: invkLock(I,H)
+invkLock(i,o) -> I(i), H(o).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: unguardedM(A,M,H)
+unguardedM(a,m,o) -> A(a), M(m), H(o).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: unguardedI(A,I,H)
+unguardedI(a,i,o) -> A(a), I(i), H(o).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: guardedM(A,M,H)
+guardedM(a,m,o) -> A(a), M(m), H(o).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: guardedL(A,L,H)
+guardedL(a,n,o) -> A(a), L(n), H(o).
+
+// # Threads t1, t2 may hold a common lock when they execute l1, l2 respectively.
+// :outputs: guarded(A,A,L,L)
+guarded(t1,t2,l1,l2) -> A(t1), A(t2), L(l1), L(l2).
+
+// ###
+// # Constraints
+// ###
+
+syncH(o) <- syncLH(_,o).
+invkLock(i,o) <- transLI(l,i), syncLH(l,o).
+
+unguardedM(t,m,o) <- syncH(o), threadAM(t,m).
+unguardedI(t,i,o) <- unguardedM(t,m,o), MI(m,i), !invkLock(i,o), !threadStartI(i).
+unguardedM(t,n,o) <- unguardedI(t,i,o), IM(i,n).
+
+guardedM(t,m,o) <- syncH(o), reachableAM(t,m), !unguardedM(t,m,o).
+
+guardedL(t,l,o) <- ML(m,l), guardedM(t,m,o).
+guardedL(_,l,o) <- transLL(l1,l), syncLH(l1,o).
+
+guarded(t1,t2,l1,l3) <- guardedL(t1,l1,o), guardedL(t2,l3,o).
+

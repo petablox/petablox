@@ -1,0 +1,43 @@
+// Created by convert.py from ./src/chord/analyses/provenance/pts/pro-pts-dlog_XZ89_.dlog on 2015-04-20 13:08:42.295002
+// :name: pro-pts-dlog_XZ89_
+// :domains: H
+// :domains: M
+// :domains: T
+// :domains: V
+// :domains: C
+
+
+// #Input relations
+// :inputs: reachableCM(C,M)
+// :inputs: checkExcludedH(H)
+// :inputs: checkExcludedV(V)
+// :inputs: CVC(C,V,C)
+// :inputs: CH(C,H)
+// :inputs: MV(M,V)
+// :inputs: MH(M,H)
+
+// #Output relations
+// :outputs: reachableV(V)
+reachableV(v) -> V(v).
+// :outputs: reachableH(H)
+reachableH(h) -> H(h).
+// :outputs: ptsVH(V,H)
+ptsVH(v,h) -> V(v), H(h).
+
+// #Instrumented relations
+// :outputs: reachableV_XZ89_0_1(V,M,C)
+reachableV_XZ89_0_1(v,m,v_XZ89_0) -> V(v), M(m), C(v_XZ89_0).
+// :outputs: reachableH_XZ89_1_1(H,M,C)
+reachableH_XZ89_1_1(h,m,v_XZ89_0) -> H(h), M(m), C(v_XZ89_0).
+// :outputs: ptsVH_XZ89_2_1(V,H,C,C)
+ptsVH_XZ89_2_1(v,h,v_XZ89_0,o) -> V(v), H(h), C(v_XZ89_0), C(o).
+
+// #Original rules
+reachableV(v) <- MV(m,v), reachableCM(_,m).
+reachableH(h) <- MH(m,h), reachableCM(_,m).
+ptsVH(v,h) <- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).
+
+// #Instrumented rules
+reachableV_XZ89_0_1(v,m,v_XZ89_0) <- MV(m,v), reachableCM(v_XZ89_0,m).
+reachableH_XZ89_1_1(h,m,v_XZ89_0) <- MH(m,h), reachableCM(v_XZ89_0,m).
+ptsVH_XZ89_2_1(v,h,v_XZ89_0,o) <- CVC(v_XZ89_0,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

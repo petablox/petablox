@@ -1,0 +1,14 @@
+// Created by convert.py from ./src/chord/analyses/method/checkExcludedM.dlog on 2015-04-20 13:08:42.253415
+// :name: checkExcludedM-dlog
+
+// :domains: T
+// :domains: M
+
+
+// :inputs: checkExcludedT(T)
+// :inputs: TM(T,M)
+// :outputs: checkExcludedM(M)
+checkExcludedM(m) -> M(m).
+
+checkExcludedM(m) <- TM(t,m), checkExcludedT(t).
+
