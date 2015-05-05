@@ -52,9 +52,11 @@ nonMainThreadM(m) -> M(m).
 // # Constraints
 // ###
 
-runCHA(h,n) <- cha("run:()V@java.lang.Runnable",t,n), HT(h,t).
+//runCHA(h,n) <- cha("run:()V@java.lang.Runnable",t,n), HT(h,t).
+runCHA(h,n) <- cha(m,t,n), HT(h,t), M_string[m] = "run:()V@java.lang.Runnable".
 
-threadRunM("run:()V@java.lang.Thread").
+//threadRunM("run:()V@java.lang.Thread").
+threadRunM(m) <- M_string[m] = "run:()V@java.lang.Thread".
 
 threadAllocIH0(i,h) <- threadAllocI(i), IinvkArg(i,0,v), VH(v,h).
 threadAllocIH1(i,h) <- threadAllocI(i), IinvkArg(i,1,v), VH(v,h).
@@ -64,3 +66,4 @@ threadStartIH0(i,h) <- threadStartI(i), IinvkArg(i,0,v), VH(v,h), !excludeThread
 threadIM(i,m) <- threadStartIH0(i,h), runCHA(h,m), !threadRunM(m).
 threadIM(i,n) <- threadStartIH0(i,h), runCHA(h,m), threadRunM(m), threadAllocIH0(i2,h), threadAllocIH1(i2,h2), runCHA(h2,n).
 nonMainThreadM(m) <- threadIM(_,m).
+

@@ -114,14 +114,13 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     private void saveDomainType(Dom<?> dom, File typeFile) {
         String name    = dom.getName();
 
-        // a new entity type
-        StringBuilder type = new StringBuilder(name).append("(x) -> .\n");
-
-        // with a constructor of (index, uniquestring)
-        type.append(name).append("_values[id, val] = x -> ").append(name)
-            .append("(x), ").append(getIntType()).append("(id), string(val).\n")
-            .append("lang:constructor(`").append(name)
-            .append("_values).\n");
+        // a new entity type with ref-mode of index
+        StringBuilder type = new StringBuilder(name).append("(x), ")
+            .append(name).append("_index(x:index) -> ").append(getIntType()).append("(index).\n");
+        
+        // and a map to the string representation
+        type.append(name).append("_string[x] = s -> ").append(name).append("(x), string(s).\n");
+        
         if (isLB3()) {
             // have to make scalable, values other than ScalableSparse are not
             // documented
@@ -154,7 +153,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         PrintWriter out = createPrintWriter(importFile);
         out.println(createImportRelation("id, val",  getIntType() + "(id), string(val)", factsFile));
         out.println();
-        out.println("+" + name + "(x), +" + name + "_values[id, val] = x <- _in(" + 
+        out.println("+" + name + "(x), +" + name + "_index[x] = id, +" + name + "_string[x] = val <- _in(" + 
                 (isLB3() ? "" : "_; ") + "id, val).");
         Utils.close(out);
         if (out.checkError()) {
@@ -250,9 +249,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         for (int i = 0, size = doms.length; i < size; ++i) {
             Dom<?> dom = doms[i];
             String domName = dom.getName();
-            sb.append(domName).append("(d").append(i).append("), ")
-                .append(domName).append("_values[id").append(i).append(", _] = d")
-                .append(i).append(',');
+            sb.append(domName).append("_index[d").append(i).append("] = id").append(i).append(',');
         }
         sb.setLength(sb.length() - 1);
         sb.append(".\n");

@@ -59,7 +59,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
                 line = line.trim();
                 if (!rowOfIntsPattern.matcher(line).matches()) {
                     if (!headerOrFooter.matcher(line).matches())
-                        Messages.warn("Ignoring unexpected lb query line: {}", line);
+                        Messages.warn("Ignoring unexpected lb query line: %s", line);
                     continue;
                 }
                 int[] indexes = parseIntRow(line);
@@ -90,7 +90,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
         sb.append(relation.getName()).append('(').append(varList).append("), ");
         for (int i = 0, size = doms.length; i < size; ++i) {
             Dom<?> dom = doms[i];
-            sb.append(dom.getName()).append("_values[id").append(i).append(", _] = d").append(i).append(',');
+            sb.append(dom.getName()).append("_index[d").append(i).append("] = id").append(i).append(',');
         }
         sb.setCharAt(sb.length() - 1, '.');
         
