@@ -75,7 +75,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
      * Builds the query for a relation.
      * <p>
      * By example, a relation VH(v,h) over domains V and H will generate the following query:<br />
-     * <code>_(id0, id1) &lt;- VH(d0, d1), V_values[id0, _] = d0, H_values[id1, _] = d1.</code>
+     * <code>_(id0, id1) &lt;- VH(d0, d1), V_index[d0] = id0, H_index[d1] = id1.</code>
      * 
      * @param relation the relation to query for
      * @return the LB query string
