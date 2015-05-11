@@ -120,7 +120,8 @@ VHfilter(v,h) <- V(v), H_index[h] = 0.
 IHM(i,h,m2) <- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
 
 // # base cases: each root method and each class initializer is reachable
-reachableM(0).
+//reachableM(0).
+reachableM(m0) <- M_index[m0] = 0.
 reachableM(m) <- reachableT(t), clinitTM(t,m).
 // # inductive case
 reachableM(m) <- IM(_,m).
@@ -155,12 +156,18 @@ reachableT(t) <- reachableI(i), clsForNameIT(i,t).
 reachableM(m) <- reachableI(i), objNewInstIM(i,m).
 reachableM(m) <- reachableI(i), conNewInstIM(i,m).
 
-VH(v,h)  <- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), VHfilter(v,h).
-VH(v,h)  <- reachableI(i), objNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
-VH(v,h2) <- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,h2), VHfilter(v,h2).
-VH(v,h)  <- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), VHfilter(v,h).
-VH(v,h)  <- reachableI(i), conNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
-VH(v,h)  <- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), objNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+//VH(v,h2) <- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,h2), VHfilter(v,h2).
+//VH(v,h)  <- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), conNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), objNewInstIM(i,m), MmethArg(m,z0,v), Z_index[z0] = 0, objNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), objNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
+VH(v,h2) <- reachableI(i), conNewInstIM(i,m), IinvkArg(i,z1,u), MmethArg(m,z1,v), VH(u,h), HFH(h,f0,h2), VHfilter(v,h2), Z_index[z1] = 1, F_index[f0] = 0.
+VH(v,h)  <- reachableI(i), conNewInstIM(i,m), MmethArg(m,z0,v), Z_index[z0] = 0, conNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), conNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
+VH(v,h)  <- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
 
 VH(l,h) <- objValAsgnInst(l,h), VHfilter(l,h).
 VH(l,h) <- objVarAsgnInst(l,r), VH(r,h), VHfilter(l,h).
@@ -188,7 +195,8 @@ reachableT(t) <- getStatFldInst(_,f), staticTF(t,f).
 // #    initialized.
 reachableT(t) <- classT(t), reachableT(s), sub(s,t).
 
-rootM(0).
+//rootM(0).
+rootM(m0) <- M_index[m0] = 0.
 rootM(m) <- reachableT(t), clinitTM(t,m).
 MM(m,n) <- IM(i,n), MI(m,i).
 

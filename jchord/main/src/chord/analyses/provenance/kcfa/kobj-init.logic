@@ -59,7 +59,8 @@ CHC(c,h,c1) -> C(c), H(h), C(c1).
 HM(h,m) <- thisMV(m,v), VH(v,h).
 
 // #initialize CM for root methods with emptycontext
-CM_1(0,m) <- roots(m).
+//CM_1(0,m) <- roots(m).
+CM_1(c0,m) <- roots(m), C_index[c0] = 0.
 // #CM_1(c,m) :- CHC_1(_,h,c), IM(i,m), IinvkArg0(i,v), VH(v,h), !statM(m).
 CM_1(c,m) <- CHC_1(_,h,c), HM(h,m).
 CM_1(c,m1) <- CM_1(c,m0), IM(i,m1), statM(m1), MI(m0,i).
@@ -68,7 +69,8 @@ CHC_1(c1,h,c3) <- MH(m,h), CM_1(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,
 CHC_2(c1,h,c2) <- CHC_1(c1,h,c2), initCHC(c1,h,c2).
 CHC_3(c1,h,c3) <- !CHC_2(c1,h,c3), CHC_1(c1,h,c3).
 
-CM(0,m) <- roots(m).
+//CM(0,m) <- roots(m).
+CM(c0,m) <- roots(m), C_index[c0] = 0.
 // #CM(c,m) :- CHC(_,h,c), IM(i,m), IinvkArg0(i,v), VH(v,h), !statM(m).
 CM(c,m) <- CHC(_,h,c), HM(h,m).
 CM(c,m1) <- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).

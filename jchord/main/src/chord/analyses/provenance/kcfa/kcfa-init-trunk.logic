@@ -63,13 +63,15 @@ CHC(c,h,c1) -> C(c), H(h), C(c1).
 // ###
 
 // #initialize CM for root methods with emptycontext
-CM_1(0,m) <- roots(m).
+//CM_1(0,m) <- roots(m).
+CM_1(c0,m) <- roots(m), C_index[c0] = 0.
 CIC_1(c1,i,c3) <- MI(m,i), CM_1(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2, k, c3).
 CM_1(c,m) <- CIC_1(_,i,c), IM(i,m).
 CIC_2(c1,i,c2) <- CIC_1(c1,i,c2), initCIC(c1,i,c2).
 CIC_3(c1,i,c3) <- !CIC_2(c1,i,c3), CIC_1(c1,i,c3).
 
-CM(0,m) <- roots(m).
+//CM(0,m) <- roots(m).
+CM(c0,m) <- roots(m), C_index[c0] = 0.
 CIC(c1,i,c3) <- CIC_2(c1,i,c3).
 CIC(c1,i,c3) <- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3), CIC_3(c1,i,c3).
 CM(c,m) <- CIC(_,i,c), IM(i,m).

@@ -157,8 +157,10 @@ ctxtInsStatIM(i,m) <- statIM(i,m), epsilonM(m).
 
 // ###
 
-reachableCM(0,0).
-reachableCM(0,m) <- clinitTM(t,m), reachableT(t).
+//reachableCM(0,0).
+//reachableCM(0,m) <- clinitTM(t,m), reachableT(t).
+reachableCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+reachableCM(c0,m) <- C_index[c0] = 0, clinitTM(t,m), reachableT(t).
 reachableCM(c,m) <- CICM(_,_,c,m).
 reachableCI(c,i) <- MI(m,i), reachableCM(c,m).
 
@@ -168,18 +170,22 @@ DIC(c,i,o) <- IinvkArg0(i,v), DVC(c,v,o).
 DIH(c,i,h) <- DIC(c,i,o), CH(o,h).
 DI(c,i) <- DIH(c,i,_).
 
-kcfaDIC(0,i,d) <- CIC(0,i,d), MI(m,i), epsilonM(m).
+//kcfaDIC(0,i,d) <- CIC(0,i,d), MI(m,i), epsilonM(m).
+kcfaDIC(c0,i,d) <- C_index[c0] = 0, CIC(c0,i,d), MI(m,i), epsilonM(m).
 kcfaDIC(c,i,d) <- CIC(c,i,d), MI(m,i), kcfaSenM(m).
 
 // ###
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+CICM(c,i,c0,m) <- C_index[c0] = 0, reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
 CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenIHM(i,h,m), DIH(c,i,h), kcfaDIC(c,i,d).
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM(c,i,c0,m) <- C_index[c0] = 0, reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
 CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenSpecIM(i,m), DI(c,i), kcfaDIC(c,i,d).
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM(c,i,c0,m) <- C_index[c0] = 0, reachableCI(c,i), ctxtInsStatIM(i,m).
 CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenStatIM(i,m), kcfaDIC(c,i,d).
 
 // ### inter-procedural
@@ -249,9 +255,12 @@ reachableT(t) <- classT(t), reachableT(s), sub(s,t).
 
 // ### CVC <- DVC (clean up context-insensitive stuff)
 
-CVC(0,v,o) <- DVC(_,v,o),  epsilonV(v).
+//CVC(0,v,o) <- DVC(_,v,o),  epsilonV(v).
+CVC(c0,v,o) <- C_index[c0] = 0, DVC(_,v,o),  epsilonV(v).
 CVC(c,v,o) <- DVC(c,v,o), !epsilonV(v).
 
-rootCM(0,0).
-rootCM(0,m) <- reachableT(t), clinitTM(t,m).
+//rootCM(0,0).
+rootCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+//rootCM(0,m) <- reachableT(t), clinitTM(t,m).
+rootCM(c0,m) <- C_index[c0] = 0, reachableT(t), clinitTM(t,m).
 CMCM(c,m,d,n) <- CICM(c,i,d,n), MI(m,i).

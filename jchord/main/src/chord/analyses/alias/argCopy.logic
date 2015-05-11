@@ -35,9 +35,13 @@ argCopy(i,u,m,v) -> I(i), V(u), M(m), V(v).
 // # Constraints
 // ###
 
-MspcMethArg(m,v)   <- MmethArg(m,0,v), kobjSenM(m), !epsilonV(v).
-MordMethArg(m,0,v) <- MmethArg(m,0,v), !MspcMethArg(m,v).
-MordMethArg(m,z,v) <- MmethArg(m,z,v), z!=0.
+//MspcMethArg(m,v)   <- MmethArg(m,0,v), kobjSenM(m), !epsilonV(v).
+//MordMethArg(m,0,v) <- MmethArg(m,0,v), !MspcMethArg(m,v).
+//MordMethArg(m,z,v) <- MmethArg(m,z,v), z!=0.
+
+MspcMethArg(m,v)   <- MmethArg(m,z0,v), Z_index[z0] = 0, kobjSenM(m), !epsilonV(v).
+MordMethArg(m,z0,v) <- MmethArg(m,z0,v), Z_index[z0] = 0, !MspcMethArg(m,v).
+MordMethArg(m,z,v) <- MmethArg(m,z,v), Z_index[z] != 0.
 
 argCopy(i,u,m,v) <- IM(i,m), IinvkArg(i,z,u), MordMethArg(m,z,v).
 

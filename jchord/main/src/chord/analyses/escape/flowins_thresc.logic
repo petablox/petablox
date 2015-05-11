@@ -40,7 +40,8 @@ escE(e) -> E(e).
 // ###
 
 escH(h) <- FH(_,h).
-escH(h) <- MmethArg(1,0,v), VH(v,h).
+//escH(h) <- MmethArg(1,0,v), VH(v,h).
+escH(h) <- MmethArg(m1,z0,v), VH(v,h), M_index[m1] = 1, Z_index[z0] = 0.
 escH(h2) <- HFH(h1,_,h2), escH(h1).
 
 escPVH(p,v,h) <- VH(v,h), MV(m,v), MP(m,p), escH(h). 

@@ -162,8 +162,10 @@ ctxtCpyStatIM(i,m) <- statIM(i,m), ctxtCpyM(m).
 
 // ###
 
-reachableCM(0,0).
-reachableCM(0,m) <- clinitTM(t,m), reachableT(t).
+//reachableCM(0,0).
+reachableCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+//reachableCM(0,m) <- clinitTM(t,m), reachableT(t).
+reachableCM(c0,m) <- clinitTM(t,m), reachableT(t), C_index[c0] = 0.
 
 reachableCM(c,m) <- CICM(_,_,c,m).
 
@@ -177,13 +179,16 @@ DI(c,i) <- DIH(c,i,_).
 
 // ###
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h), C_index[c0] = 0.
 CICM(c,i,o,m) <- reachableCI(c,i), kobjSenICM(i,o,m), DIC(c,i,o).
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i), C_index[c0] = 0.
 CICM(c,i,o,m) <- reachableCI(c,i), kobjSenSpecIM(i,m), DIC(c,i,o).
 
-CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m), C_index[c0] = 0.
 CICM(c,i,d,m) <- reachableCI(c,i), ctxtCpyStatIM(i,m), d=c.
 
 // ###
@@ -232,12 +237,18 @@ FC(f,o) <- RputStatFldInst(c,f,r), DVC(c,r,o).
 reachableCM(c,m) <- reachableCI(c,i), objNewInstIM(i,m).
 reachableCM(c,m) <- reachableCI(c,i), conNewInstIM(i,m).
 
-DVC(c,v,o)  <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
-DVC(c,v,o)  <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
-DVC(c,v,o2) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), DVC(c,u,o), CFC(o,0,o2).
-DVC(c,v,o)  <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
-DVC(c,v,o)  <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
-DVC(c,v,o)  <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//DVC(c,v,o)  <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
+//DVC(c,v,o)  <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//DVC(c,v,o2) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), DVC(c,u,o), CFC(o,0,o2).
+//DVC(c,v,o)  <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
+//DVC(c,v,o)  <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//DVC(c,v,o)  <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+DVC(c,v,o)  <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,z0,v), objNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+DVC(c,v,o)  <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+DVC(c,v,o2) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,z1,u), MmethArg(m,z1,v), DVC(c,u,o), CFC(o,f0,o2), Z_index[z1] = 1, F_index[f0] = 0.
+DVC(c,v,o)  <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,z0,v), conNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+DVC(c,v,o)  <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+DVC(c,v,o)  <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
 
 // ### epsilonV(v): treat v context-insensitively
 
@@ -257,9 +268,12 @@ reachableT(t) <- classT(t), reachableT(s), sub(s,t).
 
 // ### CVC <- DVC (clean up context-insensitive stuff)
 
-CVC(0,v,o) <- DVC(_,v,o),  epsilonV(v).
+//CVC(0,v,o) <- DVC(_,v,o),  epsilonV(v).
+CVC(c0,v,o) <- DVC(_,v,o),  epsilonV(v), C_index[c0] = 0.
 CVC(c,v,o) <- DVC(c,v,o), !epsilonV(v).
 
-rootCM(0,0).
-rootCM(0,m) <- reachableT(t), clinitTM(t,m).
+//rootCM(0,0).
+rootCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+//rootCM(0,m) <- reachableT(t), clinitTM(t,m).
+rootCM(c0,m) <- reachableT(t), clinitTM(t,m), C_index[c0] = 0.
 CMCM(c,m,d,n) <- CICM(c,i,d,n), MI(m,i).

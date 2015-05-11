@@ -113,79 +113,113 @@ PInvkSkip(p) <- PI(p,i), !IMFilter(i).
 // #path(p,0,0,0,0,0) :- reachableM(m), MP(m,p).
 // #path(p,0,0,0,0,0) :- reachableM(m), MPtail(m,p).
 
-path(p,0,0,0,0,0) <- reachableM(m), MPhead(m,p).
+//path(p,0,0,0,0,0) <- reachableM(m), MPhead(m,p).
+path(p,h0,ms0,h0,ms0,k0) <- reachableM(m), MPhead(m,p), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
 
 // ### v = new h
-path(p,0,0,h,ms,0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), allow(v), gen(0,v,ms), trackedH(h).split
-path(p,0,0,h,0,0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), deny(v), trackedH(h).split
-path(p,h1,ms1,h2,ms3,0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
-path(p,h1,ms1,h2,ms2,0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+//path(p,0,0,h,ms,0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), allow(v), gen(0,v,ms), trackedH(h).
+//path(p,0,0,h,0,0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), deny(v), trackedH(h).
+//path(p,h1,ms1,h2,ms3,0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).
+//path(p,h1,ms1,h2,ms2,0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).
+path(p,h0,ms0,h,ms,k0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,h0,ms0,h0,ms0,k0), allow(v), gen(k0,v,ms), trackedH(h), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path(p,h0,ms0,h,ms0,k0) <- PobjValAsgnInst(p,v,h), PP(q,p), path(q,h0,ms0,h0,ms0,k0), deny(v), trackedH(h), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path(p,h1,ms1,h2,ms3,k0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(v,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+path(p,h1,ms1,h2,ms2,k0) <- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(v,ms2), K_index[k0] = 0.
 
 // ### v = u
-path(p,h1,ms1,h2,ms3,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), contain(v,ms2), kill(ms2,v,ms3).split
-path(p,h1,ms1,h2,ms2,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), !contain(v,ms2).split
-path(p,h1,ms1,h2,ms2,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), deny(v).split
-path(p,h1,ms1,h2,ms3,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), allow(v), gen(ms2,v,ms3).split
+//path(p,h1,ms1,h2,ms3,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), contain(v,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(u,ms2), contain(v,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(u,ms2), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), deny(v).
+path(p,h1,ms1,h2,ms2,k0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(u,ms2), deny(v), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), allow(v), gen(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(u,ms2), allow(v), gen(ms2,v,ms3), K_index[k0] = 0.
 
 // ### v = null
-path(p,h1,ms1,h2,ms3,0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
-path(p,h1,ms1,h2,ms2,0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+//path(p,h1,ms1,h2,ms3,0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(v,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(v,ms2), K_index[k0] = 0.
 
 // ### v = u.f
-path(p,h1,ms1,h2,ms3,0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
-path(p,h1,ms1,h2,ms2,0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+//path(p,h1,ms1,h2,ms3,0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(v,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(v,ms2), K_index[k0] = 0.
 
 // ### v = f
-path(p,h1,ms1,h2,ms3,0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
-path(p,h1,ms1,h2,ms2,0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+//path(p,h1,ms1,h2,ms3,0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(v,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(v,ms2), K_index[k0] = 0.
 
 // ### Method Call
-pathArgInit(q,ms1,h1) <- PInvkInst(p,m,_,_,z), MZfirst(m,z), PP(q,p), path(q,_,_,h1,ms1,_).split
-pathArg(q,z,m,ms2,ms3) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), \
-									allow(v), gen(0,v,ms3).split
-pathArg(q,z,m,ms2,0) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), deny(v).split
-pathArg(q,z,m,ms2,0) <- PInvkInst(p,m,_,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), !contain(u,ms2).split
+pathArgInit(q,ms1,h1) <- PInvkInst(p,m,_,_,z), MZfirst(m,z), PP(q,p), path(q,_,_,h1,ms1,_).
+//pathArg(q,z,m,ms2,ms3) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), 
+//									allow(v), gen(0,v,ms3).
+pathArg(q,z,m,ms2,ms3) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), 
+									allow(v), gen(ms0,v,ms3), MS_index[ms0] = 0.
+//pathArg(q,z,m,ms2,0) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), deny(v).
+pathArg(q,z,m,ms2,ms0) <- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), deny(v), MS_index[ms0] = 0.
+//pathArg(q,z,m,ms2,0) <- PInvkInst(p,m,_,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), !contain(u,ms2).
+pathArg(q,z,m,ms2,ms0) <- PInvkInst(p,m,_,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), !contain(u,ms2), MS_index[ms0] = 0.
 
-pathArg(q,z2,m,ms2,ms4) <- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
-								 	 contain(u,ms2), allow(v), gen(ms3,v,ms4).split
-pathArg(q,z2,m,ms2,ms3) <- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
-								 	 contain(u,ms2), deny(v).split
-pathArg(q,z2,m,ms2,ms3) <- PInvkInst(p,m,_,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
-								 	 !contain(u,ms2).split
+pathArg(q,z2,m,ms2,ms4) <- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), 
+								 	 contain(u,ms2), allow(v), gen(ms3,v,ms4).
+pathArg(q,z2,m,ms2,ms3) <- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), 
+								 	 contain(u,ms2), deny(v).
+pathArg(q,z2,m,ms2,ms3) <- PInvkInst(p,m,_,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), 
+								 	 !contain(u,ms2).
 
 pathArgLast(q,m,ms1,ms2) <- pathArg(q,z,m,ms1,ms2), MZlast(m,z).
 
-path(p,h1,ms2,h2,ms3,0) <- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1), MPhead(m,p), ms2=ms3, h1=h2.split
+//path(p,h1,ms2,h2,ms3,0) <- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1), MPhead(m,p), ms2=ms3, h1=h2.
+path(p,h1,ms2,h2,ms3,k0) <- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1), MPhead(m,p), ms2=ms3, h1=h2, K_index[k0] = 0.
 
 
 // # To handle corner case of static method with no reference parameters
-pathArgInit(q,ms1,h1) <- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,h1,ms1,_).split
-pathArgLast(q,m,ms1,0) <- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,_,ms1,_).split
-// #path(p,h1,0,h2,0,0,0) :- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,h1,_,_), MPhead(m,p), h1=h2.split
+pathArgInit(q,ms1,h1) <- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,h1,ms1,_).
+//pathArgLast(q,m,ms1,0) <- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,_,ms1,_).
+pathArgLast(q,m,ms1,ms0) <- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,_,ms1,_), MS_index[ms0] = 0.
+// #path(p,h1,0,h2,0,0,0) :- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,h1,_,_), MPhead(m,p), h1=h2.
 
 // # To handle corner case of invoke instruction with no target method
-path(p,h1,ms2,h2,ms3,0) <- PInvkSkip(p), PP(q,p), path(q,h1,ms2,h2,ms3,0).split
+//path(p,h1,ms2,h2,ms3,0) <- PInvkSkip(p), PP(q,p), path(q,h1,ms2,h2,ms3,0).
+path(p,h1,ms2,h2,ms3,k0) <- PInvkSkip(p), PP(q,p), path(q,h1,ms2,h2,ms3,k0), K_index[k0] = 0.
 
 // #Applying Summary Edge
-path(p,h1,ms1,h3,ms5,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3),  \
-							 summary(m,h2,ms3,h3,0), contain(v,ms2), kill(ms2,v,ms5).split
-path(p,h1,ms1,h3,ms2,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
-							 summary(m,h2,ms3,h3,0), !contain(v,ms2).split
-path(p,h1,ms1,h3,ms5,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
-							 summary(m,h2,ms3,h3,1), allow(v), gen(ms2,v,ms5).split
-path(p,h1,ms1,h3,ms2,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
-							 summary(m,h2,ms3,h3,1), deny(v).split
+//path(p,h1,ms1,h3,ms5,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3),  
+//							 summary(m,h2,ms3,h3,0), contain(v,ms2), kill(ms2,v,ms5).
+//path(p,h1,ms1,h3,ms2,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), 
+//							 summary(m,h2,ms3,h3,0), !contain(v,ms2).
+//path(p,h1,ms1,h3,ms5,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), 
+//							 summary(m,h2,ms3,h3,1), allow(v), gen(ms2,v,ms5).
+//path(p,h1,ms1,h3,ms2,0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), 
+//							 summary(m,h2,ms3,h3,1), deny(v).
+path(p,h1,ms1,h3,ms5,k0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), pathArgLast(q,m,ms2,ms3), K_index[k0] = 0, 
+							 summary(m,h2,ms3,h3,k0), contain(v,ms2), kill(ms2,v,ms5).
+path(p,h1,ms1,h3,ms2,k0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), pathArgLast(q,m,ms2,ms3), K_index[k0] = 0, 
+							 summary(m,h2,ms3,h3,k0), !contain(v,ms2).
+path(p,h1,ms1,h3,ms5,k0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), pathArgLast(q,m,ms2,ms3), K_index[k0] = 0, 
+							 summary(m,h2,ms3,h3,k1), allow(v), gen(ms2,v,ms5), K_index[k1] = 1.
+path(p,h1,ms1,h3,ms2,k0) <- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,k0), pathArgLast(q,m,ms2,ms3), K_index[k0] = 0, 
+							 summary(m,h2,ms3,h3,k1), deny(v), K_index[k1] = 1.
 
 // # To handle corner case of invoke instruction with no return value or with no var capturing the returned value;
 // # such instructions are not captured by PInvkRetInst
-path(p,h1,ms1,h3,ms2,0) <- PI(p,i), IM(i,m), PInvkRetInstNotFilter(p,m), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
-							 summary(m,h2,ms3,h3,_).split
+//path(p,h1,ms1,h3,ms2,0) <- PI(p,i), IM(i,m), PInvkRetInstNotFilter(p,m), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), 
+//							 summary(m,h2,ms3,h3,_).
+path(p,h1,ms1,h3,ms2,k0) <- PI(p,i), IM(i,m), PInvkRetInstNotFilter(p,m), PP(q,p), path(q,h1,ms1,h2,ms2,k0), pathArgLast(q,m,ms2,ms3), K_index[k0] = 0, 
+							 summary(m,h2,ms3,h3,_).
 
 // ### Method Return
-path(p,h1,ms1,h2,ms2,1) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2).split
-path(p,h1,ms1,h2,ms2,0) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+//path(p,h1,ms1,h2,ms2,1) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k1) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,k0), contain(v,ms2), K_index[k0] = 0, K_index[k1] = 1.
+//path(p,h1,ms1,h2,ms2,0) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,k0), !contain(v,ms2), K_index[k0] = 0.
 // #path(p,h1,ms1,h2,ms2,r,k) :- path(q,h1,ms1,h2,ms2,r,k), PP(q,p), MPtail(m,p). #Handled by nonRelevantP
-summary(m,h1,ms1,h2,k) <- MPtail(m,p), path(p,h1,ms1,h2,_,k).split
+summary(m,h1,ms1,h2,k) <- MPtail(m,p), path(p,h1,ms1,h2,_,k).
 
 // ### All remaining instructions
 relevantP(p) <- PobjValAsgnInst(p,_,_).
@@ -198,11 +232,12 @@ relevantP(p) <- PobjRetInst(p,_).
 relevantP(p) <- MPhead(_,p).
 
 // #nonRelevantP(p) :- PP(_,p), !PobjValAsgnInst(p,_,_), !PobjVarAsgnInst(p,_,_), !PobjNullAsgnInst(p,_), !PgetInstFldInst(p,_,_,_), \
-// #				   !PgetStatFldInst(p,_,_), !PI(p,_), !PobjRetInst(p,_).split
+// #				   !PgetStatFldInst(p,_,_), !PI(p,_), !PobjRetInst(p,_).
 nonRelevantP(p) <- PP(_,p), !relevantP(p).
-path(p,h1,ms1,h2,ms2,k) <- nonRelevantP(p), PP(q,p), path(q,h1,ms1,h2,ms2,k).split
+path(p,h1,ms1,h2,ms2,k) <- nonRelevantP(p), PP(q,p), path(q,h1,ms1,h2,ms2,k).
 
 
 // ### Query
-unprovenQuery(q,h) <- PI(q,i), virtIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i).split
-// #unprovenQuery(q,h) :- PI(q,i), specIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i).split
+//unprovenQuery(q,h) <- PI(q,i), virtIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i).
+unprovenQuery(q,h) <- PI(q,i), virtIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,z0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i), Z_index[z0] = 0.
+// #unprovenQuery(q,h) :- PI(q,i), specIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i).

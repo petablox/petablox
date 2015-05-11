@@ -88,7 +88,8 @@ racePairs(e1,e2) -> E(e1), E(e2).
 // # Constraints
 // ###
 
-excludeInitM(m) <- excludeInitMethods(1), initM(m).
+//excludeInitM(m) <- excludeInitMethods(1), initM(m).
+excludeInitM(m) <- excludeInitMethods(k1), initM(m), K_index[k1] = 1.
 
 relevantAM(a,m) <- reachableAM(a,m), !checkExcludedM(m), !excludeInitM(m).
 
@@ -118,7 +119,8 @@ syncH(h) <- syncLH(_,h).
 guardedE(t,e,h) <- relevantAE(t,e), syncH(h), !unlockedE(t,e,h).
 
 unlikelyRace(a1,e1,a2,e2) <- parallelRace(a1,e1,a2,e2), guardedE(a1,e1,h), guardedE(a2,e2,h).
-unlikelyRace(a1,e1,a2,e2) <- parallelRace(a1,e1,a2,e2), excludeSameThread(1), a1=a2.
+//unlikelyRace(a1,e1,a2,e2) <- parallelRace(a1,e1,a2,e2), excludeSameThread(1), a1=a2.
+unlikelyRace(a1,e1,a2,e2) <- parallelRace(a1,e1,a2,e2), excludeSameThread(k1), a1=a2, K_index[k1] = 1.
 
 ultimateRace(a1,e1,a2,e2) <- parallelRace(a1,e1,a2,e2), !unlikelyRace(a1,e1,a2,e2).
 
