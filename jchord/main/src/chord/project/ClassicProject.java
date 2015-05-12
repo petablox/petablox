@@ -2,10 +2,9 @@ package chord.project;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,16 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import chord.bddbddb.Dom;
+import chord.bddbddb.RelSign;
 import chord.logicblox.LogicBloxUtils;
 import chord.project.analyses.DlogAnalysis;
 import chord.project.analyses.ProgramDom;
 import chord.project.analyses.ProgramRel;
-import chord.project.ITask;
 import chord.util.ArraySet;
-import chord.util.Utils;
 import chord.util.Timer;
-import chord.bddbddb.RelSign;
-import chord.bddbddb.Dom;
+import chord.util.Utils;
 
 /**
  * A Chord project comprising a set of tasks and a set of targets
@@ -482,6 +480,30 @@ public class ClassicProject extends Project {
         }
     }
 
+    public Set<String> getTargetNames() {
+        return Collections.unmodifiableSet(nameToTrgtMap.keySet());
+    }
+    
+    public Set<String> getTaskNames() {
+        return Collections.unmodifiableSet(nameToTaskMap.keySet());
+    }
+    
+    public Set<String> getFinishedTargetNames() {
+        HashSet<String> names = new HashSet<String>(Math.max((int) (doneTrgts.size()/.75f) + 1, 16), 0.75f);
+        for (String name: nameToTrgtMap.keySet())
+            if (isTrgtDone(name))
+                names.add(name);
+        return names;
+    }
+    
+    public Set<String> getFinishedTaskNames() {
+        HashSet<String> names = new HashSet<String>(Math.max((int) (doneTasks.size()/.75f) + 1, 16), 0.75f);
+        for (String name: nameToTaskMap.keySet())
+            if (isTrgtDone(name))
+                names.add(name);
+        return names;
+    }
+    
     public void resetTaskDone(String name) {
         resetTaskDone(getTask(name));
     }
