@@ -1,10 +1,6 @@
-## Manual Setup
+# General Instructions
 
-If you are running on Linux, you can choose to perform manual setup.  You must 
-install and start the Logicblox server and follow the directions in the Doop 
-folder's `README` file.  You need to set `DOOP_HOME` to use the install script 
-of `soot-fact-generation` and `logicblox-unit`; `LOGICBLOX_HOME` to the Logicblox 
-install location; and `LD_LIBRARY_PATH` to something (even empty, see Known Issues).
+The main analyses framework in Petablox is derived from Chord and found in the `jchord` directory.  Petablox also includes the DOOP call graph/pointer analyses in `doop-r160113-bin`.  General directions follow and the framework-specific instructions are after that. 
 
 ## Getting Started
 
@@ -25,7 +21,55 @@ All downloads can be found on the Bitbucket repository's
 #### LogicBlox
 
 Download LogicBlox 3.10.21 into `logicblox-3.10.21` or whichever version 
-you selected.
+you selected.  We recommend the latest LogicBlox 4.x version for running Chord's analyses, but you must use 3.x for DOOP.
+
+### Provisioning the VM
+
+Locally, just run:
+
+```
+$ vagrant up
+$ vagrant ssh
+```
+
+Provisioning will start LogicBlox and update the `vagrant` user's 
+profile as needed for both LogicBlox and DOOP.
+
+# Chord #
+
+The main part of Chord is found in `jchord/main`.  You can follow the directions [in the documentation](http://pag-www.gtisc.gatech.edu/chord/user_guide/index.html) for general information.
+
+You can use Chord with LogicBlox in two ways, either as the main datalog engine or as an export target.  
+
+## Using LogicBlox as the Datalog Engine
+
+You can use LogicBlox as the Datalog engine instead of BDDBDDB (currently the default).  To do this, set the system property `chord.datalog.engine` to either `logicblox3` or `logicblox4`, depending on which version you are using, e.g. by passing:
+
+```
+-Dchord.datalog.engine=logicblox4
+```
+
+A workspace name will be generated automatically based on the absolute path of `chord.work.dir`.  You can manually override this by setting the `chord.logicblox.workspace` property.
+
+## Exporting results to LogicBlox
+
+You can also use the BDDBDDB solver to create all the relations and then export the result to LogicBlox for further processing.  To do this, add the `logicblox-export` analysis as the last analysis you run.  For example, if you were running 0-CFA and wanted to export the results to LogicBlox, you could pass:
+
+```
+-Dchord.run.analyses=cipa-0cfa-dlog,logicblox-export
+```
+
+# DOOP #
+
+Below are the instructions for running DOOP.  DOOP requires a 3.x version of LogicBlox and will not work on LogicBlox 4.x out of the box.
+
+## Manual Setup
+
+If you are running on Linux, you can choose to perform manual setup.  You must 
+install and start the Logicblox server and follow the directions in the Doop 
+folder's `README` file.  You need to set `DOOP_HOME` to use the install script 
+of `soot-fact-generation` and `logicblox-unit`; `LOGICBLOX_HOME` to the Logicblox 
+install location; and `LD_LIBRARY_PATH` to something (even empty, see Known Issues).
 
 #### JREs and benchmarks for DOOP
 
@@ -65,17 +109,6 @@ doopconf_jre16=$doop/externals/jre1.6.0_45
 **TODO: Make doop.conf setup part of provisioning.**
 
 
-### Provisioning the VM
-
-Locally, just run:
-
-```
-$ vagrant up
-$ vagrant ssh
-```
-
-Provisioning will start LogicBlox and update the `vagrant` user's 
-profile as needed for both LogicBlox and DOOP.
 
 ### Running the Test Suite
 
