@@ -59,6 +59,12 @@ You can also use the BDDBDDB solver to create all the relations and then export 
 -Dchord.run.analyses=cipa-0cfa-dlog,logicblox-export
 ```
 
+By default, this exports to LogicBlox 4.  If you want to export for LogicBlox 3 you can pass:
+
+```
+-Dchord.logicblox.export.mode=logicblox3
+```
+
 # DOOP #
 
 Below are the instructions for running DOOP.  DOOP requires a 3.x version of LogicBlox and will not work on LogicBlox 4.x out of the box.
