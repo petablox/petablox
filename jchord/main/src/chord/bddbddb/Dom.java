@@ -6,6 +6,11 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import chord.logicblox.LogicBloxExporter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.File;
+import java.io.IOException;
+
 import chord.util.IndexMap;
 
 /**

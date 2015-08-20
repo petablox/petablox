@@ -130,6 +130,7 @@ public class MaxSatGenerator {
 		}
 		File consFile = new File(Config.outDirName + File.separator + "all.maxsat"+(DEBUG?dFPost:""));
 		File expConsFile = new File(Config.outDirName + File.separator + "all.explicit"+(DEBUG?dFPost:""));
+		File paramFiles = new File(Config.outDirName+File.separator+"all.params"+(DEBUG?dFPost:""));
 		try {
 //			Set<Integer> allCons = new HashSet<Integer>();
 //			for (Tuple t1 : tSet) {
@@ -198,6 +199,7 @@ public class MaxSatGenerator {
 			// Start file generation
 			PrintWriter pw = new PrintWriter(consFile);
 			PrintWriter pw1 = new PrintWriter(expConsFile);
+			PrintWriter pw2 = new PrintWriter(paramFiles);
 			pw.println("c " + tSet.toString());
 			if(DEBUG)
 			pw1.println("Queries: " + tSet.toString());
@@ -263,7 +265,10 @@ public class MaxSatGenerator {
 			// Final, soft constraints
 			for (Tuple t : paramSet) {
 				pw.println(paramHandler.getWeight(t) + " " + getOrAddTupleIdx(t) + " 0");
-				if (DEBUG) pw1.println("Input tuple: " + t);
+				if (DEBUG) {
+					pw1.println("Input tuple: " + t);
+					pw2.println(getOrAddTupleIdx(t));
+				}
 				consNumberPrinted++;
 			}
 			if (hardConsNum + softConsNum != consNumberPrinted)
@@ -272,6 +277,8 @@ public class MaxSatGenerator {
 			pw.close();
 			pw1.flush();
 			pw1.close();
+			pw2.flush();
+			pw2.close();
 			
 			if(DEBUG && tuplePoolChanged){
 				File tupleFile = new File(Config.outDirName + File.separator + "tuple.map");

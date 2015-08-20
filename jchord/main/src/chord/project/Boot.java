@@ -165,6 +165,8 @@ public class Boot {
         String dlogAnalysisPath = getOrSetProperty("chord.dlog.analysis.path",
             Utils.concat(stdDlogAnalysisPath, File.pathSeparator, extDlogAnalysisPath));
         String userClassPath = getOrSetProperty("chord.class.path", "");
+        boolean isFixedCPU = getOrSetProperty("chord.fixCPU", "false").equals("true");
+        String CPUID = getOrSetProperty("chord.CPUID", "0");
 
         System.setProperty("user.dir", workDirName);
 
@@ -202,6 +204,11 @@ public class Boot {
         // build command line arguments of fresh JVM process to run Chord
 
         List<String> cmdList = new ArrayList<String>();
+        if (isFixedCPU) {
+        	cmdList.add("taskset");
+        	cmdList.add("-c");
+        	cmdList.add(CPUID);
+        }
         cmdList.add("java");
         for (String s : jvmargs.split(" "))
             cmdList.add(s);

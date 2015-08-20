@@ -151,5 +151,30 @@ public class FieldBitSet implements Set<jq_Field> {
 	public boolean isEmpty() {
 		return bitSet.isEmpty();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bitSet == null) ? 0 : bitSet.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FieldBitSet other = (FieldBitSet) obj;
+		if (bitSet == null) {
+			if (other.bitSet != null)
+				return false;
+		} else if (!bitSet.equals(other.bitSet))
+			return false;
+		return true;
+	}	
 	
 }

@@ -13,6 +13,13 @@ import chord.project.ModernProject;
 import chord.project.VisitorHandler;
 import chord.util.Utils;
 
+import java.util.List;
+import java.io.File;
+
+import chord.project.ICtrlCollection;
+import chord.project.IDataCollection;
+import CnCHJ.api.ItemCollection;
+
 /**
  * Generic implementation of a program relation (a specialized kind of Java task).
  * <p>

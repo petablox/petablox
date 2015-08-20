@@ -40,6 +40,7 @@ import chord.project.analyses.provenance.Tuple;
  * -Dchord.provenance.invkK=<2>: if we use boolean domain, what is the k value we want for invoke sites
  * -Dchord.provenance.allocK=<2>: if we use boolean domain, what is the k value we want for alloc sites 
  * -Dchord.provenance.numQueries: randomly track given number of queries, default(-1) to track all queries
+ * -Dchord.provenance.maxsatDebug: turn on debug options of the maxsat solver
  * @author xin
  * 
  */
@@ -118,6 +119,8 @@ public class KOBJRefiner extends JavaAnalysis {
 			queryRelName = "ptsVH";
 		}else
 			throw new RuntimeException("Unknown client: " + this.client);
+		
+		MaxSatGenerator.DEBUG = Boolean.getBoolean("chord.provenance.maxsatDebug");
 
 		//The analyses we need to run
 		tasks = new ArrayList<ITask>();
@@ -238,7 +241,7 @@ public class KOBJRefiner extends JavaAnalysis {
 	private void runAll() {
 		//Set up MaxSatGenerator
 		gen = createMaxSatGenerator(new PTHandler(ifMono, ifBool), queryWeight);
-		gen.DEBUG = false;
+//		gen.DEBUG = false;
 		PTHandler.max = max;
 		int numIter = 0;
 		int kcfaImp = 0;
@@ -282,7 +285,7 @@ public class KOBJRefiner extends JavaAnalysis {
 					//Attempt to solve in one run
 					MaxSatGenerator tempGen = createMaxSatGenerator(new PTHandler(ifMono,false), MaxSatGenerator.QUERY_MAX);
 					tempGen.update(hardQueries);
-					Set<Tuple> tupleToEli = tempGen.solve(hardQueries, -1+"");
+					Set<Tuple> tupleToEli = tempGen.solve(hardQueries, numIter+"_check");
 					tupleToEli.retainAll(hardQueries);
 					System.out.println("Queries unsovable using KCFA: "+tupleToEli);
 					kcfaImp += tupleToEli.size();
@@ -501,7 +504,7 @@ public class KOBJRefiner extends JavaAnalysis {
 		printlnInfo("Processing query: " + q);
 		int numIter = 0;
 		gen = createMaxSatGenerator(new PTHandler(ifMono,ifBool), MaxSatGenerator.QUERY_HARD);
-		gen.DEBUG = false;
+//		gen.DEBUG = false;
 		while (true) {
 			if(ifMono)
 				gen = createMaxSatGenerator(new PTHandler(ifMono, ifBool), MaxSatGenerator.QUERY_HARD);

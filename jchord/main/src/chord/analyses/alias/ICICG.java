@@ -60,4 +60,11 @@ public interface ICICG extends ILabeledGraph<jq_Method, Quad> {
      * @return The ordered set of all nodes in the CICG.
      */
     public ArraySet<jq_Method> getNodesOrdered();
+    
+    /**
+     * Provides an ordered set of all root nodes of this graph.
+     *
+     * @return All root nodes of this graph.
+     */
+    public Set<jq_Method> getRootsOrdered();
 }

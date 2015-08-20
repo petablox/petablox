@@ -24,6 +24,18 @@ import chord.project.ModernProject;
 import chord.project.Config.DatalogEngineType;
 import chord.util.Utils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.HashSet;
+import chord.project.ICtrlCollection;
+import chord.project.ModernProject;
+import gnu.trove.list.array.TIntArrayList;
+
 /**
  * Generic implementation of a Dlog task (a program analysis expressed in Datalog and
  * solved using BDD-based solver <a href="http://bddbddb.sourceforge.net/">bddbddb</a>).
@@ -80,6 +92,10 @@ public class DlogAnalysis extends JavaAnalysis {
         return metadata;
     }
     
+    /*private void error(String errMsg) {
+        Messages.log("ERROR: DlogAnalysis: " + fileName + ": line " + lineNum + ": " + errMsg);
+        hasNoErrors = false;
+    }*/
     /**
      * Executes this Datalog analysis.
      */
@@ -98,7 +114,7 @@ public class DlogAnalysis extends JavaAnalysis {
             throw new ChordException("FIXME: Unhandled datalog engine type: " + datalogEngine);
         }
     }
-    
+
     public void run(Object ctrl, IStepCollection sc) {
         ModernProject p = ModernProject.g();
         Object[] consumes = p.runPrologue(ctrl, sc);
@@ -132,7 +148,7 @@ public class DlogAnalysis extends JavaAnalysis {
             pic.Put(ctrl, rel);
         }
     }
-    
+
     /**
      * Provides the names of all domains of relations consumed/produced by this Datalog analysis.
      * 

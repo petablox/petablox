@@ -1,5 +1,6 @@
 package chord.analyses.typestate;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,9 @@ import joeq.Compiler.Quad.Operator.MultiNewArray;
 import joeq.Compiler.Quad.Operator.Putfield;
 import joeq.Compiler.Quad.Operator.Putstatic;
 import joeq.Compiler.Quad.Operator.Return;
+import joeq.Compiler.Quad.Operator.Invoke.InvokeStatic;
 import joeq.Compiler.Quad.Operator.Return.THROW_A;
+import joeq.Compiler.Quad.Operator;
 import joeq.Compiler.Quad.Quad;
 import joeq.Compiler.Quad.QuadVisitor;
 import joeq.Compiler.Quad.RegisterFactory;
@@ -44,6 +47,7 @@ import chord.program.Loc;
 import chord.project.Chord;
 import chord.project.ClassicProject;
 import chord.project.Messages;
+import chord.project.OutDirUtils;
 import chord.project.analyses.ProgramRel;
 import chord.project.analyses.rhs.RHSAnalysis;
 import chord.util.ArraySet;
@@ -63,7 +67,10 @@ import chord.program.Program;
  * 4. Whether use of may-bit is enabled or not in the analysis
  *    chord.typestate.usemaybit (default value: true)
  */
-@Chord(name = "typestate-java")
+
+@Chord(name = "typestate-java",
+consumes = {"modMF", "sub", "checkExcludedT", "checkIncludedI"}
+)
 public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
     protected static boolean DEBUG = false;
     protected TypeStateSpec sp;
@@ -77,6 +84,7 @@ public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
     protected String cipaName, cicgName;
     public static TypeState startState, errorState;
     private boolean isInit;
+    protected Set<Quad> checkIncludedI;
 
     // subclasses can override
     public TypeStateSpec getTypeStateSpec() {
@@ -165,6 +173,16 @@ public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
             }
             relCheckExcludedT.close();
         }
+        
+        {
+			checkIncludedI = new HashSet<Quad>();
+			ProgramRel relI = (ProgramRel) ClassicProject.g().getTrgt("checkIncludedI");
+			relI.load();
+			Iterable<Quad> tuples = relI.getAry1ValTuples();
+			for (Quad q : tuples)
+				checkIncludedI.add(q);
+			relI.close();
+		}
     }
 
     @Override
@@ -172,6 +190,8 @@ public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
         init();
         runPass();
         if (DEBUG) print();
+        printAllQueries();
+        printErrQueries();
         done();
     }
 
@@ -179,7 +199,7 @@ public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
     public ICICG getCallGraph() {
         return cicg;
     }
-
+    
     /*
      * For each reachable method 'm' adds the following path edges:
      * 1. <null, null, null>
@@ -505,6 +525,62 @@ public class TypeStateAnalysis extends RHSAnalysis<Edge, Edge> {
         if (DEBUG) System.out.println("\nCalled getSummaryEdge: m=" + m + " pe=" + pe);
         return getCopy(pe);
     }
+    
+    // Helper functions for printing the results of the typestate analysis
+   private static boolean isInterestingSite(Operator o) {
+ 		return o instanceof Invoke && !(o instanceof InvokeStatic);
+	}
+
+    public void printAllQueries() {
+    	PrintWriter out = OutDirUtils.newPrintWriter("all_queries.txt");
+		for (Quad q : checkIncludedI) {
+			if (isInterestingSite(q.getOperator())) {
+				Register v = Invoke.getParam(q, 0).getRegister();
+				for (Quad h: cipa.pointsTo(v).pts) {
+					if (trackedSites.contains(h)) {
+						out.println(q.toVerboseStr() + " :: " + h.toVerboseStr());
+					}
+				}
+			}
+		}
+		out.close();
+	}
+
+	public void printErrQueries() {
+		PrintWriter out = OutDirUtils.newPrintWriter("error_queries.txt");
+		for (Inst x : pathEdges.keySet()) {
+			if (x instanceof Quad) {
+				Quad i = (Quad) x;
+				if (checkIncludedI.contains(i) && isInterestingSite(i.getOperator())) {
+					Set<Edge> peSet = pathEdges.get(i);
+					if (peSet != null) {
+						for (Edge pe : peSet) {
+							if (pe.dstNode != null) {
+								Quad q = pe.h;
+								if (trackedSites.contains(q)) {
+									Register v = Invoke.getParam(i, 0).getRegister();
+									if (Helper.mayPointsTo(v, q, cipa)) {
+										jq_Method tgtMethod = Invoke.getMethod(i).getMethod();
+								        TypeState newTS = pe.dstNode.ts;
+								        if (sp.isMethodOfInterest(tgtMethod)) {
+								            if (Helper.getPrefixIndexInAP(pe.dstNode.ms, v, -1) >= 0) {
+								                newTS = sp.getTargetState(tgtMethod.getName(), pe.dstNode.ts);
+								            } else if (Helper.getIndexInAP(pe.dstNode.ms,v) == -1 && pe.dstNode.may) {
+								                newTS = errorState;
+								            } 
+								        }
+										if (newTS == errorState )
+											out.println(i.toVerboseStr() + " :: " + q.toVerboseStr());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		out.close();
+	}
 
     public class MyQuadVisitor extends QuadVisitor.EmptyVisitor {
         public AbstractState istate;    // immutable, may be null

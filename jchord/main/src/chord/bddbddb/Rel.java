@@ -14,6 +14,12 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import chord.project.Config;
+
+import chord.util.tuple.integer.*;
+
+import chord.util.tuple.object.*;
+
 import net.sf.javabdd.BDD;
 import net.sf.javabdd.BDDDomain;
 import net.sf.javabdd.BDDException;

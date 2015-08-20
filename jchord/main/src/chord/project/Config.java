@@ -2,7 +2,6 @@ package chord.project;
 
 import java.io.File;
 import java.io.IOException;
-
 import chord.logicblox.LogicBloxUtils;
 import chord.util.Utils;
 
@@ -21,6 +20,9 @@ public class Config {
     public final static String maxHeap = System.getProperty("chord.max.heap");
     public final static String maxStack = System.getProperty("chord.max.stack");
     public final static String jvmargs = System.getProperty("chord.jvmargs");
+    public final static boolean fixCPU = Utils.buildBoolProperty("chord.fixCPU",false);
+    public final static String CPUID = System.getProperty("chord.CPUID", "0");
+    public final static String bddbddbCPUID = System.getProperty("chord.bddbddb.CPUID", "0");
 
     // basic properties about program being analyzed (its main class, classpath, command line args, etc.)
 
@@ -199,6 +201,9 @@ public class Config {
         System.out.println("chord.max.heap: " + maxHeap);
         System.out.println("chord.max.stack: " + maxStack);
         System.out.println("chord.jvmargs: " + jvmargs);
+        System.out.println("chord.fixCPU: " + fixCPU);
+        System.out.println("chord.cpuID: " + CPUID);
+        System.out.println("chord.bddbddb.CPUID: " + bddbddbCPUID);
         System.out.println("chord.main.dir: " + mainDirName);
         System.out.println("chord.work.dir: " + workDirName);
         System.out.println("chord.main.class: " + mainClassName);
