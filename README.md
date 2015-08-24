@@ -2,7 +2,33 @@
 
 The main analyses framework in Petablox is derived from Chord and found in the `jchord` directory.  Petablox also includes the DOOP call graph/pointer analyses in `doop-r160113-bin`.  General directions follow and the framework-specific instructions are after that. 
 
-## Getting Started
+## Manual Downloads
+
+All downloads can be found on the Bitbucket repository's 
+[download page](https://bitbucket.org/pag-lab/petablox/downloads).
+
+## Petablox without LogicBlox
+
+These instructions are if you want to use Petablox with BDDBDDB to run the
+analyses. The simplest way to run Petablox this way is to download the pre-built
+JAR file from the downloads page.
+
+Since Petablox uses Chord internally, the instructions given [in the 
+documentation](http://pag-www.gtisc.gatech.edu/chord/user_guide/index.html) 
+for Chord can be used to run Petablox.
+
+### Building the JAR
+If you choose to build the JAR from the latest code in the repository, follow
+these steps (you will need to have Apache Ant along with JRE for this)
+
+```
+cd petablox/jchord/main
+ant
+```
+
+The JAR will be built in the same folder.
+
+## Petablox with LogicBlox
 
 These instructions assume you want to use a VM to run the analyses.  We use 
 [Vagrant](https://www.vagrantup.com/) to provide the VM.  One important point 
@@ -12,11 +38,6 @@ See the Vagrant docs for other information.
 First copy `provision/config.json.default` to `provision/config.json`.  You can 
 adjust values there as needed.  This guide assumes LogicBlox version 3.10.21, but 
 you can change the version in `config.json` and modify the directions accordingly.
-
-### Manual Downloads
-
-All downloads can be found on the Bitbucket repository's 
-[download page](https://bitbucket.org/mayurnaik/petablox/downloads).
 
 #### LogicBlox
 
