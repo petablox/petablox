@@ -6,6 +6,7 @@ import joeq.Compiler.Quad.Operand;
 import joeq.Compiler.Quad.Operator;
 import joeq.Compiler.Quad.Quad;
 import joeq.Compiler.Quad.Operand.RegisterOperand;
+import joeq.Compiler.Quad.Operator.CheckCast;
 import joeq.Compiler.Quad.Operator.Move;
 import joeq.Compiler.Quad.Operator.New;
 import joeq.Compiler.Quad.Operator.NewArray;
@@ -13,6 +14,7 @@ import joeq.Compiler.Quad.RegisterFactory.Register;
 import chord.analyses.alloc.DomH;
 import chord.analyses.point.DomP;
 import chord.analyses.var.DomV;
+import chord.program.visitors.ICastInstVisitor;
 import chord.program.visitors.IMoveInstVisitor;
 import chord.project.Chord;
 import chord.project.analyses.ProgramRel;
@@ -25,7 +27,7 @@ import chord.project.analyses.ProgramRel;
  * @author Xin Zhang
  */
 @Chord(name = "PobjNullAsgnInst", sign = "P0,V0:P0_V0")
-public class RelPobjNullAsgnInst extends ProgramRel implements IMoveInstVisitor {
+public class RelPobjNullAsgnInst extends ProgramRel implements IMoveInstVisitor, ICastInstVisitor{
 	public void visit(jq_Class c) {
 	}
 
@@ -42,4 +44,15 @@ public class RelPobjNullAsgnInst extends ProgramRel implements IMoveInstVisitor 
 			}
 		}
 	}
+	
+	public void visitCastInst(Quad q) {
+        Operand rx = CheckCast.getSrc(q);
+        if (!(rx instanceof RegisterOperand)) {
+            RegisterOperand lo = CheckCast.getDest(q);
+            if (lo.getType().isReferenceType()) {
+                Register l = lo.getRegister();
+                add(q, l);
+            }
+        }
+    }
 }

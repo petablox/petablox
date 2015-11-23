@@ -390,21 +390,6 @@ public class IterThrEscAnalysis extends ParallelAnalysis {
 		return in.encode();
 	}
 
-	private void fillInQuery(List<Quad> queries){
-		queries.clear();
-		queries.add(domE.get(20514));
-		queries.add(domE.get(20531));
-		queries.add(domE.get(20533));
-		queries.add(domE.get(20532));
-		queries.add(domE.get(20529));
-		queries.add(domE.get(20156));
-		queries.add(domE.get(20157));
-		queries.add(domE.get(20534));
-		queries.add(domE.get(19992));
-		queries.add(domE.get(20530));
-		queries.add(domE.get(19993));
-	}
-	
 	public DNF getErrSuf(Quad q) {
 		Operator ro = q.getOperator();
 		RegisterOperand rx;

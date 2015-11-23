@@ -724,11 +724,6 @@ public class AllocEnvCFAAnalysis extends InfiCFARHSAnalysis<BitEdge<Quad>, BitEd
 		jq_Type[] paramTypes = m.getParamTypes();
 		for (int i = 0; i < args.length(); i++) {
 			Register actualReg = args.get(i).getRegister();
-			Register formalReg = rf.get(i);
-			BitSet paramVarPtsTo;
-			if(i == 0 && ((!isStatic && useExtraFilters)  || isReflect)){
-				paramVarPtsTo = callerVarPtsToFiltered;
-			}else if(i == 1 && isReflect && conNewInstIMMap.get(q)!=null){
 			BitSet paramVarPtsTo;
 			if(i == 0 && ((!isStatic && useExtraFilters)  || isReflect)){
 				paramVarPtsTo = callerVarPtsToFiltered;

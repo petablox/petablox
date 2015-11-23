@@ -360,7 +360,7 @@ my %local_options_map = (
     "bytecode-count-app" =>
     	[
 		"-Dchord.run.analyses=cipa-0cfa-dlog,src-files-java",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.",
 		"-Dchord.scope.reuse=false",
 		"-Dchord.reflect.kind=dynamic",
 	],
