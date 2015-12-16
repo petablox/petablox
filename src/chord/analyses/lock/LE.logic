@@ -1,0 +1,29 @@
+// Created by convert.py from ./src/chord/analyses/lock/LE.dlog on 2015-04-20 13:08:42.249369
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: LE-dlog
+
+// :domains: E
+// :domains: L
+// :domains: P
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: LP(L,P)
+// :inputs: PE(P,E)
+// :outputs: LE(L,E)
+LE(l,e) -> L(l), E(e).
+
+// ###
+// # Constraints
+// ###
+
+LE(l,e) <- LP(l,p), PE(p,e).
+

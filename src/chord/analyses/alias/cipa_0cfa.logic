@@ -1,0 +1,202 @@
+// Created by convert.py from src/chord/analyses/alias/cipa_0cfa.dlog on 2015-05-05 12:08:41.912473
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Context-insensitive may-alias/call-graph analysis.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: cipa-0cfa-dlog
+
+// :domains: T
+// :domains: F
+// :domains: M
+// :domains: I
+// :domains: H
+// :domains: V
+// :domains: Z
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: VT(V,T)
+// :inputs: HT(H0,T1)
+// :inputs: cha(M1,T1,M0)
+// :inputs: sub(T1,T0)
+// :inputs: MmethArg(M,Z,V)
+// :inputs: MmethRet(M0,Z0,V1)
+// :inputs: IinvkArg0(I0,V1)
+// :inputs: IinvkArg(I0,Z0,V1)
+// :inputs: IinvkRet(I,Z,V)
+// :inputs: MI(M,I)
+// :inputs: statIM(I,M)
+// :inputs: specIM(I,M)
+// :inputs: virtIM(I,M)
+
+// :inputs: MobjValAsgnInst(M,V,H)
+// :inputs: MobjVarAsgnInst(M,V,V)
+// :inputs: MgetInstFldInst(M,V,V,F)
+// :inputs: MputInstFldInst(M,V,F,V)
+// :inputs: MgetStatFldInst(M,V,F)
+// :inputs: MputStatFldInst(M,F,V)
+
+// :inputs: clsForNameIT(I,T)
+// :inputs: objNewInstIH(I,H)
+// :inputs: objNewInstIM(I,M)
+// :inputs: conNewInstIH(I,H)
+// :inputs: conNewInstIM(I,M)
+// :inputs: aryNewInstIH(I,H)
+
+// :inputs: classT(T)
+// :inputs: staticTM(T,M)
+// :inputs: staticTF(T,F)
+// :inputs: clinitTM(T,M)
+
+// #MclsValAsgnInst(m:M0,v:V0,t:T0) input
+// #MgetClassInvkInst(m:M0,i:I0) input
+// #clsTH(t:T0,h:H0) input
+// #objTH(t:T0,h:H0) input
+
+// :outputs: IHM(I,H,M)
+IHM(i,h,m) -> I(i), H(h), M(m).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: VV(V,V)
+VV(v1,v2) -> V(v1), V(v2).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: specIMV(I,M,V)
+specIMV(i,m,v) -> I(i), M(m), V(v).
+
+// convert.py: following intermediate relation converted to output relation
+// :outputs: objValAsgnInst(V,H)
+objValAsgnInst(l,h) -> V(l), H(h).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: objVarAsgnInst(V,V)
+objVarAsgnInst(l,r) -> V(l), V(r).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: getInstFldInst(V,V,F)
+getInstFldInst(l,b,f) -> V(l), V(b), F(f).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: putInstFldInst(V,F,V)
+putInstFldInst(b,f,r) -> V(b), F(f), V(r).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: getStatFldInst(V,F)
+getStatFldInst(l,f) -> V(l), F(f).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: putStatFldInst(F,V)
+putStatFldInst(f,r) -> F(f), V(r).
+
+// :outputs: reachableT(T)
+reachableT(t) -> T(t).
+// :outputs: VHfilter(V,H)
+VHfilter(v,h) -> V(v), H(h).
+// :outputs: VH(V,H)
+VH(v,h) -> V(v), H(h).
+// :outputs: FH(F,H)
+FH(f,h) -> F(f), H(h).
+// :outputs: HFH(H,F,H)
+HFH(h1,f,h2) -> H(h1), F(f), H(h2).
+// :outputs: rootM(M)
+rootM(m) -> M(m).
+// :outputs: reachableI(I)
+reachableI(i) -> I(i).
+// :outputs: reachableM(M)
+reachableM(m) -> M(m).
+// :outputs: IM(I,M)
+IM(i,m) -> I(i), M(m).
+// :outputs: MM(M,M)
+MM(m,n) -> M(m), M(n).
+
+// ###
+// # Constraints
+// ###
+
+VHfilter(v,h) <- VT(v,t), HT(h,s), sub(s,t).
+//VHfilter(_,0).
+VHfilter(v,h) <- V(v), H_index[h] = 0.
+
+IHM(i,h,m2) <- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
+
+// # base cases: each root method and each class initializer is reachable
+//reachableM(0).
+reachableM(m0) <- M_index[m0] = 0.
+reachableM(m) <- reachableT(t), clinitTM(t,m).
+// # inductive case
+reachableM(m) <- IM(_,m).
+
+reachableI(i) <- MI(m,i), reachableM(m).
+
+// # possibly-multiple-target call sites
+IM(i,m) <- reachableI(i), IinvkArg0(i,v), VH(v,h), IHM(i,h,m).
+// # definitely-single-target call sites
+specIMV(i,m,v) <- specIM(i,m), IinvkArg0(i,v).
+
+IM(i,m) <- reachableI(i), specIMV(i,m,v), VH(v,_).
+IM(i,m) <- reachableI(i), statIM(i,m).
+
+// # arguments and return/throw variables
+VV(v,u) <- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+VV(u,v) <- IinvkRet(i,z,u), IM(i,m), MmethRet(m,z,v).
+
+VH(u,h) <- VV(u,v), VH(v,h), VHfilter(u,h).
+
+objValAsgnInst(l,h)   <- reachableM(m), MobjValAsgnInst(m,l,h).
+objVarAsgnInst(l,r)   <- reachableM(m), MobjVarAsgnInst(m,l,r).
+getInstFldInst(l,b,f) <- reachableM(m), MgetInstFldInst(m,l,b,f).
+putInstFldInst(b,f,r) <- reachableM(m), MputInstFldInst(m,b,f,r).
+getStatFldInst(l,f)   <- reachableM(m), MgetStatFldInst(m,l,f).
+putStatFldInst(f,r)   <- reachableM(m), MputStatFldInst(m,f,r).
+
+reachableT(t) <- reachableI(i), conNewInstIH(i,h), HT(h,t).
+reachableT(t) <- reachableI(i), objNewInstIH(i,h), HT(h,t).
+reachableT(t) <- reachableI(i), clsForNameIT(i,t).
+
+reachableM(m) <- reachableI(i), objNewInstIM(i,m).
+reachableM(m) <- reachableI(i), conNewInstIM(i,m).
+
+//VH(v,h)  <- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), objNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+//VH(v,h2) <- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,h2), VHfilter(v,h2).
+//VH(v,h)  <- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), conNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+//VH(v,h)  <- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), objNewInstIM(i,m), MmethArg(m,z0,v), Z_index[z0] = 0, objNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), objNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
+VH(v,h2) <- reachableI(i), conNewInstIM(i,m), IinvkArg(i,z1,u), MmethArg(m,z1,v), VH(u,h), HFH(h,f0,h2), VHfilter(v,h2), Z_index[z1] = 1, F_index[f0] = 0.
+VH(v,h)  <- reachableI(i), conNewInstIM(i,m), MmethArg(m,z0,v), Z_index[z0] = 0, conNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  <- reachableI(i), conNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
+VH(v,h)  <- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,z0,v), VHfilter(v,h), Z_index[z0] = 0.
+
+VH(l,h) <- objValAsgnInst(l,h), VHfilter(l,h).
+VH(l,h) <- objVarAsgnInst(l,r), VH(r,h), VHfilter(l,h).
+VH(l,h2) <- getInstFldInst(l,b,f), VH(b,h1), HFH(h1,f,h2), VHfilter(l,h2). 
+HFH(h1,f,h2) <- putInstFldInst(b,f,r), VH(b,h1), VH(r,h2). 
+VH(l,h) <- getStatFldInst(l,f), FH(f,h), VHfilter(l,h).
+FH(f,h) <- putStatFldInst(f,r), VH(r,h).
+
+// ## See: http://java.sun.com/docs/books/jls/second_edition/html/execution.doc.html
+// ## Section 12.4 Initialization of Classes and Interfaces
+// ## A class or interface type T will be initialized immediately before
+// ## the first occurrence of any one of the following:
+
+// # 1. T is a class and an instance of T is created.
+// # this handles both normal allocation and reflective allocation
+reachableT(t) <- objValAsgnInst(_,h), HT(h,t).
+// # 2. T is a class and a static method declared by T is invoked
+reachableT(t) <- reachableM(m), staticTM(t,m).
+// # 3. A static field declared by T is assigned. 
+reachableT(t) <- putStatFldInst(f,_), staticTF(t,f).
+// # 4. A static field declared by T is used and the reference to the
+// #    field is not a compile-time constant.
+reachableT(t) <- getStatFldInst(_,f), staticTF(t,f).
+// # 5. Before a class is initialized, its direct superclass must be
+// #    initialized.
+reachableT(t) <- classT(t), reachableT(s), sub(s,t).
+
+//rootM(0).
+rootM(m0) <- M_index[m0] = 0.
+rootM(m) <- reachableT(t), clinitTM(t,m).
+MM(m,n) <- IM(i,n), MI(m,i).
+

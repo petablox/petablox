@@ -1,0 +1,47 @@
+// Created by convert.py from ./src/chord/analyses/alias/argCopy.dlog on 2015-04-20 13:08:42.209645
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: argCopy-dlog
+
+// :domains: I
+// :domains: M
+// :domains: V
+// :domains: Z
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: IM(I,M)
+// :inputs: IinvkArg(I0,Z0,V1)
+// :inputs: MmethArg(M,Z,V)
+// :inputs: kobjSenM(M)
+// :inputs: epsilonV(V)
+
+// :outputs: MspcMethArg(M,V)
+MspcMethArg(m,v) -> M(m), V(v).
+// :outputs: MordMethArg(M,Z,V)
+MordMethArg(m,z,v) -> M(m), Z(z), V(v).
+
+// :outputs: argCopy(I,V,M,V)
+argCopy(i,u,m,v) -> I(i), V(u), M(m), V(v).
+
+// ###
+// # Constraints
+// ###
+
+//MspcMethArg(m,v)   <- MmethArg(m,0,v), kobjSenM(m), !epsilonV(v).
+//MordMethArg(m,0,v) <- MmethArg(m,0,v), !MspcMethArg(m,v).
+//MordMethArg(m,z,v) <- MmethArg(m,z,v), z!=0.
+
+MspcMethArg(m,v)   <- MmethArg(m,z0,v), Z_index[z0] = 0, kobjSenM(m), !epsilonV(v).
+MordMethArg(m,z0,v) <- MmethArg(m,z0,v), Z_index[z0] = 0, !MspcMethArg(m,v).
+MordMethArg(m,z,v) <- MmethArg(m,z,v), Z_index[z] != 0.
+
+argCopy(i,u,m,v) <- IM(i,m), IinvkArg(i,z,u), MordMethArg(m,z,v).
+

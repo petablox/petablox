@@ -1,9 +1,0 @@
-#! /bin/sh
-
-set -e
-
-cp=$DOOP_HOME/lib/sootclasses-2.3.0.jar
-
-mkdir -p build/content
-javac -Xlint -cp $cp -d build/content $(find src -name '*.java')
-jar cvf build/soot-fact-generation.jar -C build/content .

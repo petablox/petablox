@@ -1,0 +1,46 @@
+// Created by convert.py from ./src/chord/analyses/thread/thrSenCICG.dlog on 2015-04-20 13:08:42.319060
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: thrSenCICG-dlog
+
+// :domains: I
+// :domains: M
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: rootM(M)
+// :inputs: threadIM(I,M)
+// :inputs: threadStartI(I)
+// :inputs: IM(I,M)
+// :inputs: MI(M,I)
+
+// :outputs: thrSenRootM(M)
+thrSenRootM(m) -> M(m).
+// :outputs: thrSenReachableM(M)
+thrSenReachableM(m) -> M(m).
+// :outputs: thrSenIM(I,M)
+thrSenIM(i,m) -> I(i), M(m).
+// :outputs: thrSenMM(M,M)
+thrSenMM(m,n) -> M(m), M(n).
+
+// ###
+// # Constraints
+// ###
+
+thrSenRootM(m) <- rootM(m).
+thrSenRootM(m) <- threadIM(_,m).
+
+thrSenReachableM(m) <- thrSenRootM(m).
+thrSenReachableM(n) <- thrSenIM(_,n).
+
+thrSenIM(i,n) <- thrSenReachableM(m), MI(m,i), IM(i,n), !threadStartI(i).
+thrSenMM(m,n) <- thrSenIM(i,n), MI(m,i).
+
+

@@ -1,3 +1,0 @@
-main:([Ljava/lang/String;)V@org.apache.hadoop.chukwa.util.DumpArchive
-main:([Ljava/lang/String;)V@org.apache.hadoop.chukwa.util.DumpChunks
-main:([Ljava/lang/String;)V@org.apache.hadoop.chukwa.tools.backfilling.BackfillingLoader

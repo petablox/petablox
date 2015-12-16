@@ -1,5 +1,0 @@
-<!ELEMENT Alist (A)*>
-<!ELEMENT A ANY>
-<!ATTLIST A
-	id		ID		#REQUIRED
-	Mid		IDREF	#REQUIRED>

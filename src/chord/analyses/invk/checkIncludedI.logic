@@ -1,0 +1,14 @@
+// Created by convert.py from ./src/chord/analyses/invk/checkIncludedI.dlog on 2015-04-20 13:08:42.248890
+// :name: checkIncludedI-dlog
+
+// :domains: I
+// :domains: M
+
+
+// :inputs: MI(M,I)
+// :inputs: checkIncludedM(M)
+// :outputs: checkIncludedI(I)
+checkIncludedI(i) -> I(i).
+
+checkIncludedI(i) <- MI(m,i), checkIncludedM(m).
+

@@ -1,7 +1,0 @@
-#! /bin/sh
-
-cp=$LOGICBLOX_HOME/bin/JavaBlox.jar\
-:$LOGICBLOX_UNIT_HOME/logicblox-unit.jar\
-:$JSGLR_HOME/jsglr.jar
-
-java -cp $cp com.logicblox.unit.Main $*

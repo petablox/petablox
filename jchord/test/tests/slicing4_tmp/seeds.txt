@@ -1,2 +1,0 @@
-main:([Ljava/lang/String;)V@T
-result:I@T

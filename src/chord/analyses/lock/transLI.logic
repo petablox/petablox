@@ -1,0 +1,30 @@
+// Created by convert.py from ./src/chord/analyses/lock/transLI.dlog on 2015-04-20 13:08:42.252268
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: transLI-dlog
+
+// :domains: I
+// :domains: L
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: LI(L,I)
+// :inputs: LL(L,L)
+
+// :outputs: transLI(L,I)
+transLI(l,i) -> L(l), I(i).
+
+// ###
+// # Constraints
+// ###
+
+transLI(l,i) <- LI(l,i).
+transLI(l,i) <- LL(l,l2), transLI(l2,i).
+

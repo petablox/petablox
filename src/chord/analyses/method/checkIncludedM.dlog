@@ -1,0 +1,13 @@
+# name=checkIncludedM-dlog
+
+.include "T.dom"
+.include "M.dom"
+
+.bddvarorder M0_T0
+
+checkIncludedT(t:T0) input
+TM(t:T0,m:M0) input
+checkIncludedM(m:M0) output
+
+checkIncludedM(m) :- TM(t,m), checkIncludedT(t).
+
