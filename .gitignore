@@ -1,4 +1,4 @@
-chord.jar
+petablox.jar
 classes
 libsrc/libs/*
 libsrc/heros/heros-trunk.jar
@@ -6,3 +6,4 @@ libsrc/heros/herosclasses-trunk.jar
 libsrc/jasmin/lib/jasmin*
 libsrc/soot/lib/*
 libsrc/tamiflex/Booster/lib/*
+/bin/
