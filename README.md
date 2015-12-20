@@ -2,16 +2,16 @@ Petablox
 ========
 
 There are currently 2 ways of obtaining and using Petablox:
-* Build Petablox from source
-* Obtain a binary distribution
+ * Build Petablox from source
+ * Obtain a binary distribution
 
 Both of the above steps are described below:
 
 Build from Source
 -----------------
 To build Petablox, you will need to meet the following minimum requirements:
-* Java Development Kit (JDK) >= 1.6
-* Apache Ant
+ * Java Development Kit (JDK) >= 1.6
+ * Apache Ant
 
 To compile Petablox:
     git clone https://github.com/petablox-project/petablox
