@@ -14,7 +14,8 @@ To build Petablox, you will need to meet the following minimum requirements:
  * Apache Ant
 
 To compile Petablox:
-    git clone https://github.com/petablox-project/petablox
+
+    git clone https://github.com/petablox-project/petablox.git
     cd petablox
     ant
 
