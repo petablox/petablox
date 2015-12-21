@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="joeq" default="compile">
+    <target name="compile">
+        <mkdir dir="classes"/>
+        <javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+                source="1.5" target="1.5" srcdir="src" destdir="classes">
+            <classpath>
+                <pathelement location="lib/jdd.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="jar" depends="compile">
+        <jar jarfile="javabdd-1.0b2.jar">
+            <fileset dir="classes">
+                <include name="**/*.class"/>
+            </fileset>
+        </jar>
+    </target>
+    <target name="clean">
+        <delete dir="classes"/>
+        <delete file="javabdd-1.0b2.jar"/>
+    </target>
+</project>        
+

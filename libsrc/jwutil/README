@@ -1,0 +1,10 @@
+Mayur Naik (mhn@cs.stanford.edu)
+
+Made the following changes:
+
+1. Added stmt "--size" to SortedIntArraySet.remove(int) in
+   jwutil/collections/SortedIntArraySet.java
+
+2. Changed AppendIterator.hasNext() in jwutil/collections/AppendIterator.java
+   to fix performance problem reported here:
+   http://code.google.com/p/jchord/issues/detail?id=1
