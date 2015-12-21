@@ -60,7 +60,7 @@ public class RTA implements ScopeBuilder {
 
     public static final boolean DEBUG = false;
 
-    private final String reflectKind; // [none|static|static_cast|dynamic|ext_materialize]
+    private final String reflectKind; // [none|static|static_cast|dynamic|external]
 
     /////////////////////////
 
@@ -193,7 +193,7 @@ public class RTA implements ScopeBuilder {
             dynamicResolvedConNewInstSites = dynamicReflectResolver.getResolvedConNewInstSites();
             dynamicResolvedAryNewInstSites = dynamicReflectResolver.getResolvedAryNewInstSites();
             reflectiveCtors = new LinkedHashSet<SootMethod>();
-        } else if (reflectKind.equals("ext_materialize")) {
+        } else if (reflectKind.equals("external")) {
         	ExtReflectResolver extReflectResolver = new ExtReflectResolver();
         	extReflectResolver.run();
         	Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+

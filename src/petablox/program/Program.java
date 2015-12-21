@@ -23,6 +23,7 @@ import petablox.runtime.BasicEventHandler;
 import petablox.util.IndexSet;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
+import petablox.util.soot.SSAUtilities;
 import soot.ArrayType;
 import soot.Body;
 import soot.BooleanType;
@@ -85,16 +86,15 @@ public class Program {
     private Program() {
     	if (Config.verbose >= 3)
         	soot.options.Options.v().set_verbose(true);
-    	// TODO: Need to implement SSA transformations
-        /*String ssaKind = Config.ssaKind;
+        String ssaKind = Config.ssaKind;
         if (ssaKind.equals("nophi"))
-            jq_Method.doSSA(false, false);
+            SSAUtilities.doSSA(false, false);
         else if (ssaKind.equals("phi"))
-            jq_Method.doSSA(true, false);
+            SSAUtilities.doSSA(true, false);
         else if (ssaKind.equals("nomove")) 
-            jq_Method.doSSA(false, true);
+            SSAUtilities.doSSA(false, true);
 		else if (ssaKind.equals("nomovephi"))
-			jq_Method.doSSA(true, true);*/
+			SSAUtilities.doSSA(true, true);
     	
     	List<String> excluded = new ArrayList<String>();
     	Options.v().set_exclude(excluded);

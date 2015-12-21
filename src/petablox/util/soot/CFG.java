@@ -3,18 +3,14 @@ package petablox.util.soot;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import petablox.project.Config;
 
 import java.util.HashMap;
 
 import soot.Body;
-import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
-import soot.jimple.Jimple;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
-import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.ExceptionalBlockGraph;
 
@@ -22,68 +18,12 @@ public class CFG extends ExceptionalBlockGraph {
 	private static HashMap <Unit, Block> unitToBlockMap = null;
 	private boolean isEmpty = false;
 	
-	public CFG(ExceptionalUnitGraph unitGraph) {
-		super(unitGraph);
-	}
-
 	protected CFG (SootMethod m) {
 		super (m.retrieveActiveBody());
 		addEntryAndExit (m);
 		makeUnitToBlockMap();
 	}
 	
-    private boolean isExcluded(SootMethod m) {
-    	SootClass c = m.getDeclaringClass();
-    	if (Config.isExcludedFromScope(c.getName()))
-    		return true;
-    	return false;
-    }
-    
-    private void createEmptyCFG(SootMethod m) {
-    	List<Block> heads = getHeads();
-        if(heads.size() == 0)
-            System.out.println ("Error");
-        
-        if((heads.size() == 1) && (heads.get(0) instanceof DummyBlock))
-            System.out.println ("Already present");
-
-        List<Block> blocks = getBlocks();
-        Unit hnop = new JEntryNopStmt();
-        m.getActiveBody().getUnits().add(hnop);
-        DummyBlock head = new DummyBlock(getBody(), 0, hnop, this);
-        //head.makeHeadBlock(heads);
-        mHeads = new ArrayList<Block>();
-        mHeads.add(head);
-        
-        Iterator<Block> blocksIt = blocks.iterator();
-        while(blocksIt.hasNext()){
-            Block block = (Block) blocksIt.next();
-            block.setIndexInMethod(block.getIndexInMethod() + 2);
-        }
-        
-	    List<Block> newBlocks = new ArrayList<Block>();
-	    newBlocks.add(head);
-	    newBlocks.addAll(blocks);
-	    mBlocks = newBlocks;
-	    
-	    List<Block> tails = getTails();
-        if(tails.size() == 0)
-            System.out.println ("Error");     
-        if((tails.size() == 1) && (tails.get(0) instanceof DummyBlock))
-            System.out.println ("Already present");
-
-        List<Block> blocks1 = getBlocks();
-        Unit tnop = new JExitNopStmt();
-        m.getActiveBody().getUnits().add(tnop);
-        DummyBlock tail = new DummyBlock(getBody(), 1, tnop, this);
-        //tail.makeTailBlock(tails);
-        mTails = new ArrayList<Block>();
-        mTails.add(tail);
-        blocks1.add(tail);
-        head.setSuccs(new ArrayList<Block>(mTails));
-        tail.setPreds(new ArrayList<Block>(mHeads));
-    }
-    
 	private void addEntryAndExit(SootMethod m) {	
 		List<Block> heads = getHeads();
         if(heads.size() == 0)

@@ -21,14 +21,21 @@ import soot.PrimType;
 import soot.RefLikeType;
 import soot.RefType;
 import soot.jimple.FieldRef;
+import soot.jimple.GotoStmt;
+import soot.jimple.IfStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.ReturnStmt;
+import soot.jimple.ReturnVoidStmt;
 import soot.jimple.StaticInvokeExpr;
+import soot.jimple.SwitchStmt;
+import soot.jimple.ThrowStmt;
 import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JInterfaceInvokeExpr;
 import soot.jimple.internal.JInvokeStmt;
 import soot.jimple.internal.JVirtualInvokeExpr;
+import soot.shimple.PhiExpr;
 import soot.tagkit.BytecodeOffsetTag;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
@@ -45,6 +52,7 @@ public class SootUtilities {
 		if(methodToCFG.containsKey(m)){
 			return methodToCFG.get(m);
 		}else{
+			SSAUtilities.process(m);
 			CFG cfg = new CFG(m);
 			methodToCFG.put(m, cfg);
 			return cfg;
@@ -352,6 +360,24 @@ public class SootUtilities {
 			return true;
 		return false;
 	}
+	public static boolean isPhiInst(JAssignStmt a){
+		Value right = a.rightBox.getValue();
+		if(right instanceof PhiExpr)
+			return true;
+		return false;
+	}
+	
+	public static boolean isBranch(Unit u){
+		if(u instanceof IfStmt ||
+		   u instanceof GotoStmt ||
+		   u instanceof SwitchStmt ||
+		   u instanceof ThrowStmt ||
+		   u instanceof ReturnStmt ||
+		   u instanceof ReturnVoidStmt)
+			return true;
+		return false;
+	}
+	
 	/*
 	 * Returns the local variables corresponding to the arguments of the method
 	 */

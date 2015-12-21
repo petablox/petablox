@@ -19,8 +19,8 @@ import soot.options.Options;
  *
  */
 public class ExtReflectResolver {
-	private static final String STARTING_RUN = "INFO: Reflection resolution using SOOT: Starting Run ID %s.";
-    private static final String FINISHED_RUN = "INFO: Reflection resolution using SOOT: Finished Run ID %s.";
+	private static final String STARTING_RUN = "INFO: Reflection resolution using Tamiflex: Starting Run ID %s.";
+    private static final String FINISHED_RUN = "INFO: Reflection resolution using Tamiflex: Finished Run ID %s.";
     private static final String PLAY_OUT_JAR = "poa-2.0.1.jar";
     private static final String BOOSTER_JAR  = "booster-trunk.jar";
     private static final String REFL_DIRNAME_PREFIX = "classesRefl";
