@@ -3,6 +3,8 @@ package petablox.util.soot;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+
+import petablox.program.Loc;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
@@ -82,6 +84,17 @@ public class SootUtilities {
 			for(int i=0;i<ste.length;i++){
 				System.out.println(ste[i]);
 			}
+		}
+		return m;
+	}
+	
+	public static SootMethod getMethod(Loc i){
+		SootMethod m = null;
+		if(i.i instanceof Unit){
+			m = SootUtilities.getMethod(((Unit)i.i));
+		}else{
+			Unit temp = ((Block)i.i).getHead();
+			m = SootUtilities.getMethod(temp);
 		}
 		return m;
 	}
