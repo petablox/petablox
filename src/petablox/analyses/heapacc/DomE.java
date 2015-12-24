@@ -43,12 +43,14 @@ public class DomE extends ProgramDom<Unit> implements IHeapInstVisitor {
     		JAssignStmt as = (JAssignStmt) u;
     		
             if (SootUtilities.isFieldLoad(as)) {
-                if (!(((InstanceFieldRef)as.rightBox.getValue()).getBase() instanceof Local))
-                    return;
+                if(as.rightBox.getValue() instanceof InstanceFieldRef)
+                    if (!(((InstanceFieldRef)as.rightBox.getValue()).getBase() instanceof Local))
+                        return;
             }
             if (SootUtilities.isFieldStore(as)) {
-            	if (!(((InstanceFieldRef)as.leftBox.getValue()).getBase() instanceof Local))
-                    return;
+                if(as.rightBox.getValue() instanceof InstanceFieldRef)
+            	    if (!(((InstanceFieldRef)as.leftBox.getValue()).getBase() instanceof Local))
+                        return;
             }
     	}
         

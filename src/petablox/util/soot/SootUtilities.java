@@ -89,16 +89,20 @@ public class SootUtilities {
 	}
 	
 	public static SootMethod getMethod(Loc i){
+		return SootUtilities.getMethodInst(i.i);
+	}
+
+	public static SootMethod getMethodInst(Object i){
 		SootMethod m = null;
-		if(i.i instanceof Unit){
-			m = SootUtilities.getMethod(((Unit)i.i));
+		if(i instanceof Unit){
+			m = SootUtilities.getMethod(((Unit)i));
 		}else{
-			Unit temp = ((Block)i.i).getHead();
+			Unit temp = ((Block)i).getHead();
 			m = SootUtilities.getMethod(temp);
 		}
 		return m;
 	}
-	
+
 	public static boolean isStaticGet(JAssignStmt a){
 		if(a.containsFieldRef()){
 			FieldRef fr = a.getFieldRef();
@@ -438,6 +442,17 @@ public class SootUtilities {
 	public static String toVerboseStr(Unit u) {                              //TODO 
 	//return toByteLocStr(u) + " (" + toJavaLocStr(u) + ") [" + printUnit(u) + "]";
         return "";
+	}
+
+	public static String toVerboseStrInst(Object i){
+		String s = null;
+		if(i instanceof Unit){
+			s = SootUtilities.toVerboseStr(((Unit)i));
+		}else if(i instanceof Block){
+			Unit head = ((Block)i).getHead();
+			s = SootUtilities.toVerboseStr(head);
+		}
+		return s;
 	}
 
 	public static List<Integer> getLineNumber(SootMethod m, Local v){      //TODO
