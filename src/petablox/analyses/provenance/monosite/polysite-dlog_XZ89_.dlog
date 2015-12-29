@@ -1,0 +1,30 @@
+# name=polysite-dlog_XZ89_
+.include "M.dom"
+.include "I.dom"
+.include "C.dom"
+.bddvarorder M0xI0xM1_C0xC1
+
+
+#Input relations
+CICM(c:C0,i:I0,d:C1,m:M0) input
+virtIM(i:I0,m:M0) input
+reachableCI(c:C0,i:I0) input
+checkExcludedI(i:I0) input
+
+#Output relations
+virtI(i:I0) output
+polySite(i:I0) output
+insvIM(i:I0,m:M0) output
+
+#Instrumented relations
+insvIM_XZ89_0(i:I0,m:M0,v_XZ89_0:C0,v_XZ89_1:C1) output
+polySite_XZ89_3(i:I0,m1:M0,m2:M1) output
+
+#Original rules
+insvIM(i,m) :- CICM(_,i,_,m).
+virtI(i) :- virtIM(i,_).
+polySite(i) :- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.
+
+#Instrumented rules
+insvIM_XZ89_0(i,m,v_XZ89_0,v_XZ89_1) :- CICM(v_XZ89_0,i,v_XZ89_1,m).
+polySite_XZ89_3(i,m1,m2) :- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.
