@@ -10,6 +10,9 @@ import petablox.analyses.alias.CtxtsAnalysis;
 import petablox.project.ClassicProject;
 import petablox.project.Petablox;
 import petablox.project.analyses.JavaAnalysis;
+import petablox.project.analyses.ProgramRel;
+import petablox.util.tuple.object.Pair;
+import soot.Local;
 
 /**
  * Static downcast safety analysis.
@@ -35,5 +38,18 @@ public class DowncastAnalysis extends JavaAnalysis {
 	public void run() {
 		ClassicProject.g().runTask(CtxtsAnalysis.getCspaKind());
 		ClassicProject.g().runTask("downcast-dlog");
+//		ProgramRel downCastRel = (ProgramRel) ClassicProject.g().getTrgt("downcast");
+//		downCastRel.load();
+//		ProgramRel mvRel = (ProgramRel) ClassicProject.g().getTrgt("MV");
+//		ClassicProject.g().getTaskProducingTrgt(mvRel).run();
+//		mvRel.load();
+//		for(Pair p : downCastRel.getAry2ValTuples()){
+//			Local l = (Local)p.val0;
+//			for(Pair p1 : mvRel.getAry2ValTuples()){
+//				if(p1.val1.equals(l))
+//					System.out.println(p1.val0);
+//			}
+//			System.out.println(p.val1);
+//		}
 	}
 }
