@@ -16,7 +16,7 @@ use feature "switch";
 # Third  priority options: those defined in local_options_map below. They are options specific to an analysis (but independent of the benchmark).
 # Lowest priority options: those defined in global_options below. They are options independent of both the analysis and benchmark.
 
-my $chord_main_dir = &getenv("CHORD_MAIN");
+my $petablox_dir = &getenv("PETABLOX");
 my $pjbench_dir = &getenv("PJBENCH");
 my $mainBench_dir = &getenv("PAG_BENCH");
 
@@ -67,7 +67,7 @@ my @programs = keys %benchmarks;
 
 my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj");
 
-# Lowest priority options, but still higher than $chord_main_dir/chord.properties
+# Lowest priority options, but still higher than $petablox_dir/chord.properties
 my @global_options = (
     "-Dchord.max.heap=8192m",
     "-Dchord.bddbddb.max.heap=4096m"
@@ -693,7 +693,7 @@ print "INFO: Command line system properties: @cmdline_options\n";
 
 ######################################################################################
 
-my $chord_jar_path = "$chord_main_dir/chord.jar";
+my $petablox_jar_path = "$petablox_dir/petablox.jar";
 my $local_options = $local_options_map{$chosen_analysis};
 if (!$local_options) { @$local_options = (); }
 
@@ -756,7 +756,7 @@ sub runcmd_in_background {
 }
 
 sub getcmd {
-    return ("nohup", "java", "-cp", $chord_jar_path, @_, "chord.project.Boot");
+    return ("nohup", "java", "-cp", $petablox_jar_path, @_, "petablox.project.Boot");
 }
 
 sub getenv {
