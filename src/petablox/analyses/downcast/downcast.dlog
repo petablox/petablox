@@ -26,13 +26,14 @@ CH(c:C,h:H) input
 sub(s:T1,t:T0) input
 VT(v:V0,t:T0) input
 HT(h:H0,t:T1) input
+checkExcludedM(m:M) input
 ptsVH(v:V,h:H) output
 ptsVT(v:V,t:T) output
 downcast(v:V,t:T) output
 unsafeDowncast(v:V,t:T) output
 safeDowncast(v:V,t:T) output
 
-reachableLR(l,r) :- MobjVarAsgnInst(m,l,r), reachableCM(_,m).
+reachableLR(l,r) :- MobjVarAsgnInst(m,l,r), reachableCM(_,m), !checkExcludedM(m).
 
 ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
 ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
