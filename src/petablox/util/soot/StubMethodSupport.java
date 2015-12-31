@@ -131,19 +131,19 @@ public class StubMethodSupport {
 		//t0 = (Object[])param0
 		Local l0 = body.getParameterLocal(0);
 		CastExpr ce0 = Jimple.v().newCastExpr(l0, ArrayType.v(RefType.v("java.lang.Object"), 1));
-		Local t0 = Jimple.v().newLocal("t0", c.getType());
+		Local t0 = Jimple.v().newLocal("t0", ArrayType.v(RefType.v("java.lang.Object"), 1));
         locals.add(t0);
         units.add(Jimple.v().newAssignStmt(t0, ce0));
         
         //t1 = (Object[])param2
         Local l2 = body.getParameterLocal(2);
 		CastExpr ce2 = Jimple.v().newCastExpr(l2, ArrayType.v(RefType.v("java.lang.Object"), 1));
-		Local t1 = Jimple.v().newLocal("t1", c.getType());
+		Local t1 = Jimple.v().newLocal("t1", ArrayType.v(RefType.v("java.lang.Object"), 1));
         locals.add(t1);
         units.add(Jimple.v().newAssignStmt(t1, ce2));
         
         //t2 = t0[0]
-        Local t2 = Jimple.v().newLocal("t2", c.getType());
+        Local t2 = Jimple.v().newLocal("t2", ArrayType.v(RefType.v("java.lang.Object"), 1));
         locals.add(t2);
         ArrayRef ar1 = Jimple.v().newArrayRef((Value)t0, (Value)IntConstant.v(0));
         units.add(Jimple.v().newAssignStmt(t2, ar1));
