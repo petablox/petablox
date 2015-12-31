@@ -88,21 +88,6 @@ public class SootUtilities {
 		return m;
 	}
 	
-	public static SootMethod getMethod(Loc i){
-		return SootUtilities.getMethodInst(i.i);
-	}
-
-	public static SootMethod getMethodInst(Object i){
-		SootMethod m = null;
-		if(i instanceof Unit){
-			m = SootUtilities.getMethod(((Unit)i));
-		}else{
-			Unit temp = ((Block)i).getHead();
-			m = SootUtilities.getMethod(temp);
-		}
-		return m;
-	}
-
 	public static boolean isStaticGet(JAssignStmt a){
 		if(a.containsFieldRef()){
 			FieldRef fr = a.getFieldRef();
@@ -483,7 +468,7 @@ public class SootUtilities {
 	
 	public static Block getBlock(Unit i){									
 		SootMethod m = SootUtilities.getMethod(i);
-		CFG cfg = new CFG(m);
+		CFG cfg = SootUtilities.getCFG(m);
 		return cfg.getBasicBlock(i); 
 	}
 	

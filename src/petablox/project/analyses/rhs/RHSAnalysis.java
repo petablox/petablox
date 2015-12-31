@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
+import petablox.util.soot.*;
 import soot.SootMethod;
 import soot.Unit;
 import soot.toolkits.graph.Block;
@@ -20,10 +21,6 @@ import petablox.analyses.method.DomM;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.JavaAnalysis;
 import petablox.util.ArraySet;
-import petablox.util.soot.CFG;
-import petablox.util.soot.JEntryNopStmt;
-import petablox.util.soot.JExitNopStmt;
-import petablox.util.soot.SootUtilities;
 import petablox.util.Alarm;
 import petablox.project.Messages;
 
@@ -46,17 +43,17 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     protected static final String CHORD_RHS_TIMEOUT_PROPERTY = "chord.rhs.timeout";
 
     protected List<Pair<Loc, PE>> workList = new ArrayList<Pair<Loc, PE>>();
-    protected Map<Object, Set<PE>> pathEdges = new HashMap<Object, Set<PE>>();
+    protected Map<Unit, Set<PE>> pathEdges = new HashMap<Unit, Set<PE>>();
     protected Map<SootMethod, Set<SE>> summEdges = new HashMap<SootMethod, Set<SE>>();
     protected DomI domI;
     protected DomM domM;
     protected ICICG cicg;
-    protected TObjectIntHashMap<Object> quadToRPOid;
+    protected TObjectIntHashMap<Unit> quadToRPOid;
     protected Map<Unit, Loc> invkQuadToLoc;
     protected Map<SootMethod, Set<Unit>> callersMap = new HashMap<SootMethod, Set<Unit>>();
     protected Map<Unit, Set<SootMethod>> targetsMap = new HashMap<Unit, Set<SootMethod>>();
 
-    protected Map<Pair<Object, PE>, WrappedPE<PE, SE>> wpeMap = new HashMap<Pair<Object, PE>, WrappedPE<PE, SE>>();
+    protected Map<Pair<Unit, PE>, WrappedPE<PE, SE>> wpeMap = new HashMap<Pair<Unit, PE>, WrappedPE<PE, SE>>();
     protected Map<Pair<SootMethod, SE>, WrappedSE<PE, SE>> wseMap = new HashMap<Pair<SootMethod, SE>, WrappedSE<PE, SE>>();
 
     protected boolean isInit, isDone;
@@ -199,12 +196,12 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         domM = (DomM) ClassicProject.g().getTrgt("M");
         ClassicProject.g().runTask(domM);
         cicg = getCallGraph();
-        quadToRPOid = new TObjectIntHashMap<Object>();
+        quadToRPOid = new TObjectIntHashMap<Unit>();
         invkQuadToLoc = new HashMap<Unit, Loc>();
         for (SootMethod m : cicg.getNodes()) {
             if (m.isAbstract()) continue;
             CFG cfg = SootUtilities.getCFG(m);
-            quadToRPOid.put(cfg.getHeads().get(0), 0);
+            quadToRPOid.put(cfg.getHeads().get(0).getHead(), 0);
             int rpoId = 1;
             for (Block bb : cfg.reversePostOrder()) {
             	int i = 0;
@@ -219,7 +216,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                     i++;
                 }
             }
-            quadToRPOid.put(cfg.getTails().get(0), rpoId);
+            quadToRPOid.put(cfg.getTails().get(0).getHead(), rpoId);
         }
     }
 
@@ -264,7 +261,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         return pathEdges.get(i);
     }
 
-    public Map<Object, Set<PE>> getAllPEs() {
+    public Map<Unit, Set<PE>> getAllPEs() {
         return pathEdges;
     }
 
@@ -285,11 +282,8 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                     System.out.println("\tSE " + se);
             }
         }
-        for (Object i : pathEdges.keySet()) {
-        	if(i instanceof Block)
-        		System.out.println("PE of " + (Block)i);
-        	else if(i instanceof Unit)
-        		System.out.println("PE of " + (Unit)i);
+        for (Unit i : pathEdges.keySet()) {
+            System.out.println("PE of " + (Unit)i);
             Set<PE> peSet = pathEdges.get(i);
             if (peSet != null) {
                 for (PE pe : peSet)
@@ -349,21 +343,22 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
             Pair<Loc, PE> pair = workList.remove(last);
             Loc loc = pair.val0;
             PE pe = pair.val1;
-            Object i = loc.i;
+            Unit i = loc.i;
             if (DEBUG) System.out.println("Processing loc: " + loc + " PE: " + pe);
-            if (i instanceof Block) {
+            if (i instanceof JEntryExitNopStmt) {
                 // i is either method entry basic block, method exit basic block, or an empty basic block
-                Block bb = (Block) i;
-                if (bb.getHead() instanceof JEntryNopStmt) {
-                    processEntry(bb, pe);
-                } else if (bb.getHead() instanceof JExitNopStmt) {
-                    processExit(bb, pe);
-                } else {
+                if (i instanceof JEntryNopStmt) {
+                    processEntry(i, pe);
+                } else if (i instanceof JExitNopStmt) {
+                    processExit(i, pe);
+                }
+                // TODO: Verify that empty basic block case is irrelevant
+                /*else {
 					final PE pe2 = mayMerge ? getPECopy(pe) : pe;
                     propagatePEtoPE(loc, pe2, pe, null, null);
-				}
+				}*/
             } else {
-                Unit q = (Unit) i;
+                Unit q = i;
                 // invoke or misc quad
                 if (SootUtilities.isInvoke(q)) {
                     processInvk(loc, pe);
@@ -390,7 +385,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                 	final PE pe3 = mayMerge ? getPECopy(pe) : pe;
                     propagatePEtoPE(loc, pe3, pe, null, null);
                 } else if(jumpToMethodEnd(q, m2, pe, pe2)){
-                	Block bb2 = SootUtilities.getCFG(m2).getHeads().get(0);
+                	Unit bb2 = SootUtilities.getCFG(m2).getHeads().get(0).getHead();
                     Loc loc2 = new Loc(bb2, -1);
                     int initWorkListSize = workList.size();
                     addPathEdge(loc2, pe2, q, pe, null, null);
@@ -399,13 +394,13 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                     	//This operation is safe since any entry added to the worklist will necessarily be at the last
                     	//position irrespective of BFS or DFS updates
                     	Pair<Loc,PE> entryP = workList.remove(finalWorkListSize - 1); 
-                    	Block bb3 = SootUtilities.getCFG(m2).getTails().get(0);
+                    	Unit bb3 = SootUtilities.getCFG(m2).getTails().get(0).getHead();
                         Loc loc3 = new Loc(bb3, -1);
                     	PE pe3 = mayMerge ? getPECopy(entryP.val1) : entryP.val1;
                         addPathEdge(loc3, pe3, bb2, entryP.val1, null, null);
                     }                    
                 } else {
-                	Block bb2 = SootUtilities.getCFG(m2).getHeads().get(0);
+                	Unit bb2 = SootUtilities.getCFG(m2).getHeads().get(0).getHead();
                     Loc loc2 = new Loc(bb2, -1);
                     addPathEdge(loc2, pe2, q, pe, null, null);
                 }
@@ -430,11 +425,12 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         }
     }
 
-    private void processEntry(Block bb, PE pe) {
+    private void processEntry(Unit b, PE pe) {
+        Block bb = SootUtilities.getBlock(b);
         for (Block bb2 : bb.getSuccs()) {
-            Object i2; int q2Idx;
-            if (bb2.getHead() == null) {
-                i2 = (Block) bb2;
+            Unit i2; int q2Idx;
+            if (bb2.getHead() instanceof JEntryExitNopStmt) {
+                i2 = bb2.getHead();
                 q2Idx = -1;
             } else {
                 i2 = bb2.getHead();
@@ -442,12 +438,12 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
             }
             Loc loc2 = new Loc(i2, q2Idx);
             PE pe2 = mayMerge ? getPECopy(pe) : pe;
-            addPathEdge(loc2, pe2, bb, pe, null, null);
+            addPathEdge(loc2, pe2, b, pe, null, null);
         }
     }
 
-    protected void processExit(Block bb, PE pe) {
-    	Unit head = bb.getHead();
+    protected void processExit(Unit b, PE pe) {
+    	Unit head = b;
         SootMethod m = SootUtilities.getMethod(head);
         SE se = getSummaryEdge(m, pe);
         Set<SE> seSet = summEdges.get(m);
@@ -469,7 +465,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                     if (!changed) {
                         if (DEBUG) System.out.println("\tExisting SE did not change");
                         if (traceKind != TraceKind.NONE && result == 0)
-                            updateWSE(m, se2, bb, pe);
+                            updateWSE(m, se2, b, pe);
                         return;
                     }
                     if (DEBUG) System.out.println("\tExisting SE changed");
@@ -486,11 +482,11 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         } else if (!seSet.add(se)) {
             if (DEBUG) System.out.println("\tYes, not adding");
             if (traceKind != TraceKind.NONE)
-                updateWSE(m, se, bb, pe);
+                updateWSE(m, se, b, pe);
             return;
         }
         if (traceKind != TraceKind.NONE) {
-            recordWSE(m, seToAdd, bb, pe);
+            recordWSE(m, seToAdd, b, pe);
         }
         for (Unit q2 : getCallers(m)) {
             if (DEBUG) System.out.println("\tCaller: " + q2 + " in " + SootUtilities.getMethod(q2));
@@ -519,9 +515,9 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     // 'predPE' is null iff 'predI' is null.
     // 'predSE' is null iff 'predM' is null.
     // 'loc' may be anything: entry basic block, exit basic block, invk quad, or misc quad.
-    protected void addPathEdge(Loc loc, PE pe, Object predI, PE predPE, SootMethod predM, SE predSE) {
+    protected void addPathEdge(Loc loc, PE pe, Unit predI, PE predPE, SootMethod predM, SE predSE) {
         if (DEBUG) System.out.println("\tChecking if " + loc + " has PE: " + pe);
-        Object i = loc.i;
+        Unit i = loc.i;
         Set<PE> peSet = pathEdges.get(i);
         PE peToAdd = pe;
         if (peSet == null) {
@@ -578,12 +574,12 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         Pair<Loc, PE> pair = new Pair<Loc, PE>(loc, peToAdd);
         int j = workList.size() - 1;
         if (orderKind == OrderKind.BFS) {
-            SootMethod m = SootUtilities.getMethod(loc);
+            SootMethod m = SootUtilities.getMethod(loc.i);
             int rpoId = quadToRPOid.get(i);
             for (; j >= 0; j--) {
                 Loc loc2 = workList.get(j).val0;
-                Object i2 = loc2.i;
-                if (SootUtilities.getMethod(loc2) != m) break;
+                Unit i2 = loc2.i;
+                if (SootUtilities.getMethod(i2) != m) break;
                 int rpoId2 = quadToRPOid.get(i2);
                 if (rpoId2 > rpoId)
                     break;
@@ -598,13 +594,8 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     // 'predPE' is guaranteed to be non-null but 'predSE' may be null.
     protected void propagatePEtoPE(Loc loc, PE pe, PE predPE, SootMethod predM, SE predSE) {
         int qIdx = loc.qIdx;
-        Object i = loc.i;
-        Block bb = null;
-        if(i instanceof Unit){
-        	bb = CFG.getBasicBlock((Unit)i);
-        }else{
-        	bb = (Block)i;
-        }
+        Unit i = loc.i;
+        Block bb = CFG.getBasicBlock(i);
         Iterator<Unit> uit=bb.iterator();
         int curIdx=-1;
         while(uit.hasNext()){
@@ -620,9 +611,9 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         }
         boolean isFirst = true;
         for (Block bb2 : bb.getSuccs()) {
-            Object i2; int q2Idx;
-            if(bb2.getHead() == null){
-            	i2 = bb2;
+            Unit i2; int q2Idx;
+            if(bb2.getHead() instanceof JEntryExitNopStmt){
+            	i2 = bb2.getHead();
             	q2Idx = -1;
             }else{
             	i2 = bb2.getHead();
@@ -664,14 +655,14 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
      * Replace the old provenance with the new provenance if traceKind is SHORTEST
      * and new provenance has shorter length than old provenance.
      */
-    protected void updateWSE(SootMethod m, SE seToAdd, Block bb, PE predPE) {
+    protected void updateWSE(SootMethod m, SE seToAdd, Unit bb, PE predPE) {
         assert (seToAdd != null && predPE != null);
         Pair<SootMethod, SE> p = new Pair<SootMethod, SE>(m, seToAdd);
         WrappedSE<PE, SE> wse = wseMap.get(p);
         assert (wse != null);
         if (traceKind == TraceKind.SHORTEST) {
             int oldLen = wse.getLen();
-            Pair<Object, PE> predP = new Pair<Object, PE>(bb, predPE);
+            Pair<Unit, PE> predP = new Pair<Unit, PE>(bb, predPE);
             WrappedPE<PE, SE> newWPE = wpeMap.get(predP);
             assert (newWPE != null);
             int newLen = 1 + newWPE.getLen();
@@ -688,10 +679,10 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
      * Replace the old provenance with the new provenance if traceKind is SHORTEST
      * and new provenance has shorter length than old provenance.
      */
-    private void updateWPE(Object i, PE peToAdd, Object predI, PE predPE,SootMethod predM, SE predSE) {
+    private void updateWPE(Unit i, PE peToAdd, Unit predI, PE predPE,SootMethod predM, SE predSE) {
         assert (peToAdd != null);
         // predPE and/or predSE may be null
-        Pair<Object, PE> p = new Pair<Object, PE>(i, peToAdd);
+        Pair<Unit, PE> p = new Pair<Unit, PE>(i, peToAdd);
         WrappedPE<PE, SE> wpe = wpeMap.get(p);
         assert (wpe != null);
         if (traceKind == TraceKind.SHORTEST) {
@@ -702,10 +693,10 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
                 return;
             }
             int newLen;
-            Pair<Object, PE> predP = new Pair<Object, PE>(predI, predPE);
+            Pair<Unit, PE> predP = new Pair<Unit, PE>(predI, predPE);
             WrappedPE<PE, SE> newWPE = wpeMap.get(predP);
             assert (newWPE != null);
-            if (i instanceof Block && ((Block) i).getHead() instanceof JEntryNopStmt)
+            if (i instanceof JEntryNopStmt)
                 newLen = 0;
             else
                 newLen = 1 + newWPE.getLen();
@@ -733,10 +724,10 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
      * (m, seToAdd): the SE whose provenance will be initialized.
      * (bb, predPE): the provenance of the SE.
      */
-    protected void recordWSE(SootMethod m, SE seToAdd, Block bb, PE predPE) {
+    protected void recordWSE(SootMethod m, SE seToAdd, Unit bb, PE predPE) {
         assert (seToAdd != null && predPE != null);
         assert (!wseMap.containsKey(seToAdd));
-        WrappedPE<PE, SE> wpe = wpeMap.get(new Pair<Object, PE>(bb, predPE));
+        WrappedPE<PE, SE> wpe = wpeMap.get(new Pair<Unit, PE>(bb, predPE));
         assert (wpe != null);
         SE seCopy = getSECopy(seToAdd);
         int len = 1 + wpe.getLen();
@@ -750,7 +741,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
      * (i, peToAdd): the PE whose provenance will be initialized.
      * (predI, predPE, predM, predSE): the provenance of the PE.
      */
-    private void recordWPE(Object i, PE peToAdd, Object predI, PE predPE, SootMethod predM, SE predSE) {
+    private void recordWPE(Unit i, PE peToAdd, Unit predI, PE predPE, SootMethod predM, SE predSE) {
         assert (peToAdd != null);
         // predPE and/or predSE may be null
         assert (!wpeMap.containsKey(peToAdd));
@@ -763,9 +754,9 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
             len = 0;
         } else {
             assert (predI != null);
-            predWPE = wpeMap.get(new Pair<Object, PE>(predI, predPE));
+            predWPE = wpeMap.get(new Pair<Unit, PE>(predI, predPE));
             assert (predWPE != null);
-            if (i instanceof Block && ((Block) i).getHead() instanceof JEntryNopStmt)
+            if (i instanceof JEntryNopStmt)
                 len = 0;
             else
                 len = 1 + predWPE.getLen();
@@ -785,7 +776,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
             throw new TraceOverflowException();
             }
         WrappedPE<PE, SE> wpe = new WrappedPE<PE, SE>(i, peCopy, predWPE, predWSE, len);
-        wpeMap.put(new Pair<Object, PE>(i, peCopy), wpe);
+        wpeMap.put(new Pair<Unit, PE>(i, peCopy), wpe);
     }
 }
 

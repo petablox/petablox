@@ -44,14 +44,12 @@ public class BackTraceIterator<PE extends IEdge, SE extends IEdge> implements It
     @Override
     public IWrappedPE<PE, SE> next() {
         IWrappedPE<PE, SE> ret = currentWPE;
-        Object inst = currentWPE.getInst();
-        if (inst instanceof Block) {
-            Block bb = (Block) inst;
-            if (bb.getHead() instanceof JEntryNopStmt && !callStack.empty()) {
-                currentWPE = callStack.pop();
-                return ret;
-            }
+        Unit inst = currentWPE.getInst();
+        if (inst instanceof JEntryNopStmt && !callStack.empty()) {
+            currentWPE = callStack.pop();
+            return ret;
         }
+
         IWrappedSE<PE, SE> wse = currentWPE.getWSE();
         IWrappedPE<PE, SE> wpe = currentWPE.getWPE();
         SootMethod m = SootUtilities.getMethod(((Unit)wse.getWPE().getInst()));

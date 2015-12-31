@@ -139,7 +139,7 @@ public class ThrEscForwardAnalysis extends RHSAnalysis<Edge, Edge> {
 		Set<Pair<Loc, Edge>> initPEs = new ArraySet<Pair<Loc, Edge>>(roots.size());
 		for (SootMethod m : roots) {
 			Edge pe = getRootPathEdge(m);
-			Block bb = SootUtilities.getCFG(m).getHeads().get(0);
+			Unit bb = SootUtilities.getCFG(m).getHeads().get(0).getHead();
 			Loc loc = new Loc(bb, -1);
 			Pair<Loc, Edge> pair = new Pair<Loc, Edge>(loc, pe);
 			initPEs.add(pair);
@@ -355,7 +355,7 @@ public class ThrEscForwardAnalysis extends RHSAnalysis<Edge, Edge> {
 			for (Edge pe : peSet) {
 				Obj pts = pe.dstNode.env[bIdx];
 				if (pts == Obj.ONLY_ESC || pts == Obj.BOTH) {
-					Pair<Object, Edge> pair = new Pair<Object, Edge>(q, pe);
+					Pair<Unit, Edge> pair = new Pair<Unit, Edge>(q, pe);
 					escEdge = wpeMap.get(pair);
 					assert (escEdge != null);
 					return;

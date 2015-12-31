@@ -1,15 +1,16 @@
 package petablox.project.analyses.rhs;
 
 import petablox.util.Utils;
+import soot.Unit;
 
 public class WrappedPE<PE extends IEdge, SE extends IEdge> implements IWrappedPE<PE, SE> {
-    private final Object i;
+    private final Unit i;
     private final PE pe;
     private IWrappedPE<PE, SE> wpe;
     private IWrappedSE<PE, SE> wse;
     private int len;
 
-    public WrappedPE(Object i, PE pe, IWrappedPE<PE, SE> wpe, IWrappedSE<PE, SE> wse, int len) {
+    public WrappedPE(Unit i, PE pe, IWrappedPE<PE, SE> wpe, IWrappedSE<PE, SE> wse, int len) {
         assert (len >= 0);
         this.i = i;
         this.pe = pe;
@@ -28,7 +29,7 @@ public class WrappedPE<PE extends IEdge, SE extends IEdge> implements IWrappedPE
     public int getLen() { return len; }
 
     @Override
-    public Object getInst() { return i; }
+    public Unit getInst() { return i; }
 
     @Override
     public PE getPE() { return pe; }

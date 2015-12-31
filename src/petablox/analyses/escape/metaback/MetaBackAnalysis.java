@@ -94,25 +94,24 @@ public class MetaBackAnalysis {
 		while (!isFixed(errSuf) && backIter.hasNext()) {
 			checkTimeout();
 			IWrappedPE<Edge, Edge> wpe = backIter.next();
-			Object inst = wpe.getInst();
-			if (inst instanceof Block) {
-				Block bb = (Block) inst;
-				if (bb.getHead() instanceof JEntryNopStmt ||
-						bb.getHead() instanceof JExitNopStmt) {
-					pre = wpe;
-					if (DEBUG) {
-						System.out.println(wpe);
-					}
-					if (bb.getHead() instanceof JEntryNopStmt) {
-						if(checkThreadStart()) // For threadStart, it's a special root method
-							break;
-					} else {
-						errSuf = increaseContext(errSuf);  // Adjust the context level of each variable
-					}
-					continue;
-				} else
-					assert (bb.getHead() == null);
-			}
+			Unit inst = wpe.getInst();
+            if (inst instanceof JEntryExitNopStmt) {
+                pre = wpe;
+                if (DEBUG) {
+                    System.out.println(wpe);
+                }
+                if (inst instanceof JEntryNopStmt) {
+                    if(checkThreadStart()) // For threadStart, it's a special root method
+                        break;
+                } else {
+                    errSuf = increaseContext(errSuf);  // Adjust the context level of each variable
+                }
+                continue;
+            }
+            //TODO: Verify empty basic block case doesn't occur
+            /*else
+                assert (bb.getHead() == null);
+                */
 			preSuf = errSuf;
 			errSuf = backTransfer(errSuf, wpe.getInst());
 			if (DEBUG) {
@@ -129,7 +128,7 @@ public class MetaBackAnalysis {
 			if (DEBUG) {
 				System.out.println("Forward state: " + fwdState + " " + wpe.getPE().dstNode.isKill);
 				System.out.println(wpe.getPE());
-				System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethodInst(wpe.getInst())));
+				System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethod(wpe.getInst())));
 			}
 			if(prune)
 			errSuf = errSuf.prune(errSufSize, fwdState);  // Drop clauses to prevent blowing up
@@ -212,11 +211,11 @@ public class MetaBackAnalysis {
 		System.out.println(pre.getInst());
 		System.out.println(pre);
 		System.out.println("====dump out the stack====");
-		System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethodInst(pre.getInst())));
+		System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethod(pre.getInst())));
 		for (int j = callStack.size() - 1; j >= 0; j--) {
 			IWrappedPE<Edge, Edge> wpe = callStack.get(j);
 			System.out.println(wpe);
-			System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethodInst(pre.getInst())));
+			System.out.println(iterAnalysis.methToFstVar(SootUtilities.getMethod(pre.getInst())));
 		}
 		throw new RuntimeException();
 	}
@@ -255,7 +254,7 @@ public class MetaBackAnalysis {
 	}
 
 	private boolean checkThreadStart() {
-		if (SootUtilities.getMethodInst(pre.getInst()) == iterAnalysis.getThreadStartMethod()) {
+		if (SootUtilities.getMethod(pre.getInst()) == iterAnalysis.getThreadStartMethod()) {
 			System.out.println("Reach the entry block of Thread.start().");
 			int thisIdx = iterAnalysis.methToFstVar(iterAnalysis.getThreadStartMethod());
 			EscVVariable ev = new EscVVariable(thisIdx, iterAnalysis.domV());
@@ -328,11 +327,12 @@ public class MetaBackAnalysis {
 		if (wpe.getWSE() != null) {  // if wse!=null, wpe is a path edge
 			// immediately after a method call
 			IWrappedPE<Edge, Edge> cwpe = wpe.getWPE();
-			Object inst = cwpe.getInst();
-			if (inst instanceof Block) { // an empty basic block
+			Unit inst = cwpe.getInst();
+			// TODO: Verify Empty basic block case
+			/*if (inst instanceof Block) { // an empty basic block
 				assert ((Block) inst).getHead() == null;
 				return;
-			}
+			}*/
 			Unit q = (Unit) inst;
 			if (iterAnalysis.isThreadStart(q))
 				return;
@@ -355,13 +355,9 @@ public class MetaBackAnalysis {
 	 * @param inst
 	 * @return
 	 */
-	private DNF backTransfer(DNF es, Object inst) {
-		if (inst instanceof Block) {
-			Block bb = (Block) inst;
-			// bb might be entry, exit, or empty basic block
-			assert bb.getHead() == null || bb.getHead() instanceof JEntryExitNopStmt;
-			return es;
-		}
+	private DNF backTransfer(DNF es, Unit inst) {
+			if(inst instanceof JEntryExitNopStmt)
+				return es;
 		qv.iDNF = es;
 		qv.oDNF = es;
 		Unit q = (Unit) inst;
@@ -396,7 +392,7 @@ public class MetaBackAnalysis {
 					EscVVariable vv = (EscVVariable) v;
 					int cl = vv.getContext();
 					if (0 == cl) {
-						int firstVar = iterAnalysis.methToFstVar(SootUtilities.getMethodInst(wpe.getInst()));
+						int firstVar = iterAnalysis.methToFstVar(SootUtilities.getMethod(wpe.getInst()));
 						ret.addLiteral(vv, Value.objToValue(dNode.env[vv.getIdx() - firstVar]));
 					} else {
 						int stackSize = callStack.size();
@@ -405,7 +401,7 @@ public class MetaBackAnalysis {
 						for (int i = 1; i <= cl-1; i++)
 							isKill |= callStack.get(stackSize - i).getPE().dstNode.isKill;
 						DstNode uNode = uWPE.getPE().dstNode;
-						int firstVar = iterAnalysis.methToFstVar(SootUtilities.getMethodInst(wpe.getInst()));
+						int firstVar = iterAnalysis.methToFstVar(SootUtilities.getMethod(wpe.getInst()));
 						Value tv = Value.objToValue(uNode.env[vv.getIdx() - firstVar]);
 						if (isKill && Value.L().equals(tv))
 							ret.addLiteral(vv, Value.E());
@@ -523,7 +519,7 @@ public class MetaBackAnalysis {
 			int numArgs = args.size();
 			//RegisterFactory rf = pre.getInst().getMethod().getCFG().getRegisterFactory();
 			Local[] rf =
-			SootUtilities.getMethArgLocals(SootUtilities.getMethodInst(pre.getInst()));
+			SootUtilities.getMethArgLocals(SootUtilities.getMethod(pre.getInst()));
 			// HashSet<Integer> liveVs = new HashSet<Integer>();
 			oDNF = decreaseContext(oDNF);
 			for (int i = 0; i < rf.length; i++) {
