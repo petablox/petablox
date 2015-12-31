@@ -19,6 +19,7 @@ import soot.jimple.CastExpr;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.jimple.internal.JAssignStmt;
 import soot.util.Chain;
 
 public class StubMethodSupport {
@@ -104,6 +105,8 @@ public class StubMethodSupport {
 		Chain<Local> locals = body.getLocals();
         Local lcl1 = Jimple.v().newLocal("l", c.getType());
         locals.add(lcl1);
+		Local thisLocal = body.getThisLocal();
+		units.add(Jimple.v().newAssignStmt(lcl1,thisLocal));
 		units.add(Jimple.v().newReturnStmt(lcl1));
 		methodToStub.put(m, s);
 		if (Config.verbose >= 1)
