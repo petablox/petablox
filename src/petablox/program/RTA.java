@@ -491,7 +491,24 @@ public class RTA implements ScopeBuilder {
             me.cName.equals(m.getDeclaringClass().getName()) &&
             SootUtilities.getBCI(u) == me.offset;                                                                  
     }
-    
+
+    private SootMethod getMethodItr(SootClass c,String subsign){
+        SootMethod ret = null;
+        while(true){
+            try{
+                ret= c.getMethod(subsign);
+                break;
+            }catch(Exception e){
+                if(!c.hasSuperclass()){
+                    System.out.println("WARN: RelCHA: Method "+subsign+" not found");
+                    break;
+                }else{
+                    c = c.getSuperclass();
+                }
+            }
+        }
+        return ret;
+    }
 
     private void processVirtualInvk(SootMethod m, Unit u) {
     	InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
@@ -547,16 +564,18 @@ public class RTA implements ScopeBuilder {
             SootClass d = ((RefType)r).getSootClass();
             assert (!d.isInterface());
             assert (!d.isAbstract());
-            boolean matches = isInterface ? d.implementsInterface(c.getName()) : SootUtilities.extendsClass(d,c);  
+            boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
             	try{
-            		SootMethod m2 = d.getMethod(n.getSubSignature());
+            		SootMethod m2 = this.getMethodItr(d,n.getSubSignature());
+                    if(m2 == null)
+                        throw new Exception();
             		visitMethod(m2);
             	}catch(Exception e){
             		// TODO : Verify, Soot shows the method only in the class
             		// where it is defined and not in sub-classes
-            		//Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
-                      //      n.getSubSignature(), d.getName(), c.getName());
+            		Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
+                            n.getSubSignature(), d.getName(), c.getName());
             	}
             }
         }
