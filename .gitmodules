@@ -1,0 +1,12 @@
+[submodule "libsrc/heros"]
+	path = libsrc/heros
+	url = git@github.com:petablox-project/heros.git
+[submodule "libsrc/jasmin"]
+	path = libsrc/jasmin
+	url = git@github.com:petablox-project/jasmin.git
+[submodule "libsrc/tamiflex"]
+	path = libsrc/tamiflex
+	url = git@github.com:petablox-project/tamiflex.git
+[submodule "libsrc/soot"]
+	path = libsrc/soot
+	url = git@github.com:petablox-project/soot.git

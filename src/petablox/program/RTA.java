@@ -500,7 +500,7 @@ public class RTA implements ScopeBuilder {
                 break;
             }catch(Exception e){
                 if(!c.hasSuperclass()){
-                    System.out.println("WARN: RelCHA: Method "+subsign+" not found");
+                    System.out.println("WARN: RTA: Method "+subsign+" not found");
                     break;
                 }else{
                     c = c.getSuperclass();

@@ -1,5 +1,6 @@
 package petablox.util.soot;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,20 +9,7 @@ import petablox.program.Loc;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
-import soot.Local;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
-import soot.ArrayType;
-import soot.Body;
-import soot.UnitPrinter;
-import soot.NormalUnitPrinter;
-import soot.PrimType;
-import soot.RefLikeType;
-import soot.RefType;
+import soot.*;
 import soot.jimple.FieldRef;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
@@ -49,6 +37,7 @@ import soot.util.Chain;
 public class SootUtilities {
 	private static HashMap <Unit, SootMethod> PMMap = null;
 	private static HashMap <SootMethod,CFG> methodToCFG = new HashMap<SootMethod,CFG>();
+	public static Hierarchy h = null;
 	
 	public static CFG getCFG(SootMethod m){
 		if(methodToCFG.containsKey(m)){
@@ -324,6 +313,10 @@ public class SootUtilities {
 					RefType baseir = (RefType)basei;
 					RefType basejr = (RefType)basej;
 					return isSubtypeOf(baseir.getSootClass(),basejr.getSootClass());
+				}else if(basej instanceof RefType){
+					SootClass c = ((RefType)basej).getSootClass();
+					if(c.getName().equals("java.lang.Object"))
+						return true;
 				}
 			}else{
 				return false;
@@ -340,15 +333,27 @@ public class SootUtilities {
 		}
 		return false;
 	}
+
 	public static boolean isSubtypeOf(SootClass j, SootClass k) {
-    	if (j.getName().equals(k.getName()))
+    	if(k.getName().equals("java.lang.Object"))
 			return true;
-    	if (k.isInterface() && j.implementsInterface(k.getName()))
-    		return true;
-    	if (!j.hasSuperclass())	
-    		return false;	
-    	else
-    		return isSubtypeOf(j.getSuperclass(),k); 
+		if (j.getName().equals(k.getName()))
+			return true;
+		if(!(k.isInterface())){
+			if(j.isInterface())
+				return false;
+			return h.isClassSubclassOfIncluding(j,k);
+		}else{
+			if(j.isInterface())
+				return h.isInterfaceSubinterfaceOf(j,k);
+			Iterator<SootClass> interfaces = j.getInterfaces().iterator();
+			while(interfaces.hasNext()){
+				SootClass inter = interfaces.next();
+				boolean temp = h.isInterfaceSubinterfaceOf(inter,k);
+				if(temp) return temp;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isNew(JAssignStmt a){                            //duplicate

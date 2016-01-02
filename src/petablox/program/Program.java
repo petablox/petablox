@@ -24,23 +24,8 @@ import petablox.util.IndexSet;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
 import petablox.util.soot.SSAUtilities;
-import soot.ArrayType;
-import soot.Body;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.NullType;
-import soot.RefLikeType;
-import soot.RefType;
-import soot.Scene;
-import soot.ShortType;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Type;
+import petablox.util.soot.SootUtilities;
+import soot.*;
 import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
@@ -185,6 +170,10 @@ public class Program {
             methods = b.getMethods();
             scopeClasses = b.getClasses();
             reflect = b.getReflect();
+
+            //Set up Soot Class hierarchy object in SootUtilities
+            Hierarchy h = new Hierarchy();
+            SootUtilities.h = h;
 
             buildSignToMethodMap();
             saveMethodsFile(methodsFile);

@@ -6,10 +6,10 @@
 rm -rf ./libs
 mkdir libs
 
+git submodule update --init --recursive
 # Build Heros
 echo "Building Heros"
 cd heros
-#git pull
 ant
 cp heros-trunk.jar ../libs/
 cd ..
@@ -29,7 +29,6 @@ echo "Done building Jasmin"
 # Build Soot
 echo "Building Soot"
 cd soot
-#git pull
 ant clean
 ant barebones
 ant fulljar
@@ -40,7 +39,6 @@ echo "Done building soot"
 # Building Booster
 echo "Building TamiFlex-Booster"
 cd ./tamiflex/Booster
-#git pull
 rm lib/soot-trunk.jar
 rm lib/booster-trunk.jar
 cp ../../libs/soot-trunk.jar lib/
