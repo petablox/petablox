@@ -1,32 +1,20 @@
 package petablox.project.analyses;
 
-import gnu.trove.set.hash.TIntHashSet;
-import petablox.analyses.basicblock.DomB;
-import petablox.analyses.method.DomM;
 import petablox.instr.BasicInstrumentor;
-import petablox.instr.EventKind;
 import petablox.instr.OfflineTransformer;
-import petablox.instr.TracePrinter;
-import petablox.instr.TraceTransformer;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
-import petablox.project.Project;
 import petablox.runtime.BasicEventHandler;
 import petablox.runtime.TraceEventHandler;
 import petablox.util.ByteBufferedFile;
 import petablox.util.Executor;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
-import petablox.util.tuple.object.Pair;
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.Stack;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;

@@ -63,9 +63,11 @@ public class SSAUtilities {
 	}
 	
 	public static void installShimpleBody(SootMethod m) {
-		Body b = m.retrieveActiveBody();
-		ShimpleBody sb = Shimple.v().newBody(b);
-		m.setActiveBody(sb);
+		if (m.isConcrete()) {
+			Body b = m.retrieveActiveBody();
+			ShimpleBody sb = Shimple.v().newBody(b);
+			m.setActiveBody(sb);
+		}
 		return;
 	}
 	

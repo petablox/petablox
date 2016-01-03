@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Iterator;
 
 import soot.RefLikeType;
-import soot.RefType;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Type;
@@ -101,8 +100,8 @@ public class DomH extends ProgramDom<Object> {
         }
     }
 
-    private void processResolvedNewInstSites(List<Pair<Unit, List<RefType>>> l) {
-        for (Pair<Unit, List<RefType>> p : l)
+    private void processResolvedNewInstSites(List<Pair<Unit, List<RefLikeType>>> l) {
+        for (Pair<Unit, List<RefLikeType>> p : l)
             add(p.val0);
     }
 

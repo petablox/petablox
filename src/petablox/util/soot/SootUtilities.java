@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import petablox.program.Loc;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;

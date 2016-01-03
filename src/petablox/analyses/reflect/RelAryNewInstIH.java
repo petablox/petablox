@@ -2,7 +2,7 @@ package petablox.analyses.reflect;
 
 import java.util.List;
 
-import soot.RefType;
+import soot.RefLikeType;
 import soot.Unit;
 import petablox.analyses.alloc.DomH;
 import petablox.analyses.invk.DomI;
@@ -27,9 +27,9 @@ public class RelAryNewInstIH extends ProgramRel {
     public void fill() {
         DomI domI = (DomI) doms[0];
         DomH domH = (DomH) doms[1];
-        List<Pair<Unit, List<RefType>>> l =
+        List<Pair<Unit, List<RefLikeType>>> l =
             Program.g().getReflect().getResolvedAryNewInstSites();
-        for (Pair<Unit, List<RefType>> p : l) {
+        for (Pair<Unit, List<RefLikeType>> p : l) {
             Unit q = p.val0;
             int iIdx = domI.indexOf(q);
             assert (iIdx >= 0);

@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 import com.java2html.Java2HTML;
+
 import petablox.instr.BasicInstrumentor;
 import petablox.project.Config;
 import petablox.project.Messages;
@@ -23,8 +24,11 @@ import petablox.runtime.BasicEventHandler;
 import petablox.util.IndexSet;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
+import petablox.util.soot.CFG;
 import petablox.util.soot.SSAUtilities;
 import petablox.util.soot.SootUtilities;
+import petablox.util.soot.StubMethodSupport;
+import petablox.util.tuple.object.Pair;
 import soot.*;
 import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
@@ -51,8 +55,6 @@ public class Program {
         "ERROR: Program: Could not find method '%s'.";
     private static final String CLASS_NOT_FOUND =
         "ERROR: Program: Could not find class '%s'.";
-    private static final String STUBS_FILE_NOT_FOUND =
-        "ERROR: Program: Cannot find native method stubs file '%s'.";
 
     private static Program program = null;
     private boolean isBuilt;
@@ -61,12 +63,23 @@ public class Program {
     private Reflect reflect;
     private IndexSet<RefLikeType> classes;
     private IndexSet<Type> types;
-    private Map<String, Type> nameToTypeMap;
-    private Map<String, RefLikeType> nameToClassMap;
-    private Map<String, SootMethod> signToMethodMap;
+    private Map<Unit, SootMethod> unitToMethodMap;
     private SootMethod mainMethod;
     private boolean HTMLizedJavaSrcFiles;
     private ClassHierarchy ch;
+    private Type[] basicTypes = {
+			BooleanType.v(),
+			ByteType.v(),
+			CharType.v(),
+			DoubleType.v(),
+			FloatType.v(),
+			Integer127Type.v(),
+			Integer1Type.v(),
+			Integer32767Type.v(),
+			IntType.v(),
+			LongType.v(),
+			ShortType.v()
+	};
 
     private Program() {
     	if (Config.verbose >= 3)
@@ -82,17 +95,34 @@ public class Program {
 			SSAUtilities.doSSA(true, true);
     	
     	List<String> excluded = new ArrayList<String>();
+    	Options.v().set_coffi(true);
     	Options.v().set_exclude(excluded);
     	Options.v().set_include_all(true);
     	Options.v().set_keep_line_number(true);
     	Options.v().set_keep_offset(true);
     	Options.v().set_whole_program(true);
     	
+    	
 		String stdlibClPath = System.getProperty("sun.boot.class.path");
     	Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+
     			Config.userClassPathName+File.pathSeparator+stdlibClPath);
     	Scene.v().addBasicClass(Config.mainClassName);
-    	Scene.v().loadNecessaryClasses();
+    	
+    	/* For simulating the FileSystem class, we need the implementation
+        of the FileSystem, but the classes are not loaded automatically
+        due to the indirection via native code.
+        */
+        Scene.v().addBasicClass("java.io.UnixFileSystem");
+        Scene.v().addBasicClass("java.io.WinNTFileSystem");
+        Scene.v().addBasicClass("java.io.Win32FileSystem");
+
+        /* java.net.URL loads handlers dynamically */
+        Scene.v().addBasicClass("sun.net.www.protocol.file.Handler");
+        Scene.v().addBasicClass("sun.net.www.protocol.ftp.Handler");
+        Scene.v().addBasicClass("sun.net.www.protocol.http.Handler");
+        Scene.v().addBasicClass("sun.net.www.protocol.https.Handler");
+        Scene.v().addBasicClass("sun.net.www.protocol.jar.Handler");
+    	Scene.v().loadBasicClasses();
     }
 
     /**
@@ -137,13 +167,14 @@ public class Program {
     private void buildMethods() {
         assert (methods == null);
         assert (reflect == null);
-        assert (signToMethodMap == null);
         File methodsFile = new File(Config.methodsFileName);
         File reflectFile = new File(Config.reflectFileName);
-        if (Config.reuseScope && methodsFile.exists() && reflectFile.exists()) {
+        File typesFile = new File(Config.typesFileName);
+        if (Config.reuseScope && methodsFile.exists() && reflectFile.exists() && typesFile.exists()) {
+        	// loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
+        	loadTypesFile(typesFile);
             loadMethodsFile(methodsFile);
-            buildSignToMethodMap();
-            //loadReflectFile(reflectFile);
+            loadReflectFile(reflectFile);
         } else {
             String scopeKind = Config.scopeKind;
             ScopeBuilder b = null;
@@ -171,31 +202,17 @@ public class Program {
             scopeClasses = b.getClasses();
             reflect = b.getReflect();
 
-            //Set up Soot Class hierarchy object in SootUtilities
-            Hierarchy h = new Hierarchy();
-            SootUtilities.h = h;
-
-            buildSignToMethodMap();
             saveMethodsFile(methodsFile);
-            //saveReflectFile(reflectFile);
+            saveReflectFile(reflectFile);
+            saveTypesFile(typesFile);
         }
+        //Set up Soot Class hierarchy object in SootUtilities
+        Hierarchy h = new Hierarchy();
+        SootUtilities.h = h;
     }
 
     private List<Type> getBasicTypes(){
     	List<Type> types = new ArrayList<Type>();
-    	Type[] basicTypes = {
-    			BooleanType.v(),
-    			ByteType.v(),
-    			CharType.v(),
-    			DoubleType.v(),
-    			FloatType.v(),
-    			Integer127Type.v(),
-    			Integer1Type.v(),
-    			Integer32767Type.v(),
-    			IntType.v(),
-    			LongType.v(),
-    			ShortType.v()
-    	};
     	for(Type t : basicTypes){
     		types.add(t);
     		types.add(ArrayType.v(t, 1));
@@ -240,8 +257,6 @@ public class Program {
             buildMethods();
         assert (classes == null);
         assert (types == null);
-        assert (nameToClassMap == null);
-        assert (nameToTypeMap == null);
         List<Type> typesAry = getBasicTypes();
         int numTypes = typesAry.size();
         Collections.sort(typesAry, comparator);
@@ -256,24 +271,61 @@ public class Program {
                 classes.add(r);
             }
         }
-        buildNameToClassMap();
-        buildNameToTypeMap();
     }
 
+    private boolean isExcluded(SootMethod m) {
+    	SootClass c = m.getDeclaringClass();
+    	if (Config.isExcludedFromScope(c.getName()))
+    		return true;
+    	return false;
+    }
+    
+    private SootMethod getMethodItr(SootClass c,String subsign){
+        SootMethod ret = null;
+        while(true){
+            try{
+                ret= c.getMethod(subsign);
+                break;
+            }catch(Exception e){
+                if(!c.hasSuperclass()){
+                    System.out.println("WARN: Method "+subsign+" not found");
+                    break;
+                }else{
+                    c = c.getSuperclass();
+                }
+            }
+        }
+        return ret;
+    }
+    
     private void loadMethodsFile(File file) {
     	List<String> l = Utils.readFileToList(file);
         methods = new IndexSet<SootMethod>(l.size());
         for (String s : l) {
-            MethodSign sign = MethodSign.parse(s);
-            String cName = sign.cName;
-            SootClass c = Scene.v().loadClassAndSupport(cName);
-            String mName = sign.mName;
-            String mDesc = sign.mDesc;
-            SootMethod m = c.getMethod(mDesc);
+        	int colonIdx  = s.indexOf(':');
+            String cName = s.substring(1, colonIdx); // exclude the initial '<' character
+            String subsig = s.substring(colonIdx + 2, s.length() - 1); // get subsignature and exclude end char '>'
+            SootClass c = Scene.v().getSootClass(cName);
+            SootMethod m = getMethodItr(c, subsig);
             assert (m != null);
-            if (!m.isAbstract())
-                m.retrieveActiveBody();
-            methods.add(m);
+          	SootMethod sm = null;
+        	if(StubMethodSupport.methodToStub.containsKey(m) || StubMethodSupport.methodToStub.containsValue(m)){
+        		sm = m;
+        	}else{
+    	    	if(StubMethodSupport.toReplace(m)){
+    	    		sm = StubMethodSupport.getStub(m);
+    	    	}else if(isExcluded(m)){
+    	    		sm = StubMethodSupport.emptyStub(m);
+    	    	}else{
+    	    		sm = m;
+    	    	}
+        	}
+            if (sm.isConcrete()) {
+                sm.retrieveActiveBody();
+                // This is required for methods to have their final bodies in case SSA is turned on.
+                CFG cfg = SootUtilities.getCFG(sm);
+            }
+            methods.add(sm);
         }
     }
 
@@ -281,16 +333,70 @@ public class Program {
         try {
             PrintWriter out = new PrintWriter(file);
             for (SootMethod m : methods)
-                out.println(m);
+                out.println(m.getSignature());
             out.close();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
     
-    // TODO: Loading from reflect file not implemented
-    /*private List<Pair<Quad, List<jq_Reference>>> loadResolvedSites(BufferedReader in) {
-        List<Pair<Quad, List<jq_Reference>>> l = new ArrayList<Pair<Quad, List<jq_Reference>>>();
+    private void saveTypesFile(File file) {
+    	 try {
+             PrintWriter out = new PrintWriter(file);
+             for (Type t : scopeClasses)
+                 out.println(t.toString());
+             out.close();
+         } catch (IOException ex) {
+             throw new RuntimeException(ex);
+         }
+    }
+    
+    // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
+    private void loadTypesFile(File file) {
+     	List<String> l = Utils.readFileToList(file);
+    	scopeClasses = new IndexSet<RefLikeType>(l.size());
+    	for (String s : l) {
+    		RefLikeType t = loadTypeString (s);
+    		if (t != null) scopeClasses.add(t);
+    	}
+    }
+    
+    private RefLikeType loadTypeString(String s) {
+    	Type r = null;
+		int dimPos = s.indexOf('[');
+		if (dimPos > 0) {
+    		String sm = s.substring(0, dimPos);
+    		boolean isBasicType = false;
+    		int i;
+    		for (i = 0; i < basicTypes.length; i++) {
+    			if (sm.equals(basicTypes[i].toString())) {
+    				isBasicType = true;
+    				break;
+    			}	
+    		}
+        	if (isBasicType)
+        		r = basicTypes[i];
+        	else {
+        		r = loadClass(sm);
+        		if (r != null) {
+	        		assert (r instanceof RefType);
+	        		scopeClasses.add((RefType) r);
+        		}
+        	}
+        	int dim = s.split("\\[").length - 1;
+        	ArrayType arr = null;
+        	if (r != null) arr = ArrayType.v(r, dim);
+            return (RefLikeType)arr;
+    	} else {
+    		r = loadClass(s);
+    		if (r != null) 
+    			assert (r instanceof RefType);
+    		return (RefLikeType)r;
+    	}
+    }
+    
+    private List<Pair<Unit, List<RefLikeType>>> loadResolvedSites(BufferedReader in) {
+        List<Pair<Unit, List<RefLikeType>>> l = new ArrayList<Pair<Unit, List<RefLikeType>>>();
         String s;
         try {
             while ((s = in.readLine()) != null) {
@@ -310,7 +416,7 @@ public class Program {
                         continue;
                 }
                 
-                Pair<Quad, List<jq_Reference>> site = strToSite(s);
+                Pair<Unit, List<RefLikeType>> site = strToSite(s);
                 
                 l.add(site);
             }
@@ -320,8 +426,10 @@ public class Program {
         return l;
     }
 
-    private void saveResolvedSites(List<Pair<Quad, List<jq_Reference>>> l, PrintWriter out) {
-        for (Pair<Quad, List<jq_Reference>> p : l) {
+    private void saveResolvedSites(List<Pair<Unit, List<RefLikeType>>> l, PrintWriter out) {
+    	if (l.size() > 0 && unitToMethodMap == null)
+    		buildUnitToMethodMap();
+        for (Pair<Unit, List<RefLikeType>> p : l) {
             String s = siteToStr(p);
             out.println(s);
         }
@@ -336,10 +444,10 @@ public class Program {
         } catch (IOException ex) {
             Messages.fatal(ex);
         }
-        List<Pair<Quad, List<jq_Reference>>> resolvedClsForNameSites;
-        List<Pair<Quad, List<jq_Reference>>> resolvedObjNewInstSites;
-        List<Pair<Quad, List<jq_Reference>>> resolvedConNewInstSites;
-        List<Pair<Quad, List<jq_Reference>>> resolvedAryNewInstSites;
+        List<Pair<Unit, List<RefLikeType>>> resolvedClsForNameSites;
+        List<Pair<Unit, List<RefLikeType>>> resolvedObjNewInstSites;
+        List<Pair<Unit, List<RefLikeType>>> resolvedConNewInstSites;
+        List<Pair<Unit, List<RefLikeType>>> resolvedAryNewInstSites;
         if (s == null) {
             resolvedClsForNameSites = Collections.emptyList();
             resolvedObjNewInstSites = Collections.emptyList();
@@ -370,73 +478,65 @@ public class Program {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-    }*/
+    }
 
     private String strToClassName(String s) {
         String[] a = s.split("->");
         assert (a.length == 2);
-        MethodElem e = MethodElem.parse(a[0]);
-        return e.cName;
+        int clNameStart = a[0].indexOf("!<") + 2;
+        int clNameEnd = a[0].indexOf(':');
+        String clName = a[0].substring(clNameStart, clNameEnd);
+        return clName;
     }
     
-    /*private Pair<Quad, List<jq_Reference>> strToSite(String s) {
+    private Pair<Unit, List<RefLikeType>> strToSite(String s) {
         String[] a = s.split("->");
         assert (a.length == 2);
-        MethodElem e = MethodElem.parse(a[0]);
-        Quad q = getQuad(e, Invoke.class);
-        assert (q != null);
+        int bciEnd = a[0].indexOf('!');
+        int bciFromStr = Integer.parseInt(a[0].substring(0, bciEnd));
+        SootMethod m = Scene.v().getMethod(a[0].substring(bciEnd + 1).trim());
+        Unit u = getUnit(m, bciFromStr);
+        assert (u != null);
         String[] rNames = a[1].split(",");
-        List<jq_Reference> rTypes = new ArrayList<jq_Reference>(rNames.length);
+        List<RefLikeType> rTypes = new ArrayList<RefLikeType>(rNames.length);
         for (String rName : rNames) {
-            jq_Reference r = loadClass(rName);
-            rTypes.add(r);
+        	RefLikeType t = loadTypeString (rName);
+        	if (t != null) {
+	    		scopeClasses.add(t);
+	            rTypes.add(t);
+        	}
         }
-        return new Pair<Quad, List<jq_Reference>>(q, rTypes);
+        return new Pair<Unit, List<RefLikeType>>(u, rTypes);
     }
 
-    private String siteToStr(Pair<Quad, List<jq_Reference>> p) {
-        List<jq_Reference> l = p.val1;
+    private String siteToStr(Pair<Unit, List<RefLikeType>> p) {
+        List<RefLikeType> l = p.val1;
         assert (l != null);
         int n = l.size();
-        Iterator<jq_Reference> it = l.iterator();
-         assert (n > 0);
-        String s = p.val0.toByteLocStr() + "->" + it.next();
+        Iterator<RefLikeType> it = l.iterator();
+        assert (n > 0);
+        Unit u = p.val0;
+        int bci = SootUtilities.getBCI(u);
+        SootMethod m = unitToMethodMap.get(u);
+        String s = bci + "!" + m.getSignature() + "->" + it.next();
         for (int i = 1; i < n; i++)
             s += "," + it.next();
         return s;
-    }*/
-
-    private void buildNameToTypeMap() {
-        assert (nameToTypeMap == null);
-        assert (types != null);
-        nameToTypeMap = new HashMap<String, Type>();
-        for (Type t : types) {
-            nameToTypeMap.put(t.toString(), t);
-        }
     }
 
-    private void buildNameToClassMap() {
-        assert (nameToClassMap == null);
-        assert (classes != null);
-        nameToClassMap = new HashMap<String, RefLikeType>();
-        for (RefLikeType c : classes) {
-            nameToClassMap.put(c.toString(), c);
-        }
+    private void buildUnitToMethodMap() {
+    	unitToMethodMap = new HashMap<Unit, SootMethod>();
+    	for (SootMethod m : methods) {
+    		if (m.isConcrete()) {
+	    		PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
+	    		Iterator<Unit> it = upc.iterator();
+	    		while (it.hasNext())
+	    			unitToMethodMap.put(it.next(), m);
+    		}
+    	}
+    	return;
     }
-
-    private void buildSignToMethodMap() {
-        assert (signToMethodMap == null);
-        assert (methods != null);
-        signToMethodMap = new HashMap<String, SootMethod>();
-        for (SootMethod m : methods) {
-            String mName = m.getName().toString();
-            String mDesc = m.getBytecodeParms();
-            String cName = m.getDeclaringClass().getName();
-            String sign = mName + ":" + mDesc + "@" + cName;
-            signToMethodMap.put(sign, m);
-        }
-    }
-
+    
     private static Comparator<Type> comparator = new Comparator<Type>() {
         @Override
         public int compare(Type t1, Type t2) {
@@ -459,9 +559,20 @@ public class Program {
     public RefType loadClass(String s) throws Error {
     	if (Config.verbose >= 2)
             Messages.log(LOADING_CLASS, s);
-        SootClass c = Scene.v().loadClassAndSupport(s);
-        if (c == null)
-            throw new NoClassDefFoundError(s);
+    	SootClass c = null;
+    	if(Scene.v().containsClass(s)){
+    		c = Scene.v().getSootClass(s);
+    	}else{
+    		Scene.v().addBasicClass(s,SootClass.BODIES);
+    		Scene.v().loadBasicClasses();
+    		if(!Scene.v().containsClass(s)){
+    			System.out.println("WARN: Could not load class " + s);
+    			return null;
+    		}else{
+    			c = Scene.v().getSootClass(s);
+    		}
+    	}
+    	c.setApplicationClass();
         return c.getType();
     }
 
@@ -516,33 +627,9 @@ public class Program {
      * @return The quadcode representation of the given class, if it is deemed reachable, and null otherwise.
      */
     public RefLikeType getClass(String name) {
-        if (nameToClassMap == null)
+        if (classes == null)
             buildClasses();
-        return nameToClassMap.get(name);
-    }
-
-    /**
-     * Provides the quadcode representation of the given method, if it is deemed reachable, and null otherwise.
-     *
-     * @param mName Name of the method.
-     * @param mDesc Descriptor of the method.
-     * @param cName Name of the class declaring the method.
-     *
-     * @return The quadcode representation of the given method, if it is deemed reachable, and null otherwise.
-     */
-    public SootMethod getMethod(String mName, String mDesc, String cName) {
-        return getMethod(mName + ":" + mDesc + "@" + cName);
-    }
-
-    /**
-     * Provides the quadcode representation of the given method, if it is deemed reachable, and null otherwise.
-     *
-     * @param sign Signature of the method specifying its name, its descriptor, and its declaring class.
-     *
-     * @return The quadcode representation of the given method, if it is deemed reachable, and null otherwise.
-     */
-    public SootMethod getMethod(MethodSign sign) {
-        return getMethod(sign.mName, sign.mDesc, sign.cName);
+        return Scene.v().getSootClass(name).getType();
     }
 
     /**
@@ -554,9 +641,9 @@ public class Program {
      * @return The quadcode representation of the given method, if it is deemed reachable, and null otherwise.
      */
     public SootMethod getMethod(String sign) {
-        if (signToMethodMap == null)
+        if (methods == null)
             buildMethods();
-        return signToMethodMap.get(sign);
+        return Scene.v().getMethod(sign);
     }
 
     /**
@@ -564,12 +651,11 @@ public class Program {
      */
     public SootMethod getMainMethod() {
         if (mainMethod == null) {
-            String mainClassName = Config.mainClassName;
-            if (mainClassName == null)
+            if (!Scene.v().hasMainClass())
                 Messages.fatal(MAIN_CLASS_NOT_DEFINED);
-            mainMethod = getMethod("main", "[Ljava/lang/String;", mainClassName);
+            mainMethod = Scene.v().getMainMethod();
             if (mainMethod == null)
-                Messages.fatal(MAIN_METHOD_NOT_FOUND, mainClassName);
+                Messages.fatal(MAIN_METHOD_NOT_FOUND, Scene.v().getMainClass().getName());
         }
         return mainMethod;
     }
@@ -582,7 +668,7 @@ public class Program {
      * if it is deemed reachable, and null otherwise.
      */
     public SootMethod getThreadStartMethod() {
-        return getMethod("start", "()V", "java.lang.Thread");
+        return getMethod("<java.lang.Thread: void start()>");
     }
 
     /**
@@ -591,48 +677,23 @@ public class Program {
      * @return The quadcode representation of the given type, if it is deemed reachable, and null otherwise.
      */
     public Type getType(String name) {
-        if (nameToTypeMap == null)
+        if (classes == null)
             buildClasses();
-        return nameToTypeMap.get(name);
+        return Scene.v().getRefType(name);
     }
 
-    /**
-     * Provides the first quad corresponding to the given bytecode instruction, if it exists, and null otherwise.
-     *
-     * @return The first quad corresponding to the given bytecode instruction, if it exists, and null otherwise.
-     */
-    /* TODO
-     * public Quad getQuad(MethodElem e) {
-        return getQuad(e, new Class[] { Operator.class });
-    }*/
-
-    /**
-     * Provides the first quad corresponding to the given bytecode instruction and of the given quad kind,
-     * if it exists, and null otherwise.
-     *
-     * @return The first quad corresponding to the given bytecode instruction and of the given quad kind,
-     * if it exists, and null otherwise.
-     */
-    // TODO
-    /*public Quad getQuad(MethodElem e, Class quadOpClass) {
-        return getQuad(e, new Class[] { quadOpClass });
-    }*/
-
-    /**
-     * Provides the first quad corresponding to the given bytecode instruction and of any of the given quad kinds,
-     * if it exists, and null otherwise.
-     *
-     * @return The first quad corresponding to the given bytecode instruction and of any of the given quad kinds,
-     * if it exists, and null otherwise.
-     */
-    // TODO
-    /*public Quad getQuad(MethodElem e, Class[] quadOpClasses) {
-        int offset = e.offset;
-        jq_Method m = getMethod(e.mName, e.mDesc, e.cName);
-        assert (m != null) : ("Method elem: " + e);
-        return m.getQuad(offset, quadOpClasses);
-    }*/
-
+    public Unit getUnit(SootMethod m, int bci) {
+    	Unit u = null;
+		PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
+		Iterator<Unit> it = upc.iterator();
+		while (it.hasNext()) {
+			u = it.next();
+			if (SootUtilities.getBCI(u) == bci)
+				break;
+		}
+    	return u;
+    }
+   
     /**
      * Provides a human-readable string that corresponds to the given bytecode string encoding a list of zero
      * or more types, if it is well-formed, and null otherwise.
@@ -819,7 +880,7 @@ public class Program {
             printMethod(m);
         }*/
     }
-    // TODO: need to print with BCI when possible
+    
     private void printMethod(SootMethod m) {
         System.out.println("Method: " + m);
         if (!m.isAbstract()) {

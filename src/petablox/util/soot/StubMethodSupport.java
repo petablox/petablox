@@ -89,7 +89,7 @@ public class StubMethodSupport {
 		units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(thisLcl, runM.makeRef())));
 		units.add(Jimple.v().newReturnVoidStmt());
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Custom stub (getThreadStartEquiv) for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}
@@ -109,7 +109,7 @@ public class StubMethodSupport {
 		units.add(Jimple.v().newAssignStmt(lcl1,thisLocal));
 		units.add(Jimple.v().newReturnStmt(lcl1));
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Custom stub (getCloneEquiv) for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}
@@ -159,7 +159,7 @@ public class StubMethodSupport {
 		units.add(Jimple.v().newReturnVoidStmt());
 		
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Custom stub (getArrayCopyEquiv) for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}
@@ -195,7 +195,7 @@ public class StubMethodSupport {
 		units.add(Jimple.v().newReturnVoidStmt());
 		
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Custom stub (getArraySetEquiv) for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}
@@ -223,7 +223,7 @@ public class StubMethodSupport {
 		units.add(Jimple.v().newAssignStmt(t0, Jimple.v().newInterfaceInvokeExpr(invokeBase, runM.makeRef())));
 		units.add(Jimple.v().newReturnStmt(t0));
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Custom stub (getDoPrivileged1) for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}
@@ -247,7 +247,7 @@ public class StubMethodSupport {
 			}
         }
 		methodToStub.put(m, s);
-		if (Config.verbose >= 1)
+		if (Config.verbose >= 2)
 			System.out.println("Empty stub for method: " + s.getName() + ":" + s.getDeclaringClass());
 		return s;
 	}

@@ -148,6 +148,7 @@ public class Config {
     public final static String errFileName = System.getProperty("chord.err.file", outRel2Abs("log.txt"));    
     public final static String reflectFileName = System.getProperty("chord.reflect.file", outRel2Abs("reflect.txt"));
     public final static String methodsFileName = System.getProperty("chord.methods.file", outRel2Abs("methods.txt"));
+    public final static String typesFileName = System.getProperty("chord.types.file", outRel2Abs("types.txt"));
     public final static String classesFileName = System.getProperty("chord.classes.file", outRel2Abs("classes.txt"));
     public final static String bddbddbWorkDirName = System.getProperty("chord.bddbddb.work.dir", outRel2Abs("bddbddb"));
     public final static String bootClassesDirName = System.getProperty("chord.boot.classes.dir", outRel2Abs("boot_classes"));

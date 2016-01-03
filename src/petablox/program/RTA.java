@@ -6,29 +6,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.io.File;
-import java.lang.NoClassDefFoundError;
 import java.util.Iterator;
 
-import soot.RefType;
-import soot.Scene;
-import soot.RefLikeType;
-import soot.ArrayType;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Local;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.InvokeExpr;
-import soot.jimple.InvokeStmt;
 import soot.jimple.NewExpr;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.internal.AbstractInstanceInvokeExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.options.Options;
-import soot.tagkit.LineNumberTag;
 import soot.toolkits.graph.Block;
 import petablox.program.reflect.DynamicReflectResolver;
 import petablox.program.reflect.ExtReflectResolver;
@@ -258,7 +245,7 @@ public class RTA implements ScopeBuilder {
             System.out.println("LEAVE: RTA");
             System.out.println("Time: " + timer.getInclusiveTimeStr());
         }
-        System.out.println("AK: RTA Number of Classes"+classes.size());
+        System.out.println("RTA Number of Classes: "+classes.size());
         if(Config.verbose >=3){
         	Iterator<RefLikeType> itr = classes.iterator();
         	while(itr.hasNext()){
@@ -328,13 +315,11 @@ public class RTA implements ScopeBuilder {
         	}
             return true;
         } catch(NoClassDefFoundError e) {
-        	int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
-            String qpos = SootUtilities.getMethod(u).getDeclaringClass() + " " +  SootUtilities.getMethod(u) + ":" + line;       
-            Messages.log(qpos + " references class "+ r + " via reflection. Class not found in classpath");
+        	Messages.log("WARN: Failed to load class " + r.toString() + " for dynamic reflection");
             return false;
         }
     }
-
+    
     /*
      * It can happen that we see Class.forName("something not in classpath").
      * Should handle this gracefully.
@@ -355,13 +340,13 @@ public class RTA implements ScopeBuilder {
         visitClass(r);
         if (reachableAllocClasses.add(r) ||
                 (staticReflectResolver != null && staticReflectResolver.needNewIter()))
-            repeat = true;
-        //if (r instanceof jq_Class) {                              
+            repeat = true;                           
         SootClass c = r.getSootClass();
            
         //two cases: call was Constructor.newInstance or call was Class.newInstance
         //Static reflection analysis folds these together, so we pull them apart here
-        String cName = ((InvokeStmt)u).getInvokeExpr().getMethod().getDeclaringClass().getName();
+        //String cName = ((InvokeStmt)u).getInvokeExpr().getMethod().getDeclaringClass().getName();
+        String cName = SootUtilities.getInvokeExpr(u).getMethod().getDeclaringClass().getName();
         if(cName.equals("java.lang.reflect.Constructor")) {
             processResolvedConNewInstSite(u, r);
         } else {
@@ -373,12 +358,12 @@ public class RTA implements ScopeBuilder {
         }
     }
 
-    private void processResolvedAryNewInstSite(Unit u, RefType r) {
-        if (!isClassDefined(u, r))
+    private void processResolvedAryNewInstSite(Unit u, RefLikeType r, RefType elemCl) {
+        if (!isClassDefined(u, elemCl))
             return;
         reflect.addResolvedAryNewInstSite(u, r);
         visitClass(r);
-        if (reachableAllocClasses.add(r))
+        if (reachableAllocClasses.add(elemCl))
             repeat = true;
     }
 
@@ -483,15 +468,54 @@ public class RTA implements ScopeBuilder {
     }
 
     // does qStr (in format bci!mName:mDesc@cName) correspond to unit u in method m?
-    private static boolean matches(String uStr, SootMethod m, Unit u) {                           
+    private static boolean matches(String uStr, SootMethod m, Unit u) {   
         MethodElem me = MethodElem.parse(uStr);
-        return me.mName.equals(m.getName().toString()) &&
-        	m.getBytecodeSignature().contains(me.mDesc)&&
-            //me.mDesc.equals(m.getDesc().toString()) &&                                                
+        int offset = SootUtilities.getBCI(u);
+        boolean flag = me.mName.equals(m.getName().toString()) &&
+        	m.getBytecodeSignature().contains(me.mDesc) &&                                              
             me.cName.equals(m.getDeclaringClass().getName()) &&
-            SootUtilities.getBCI(u) == me.offset;                                                                  
+            offset == me.offset;  
+        if (flag) {
+        	if (Config.verbose >= 1) {
+	        	System.out.println("MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
+	        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
+        	}
+        	return flag;
+        } 
+    	// The following fix is to bypass a bug in soot. Ideally needs to be fixed in soot.
+		if (u instanceof JAssignStmt) {
+			JAssignStmt as = (JAssignStmt)u;
+			if (as.rightBox.getValue() instanceof InvokeExpr) {
+				Value v = as.leftBox.getValue();
+				if (v instanceof Local) {
+					offset -= 3;
+					if (offset >= 0) {
+						flag = me.mName.equals(m.getName().toString()) &&
+						        	m.getBytecodeSignature().contains(me.mDesc) &&                                              
+						            me.cName.equals(m.getDeclaringClass().getName()) &&
+						            offset == me.offset;  
+				        if (flag) {
+				        	if (Config.verbose >= 1) {
+					        	System.out.println("MATCH (SUB): " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
+					        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
+				        	}
+				        	return flag;
+				        }
+					}
+				}
+			}
+		}
+    	if (me.mName.equals(m.getName().toString()) &&
+    	    m.getBytecodeSignature().contains(me.mDesc) &&                                               
+            me.cName.equals(m.getDeclaringClass().getName())) {
+    		if (Config.verbose >= 1) {
+	        	System.out.println("NO MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
+	        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
+    		}
+    	}
+        return flag;
     }
-
+    
     private SootMethod getMethodItr(SootClass c,String subsign){
         SootMethod ret = null;
         while(true){
@@ -526,12 +550,11 @@ public class RTA implements ScopeBuilder {
         String cName = c.getName();
         if (cName.equals("java.lang.Class")) {
             if (dynamicResolvedObjNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance()")){            
+            		n.getSubSignature().equals("java.lang.Object newInstance()")){  
                 for (Pair<String, List<String>> p : dynamicResolvedObjNewInstSites) {
-                    if (matches(p.val0, m, u)) {
+                	if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                            //RefType r = (RefType) jq_Type.parseType(s);
-                        	SootClass r = Scene.v().getSootClass(s);
+                        	SootClass r = loadClass(s);
                             if (r != null)
                                 processResolvedObjNewInstSite(u, r.getType());
                         }
@@ -541,12 +564,11 @@ public class RTA implements ScopeBuilder {
             }
         } else if (cName.equals("java.lang.reflect.Constructor")) {
             if (dynamicResolvedConNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Object)")) {
+            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Object[])")) {
                 for (Pair<String, List<String>> p : dynamicResolvedConNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	//RefType r = (RefType) jq_Type.parseType(s);
-                        	SootClass r = Scene.v().getSootClass(s);
+                        	SootClass r = loadClass(s);
                             if (r != null)
                                 processResolvedConNewInstSite(u, r.getType());
                         }
@@ -564,12 +586,12 @@ public class RTA implements ScopeBuilder {
             SootClass d = ((RefType)r).getSootClass();
             assert (!d.isInterface());
             assert (!d.isAbstract());
-            boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
+            boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c); 
             if (matches) {
             	try{
-            		SootMethod m2 = this.getMethodItr(d,n.getSubSignature());
+            		SootMethod m2 = this.getMethodItr(d,n.getSubSignature()); 
                     if(m2 == null)
-                        throw new Exception();
+                    	throw new Exception();
             		visitMethod(m2);
             	}catch(Exception e){
             		// TODO : Verify, Soot shows the method only in the class
@@ -596,7 +618,7 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = Scene.v().getSootClass(s);
+                        	SootClass r = loadClass(s);
                             if (r != null)
                                 processResolvedClsForNameSite(u, r.getType());
                         }
@@ -606,13 +628,17 @@ public class RTA implements ScopeBuilder {
             }
         } else if (cName.equals("java.lang.reflect.Array")) {
             if (dynamicResolvedAryNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,I)")) {
-               for (Pair<String, List<String>> p : dynamicResolvedAryNewInstSites) {
+            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,int)")) {
+                for (Pair<String, List<String>> p : dynamicResolvedAryNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = Scene.v().getSootClass(s);
-                            if (r != null)
-                                processResolvedAryNewInstSite(u, r.getType());
+                        	String sm = s.substring(0, s.indexOf('['));
+                        	SootClass r = loadClass(sm);
+                        	int dim = s.split("\\[").length - 1;
+                        	assert (dim > 0);
+                        	ArrayType arr = ArrayType.v(r.getType(), dim);
+                            if (r != null && arr != null)
+                                processResolvedAryNewInstSite(u, arr, r.getType());
                         }
                         break;
                     }
@@ -620,6 +646,7 @@ public class RTA implements ScopeBuilder {
             }
         }
     }
+    
     private SootClass loadClass(String cName){
     	SootClass c = null;
     	if(Scene.v().containsClass(cName)){
@@ -637,10 +664,15 @@ public class RTA implements ScopeBuilder {
     	c.setApplicationClass();
     	return c;
     }
+    
     private void prepareClass(RefLikeType r) {
         if (classes.add(r)) {                             
             if (DEBUG) System.out.println("\tAdding class: " + r);
-            if(r instanceof ArrayType) return;
+            if(r instanceof ArrayType) {
+            	Type bType = ((ArrayType) r).baseType;
+            	if (bType instanceof RefType) visitClass((RefType)bType);
+            	return;
+            }
             SootClass c = loadClass(((RefType)r).getSootClass().getName());
             if(c==null)
             	return;

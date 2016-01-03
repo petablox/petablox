@@ -2,7 +2,7 @@ package petablox.analyses.reflect;
 
 import java.util.List;
 
-import soot.RefType;
+import soot.RefLikeType;
 import soot.Unit;
 import petablox.analyses.invk.DomI;
 import petablox.analyses.type.DomT;
@@ -27,13 +27,13 @@ public class RelClsForNameIT extends ProgramRel {
     public void fill() {
         DomI domI = (DomI) doms[0];
         DomT domT = (DomT) doms[1];
-        List<Pair<Unit, List<RefType>>> l =
+        List<Pair<Unit, List<RefLikeType>>> l =
             Program.g().getReflect().getResolvedClsForNameSites();
-        for (Pair<Unit, List<RefType>> p : l) {
+        for (Pair<Unit, List<RefLikeType>> p : l) {
             Unit q = p.val0;
             int iIdx = domI.indexOf(q);
             assert (iIdx >= 0);
-            for (RefType t : p.val1) {
+            for (RefLikeType t : p.val1) {
                 int tIdx = domT.indexOf(t);
                 assert (tIdx >= 0);
                 add(iIdx, tIdx);
