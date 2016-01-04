@@ -312,11 +312,15 @@ public class SootUtilities {
 					RefType baseir = (RefType)basei;
 					RefType basejr = (RefType)basej;
 					return isSubtypeOf(baseir.getSootClass(),basejr.getSootClass());
-				}else if(basej instanceof RefType){
+				}
+			}else if(ia.numDimensions < ja.numDimensions) {
+				Type basej = ja.baseType;
+				if(basej instanceof RefType){
 					SootClass c = ((RefType)basej).getSootClass();
 					if(c.getName().equals("java.lang.Object"))
 						return true;
 				}
+				return false;
 			}else{
 				return false;
 			}
@@ -338,19 +342,29 @@ public class SootUtilities {
 			return true;
 		if (j.getName().equals(k.getName()))
 			return true;
-		if(!(k.isInterface())){
-			if(j.isInterface())
-				return false;
-			return h.isClassSubclassOfIncluding(j,k);
-		}else{
-			if(j.isInterface())
-				return h.isInterfaceSubinterfaceOf(j,k);
-			Iterator<SootClass> interfaces = j.getInterfaces().iterator();
-			while(interfaces.hasNext()){
-				SootClass inter = interfaces.next();
-				boolean temp = h.isInterfaceSubinterfaceOf(inter,k);
-				if(temp) return temp;
+		if(j.isInterface() && k.isInterface()){
+			return h.isInterfaceSubinterfaceOf(j,k);
+		}else if(j.isInterface() && !(k.isInterface()))
+			return false;
+		else if(!(j.isInterface()) && k.isInterface()){
+			Iterator<SootClass> inters = j.getInterfaces().iterator();
+			while(inters.hasNext()){
+				SootClass c = inters.next();
+				if(c.getName().equals(k.getName()))
+					return true;
+				else{
+					boolean temp = false;
+					temp = h.isInterfaceSubinterfaceOf(c,k);
+					if(temp) return temp;
+				}
 			}
+			if(j.hasSuperclass())
+				return isSubtypeOf(j.getSuperclass(),k);
+		}else{
+			// Both j and k are concrete classes
+			if(!j.hasSuperclass())
+				return false;
+			return SootUtilities.isSubtypeOf(j.getSuperclass(),k);
 		}
 		return false;
 	}
