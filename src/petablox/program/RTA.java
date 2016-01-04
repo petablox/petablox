@@ -674,7 +674,16 @@ public class RTA implements ScopeBuilder {
             if (DEBUG) System.out.println("\tAdding class: " + r);
             if(r instanceof ArrayType) {
             	Type bType = ((ArrayType) r).baseType;
-            	if (bType instanceof RefType) visitClass((RefType)bType);
+            	if (bType instanceof RefType) {
+                    SootClass d = ((RefType)bType).getSootClass();
+                    visitClass((RefType)bType);
+                    int numDimensions = ((ArrayType)r).numDimensions;
+                    if(d.hasSuperclass()){
+                        visitClass(ArrayType.v(d.getSuperclass().getType(),numDimensions));
+                    }
+                    for(SootClass i : d.getInterfaces())
+                        visitClass(ArrayType.v(i.getType(),numDimensions));
+                }
             	return;
             }
             SootClass c = loadClass(((RefType)r).getSootClass().getName());
