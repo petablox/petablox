@@ -650,6 +650,8 @@ public class Program {
      * Provides the quadcode representation of the main method of the program, if it exists, and exits otherwise.
      */
     public SootMethod getMainMethod() {
+    	if (methods == null)
+    		buildMethods();
         if (mainMethod == null) {
             if (!Scene.v().hasMainClass())
                 Messages.fatal(MAIN_CLASS_NOT_DEFINED);
