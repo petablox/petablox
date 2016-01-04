@@ -25,9 +25,11 @@ public class RelEntryP extends ProgramRel {
 	 	DomP domP = (DomP) ClassicProject.g().getTrgt("P");
 	 	for (int i = 0; i < domM.size(); i++) { 
 	 		SootMethod m = (SootMethod) domM.get(i);
-	 		CFG cfg = SootUtilities.getCFG(m);
-	 		Unit hnop = cfg.getHeads().get(0).getHead();
-	 		add(domP.indexOf(hnop));
+	 		if (!m.isAbstract()) {
+		 		CFG cfg = SootUtilities.getCFG(m);
+		 		Unit hnop = cfg.getHeads().get(0).getHead();
+		 		add(domP.indexOf(hnop));
+	 		}
         }
     }
 }

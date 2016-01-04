@@ -34,6 +34,7 @@ import petablox.analyses.lock.DomL;
 public class RelLL extends ProgramRel implements IMethodVisitor {
     private Set<Block> visited = new HashSet<Block>();
     private DomL domL;
+    
     public void init() {
         domL = (DomL) doms[0];
     }
@@ -44,16 +45,18 @@ public class RelLL extends ProgramRel implements IMethodVisitor {
         CFG cfg = SootUtilities.getCFG(m);
         Block entry = cfg.getHeads().get(0);
         TIntArrayList locks = new TIntArrayList();
+        int ndx = 0;
         if (m.isSynchronized()) {
             int lIdx = domL.indexOf(entry.getHead());
             assert (lIdx >= 0);
             locks.add(lIdx);
+            ndx++;
         }
-        process(entry, locks);
+        process(entry, locks, ndx);
         visited.clear();
     }
-    private void process(Block bb, TIntArrayList locks) {
-        int k = locks.size();
+    private void process(Block bb, TIntArrayList locks, int ndx) {
+        int k = ndx;
         Iterator<Unit> uit = bb.iterator();
         while(uit.hasNext()){
         	Unit u = uit.next();
@@ -61,23 +64,14 @@ public class RelLL extends ProgramRel implements IMethodVisitor {
                 if (u instanceof JEnterMonitorStmt) {
                     int lIdx = domL.indexOf(u);
                     assert (lIdx >= 0);
-                    TIntArrayList locks2 = new TIntArrayList(k + 1);
                     if (k > 0) {
                         int lIdx2 = locks.get(k - 1);
-                        for (int j = 0; j < k - 1; j++)
-                            locks2.add(locks.get(j));
-                        locks2.add(lIdx2);
                         add(lIdx2, lIdx);
                     }
-                    locks2.add(lIdx);
-                    locks = locks2;
+                    locks.add(lIdx);
                     k++;
                 } else {
                     k--;
-                    TIntArrayList locks2 = new TIntArrayList(k);
-                    for (int j = 0; j < k; j++)
-                        locks2.add(locks.get(j));
-                    locks = locks2;
                 }
             }
         }
@@ -85,7 +79,7 @@ public class RelLL extends ProgramRel implements IMethodVisitor {
             Block bb2 = (Block) o;
             if (!visited.contains(bb2)) {
                 visited.add(bb2);
-                process(bb2, locks);
+                process(bb2, locks, k);
             }
         }
     }
