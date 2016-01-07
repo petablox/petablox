@@ -287,7 +287,9 @@ public class RTA implements ScopeBuilder {
      */
     protected void visitMethod(SootMethod m) {
     	SootMethod s = null;
-    	if(StubMethodSupport.methodToStub.containsKey(m) || StubMethodSupport.methodToStub.containsValue(m)){
+    	if(StubMethodSupport.methodToStub.containsKey(m)) {
+    		s = StubMethodSupport.methodToStub.get(m);
+    	}else if (StubMethodSupport.methodToStub.containsValue(m)) {
     		s = m;
     	}else{
 	    	if(StubMethodSupport.toReplace(m)){
@@ -363,7 +365,9 @@ public class RTA implements ScopeBuilder {
             return;
         reflect.addResolvedAryNewInstSite(u, r);
         visitClass(r);
-        if (reachableAllocClasses.add(elemCl))
+        // It is possible that arrays are created with an abstract class as element type.
+        // The actual allocation for elements may be from concrete implementations.
+        if (elemCl.getSootClass().isConcrete() && reachableAllocClasses.add(elemCl))
             repeat = true;
     }
 
