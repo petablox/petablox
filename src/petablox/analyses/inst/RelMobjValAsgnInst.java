@@ -6,17 +6,13 @@ import soot.Unit;
 import soot.Value;
 import soot.jimple.internal.JAssignStmt;
 
-import java.util.HashMap;
-
 import petablox.analyses.alloc.DomH;
 import petablox.analyses.method.DomM;
 import petablox.analyses.var.DomV;
 import petablox.project.Petablox;
-import petablox.project.ClassicProject;
 import petablox.project.Messages;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.soot.SootUtilities;
-import petablox.util.tuple.object.Pair;
 
 /**
  * Relation containing each tuple (m,v,h) such that method m contains
@@ -43,9 +39,9 @@ public class RelMobjValAsgnInst extends ProgramRel {
             if(q instanceof JAssignStmt){
             	JAssignStmt j = (JAssignStmt)q;
             	Value left = j.leftBox.getValue();
-            	if(SootUtilities.isNew(j))
+            	if(SootUtilities.isNewStmt(j))
             		vo = (Local)left;
-            	else if(SootUtilities.isNewArray(j))
+            	else if(SootUtilities.isNewArrayStmt(j))
             		vo = (Local)left;
             	else if(SootUtilities.isNewMultiArrayStmt(j))
             		vo = (Local)left;

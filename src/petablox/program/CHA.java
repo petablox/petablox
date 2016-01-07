@@ -160,12 +160,12 @@ public class CHA implements ScopeBuilder {
                         SootField f = jas.getFieldRef().getField();
                         SootClass c = f.getDeclaringClass();
                         visitClass(c.getType());
-    				}else if(SootUtilities.isNew(jas)){
+    				}else if(SootUtilities.isNewStmt(jas)){
         				if(DEBUG) System.out.println("Unit "+u);
         				JNewExpr jne = ((JNewExpr)jas.rightBox.getValue());
         				SootClass c = ((RefType)jne.getType()).getSootClass();
         				visitClass(c.getType());
-        			}else if(SootUtilities.isNewArray(jas)){
+        			}else if(SootUtilities.isNewArrayStmt(jas)){
         				if(DEBUG) System.out.println("Unit "+u);
         				JNewArrayExpr jne = ((JNewArrayExpr)jas.rightBox.getValue());
         				visitClass(jne.getType());

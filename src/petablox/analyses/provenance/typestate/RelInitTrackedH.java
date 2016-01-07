@@ -3,7 +3,6 @@ package petablox.analyses.provenance.typestate;
 import java.util.HashSet;
 import java.util.Set;
 
-import joeq.Class.jq_Type;
 import petablox.analyses.alloc.DomH;
 import petablox.analyses.type.DomT;
 import petablox.project.ClassicProject;
@@ -69,7 +68,7 @@ public class RelInitTrackedH extends ProgramRel {
 		
 		if(q instanceof JAssignStmt){
 			JAssignStmt q1 = (JAssignStmt)q;
-			if ((SootUtilities.isNew(q1) || SootUtilities.isNewArray(q1) || SootUtilities.isNewMultiArrayStmt(q1))){
+			if ((SootUtilities.isNewStmt(q1) || SootUtilities.isNewArrayStmt(q1) || SootUtilities.isNewMultiArrayStmt(q1))){
 				if(trackedTypes.contains(q1.rightBox.getValue().getType()))
 					return true;
 			}

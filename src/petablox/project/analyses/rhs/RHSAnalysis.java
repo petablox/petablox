@@ -426,7 +426,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     }
 
     private void processEntry(Unit b, PE pe) {
-        Block bb = SootUtilities.getBlock(b);
+        Block bb = SootUtilities.getBasicBlock(b);
         for (Block bb2 : bb.getSuccs()) {
             Unit i2; int q2Idx;
             if (bb2.getHead() instanceof JEntryExitNopStmt) {
@@ -595,7 +595,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     protected void propagatePEtoPE(Loc loc, PE pe, PE predPE, SootMethod predM, SE predSE) {
         int qIdx = loc.qIdx;
         Unit i = loc.i;
-        Block bb = CFG.getBasicBlock(i);
+        Block bb = SootUtilities.getBasicBlock(i);
         Iterator<Unit> uit=bb.iterator();
         int curIdx=-1;
         while(uit.hasNext()){

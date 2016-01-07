@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import petablox.project.ClassicProject;
+import petablox.project.Config;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
 import soot.*;
@@ -36,6 +37,7 @@ import soot.util.Chain;
 public class SootUtilities {
 	private static HashMap <Unit, SootMethod> PMMap = null;
 	private static HashMap <SootMethod,CFG> methodToCFG = new HashMap<SootMethod,CFG>();
+	private static HashMap <Unit, Block> unitToBlockMap = null;
 	public static Hierarchy h = null;
 	
 	public static CFG getCFG(SootMethod m){
@@ -43,8 +45,13 @@ public class SootUtilities {
 			return methodToCFG.get(m);
 		}else{
 			SSAUtilities.process(m);
-			CFG cfg = new CFG(m);
+			CFG cfg;
+			if (Config.cfgKind.equals("exception"))
+				cfg = new ECFG(m);
+			else 
+				cfg = new BCFG(m);
 			methodToCFG.put(m, cfg);
+			makeUnitToBlockMap(cfg);
 			return cfg;
 		}
 	}
@@ -111,6 +118,7 @@ public class SootUtilities {
 		}
 		return false;
 	}
+	
 	public static boolean isStoreInst(JAssignStmt a){
 		Value left = a.leftBox.getValue();
 		if(left instanceof JArrayRef){
@@ -140,7 +148,6 @@ public class SootUtilities {
 	}
 	
 	public static boolean isInvoke(Unit q){
-		//assert (q instanceof JInvokeStmt || q instanceof JAssignStmt);
 		if (q instanceof JInvokeStmt)
 	    	return true;
 		else if (q instanceof JAssignStmt) {
@@ -369,22 +376,6 @@ public class SootUtilities {
 		return false;
 	}
 
-	public static boolean isNew(JAssignStmt a){                            //duplicate
-		Value left = a.leftBox.getValue();
-		Value right = a.rightBox.getValue();
-		if(right instanceof JNewExpr){
-			return true;
-		}
-		return false;
-	}
-	public static boolean isNewArray(JAssignStmt a){                       //duplicate
-		Value left = a.leftBox.getValue();
-		Value right = a.rightBox.getValue();
-		if(right instanceof JNewArrayExpr){
-			return true;
-		}
-		return false;
-	}
 	public static boolean isMoveInst(JAssignStmt a){
 		Value left = a.leftBox.getValue();
 		Value right = a.rightBox.getValue();
@@ -428,12 +419,14 @@ public class SootUtilities {
 		}
 		return locals;
 	}
+	
 	public static int getBCI(Unit u){
 		try{
 			BytecodeOffsetTag bci = (BytecodeOffsetTag)u.getTag("BytecodeOffsetTag");
 			return bci.getBytecodeOffset();
 		}catch(Exception e){
-			System.out.println("WARN: SootUtilities cannot get BCI"+u);
+			if (Config.verbose >= 2)
+				System.out.println("WARN: SootUtilities cannot get BCI"+u);
 		}
 		return -1;
 	}
@@ -442,8 +435,9 @@ public class SootUtilities {
         return 0;
 	}
 	
-	public static String toByteLocStr(Unit u) {                              //TODO 
-        return "";
+	public static String toByteLocStr(Unit u) {   
+		String x = Integer.toString(getBCI((Unit) u));                  
+	    return x + "!" + getMethod(u);
 	}
 	
 	public static String toLocStr(Unit u) {                              //TODO 
@@ -496,10 +490,27 @@ public class SootUtilities {
 		return null;
 	}
 	
-	public static Block getBlock(Unit i){									
-		SootMethod m = SootUtilities.getMethod(i);
-		CFG cfg = SootUtilities.getCFG(m);
-		return cfg.getBasicBlock(i); 
+	public static Block getBasicBlock(Unit u){
+		Block b = unitToBlockMap.get(u);
+		if (b == null) {
+			SootMethod m = getMethod(u);
+			CFG cfg = getCFG(m);
+			makeUnitToBlockMap(cfg);
+		}
+		return unitToBlockMap.get(u);
+	}
+	
+	private static void makeUnitToBlockMap(CFG cfg){
+		if (unitToBlockMap == null) {
+			unitToBlockMap = new HashMap<Unit, Block>();
+		}
+		for (Block b : cfg.reversePostOrder()){
+			Iterator<Unit> uit = b.iterator();
+			while(uit.hasNext()){
+				Unit u = uit.next();
+				unitToBlockMap.put(u,b);
+			}
+		}
 	}
 	
 	public static Map<Unit,Integer> getBCMap(SootMethod m){					//TODO

@@ -181,10 +181,10 @@ public class RTA implements ScopeBuilder {
             dynamicResolvedAryNewInstSites = dynamicReflectResolver.getResolvedAryNewInstSites();
             reflectiveCtors = new LinkedHashSet<SootMethod>();
         } else if (reflectKind.equals("external")) {
-        	ExtReflectResolver extReflectResolver = new ExtReflectResolver();
-        	extReflectResolver.run();
-        	Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+
-        			Config.userClassPathName);
+        	//ExtReflectResolver extReflectResolver = new ExtReflectResolver();
+        	//extReflectResolver.run();
+        	//Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+
+        			//Config.userClassPathName);
         	
         }
         System.out.println("Soot class path:"+Scene.v().getSootClassPath());
@@ -480,7 +480,7 @@ public class RTA implements ScopeBuilder {
             me.cName.equals(m.getDeclaringClass().getName()) &&
             offset == me.offset;  
         if (flag) {
-        	if (Config.verbose >= 1) {
+        	if (Config.verbose >= 2) {
 	        	System.out.println("MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
 	        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
         	}
@@ -499,7 +499,7 @@ public class RTA implements ScopeBuilder {
 						            me.cName.equals(m.getDeclaringClass().getName()) &&
 						            offset == me.offset;  
 				        if (flag) {
-				        	if (Config.verbose >= 1) {
+				        	if (Config.verbose >= 2) {
 					        	System.out.println("MATCH (SUB): " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
 					        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
 				        	}
@@ -512,7 +512,7 @@ public class RTA implements ScopeBuilder {
     	if (me.mName.equals(m.getName().toString()) &&
     	    m.getBytecodeSignature().contains(me.mDesc) &&                                               
             me.cName.equals(m.getDeclaringClass().getName())) {
-    		if (Config.verbose >= 1) {
+    		if (Config.verbose >= 2) {
 	        	System.out.println("NO MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
 	        	System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
     		}
