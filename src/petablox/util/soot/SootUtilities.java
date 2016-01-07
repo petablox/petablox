@@ -313,7 +313,7 @@ public class SootUtilities {
 					RefType basejr = (RefType)basej;
 					return isSubtypeOf(baseir.getSootClass(),basejr.getSootClass());
 				}
-			}else if(ia.numDimensions < ja.numDimensions) {
+			}else if(ia.numDimensions > ja.numDimensions) {
 				Type basej = ja.baseType;
 				if(basej instanceof RefType){
 					SootClass c = ((RefType)basej).getSootClass();

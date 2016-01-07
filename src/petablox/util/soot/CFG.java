@@ -70,7 +70,7 @@ public class CFG extends ExceptionalBlockGraph {
 	public List<Block> reversePostOrder(){
 		if (!isEmpty) {
 			PseudoTopologicalOrderer<Block> pto = new PseudoTopologicalOrderer<Block>();
-			List<Block> rpo = pto.newList(this, true);	
+			List<Block> rpo = pto.newList(this, false);
 			return rpo;
 		} else {
 			List<Block> rpo = new ArrayList<Block>();
