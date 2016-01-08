@@ -415,16 +415,14 @@ public class SootUtilities {
 	 */
 	public static Local[] getMethArgLocals(SootMethod m){
 		int numLocals = m.getParameterCount();
-		if(!m.isStatic())
+		List<Local> regs = m.getActiveBody().getParameterLocals();
+		if(!m.isStatic()) {
 			numLocals++; // Done to consider the "this" parameter passed
+			regs.add(0,m.getActiveBody().getThisLocal());
+		}
 		Local[] locals = new Local[numLocals];
-		if(numLocals==0)
-			return locals;
-		Chain<Local> cl = m.getActiveBody().getLocals();
-		int j = 0;
-		locals[j] = cl.getFirst();
-		for(j=1;j<numLocals;j++){
-			locals[j] = cl.getSuccOf(locals[j-1]);
+		for(int i=0;i<regs.size();i++){
+			locals[i] = regs.get(i);
 		}
 		return locals;
 	}
