@@ -40,10 +40,12 @@ public class Config {
     public final static String reflectKind = System.getProperty("chord.reflect.kind", "none");
     public final static String CHkind = System.getProperty("chord.ch.kind", "static");
     public final static String ssaKind = System.getProperty("chord.ssa.kind", "phi");
+    public final static String cfgKind = System.getProperty("chord.cfg.kind", "exception");
     static {
         check(CHkind, new String[] { "static", "dynamic" }, "chord.ch.kind");
         check(reflectKind, new String[] { "none", "static", "dynamic", "static_cast", "external" }, "chord.reflect.kind");
         check(ssaKind, new String[] { "none", "phi", "nophi", "nomove", "nomovephi" }, "chord.ssa.kind");
+        check(cfgKind, new String[] { "exception", "noexception" }, "chord.cfg.kind");
     }
     public final static String DEFAULT_SCOPE_EXCLUDES = "";
     public final static String scopeStdExcludeStr = System.getProperty("chord.std.scope.exclude", DEFAULT_SCOPE_EXCLUDES);
@@ -56,6 +58,12 @@ public class Config {
     public final static String checkExtExcludeStr = System.getProperty("chord.ext.check.exclude", "");
     public final static String checkExcludeStr =
         System.getProperty("chord.check.exclude", Utils.concat(checkStdExcludeStr, ",", checkExtExcludeStr));
+    public final static String DEFAULT_EXT_REFL_EXCLUDES =
+    "$Proxy,ByCGLIB,GeneratedConstructorAccessor,GeneratedMethodAccessor,GeneratedSerializationConstructorAccessor,org\\.apache\\.derby\\.exe\\.";
+    public final static String extReflDefExcludeStr = System.getProperty("chord.def.extrefl.exclude", DEFAULT_EXT_REFL_EXCLUDES);
+    public final static String extReflAddlExcludeStr = System.getProperty("chord.addl.extrefl.exclude", "");
+    public final static String extReflExcludeStr =
+        System.getProperty("chord.extrefl.exclude", Utils.concat(extReflDefExcludeStr, ",", extReflAddlExcludeStr));
 
     // properties dictating what gets computed/printed by Chord
 
@@ -192,6 +200,13 @@ public class Config {
                 return true;
         return false;
     }
+    public final static String[] extReflExcludeAry = Utils.toArray(extReflExcludeStr);
+    public static boolean isExcludedFromExtRefl(String className) {
+        for (String c : extReflExcludeAry)
+            if (className.indexOf(c) >= 0)
+                return true;
+        return false;
+    }
 
     public static void print() {
         System.out.println("java.vendor: " + System.getProperty("java.vendor"));
@@ -217,12 +232,16 @@ public class Config {
         System.out.println("chord.reflect.kind: " + reflectKind);
         System.out.println("chord.ch.kind: " + CHkind);
         System.out.println("chord.ssa: " + ssaKind);
+        System.out.println("chord.cfg: " + cfgKind);
         System.out.println("chord.std.scope.exclude: " + scopeStdExcludeStr);
         System.out.println("chord.ext.scope.exclude: " + scopeExtExcludeStr);
         System.out.println("chord.scope.exclude: " + scopeExcludeStr);
         System.out.println("chord.std.check.exclude: " + checkStdExcludeStr);
         System.out.println("chord.ext.check.exclude: " + checkExtExcludeStr);
         System.out.println("chord.check.exclude: " + checkExcludeStr);
+        System.out.println("chord.def.extrefl.exclude: " + extReflDefExcludeStr);
+        System.out.println("chord.addl.extrefl.exclude: " + extReflAddlExcludeStr);
+        System.out.println("chord.extrefl.exclude: " + extReflExcludeStr);
         System.out.println("chord.build.scope: " + buildScope);
         System.out.println("chord.run.analyses: " + runAnalyses);
         System.out.println("chord.print.all.classes: " + printAllClasses);

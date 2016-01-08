@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.Local;
 import soot.SootMethod;
 import soot.toolkits.graph.Block;
 import soot.Unit;
@@ -66,9 +65,8 @@ public class DomP extends ProgramDom<Unit> {
 
     @Override
     public String toUniqueString(Unit u) {
-        String x = Integer.toString(SootUtilities.getID((Unit) u));                  
+        String x = Integer.toString(SootUtilities.getBCI((Unit) u));                  
         return x + "!" + getMethod(u);
-    	//return "";
     }
 
     @Override

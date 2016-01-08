@@ -54,8 +54,7 @@ public class ExtReflectResolver {
 	            List<String> boosterCmd = getBoosterCmd(dstDirName);
 	            execCmd(boosterCmd);
 	            Config.userClassPathName = Config.workDirName + File.separator + basename(Config.outDirName) +
-		                   File.separator + getReflDstDirname(runIDs[0]);
-	            Options.v().set_whole_program(false);
+                           File.separator + getReflDstDirname(runIDs[0]);
             } else {
             	if (Config.verbose >- 1) Messages.log("Empty reflection data - hence not running booster");
             	deleteDirIfExists(PO_OUT);
@@ -93,6 +92,7 @@ public class ExtReflectResolver {
         
         basecmd.add("-jar"); 
         basecmd.add(Config.mainDirName +File.separator + "lib" + File.separator + BOOSTER_JAR);
+        basecmd.add("-include-all");
         basecmd.add("-p");
         basecmd.add("cg");
         basecmd.add("reflection-log:" + basename(Config.outDirName) + File.separator + REFL_DATA_FILTERED);
@@ -101,7 +101,7 @@ public class ExtReflectResolver {
         basecmd.add(stdlibClPath + File.pathSeparator + 
 	             Config.toolClassPathName + File.pathSeparator + classPathName);
         basecmd.add("-d");
-        basecmd.add(dstDirName);    
+        basecmd.add(dstDirName); 
         basecmd.add(mainClassName);
         return basecmd;
     }
@@ -157,10 +157,21 @@ public class ExtReflectResolver {
     }
     
     private void createFilteredReflFile() {
+    	StringBuilder sb = new StringBuilder();
+    	boolean first = true;
+    	for (String c : Config.extReflExcludeAry) {
+    		if (!first)
+    			sb.append("\\|");
+    		sb.append(c);
+    		first = false;
+    	}
+    	String s = sb.toString();
     	List<String> basecmd = new ArrayList<String>();
     	basecmd.add("/bin/bash");
     	basecmd.add("-c");
-    	basecmd.add("grep " + SUPPORTED_REFL + " " + basename(Config.outDirName) + File.separator + REFL_DATA_FILENAME +
+    	basecmd.add("grep " + SUPPORTED_REFL + " " +
+    	            basename(Config.outDirName) + File.separator + REFL_DATA_FILENAME +
+    	            " | " + "grep -v " + s + " " +
     			    " > " + basename(Config.outDirName) + File.separator + REFL_DATA_FILTERED);
         execCmd(basecmd);
         return;

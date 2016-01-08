@@ -17,6 +17,7 @@ import java.io.IOException;
 import com.java2html.Java2HTML;
 
 import petablox.instr.BasicInstrumentor;
+import petablox.program.reflect.ExtReflectResolver;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
@@ -34,6 +35,7 @@ import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
 import soot.options.Options;
+import soot.util.Chain;
 
 /**
  * Quadcode intermediate representation of a Java program.
@@ -102,26 +104,15 @@ public class Program {
     	Options.v().set_keep_offset(true);
     	Options.v().set_whole_program(true);
     	
-    	
+		if (Config.reflectKind.equals("external")) {
+			ExtReflectResolver extReflectResolver = new ExtReflectResolver();
+		 	extReflectResolver.run();
+		}
 		String stdlibClPath = System.getProperty("sun.boot.class.path");
-    	Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+
-    			Config.userClassPathName+File.pathSeparator+stdlibClPath);
+		Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
+				                       Scene.v().defaultClassPath() + File.pathSeparator +
+		                               stdlibClPath);
     	Scene.v().addBasicClass(Config.mainClassName);
-    	
-    	/* For simulating the FileSystem class, we need the implementation
-        of the FileSystem, but the classes are not loaded automatically
-        due to the indirection via native code.
-        */
-        Scene.v().addBasicClass("java.io.UnixFileSystem");
-        Scene.v().addBasicClass("java.io.WinNTFileSystem");
-        Scene.v().addBasicClass("java.io.Win32FileSystem");
-
-        /* java.net.URL loads handlers dynamically */
-        Scene.v().addBasicClass("sun.net.www.protocol.file.Handler");
-        Scene.v().addBasicClass("sun.net.www.protocol.ftp.Handler");
-        Scene.v().addBasicClass("sun.net.www.protocol.http.Handler");
-        Scene.v().addBasicClass("sun.net.www.protocol.https.Handler");
-        Scene.v().addBasicClass("sun.net.www.protocol.jar.Handler");
     	Scene.v().loadBasicClasses();
     }
 
@@ -670,7 +661,11 @@ public class Program {
      * if it is deemed reachable, and null otherwise.
      */
     public SootMethod getThreadStartMethod() {
-        return getMethod("<java.lang.Thread: void start()>");
+    	if (Config.isExcludedFromScope("java.")) {
+    		Messages.log("WARNING: java. is excluded from scope - hence returning null for ThreadStartMethod.");
+    		return null;
+    	} else
+    		return getMethod("<java.lang.Thread: void start()>");
     }
 
     /**

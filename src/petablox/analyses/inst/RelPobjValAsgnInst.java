@@ -33,7 +33,7 @@ public class RelPobjValAsgnInst extends ProgramRel {
             assert (pIdx >= 0);
             if(h instanceof JAssignStmt){
             	JAssignStmt j = (JAssignStmt)h;
-            	if(SootUtilities.isNew(j) || SootUtilities.isNewArray(j)){
+            	if(SootUtilities.isNewStmt(j) || SootUtilities.isNewArrayStmt(j)){
             		Local v = (Local)j.leftBox.getValue();
             		int vIdx = domV.indexOf(v);
                     assert (vIdx >= 0);
