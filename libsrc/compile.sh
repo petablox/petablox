@@ -6,7 +6,7 @@
 rm -rf ./libs
 mkdir libs
 
-git submodule update --init --recursive
+git submodule update --init --recursive --remote
 # Build Heros
 echo "Building Heros"
 cp settings/heros/ant.settings heros/
