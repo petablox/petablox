@@ -40,7 +40,6 @@ import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.toolkits.graph.Block;
-import soot.util.Chain;
 
 /**
  * chord.ssa = [true|false] (default = true)<br>
@@ -194,7 +193,7 @@ public class IterThrEscAnalysis extends ParallelAnalysis {
 			Local v = domV.get(vIdx);
 			SootMethod m = domV.getMethod(v);
 			List<Local> refVars = new ArrayList<Local>();
-			Chain<Local> locals = m.getActiveBody().getLocals();
+			List<Local> locals = SootUtilities.getLocals(m);
 			Iterator<Local> itr = locals.iterator();
 			while(itr.hasNext()){
 				Local v1 = itr.next();

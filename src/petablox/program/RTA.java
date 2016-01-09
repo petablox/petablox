@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.io.File;
 import java.util.Iterator;
 
 import soot.*;
@@ -15,10 +14,8 @@ import soot.jimple.NewExpr;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.internal.AbstractInstanceInvokeExpr;
 import soot.jimple.internal.JAssignStmt;
-import soot.options.Options;
 import soot.toolkits.graph.Block;
 import petablox.program.reflect.DynamicReflectResolver;
-import petablox.program.reflect.ExtReflectResolver;
 import petablox.program.reflect.StaticReflectResolver;
 import petablox.project.Config;
 import petablox.project.Messages;
@@ -181,11 +178,8 @@ public class RTA implements ScopeBuilder {
             dynamicResolvedAryNewInstSites = dynamicReflectResolver.getResolvedAryNewInstSites();
             reflectiveCtors = new LinkedHashSet<SootMethod>();
         } else if (reflectKind.equals("external")) {
-        	//ExtReflectResolver extReflectResolver = new ExtReflectResolver();
-        	//extReflectResolver.run();
-        	//Options.v().set_soot_classpath(Scene.v().defaultClassPath()+File.pathSeparator+
-        			//Config.userClassPathName);
-        	
+        	// do nothing; "external" reflection handler has already been run in the constructor of Program
+        	// and Config.userClassPathName has been pointed to the application classes modified to inline reflective calls.
         }
         System.out.println("Soot class path:"+Scene.v().getSootClassPath());
         reflect = new Reflect();   
@@ -411,7 +405,7 @@ public class RTA implements ScopeBuilder {
         	Messages.log(METHOD_BODY_NOT_FOUND, m.getSubSignature(),m.getDeclaringClass().getName());
         	return;
         }
-        Iterator<Local> itr = m.getActiveBody().getLocals().iterator();
+        Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
         while(itr.hasNext()){
         	Local l = itr.next();
         	if(l.getType() instanceof RefLikeType){

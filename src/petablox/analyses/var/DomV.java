@@ -1,6 +1,5 @@
 package petablox.analyses.var;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -10,8 +9,6 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Local;
 import soot.RefLikeType;
-import soot.util.Chain;
-import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceFileTag;
 import petablox.analyses.method.DomM;
 import petablox.program.visitors.IMethodVisitor;
@@ -57,7 +54,7 @@ public class DomV extends ProgramDom<Local> implements IMethodVisitor {
     public void visit(SootMethod m) {
         if (m.isAbstract())
             return;
-        Chain<Local> vars = m.retrieveActiveBody().getLocals();
+        List<Local> vars = SootUtilities.getLocals(m);
         Iterator<Local> varsIt = vars.iterator();
         while (varsIt.hasNext()) {
         	Local v=varsIt.next();

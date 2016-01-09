@@ -32,7 +32,6 @@ import petablox.project.OutDirUtils;
 import petablox.project.analyses.ProgramRel;
 import petablox.project.analyses.rhs.RHSAnalysis;
 import petablox.project.analyses.rhs.TimeoutException;
-import petablox.project.analyses.rhs.IEdge;
 import petablox.project.analyses.rhs.MergeKind;
 import petablox.project.analyses.rhs.IWrappedPE;
 import petablox.project.analyses.rhs.BackTraceIterator;
@@ -42,13 +41,11 @@ import petablox.util.Timer;
 import petablox.util.soot.*;
 import petablox.util.tuple.integer.IntPair;
 import petablox.util.tuple.object.Pair;
-import petablox.util.tuple.object.Trio;
 import soot.*;
 import soot.jimple.*;
 import soot.jimple.internal.JAssignStmt;
 import soot.shimple.PhiExpr;
 import soot.toolkits.graph.Block;
-import soot.util.Chain;
 
 /**
  * Static thread-escape analysis.
@@ -162,7 +159,7 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
             Local v = domV.get(vIdx);
             SootMethod m = domV.getMethod(v);
             List<Local> refVars = new ArrayList<Local>();
-            Chain<Local> locals = m.getActiveBody().getLocals();
+            List<Local> locals = SootUtilities.getLocals(m);
             Iterator<Local> itr = locals.iterator();
             while(itr.hasNext()){
             	Local v1 = itr.next();
@@ -389,7 +386,7 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
             Set<Edge> seSet = summEdges.get(m);
             CFG cfg = SootUtilities.getCFG(m);
             w.println("<pre>");
-            w.println("Register Factory: " + m.getActiveBody().getLocals());
+            w.println("Register Factory: " + SootUtilities.getLocals(m));
             for (Block bb : cfg.reversePostOrder()) {
                 Iterator<Block> bbi;
                 String s = bb.toString() + "(in: ";

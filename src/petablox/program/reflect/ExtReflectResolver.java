@@ -11,11 +11,10 @@ import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
 import petablox.util.Utils;
-import soot.options.Options;
 
 
 /**
- * Dynamic reflection resolution using soot/tamiflex tools.
+ * External reflection resolution using soot/tamiflex tools.
  *
  */
 public class ExtReflectResolver {
@@ -23,12 +22,12 @@ public class ExtReflectResolver {
     private static final String FINISHED_RUN = "INFO: Reflection resolution using Tamiflex: Finished Run ID %s.";
     private static final String PLAY_OUT_JAR = "poa-2.0.1.jar";
     private static final String BOOSTER_JAR  = "booster-trunk.jar";
-    private static final String REFL_DIRNAME_PREFIX = "classesRefl";
+    private static final String REFL_DIRNAME = "classesRefl";
     private static final String REFL_DATA_FILENAME = "out/refl.log";
     private static final String REFL_DATA_FILTERED = "out/refl_filt.log";
     private static final String PO_OUT = "out";
     private static final String PO_SCRATCH = "scratch";
-    private static final String SUPPORTED_REFL ="\"^Class\\.forName\\|^Class\\.newInstance\\|^Constructor\\.newInstance\"";
+    private static final String SUPPORTED_REFL ="\"^Class\\.forName\\|^Class\\.newInstance\\|^Constructor\\.newInstance\\|^Field\\.get\\|^Field\\.set\\|^Method\\.invoke\"";
     private static final String CONFIG_FILE_DIR = ".tamiflex";
     private static final String CONFIG_FILE_NAME = "poa.properties";
     
@@ -36,31 +35,31 @@ public class ExtReflectResolver {
 	
     public void run() {
     	dumpConfig();
+    	deleteDirIfExists(PO_OUT);
     	for (String runID : runIDs) {
     		if (Config.verbose >= 1) Messages.log(STARTING_RUN, runID);
     		List<String> playOutCmd = getPlayOutCmd();
     		String args = System.getProperty("chord.args." + runID, "");
             List<String> fullPoCmd = new ArrayList<String>(playOutCmd);
             fullPoCmd.addAll(Utils.tokenize(args));  
-            deleteDirIfExists(PO_OUT);
             execCmd(fullPoCmd);
-            
-            File reflFile = new File(REFL_DATA_FILENAME);
-            if (reflFile.length() != 0) {
-	            String dstDirName = basename(Config.outDirName) + File.separator + getReflDstDirname(runID);
-	            movePlayOutData();
-	            createDstDirForRefl(dstDirName);
-	            createFilteredReflFile();
-	            List<String> boosterCmd = getBoosterCmd(dstDirName);
-	            execCmd(boosterCmd);
-	            Config.userClassPathName = Config.workDirName + File.separator + basename(Config.outDirName) +
-                           File.separator + getReflDstDirname(runIDs[0]);
-            } else {
-            	if (Config.verbose >- 1) Messages.log("Empty reflection data - hence not running booster");
-            	deleteDirIfExists(PO_OUT);
-            }
             if (Config.verbose >= 1) Messages.log(FINISHED_RUN, runID);
     	}
+            
+        File reflFile = new File(REFL_DATA_FILENAME);
+        if (reflFile.length() != 0) {
+            String dstDirName = basename(Config.outDirName) + File.separator + REFL_DIRNAME;
+            movePlayOutData();
+            createDstDirForRefl(dstDirName);
+            createFilteredReflFile();
+            List<String> boosterCmd = getBoosterCmd(dstDirName);
+            execCmd(boosterCmd);
+            Config.userClassPathName = Config.workDirName + File.separator + basename(Config.outDirName) +
+                       File.separator + REFL_DIRNAME;
+        } else {
+        	if (Config.verbose >- 1) Messages.log("Empty reflection data - hence not running booster");
+        	deleteDirIfExists(PO_OUT);
+        }    
         return;
     }
     
@@ -132,25 +131,23 @@ public class ExtReflectResolver {
     private int getTimeout() {
         return Config.dynamicTimeout;
     }
-
-    private String getReflDstDirname(String runId) {
-    	String dstDirName = REFL_DIRNAME_PREFIX + runId;
-    	return dstDirName;
-    }
-    
+ 
     private void createDstDirForRefl(String dstDirName) {
     	File dstDir;
+    	
+    	deleteDirIfExists(Config.workDirName + File.separator + dstDirName);
         dstDir = new File(Config.workDirName, dstDirName);
-        if (!dstDir.exists())
-            dstDir.mkdir(); 
+        dstDir.mkdir(); 
         return;
     }
     
     private void movePlayOutData() {
     	File poOut;
     	poOut = new File(Config.workDirName + File.separator + PO_OUT);
+    	String poOutMovedName = Config.workDirName + File.separator + basename(Config.outDirName) + File.separator + PO_OUT;
     	File poOutMoved;
-    	poOutMoved = new File(Config.workDirName + File.separator + basename(Config.outDirName) + File.separator + PO_OUT);
+    	poOutMoved = new File(poOutMovedName);
+    	deleteDirIfExists(poOutMovedName);
     	poOut.renameTo(poOutMoved);
     	deleteDirIfExists(PO_SCRATCH);
     	return;
@@ -158,20 +155,25 @@ public class ExtReflectResolver {
     
     private void createFilteredReflFile() {
     	StringBuilder sb = new StringBuilder();
-    	boolean first = true;
-    	for (String c : Config.extReflExcludeAry) {
-    		if (!first)
-    			sb.append("\\|");
-    		sb.append(c);
-    		first = false;
+    	if (!Config.extReflExcludeStr.equals("")) {
+    		sb.append(" | grep -v ");
+	    	boolean first = true;
+	    	for (String c : Config.extReflExcludeAry) {
+	    		if (!first)
+	    			sb.append("\\|");
+	    		else
+	    			sb.append("\"");
+	    		sb.append(c);
+	    		first = false;
+	    	}
+	    	sb.append("\" ");
     	}
     	String s = sb.toString();
     	List<String> basecmd = new ArrayList<String>();
     	basecmd.add("/bin/bash");
     	basecmd.add("-c");
     	basecmd.add("grep " + SUPPORTED_REFL + " " +
-    	            basename(Config.outDirName) + File.separator + REFL_DATA_FILENAME +
-    	            " | " + "grep -v " + s + " " +
+    	            basename(Config.outDirName) + File.separator + REFL_DATA_FILENAME + s +
     			    " > " + basename(Config.outDirName) + File.separator + REFL_DATA_FILTERED);
         execCmd(basecmd);
         return;
@@ -212,6 +214,9 @@ public class ExtReflectResolver {
 	    	pw.println("de.bodden.tamiflex.playout.transformation.clazz.ClassForNameTransformation \\");
 	    	pw.println("de.bodden.tamiflex.playout.transformation.clazz.ClassNewInstanceTransformation \\");
 	    	pw.println("de.bodden.tamiflex.playout.transformation.constructor.ConstructorNewInstanceTransformation \\");
+	    	pw.println("de.bodden.tamiflex.playout.transformation.field.FieldGetTransformation \\");
+            pw.println("de.bodden.tamiflex.playout.transformation.field.FieldSetTransformation \\");
+            pw.println("de.bodden.tamiflex.playout.transformation.method.MethodInvokeTransformation");
 	    	pw.close();
     	}
     }

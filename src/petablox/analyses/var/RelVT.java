@@ -50,8 +50,8 @@ public class RelVT extends ProgramRel implements IMethodVisitor {
     public void visit(SootMethod m) {
         if (m.isAbstract())
             return;
-        CFG cfg = SootUtilities.getCFG(m);
-        /*Local[] regs = SootUtilities.getMethArgLocals(m);
+        /*CFG cfg = SootUtilities.getCFG(m);
+        Local[] regs = SootUtilities.getMethArgLocals(m);
         int numArgs = regs.length;
         for(int i=0; i<numArgs; i++){
         	Type t = regs[i].getType();
@@ -67,7 +67,7 @@ public class RelVT extends ProgramRel implements IMethodVisitor {
                 process(q);
             }
         }*/
-        Iterator<Local> itr = m.getActiveBody().getLocals().iterator();
+        Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
         while(itr.hasNext()){
         	Local l = itr.next();
         	Type t = l.getType();

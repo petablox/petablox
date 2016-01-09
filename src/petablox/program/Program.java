@@ -103,6 +103,7 @@ public class Program {
     	Options.v().set_keep_line_number(true);
     	Options.v().set_keep_offset(true);
     	Options.v().set_whole_program(true);
+    	Options.v().set_allow_phantom_refs(true);
     	
 		if (Config.reflectKind.equals("external")) {
 			ExtReflectResolver extReflectResolver = new ExtReflectResolver();
@@ -531,8 +532,8 @@ public class Program {
     private static Comparator<Type> comparator = new Comparator<Type>() {
         @Override
         public int compare(Type t1, Type t2) {
-            String s1 = t1.toString();
-            String s2 = t2.toString();
+            String s1 = (t1 instanceof NullType) ? "NULL_TYPE" : t1.toString();
+            String s2 = (t2 instanceof NullType) ? "NULL_TYPE" : t2.toString();
             return s1.compareTo(s2);
         }
     };

@@ -1,5 +1,6 @@
 package petablox.util.soot;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
@@ -416,6 +417,27 @@ public class SootUtilities {
 			locals[i] = regs.get(i);
 		}
 		return locals;
+	}
+	
+	/*
+	 * Returns the local variables of the method - arguments first, followed by temporaries
+	 */
+	public static List<Local> getLocals(SootMethod m){
+		Body b = m.getActiveBody();
+		List<Local> regs = b.getParameterLocals();
+		if(!m.isStatic())
+			regs.add(0, b.getThisLocal());
+		
+		List<Local> temps = new ArrayList<Local>();
+		Chain<Local> allLocals = b.getLocals();
+		Iterator<Local> it = allLocals.iterator();
+		while (it.hasNext()) {
+			Local l = it.next();
+			if (!regs.contains(l)) 
+				temps.add(l);
+		}
+		regs.addAll(temps);
+		return regs;
 	}
 	
 	public static int getBCI(Unit u){

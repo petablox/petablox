@@ -1,23 +1,16 @@
 package petablox.analyses.alias;
 
 import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import soot.Local;
 import soot.RefLikeType;
-import soot.RefType;
 import soot.SootField;
 import soot.SootMethod;
 import soot.Type;
@@ -27,7 +20,6 @@ import soot.jimple.NewArrayExpr;
 import soot.jimple.NewExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JNewMultiArrayExpr;
-import soot.util.Chain;
 import gnu.trove.list.array.TIntArrayList;
 import petablox.analyses.alloc.DomH;
 import petablox.analyses.invk.DomI;
@@ -38,16 +30,12 @@ import petablox.program.Program;
 import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
-import petablox.project.Messages;
-import petablox.project.OutDirUtils;
 import petablox.project.analyses.JavaAnalysis;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.ArraySet;
-import petablox.util.Utils;
 import petablox.util.graph.IGraph;
 import petablox.util.graph.MutableGraph;
 import petablox.util.soot.SootUtilities;
-import petablox.util.tuple.object.Pair;
 
 /**
  * Analysis for pre-computing abstract contexts.
@@ -278,7 +266,7 @@ public class CtxtsAnalysis extends JavaAnalysis {
 			for (int mIdx = 0; mIdx < numM; mIdx++) {
 				if (methKind[mIdx] != CTXTINS) {
 					SootMethod m = domM.get(mIdx);
-					Chain<Local> rf = m.getActiveBody().getLocals();
+					List<Local> rf = SootUtilities.getLocals(m);
 		            Iterator<Local> rfIt = rf.iterator();
 		            for (int cnt = 0; rfIt.hasNext(); cnt++) {
 		                Local v = rfIt.next();
