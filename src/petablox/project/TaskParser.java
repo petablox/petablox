@@ -1,7 +1,6 @@
 package petablox.project;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,7 +23,6 @@ import org.scannotation.AnnotationDB;
 
 import petablox.bddbddb.RelSign;
 import petablox.core.DatalogMetadata;
-import petablox.project.ITask;
 import petablox.project.analyses.DlogAnalysis;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
@@ -63,7 +61,7 @@ public class TaskParser {
             datalogFilePattern = Pattern.compile("\\.logic$", Pattern.CASE_INSENSITIVE);
             break;
         default:
-            throw new ChordException("Unhandled datalog engine type: " + Config.datalogEngine);
+            throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
     }
 

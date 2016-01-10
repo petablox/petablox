@@ -9,7 +9,7 @@ import petablox.bddbddb.Rel;
 import petablox.logicblox.LogicBloxExporter;
 import petablox.logicblox.LogicBloxUtils;
 import petablox.project.Petablox;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.Messages;
@@ -45,7 +45,7 @@ public class LogicBloxExportAnalysis extends JavaAnalysis {
         case LOGICBLOX4:
             break;
         default:
-            throw new ChordException("Unsupported petablox.logicblox.export.mode type: " + logicbloxType);
+            throw new PetabloxException("Unsupported petablox.logicblox.export.mode type: " + logicbloxType);
         }
     }
     
@@ -57,7 +57,7 @@ public class LogicBloxExportAnalysis extends JavaAnalysis {
         switch (Config.datalogEngine) {
         case LOGICBLOX3:
         case LOGICBLOX4:
-            throw new ChordException("Datalog engine is already a LogicBlox type (" 
+            throw new PetabloxException("Datalog engine is already a LogicBlox type ("
                 + Config.datalogEngine + "), refusing to overwrite workspace.");
         default:
             break;

@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.Config.DatalogEngineType;
@@ -40,7 +40,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
      * by name from the workspace.
      * 
      * @param relation the relation to load
-     * @throws ChordException if an error occurs loading the data
+     * @throws PetabloxException if an error occurs loading the data
      */
     public void importRelation(Rel relation) {
         if( relation == null ) throw new NullPointerException("relation is null");
@@ -66,7 +66,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
             }
             Utils.close(reader);
         } catch (IOException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         }
     }
     

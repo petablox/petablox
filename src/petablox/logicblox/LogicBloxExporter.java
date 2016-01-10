@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Config.DatalogEngineType;
 import petablox.util.Utils;
@@ -34,7 +34,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * Saves the given domain to file and loads it into the LB workspace.
      * 
      * @param dom the domain to save
-     * @throws ChordException if an error occurs
+     * @throws PetabloxException if an error occurs
      */
     public void saveDomain(Dom<?> dom) {
         String domName = dom.getName();
@@ -77,7 +77,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * 
      * @param dom        the domain to save
      * @param factsFile  the destination file
-     * @throws ChordException if an error occurs saving the data
+     * @throws PetabloxException if an error occurs saving the data
      */
     private void saveDomainData(Dom<?> dom, File factsFile) {
         final String DELIM = this.delim;
@@ -89,7 +89,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         }
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("Error writing " + dom.getName() 
+            throw new PetabloxException("Error writing " + dom.getName()
                 + " domain facts to " + factsFile.getAbsolutePath());
         }
     }
@@ -99,7 +99,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         try {
             return new PrintWriter(new OutputStreamWriter(new FileOutputStream(outFile), "UTF-8"), autoFlush);
         } catch (IOException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         }
     }
     
@@ -108,7 +108,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * 
      * @param dom       the domain
      * @param typeFile  the output file
-     * @throws ChordException if an error occurs writing the file
+     * @throws PetabloxException if an error occurs writing the file
      */
     private void saveDomainType(Dom<?> dom, File typeFile) {
         String name    = dom.getName();
@@ -133,7 +133,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         out.println(type.toString());
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("Error writing " + name + " domain type to " 
+            throw new PetabloxException("Error writing " + name + " domain type to "
                 + typeFile.getAbsolutePath());
         }
     }
@@ -145,7 +145,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @param dom         the domain to import
      * @param importFile  the output file
      * @param factsFile   the delimited data file that will be imported
-     * @throws ChordException if an error occurs writing the file
+     * @throws PetabloxException if an error occurs writing the file
      */
     private void saveDomainImport(Dom<?> dom, File importFile, File factsFile) {
         String name = dom.getName();
@@ -156,7 +156,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
                 (isLB3() ? "" : "_; ") + "id, val).");
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("An error occurred writing import declaration of domain " 
+            throw new PetabloxException("An error occurred writing import declaration of domain "
                 + name + " to " + importFile.getAbsolutePath());
         }
     }
@@ -167,7 +167,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * 
      * @param relation the relation to save
      * @param typeFile the output file
-     * @throws ChordException if an error occurs writing the file
+     * @throws PetabloxException if an error occurs writing the file
      */
     private void saveRelationType(Rel relation, File typeFile) {
         String relName           = relation.getName();
@@ -178,7 +178,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         out.println(relName + "(" + domainVars + ") -> " + domainConstraints + ".");
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("An error occurred writing relation type for " + 
+            throw new PetabloxException("An error occurred writing relation type for " +
                 relName + " to " + typeFile.getAbsolutePath());
         }
     }
@@ -189,7 +189,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      *  
      * @param relation      the relation data to export
      * @param destination   the output file
-     * @throws ChordException if an error occurs writing the file
+     * @throws PetabloxException if an error occurs writing the file
      */
     private void saveRelationData(Rel relation, File destination) {
         final String DELIM = this.delim;
@@ -207,7 +207,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         out.flush();
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("An error occurred writing relation " + 
+            throw new PetabloxException("An error occurred writing relation " +
                 relation.getName() + " data to " + destination.getAbsolutePath());
         }
     }
@@ -219,7 +219,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @param relation    the relation to import
      * @param importFile  the output file
      * @param factsFile   the delimited file containing the actual data
-     * @throws ChordException if an error occurs writing the file
+     * @throws PetabloxException if an error occurs writing the file
      */
     private void saveRelationImport(Rel relation, File importFile, File factsFile) {
         Dom<?>[] doms            = relation.getDoms();
@@ -256,7 +256,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         
         Utils.close(out);
         if (out.checkError()) {
-            throw new ChordException("There as an error writing the import command for " 
+            throw new PetabloxException("There as an error writing the import command for "
                 + relName + " to " + importFile.getAbsolutePath());
         }
     }

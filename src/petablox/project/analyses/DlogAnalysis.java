@@ -9,16 +9,6 @@ import java.util.Set;
 
 import CnCHJ.api.ItemCollection;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.HashSet;
-
-import gnu.trove.list.array.TIntArrayList;
 import petablox.bddbddb.BDDBDDBParser;
 import petablox.bddbddb.RelSign;
 import petablox.bddbddb.Solver;
@@ -26,9 +16,8 @@ import petablox.core.DatalogMetadata;
 import petablox.core.IDatalogParser;
 import petablox.logicblox.LogicBloxParser;
 import petablox.logicblox.LogicBloxUtils;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
-import petablox.project.ICtrlCollection;
 import petablox.project.IDataCollection;
 import petablox.project.IStepCollection;
 import petablox.project.Messages;
@@ -65,7 +54,7 @@ public class DlogAnalysis extends JavaAnalysis {
             parser = new LogicBloxParser();
             break;
         default:
-            throw new ChordException("Unhandled datalog engine type: " + Config.datalogEngine);
+            throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
     }
     
@@ -111,7 +100,7 @@ public class DlogAnalysis extends JavaAnalysis {
             LogicBloxUtils.addBlock(new File(metadata.getFileName()));
             break;
         default:
-            throw new ChordException("FIXME: Unhandled datalog engine type: " + datalogEngine);
+            throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
         }
     }
 

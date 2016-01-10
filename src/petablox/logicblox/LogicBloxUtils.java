@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
@@ -68,9 +68,9 @@ public class LogicBloxUtils {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         }
     }
     
