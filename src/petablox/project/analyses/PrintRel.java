@@ -29,13 +29,19 @@ public class PrintRel extends JavaAnalysis {
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("reachableT");
 	    rel.load(); rel.printFI(printDir); rel.close();
 	    
-	    rel = (ProgramRel) ClassicProject.g().getTrgt("HT");
+	    rel = (ProgramRel) ClassicProject.g().getTrgt("reachableI");
+	    rel.load(); rel.printFI(printDir); rel.close();
+	    
+		rel = (ProgramRel) ClassicProject.g().getTrgt("HT");
 	    rel.load(); rel.printFI(printDir); rel.close();
 	    
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("cha");
 		rel.load(); rel.printFI(printDir); rel.close();
 		
-	    rel = (ProgramRel) ClassicProject.g().getTrgt("VT");
+	    rel = (ProgramRel) ClassicProject.g().getTrgt("VH");
+		rel.load(); rel.printFI(printDir); rel.close();
+	    
+		rel = (ProgramRel) ClassicProject.g().getTrgt("VT");
 		rel.load(); rel.printFI(printDir); rel.close();
 		
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("sub");
@@ -96,6 +102,9 @@ public class PrintRel extends JavaAnalysis {
 		rel.load(); rel.printFI(printDir); rel.close();
 		
 		rel = (ProgramRel) ClassicProject.g().getTrgt("MputStatFldInst");
+		rel.load(); rel.printFI(printDir); rel.close();
+		
+		rel = (ProgramRel) ClassicProject.g().getTrgt("IHM");
 		rel.load(); rel.printFI(printDir); rel.close();
 	}
 }

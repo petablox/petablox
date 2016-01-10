@@ -589,7 +589,7 @@ public class RTA implements ScopeBuilder {
             SootClass d = ((RefType)r).getSootClass();
             assert (!d.isInterface());
             assert (!d.isAbstract());
-            boolean matches = SootUtilities.isSubtypeOf(d,c);
+            boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
             	try{
             		SootMethod m2 = this.getMethodItr(d,n.getSubSignature()); 
