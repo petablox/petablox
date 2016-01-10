@@ -35,7 +35,6 @@ import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
 import soot.options.Options;
-import soot.util.Chain;
 
 /**
  * Quadcode intermediate representation of a Java program.
@@ -65,6 +64,9 @@ public class Program {
     private Reflect reflect;
     private IndexSet<RefLikeType> classes;
     private IndexSet<Type> types;
+    private Map<String, Type> nameToTypeMap;
+    private Map<String, RefLikeType> nameToClassMap;
+    private Map<String, SootMethod> signToMethodMap;
     private Map<Unit, SootMethod> unitToMethodMap;
     private SootMethod mainMethod;
     private boolean HTMLizedJavaSrcFiles;
@@ -96,9 +98,9 @@ public class Program {
 		else if (ssaKind.equals("nomovephi"))
 			SSAUtilities.doSSA(true, true);
     	
-    	List<String> excluded = new ArrayList<String>();
+    	//List<String> excluded = new ArrayList<String>();
     	Options.v().set_coffi(true);
-    	Options.v().set_exclude(excluded);
+    	//Options.v().set_exclude(excluded);
     	Options.v().set_include_all(true);
     	Options.v().set_keep_line_number(true);
     	Options.v().set_keep_offset(true);
@@ -198,6 +200,7 @@ public class Program {
             saveReflectFile(reflectFile);
             saveTypesFile(typesFile);
         }
+        buildSignToMethodMap();
         //Set up Soot Class hierarchy object in SootUtilities
         Hierarchy h = new Hierarchy();
         SootUtilities.h = h;
@@ -263,6 +266,8 @@ public class Program {
                 classes.add(r);
             }
         }
+        buildNameToClassMap();
+        buildNameToTypeMap();
     }
 
     private boolean isExcluded(SootMethod m) {
@@ -516,6 +521,34 @@ public class Program {
         return s;
     }
 
+    private void buildNameToTypeMap() {
+        assert (nameToTypeMap == null);
+        assert (types != null);
+        nameToTypeMap = new HashMap<String, Type>();
+        for (Type t : types) {
+            nameToTypeMap.put(t.toString(), t);
+        }
+    }
+
+    private void buildNameToClassMap() {
+        assert (nameToClassMap == null);
+        assert (classes != null);
+        nameToClassMap = new HashMap<String, RefLikeType>();
+        for (RefLikeType c : classes) {
+        	nameToClassMap.put(c.toString(), c);
+        }
+    }
+
+    private void buildSignToMethodMap() {
+        assert (signToMethodMap == null);
+        assert (methods != null);
+        signToMethodMap = new HashMap<String, SootMethod>();
+        for (SootMethod m : methods) {
+            String sign = m.getSignature();
+            signToMethodMap.put(sign, m);
+        }
+    }
+    
     private void buildUnitToMethodMap() {
     	unitToMethodMap = new HashMap<Unit, SootMethod>();
     	for (SootMethod m : methods) {
@@ -621,7 +654,7 @@ public class Program {
     public RefLikeType getClass(String name) {
         if (classes == null)
             buildClasses();
-        return Scene.v().getSootClass(name).getType();
+        return nameToClassMap.get(name);
     }
 
     /**
@@ -635,7 +668,7 @@ public class Program {
     public SootMethod getMethod(String sign) {
         if (methods == null)
             buildMethods();
-        return Scene.v().getMethod(sign);
+        return signToMethodMap.get(sign);
     }
 
     /**
@@ -677,7 +710,7 @@ public class Program {
     public Type getType(String name) {
         if (classes == null)
             buildClasses();
-        return Scene.v().getRefType(name);
+        return nameToTypeMap.get(name);
     }
 
     public Unit getUnit(SootMethod m, int bci) {
