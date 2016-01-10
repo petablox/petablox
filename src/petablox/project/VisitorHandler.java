@@ -20,7 +20,7 @@ import petablox.program.visitors.IRelLockInstVisitor;
 import petablox.program.visitors.IReturnInstVisitor;
 import petablox.project.ITask;
 import petablox.util.IndexSet;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Local;
@@ -99,13 +99,13 @@ public class VisitorHandler {
                         continue;
                     if (m.isAbstract())
                         continue;
-                    CFG cfg = SootUtilities.getCFG(m);
+                    ICFG cfg = SootUtilities.getCFG(m);
                     visitInsts(cfg);
                 }
             }
         }
     }
-    private void visitInsts(CFG cfg) {
+    private void visitInsts(ICFG cfg) {
         for (Block bb : cfg.reversePostOrder()) {
         	Iterator<Unit> uit = bb.iterator();
             while(uit.hasNext()){

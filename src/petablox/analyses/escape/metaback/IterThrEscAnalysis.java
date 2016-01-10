@@ -33,7 +33,7 @@ import petablox.project.analyses.rhs.IWrappedPE;
 import petablox.project.analyses.rhs.TimeoutException;
 import petablox.util.Execution;
 import petablox.util.Utils;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.*;
 import soot.jimple.ArrayRef;
@@ -220,7 +220,7 @@ public class IterThrEscAnalysis extends ParallelAnalysis {
 		for (SootMethod m : cicg.getNodes()) {
 			if (m.isAbstract())
 				continue;
-			CFG cfg = SootUtilities.getCFG(m);
+			ICFG cfg = SootUtilities.getCFG(m);
 			quadToRPOid.put(cfg.getHeads().get(0), 0);
 			int rpoId = 1;
 			for (Block bb : cfg.reversePostOrder()) {

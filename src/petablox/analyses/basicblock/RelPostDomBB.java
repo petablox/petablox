@@ -12,7 +12,7 @@ import petablox.program.visitors.IMethodVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.ArraySet;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 /**
@@ -33,7 +33,7 @@ public class RelPostDomBB extends ProgramRel implements IMethodVisitor {
         if (m.isAbstract())
             return;
         pdomMap.clear();
-        CFG cfg = SootUtilities.getCFG(m);
+        ICFG cfg = SootUtilities.getCFG(m);
         Block exit = cfg.getTails().get(0);
         Set<Block> exitSet = new ArraySet<Block>(1);
         exitSet.add(exit);

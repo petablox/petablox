@@ -200,7 +200,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         invkQuadToLoc = new HashMap<Unit, Loc>();
         for (SootMethod m : cicg.getNodes()) {
             if (m.isAbstract()) continue;
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             quadToRPOid.put(cfg.getHeads().get(0).getHead(), 0);
             int rpoId = 1;
             for (Block bb : cfg.reversePostOrder()) {

@@ -14,7 +14,7 @@ import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.ExceptionalBlockGraph;
 
-public class ECFG extends ExceptionalBlockGraph implements CFG {
+public class ECFG extends ExceptionalBlockGraph implements ICFG {
 	private boolean isEmpty = false;
 	
 	public ECFG (SootMethod m) {

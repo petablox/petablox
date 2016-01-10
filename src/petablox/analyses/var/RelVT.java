@@ -7,7 +7,7 @@ import petablox.program.Program;
 import petablox.program.visitors.IMethodVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Local;
@@ -50,7 +50,7 @@ public class RelVT extends ProgramRel implements IMethodVisitor {
     public void visit(SootMethod m) {
         if (m.isAbstract())
             return;
-        /*CFG cfg = SootUtilities.getCFG(m);
+        /*ICFG cfg = SootUtilities.getCFG(m);
         Local[] regs = SootUtilities.getMethArgLocals(m);
         int numArgs = regs.length;
         for(int i=0; i<numArgs; i++){

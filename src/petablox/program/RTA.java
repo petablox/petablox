@@ -21,7 +21,7 @@ import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.util.IndexSet;
 import petablox.util.Timer;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import petablox.util.soot.StubMethodSupport;
 import petablox.util.tuple.object.Pair;
@@ -308,8 +308,14 @@ public class RTA implements ScopeBuilder {
         	if(!c.isInScene()){
         		Scene.v().addBasicClass(c.getName(), SootClass.BODIES);
         		Scene.v().loadBasicClasses();
-        	}
-            return true;
+        		if (!c.isInScene() || c.isPhantomClass())
+        			return false;
+        		else
+        			return true;
+        	} else if(c.isPhantomClass()) 
+        		return false;
+        	else
+        		return true;
         } catch(NoClassDefFoundError e) {
         	Messages.log("WARN: Failed to load class " + r.toString() + " for dynamic reflection");
             return false;
@@ -330,8 +336,7 @@ public class RTA implements ScopeBuilder {
 
     private void processResolvedObjNewInstSite(Unit u, RefType r) {
         if (!isClassDefined(u, r))
-            return;
-
+            return; 
         reflect.addResolvedObjNewInstSite(u, r);
         visitClass(r);
         if (reachableAllocClasses.add(r) ||
@@ -412,7 +417,7 @@ public class RTA implements ScopeBuilder {
         		visitClass((RefLikeType)l.getType());
         	}
         }
-        CFG cfg = SootUtilities.getCFG(m);
+        ICFG cfg = SootUtilities.getCFG(m);
         for ( Block bb : cfg.reversePostOrder()){
         	Iterator<Unit> uit=bb.iterator();
         	while(uit.hasNext()){
@@ -649,14 +654,20 @@ public class RTA implements ScopeBuilder {
     	SootClass c = null;
     	if(Scene.v().containsClass(cName)){
     		c = Scene.v().getSootClass(cName);
+    		if(c.isPhantomClass())
+    			return null;
     	}else{
     		Scene.v().addBasicClass(cName,SootClass.BODIES);
     		Scene.v().loadBasicClasses();
     		if(!Scene.v().containsClass(cName)){
-    			System.out.println("WARN: RTA could not load class "+cName);
-    			return c;
+    			System.out.println("WARN: RTA could not load class " + cName);
+    			return null;
     		}else{
     			c = Scene.v().getSootClass(cName);
+    			if (c.isPhantomClass()) {
+    				System.out.println("WARN: RTA: class " + cName + " is a phantom class.");
+    				return null;
+    			}
     		}
     	}
     	c.setApplicationClass();
@@ -706,7 +717,8 @@ public class RTA implements ScopeBuilder {
         prepareClass(r);
         if (r instanceof ArrayType) return;
         SootClass c = ((RefType)r).getSootClass();
-        visitClinits(c);
+        if (!c.isPhantomClass())
+        	visitClinits(c);
     }
 
     protected void visitClinits(SootClass c) {

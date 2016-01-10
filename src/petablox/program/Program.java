@@ -25,7 +25,7 @@ import petablox.runtime.BasicEventHandler;
 import petablox.util.IndexSet;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SSAUtilities;
 import petablox.util.soot.SootUtilities;
 import petablox.util.soot.StubMethodSupport;
@@ -315,7 +315,7 @@ public class Program {
             if (sm.isConcrete()) {
                 sm.retrieveActiveBody();
                 // This is required for methods to have their final bodies in case SSA is turned on.
-                CFG cfg = SootUtilities.getCFG(sm);
+                ICFG cfg = SootUtilities.getCFG(sm);
             }
             methods.add(sm);
         }

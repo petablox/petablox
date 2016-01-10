@@ -19,7 +19,7 @@ import petablox.project.Messages;
 import petablox.project.analyses.ProgramDom;
 import petablox.runtime.EventHandler;
 import petablox.util.IndexMap;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.RefLikeType;
@@ -445,7 +445,7 @@ public class Instrumentor extends BasicInstrumentor {
                 if (verbose >= 2) Messages.log(METHOD_BYTECODE_NOT_FOUND, currSign);
                 return;
             }
-            CFG cfg = SootUtilities.getCFG(currMethod);
+            ICFG cfg = SootUtilities.getCFG(currMethod);
             bciToInstrMap.clear();
             if (genQuadEvent || genBasicBlockEvent) {
                 for (Block bb : cfg.reversePostOrder()) {

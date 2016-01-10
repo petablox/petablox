@@ -384,7 +384,7 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
             }
             w.println("<br>Summary Edges:");
             Set<Edge> seSet = summEdges.get(m);
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             w.println("<pre>");
             w.println("Register Factory: " + SootUtilities.getLocals(m));
             for (Block bb : cfg.reversePostOrder()) {

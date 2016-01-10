@@ -10,7 +10,7 @@ import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.util.IndexSet;
 import petablox.util.Timer;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Hierarchy;
@@ -102,7 +102,7 @@ public class CHA implements ScopeBuilder {
             }catch(Exception e){
             	continue;
             }
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             if (DEBUG) System.out.println("Processing CFG of method: " + m);
             processCFG(cfg);
         }
@@ -126,7 +126,7 @@ public class CHA implements ScopeBuilder {
         }
     }
 
-    private void processCFG(CFG cfg) {
+    private void processCFG(ICFG cfg) {
     	Hierarchy h = new Hierarchy();
     	for(Block bb : cfg.reversePostOrder()){
     		Iterator<Unit> itr = bb.iterator();

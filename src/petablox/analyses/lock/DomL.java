@@ -12,7 +12,7 @@ import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 /**
@@ -38,7 +38,7 @@ public class DomL extends ProgramDom<Unit> implements IAcqLockInstVisitor {
         if (m.isAbstract())
             return;
         if (m.isSynchronized()) {
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             Unit head = cfg.getHeads().get(0).getHead();
             add(head);
         }

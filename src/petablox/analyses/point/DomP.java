@@ -14,7 +14,7 @@ import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 
@@ -51,7 +51,7 @@ public class DomP extends ProgramDom<Unit> {
             SootMethod m = domM.get(mIdx);
             if (m.isAbstract())
                 continue;
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
             	Iterator<Unit> uit = bb.iterator();
             	while(uit.hasNext()){

@@ -37,16 +37,16 @@ import soot.util.Chain;
 
 public class SootUtilities {
 	private static HashMap <Unit, SootMethod> PMMap = null;
-	private static HashMap <SootMethod,CFG> methodToCFG = new HashMap<SootMethod,CFG>();
+	private static HashMap <SootMethod,ICFG> methodToCFG = new HashMap<SootMethod,ICFG>();
 	private static HashMap <Unit, Block> unitToBlockMap = null;
 	public static Hierarchy h = null;
 	
-	public static CFG getCFG(SootMethod m){
+	public static ICFG getCFG(SootMethod m){
 		if(methodToCFG.containsKey(m)){
 			return methodToCFG.get(m);
 		}else{
 			SSAUtilities.process(m);
-			CFG cfg;
+			ICFG cfg;
 			if (Config.cfgKind.equals("exception"))
 				cfg = new ECFG(m);
 			else 
@@ -514,13 +514,13 @@ public class SootUtilities {
 		Block b = unitToBlockMap.get(u);
 		if (b == null) {
 			SootMethod m = getMethod(u);
-			CFG cfg = getCFG(m);
+			ICFG cfg = getCFG(m);
 			makeUnitToBlockMap(cfg);
 		}
 		return unitToBlockMap.get(u);
 	}
 	
-	private static void makeUnitToBlockMap(CFG cfg){
+	private static void makeUnitToBlockMap(ICFG cfg){
 		if (unitToBlockMap == null) {
 			unitToBlockMap = new HashMap<Unit, Block>();
 		}

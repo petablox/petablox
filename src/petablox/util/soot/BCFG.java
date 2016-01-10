@@ -14,7 +14,7 @@ import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.BriefBlockGraph;
 
-public class BCFG extends BriefBlockGraph implements CFG {
+public class BCFG extends BriefBlockGraph implements ICFG {
 	private boolean isEmpty = false;
 	
 	public BCFG (SootMethod m) {

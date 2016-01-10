@@ -7,7 +7,7 @@ import soot.Body;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.DirectedGraph;
 
-public interface CFG extends DirectedGraph<Block> {
+public interface ICFG extends DirectedGraph<Block> {
 	public List<Block> reversePostOrder();
 	public Body getBody();
 	public List<Block> getBlocks();

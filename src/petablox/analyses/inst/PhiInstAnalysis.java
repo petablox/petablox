@@ -21,7 +21,7 @@ import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.JavaAnalysis;
 import petablox.project.analyses.ProgramRel;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 /**
@@ -45,7 +45,7 @@ public class PhiInstAnalysis extends JavaAnalysis {
         for (SootMethod m : Program.g().getMethods()) {
             if (m.isAbstract())
                 continue;
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
             	Iterator<Unit> itr = bb.iterator();
                 while(itr.hasNext()) {

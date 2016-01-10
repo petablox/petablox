@@ -17,7 +17,7 @@ import petablox.project.Messages;
 import petablox.runtime.EventHandler;
 import petablox.util.ByteBufferedFile;
 import petablox.util.Utils;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import petablox.util.tuple.object.Pair;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -256,7 +256,7 @@ public class DynamicAnalysis extends BasicDynamicAnalysis {
             SootMethod mthd = (SootMethod)domM.get(m);
             // Perform a slightly eager computation to map each loop header
             // to its body (in terms of <code>DomB</code>).
-            CFG cfg = SootUtilities.getCFG(mthd);
+            ICFG cfg = SootUtilities.getCFG(mthd);
             CFGLoopFinder finder = new CFGLoopFinder();
             finder.visit(cfg);
             for (Block head : finder.getLoopHeads()) {
