@@ -170,8 +170,8 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
      * at runtime.
      *
      * If any dynamic analysis uses this JVMTI agent, then Chord must have been
-     * compiled by setting chord.use.jvmti=true (default is false) either on
-     * the command line or in file main/chord.properties.
+     * compiled by setting petablox.use.jvmti=true (default is false) either on
+     * the command line or in file main/petablox.properties.
      *
      * Subclasses can override this method.
      */
@@ -323,7 +323,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
             List<String> basecmd = getBaseCmd(!offline, useJvmti, 0);
             initAllPasses();
             for (String runID : runIDs) {
-                String args = System.getProperty("chord.args." + runID, "");
+                String args = System.getProperty("petablox.args." + runID, "");
                 List<String> fullcmd = new ArrayList<String>(basecmd);
                 fullcmd.addAll(Utils.tokenize(args));
                 if (Config.verbose >= 1) Messages.log(STARTING_RUN, runID, msg);
@@ -354,7 +354,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
                 }
             };
             Executor executor = new Executor(!pipeTraces);
-            String args = System.getProperty("chord.args." + runID, "");
+            String args = System.getProperty("petablox.args." + runID, "");
             final List<String> fullcmd = new ArrayList<String>(basecmd);
             fullcmd.addAll(Utils.tokenize(args));
             Runnable instrProgram = new Runnable() {
@@ -416,7 +416,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
         int timeout = getTimeout();
         boolean haltOnErr = haltOnErr();
         
-        String runBefore = System.getProperty("chord.dynamic.runBeforeCmd");
+        String runBefore = System.getProperty("petablox.dynamic.runBeforeCmd");
         
         try {
             Process beforeProc = null;
@@ -449,7 +449,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
             Properties props = System.getProperties();
             for (Map.Entry e : props.entrySet()) {
                 String key = (String) e.getKey();
-                if (key.startsWith("chord."))
+                if (key.startsWith("petablox."))
                     basecmd.add("-D" + key + "=" + e.getValue());
             }
             basecmd.add("-Xbootclasspath/p:" + Config.toolClassPathName);

@@ -23,7 +23,7 @@ import soot.toolkits.graph.Block;
 
 /**
  * Relation containing each tuple (v,t) such that local variable v of reference type has type t.
- * If SSA is used (system property {@code chord.ssa} is set to true) then it is guaranteed that
+ * If SSA is used (system property {@code petablox.ssa} is set to true) then it is guaranteed that
  * each local variable v has a unique type t.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)

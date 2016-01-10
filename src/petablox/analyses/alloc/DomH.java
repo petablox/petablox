@@ -62,7 +62,7 @@ public class DomH extends ProgramDom<Object> {
     @Override
     public void init() {
         domM = (DomM) (Config.classic ? ClassicProject.g().getTrgt("M") : consumes[0]);
-        PHANTOM_CLASSES = Utils.buildBoolProperty("chord.add.phantom.classes", false);
+        PHANTOM_CLASSES = Utils.buildBoolProperty("petablox.add.phantom.classes", false);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class DomH extends ProgramDom<Object> {
     public String toFIString(Object o) {
     	StringBuilder sb = new StringBuilder();
     	Unit u = (Unit)o;
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if (printId) sb.append("(" + indexOf(u) + ")");
     	Type t = getType(u);
     	if (t == null)

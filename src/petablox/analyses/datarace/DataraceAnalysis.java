@@ -44,12 +44,12 @@ import soot.jimple.Stmt;
  * <p>
  * Recognized system properties:
  * <ul>
- *   <li>chord.datarace.exclude.init (default is true): Suppress checking races on accesses in constructors.</li>
- *   <li>chord.datarace.exclude.eqth (default is true): Suppress checking races between the same abstract thread.</li>
- *   <li>chord.datarace.exclude.escaping (default is false): Suppress the thread-escape analysis stage.</li>
- *   <li>chord.datarace.exclude.parallel (default is false): Suppress the may-happen-in-parallel analysis stage.</li>
- *   <li>chord.datarace.exclude.nongrded (default is false): Suppress the lockset analysis stage.</li>
- *   <li>chord.print.results (default is false): Print race results in HTML.</li>
+ *   <li>petablox.datarace.exclude.init (default is true): Suppress checking races on accesses in constructors.</li>
+ *   <li>petablox.datarace.exclude.eqth (default is true): Suppress checking races between the same abstract thread.</li>
+ *   <li>petablox.datarace.exclude.escaping (default is false): Suppress the thread-escape analysis stage.</li>
+ *   <li>petablox.datarace.exclude.parallel (default is false): Suppress the may-happen-in-parallel analysis stage.</li>
+ *   <li>petablox.datarace.exclude.nongrded (default is false): Suppress the lockset analysis stage.</li>
+ *   <li>petablox.print.results (default is false): Print race results in HTML.</li>
  * </ul>
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
@@ -77,9 +77,9 @@ public class DataraceAnalysis extends JavaAnalysis {
     }
 
     public void run() {
-        boolean excludeParallel = Boolean.getBoolean("chord.datarace.exclude.parallel");
-        boolean excludeEscaping = Boolean.getBoolean("chord.datarace.exclude.escaping");
-        boolean excludeNongrded = Boolean.getBoolean("chord.datarace.exclude.nongrded");
+        boolean excludeParallel = Boolean.getBoolean("petablox.datarace.exclude.parallel");
+        boolean excludeEscaping = Boolean.getBoolean("petablox.datarace.exclude.escaping");
+        boolean excludeNongrded = Boolean.getBoolean("petablox.datarace.exclude.nongrded");
 
         init();
 

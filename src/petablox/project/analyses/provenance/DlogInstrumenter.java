@@ -33,11 +33,11 @@ import petablox.project.analyses.ProgramRel;
 /**
  * A simple datalog instrumentor using John Whaley's BDDSolver. Because he
  * didn't separate the parser nicely from the solver, a program needs to be
- * provided to fool the solver. Usage: ant -Dchord.work.dir=<benchmark>
- * -Dchord.run.analyses=provenance-instr 
- * -Dchord.provenance.dlog=<dlog-name>
- * -Dchord.provenance.paramR=<parametric relations: r1,r2,r3...>
- * -Dchord.provenance.ruleFilter=<true/false> run Note: 1. the current
+ * provided to fool the solver. Usage: ant -Dpetablox.work.dir=<benchmark>
+ * -Dpetablox.run.analyses=provenance-instr 
+ * -Dpetablox.provenance.dlog=<dlog-name>
+ * -Dpetablox.provenance.paramR=<parametric relations: r1,r2,r3...>
+ * -Dpetablox.provenance.ruleFilter=<true/false> run Note: 1. the current
  * implementation doesn't handle the case that new domain needed to be added to
  * the file. In that case, .bddvarorder needs adjustment. 2. The output
  * uninstrumented rules slightly differ from the rules in the orignal dlog file.
@@ -48,9 +48,9 @@ import petablox.project.analyses.ProgramRel;
  */
 @Petablox(name = "provenance-instr")
 public class DlogInstrumenter extends JavaAnalysis {
-	public final static String DLOG = "chord.provenance.dlog";
-	public final static String PARAM = "chord.provenance.paramR";
-	public final static String RULE_FILTER = "chord.provenance.ruleFilter";
+	public final static String DLOG = "petablox.provenance.dlog";
+	public final static String PARAM = "petablox.provenance.paramR";
+	public final static String RULE_FILTER = "petablox.provenance.ruleFilter";
 	private boolean ruleFilter;
 	private String dlogName;
 	private Collection inputRelations;

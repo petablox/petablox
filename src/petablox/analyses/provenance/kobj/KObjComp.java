@@ -23,8 +23,8 @@ public class KObjComp extends JavaAnalysis {
 	DomH domH;
 	@Override
 	public void run() {
-		System.setProperty("chord.ctxt.kind", "co");
-		System.setProperty("chord.kobj.k","1");
+		System.setProperty("petablox.ctxt.kind", "co");
+		System.setProperty("petablox.kobj.k","1");
 		domI = (DomI) ClassicProject.g().getTrgt("I");
 		domK = (DomK) ClassicProject.g().getTrgt("K");
 		ClassicProject.g().runTask(domI);
@@ -36,7 +36,7 @@ public class KObjComp extends JavaAnalysis {
 		ikRel.zero();
 		allowI.zero();
 		denyI.zero();
-		int k = Integer.getInteger("chord.kcfa.k", 0);
+		int k = Integer.getInteger("petablox.kcfa.k", 0);
 		int max = 20;
 		for (int i = 0; i < domI.size(); i++) {
 			ikRel.add(domI.get(i), k);
@@ -58,7 +58,7 @@ public class KObjComp extends JavaAnalysis {
 		HKRel.zero();
 		allowH.zero();
 		denyH.zero();
-		k = Integer.getInteger("chord.kobj.k", 1);
+		k = Integer.getInteger("petablox.kobj.k", 1);
 		for (int i = 0; i < domH.size(); i++) {
 			HKRel.add(domH.get(i), k);
 			for(int j = 1; j <=k; j++){

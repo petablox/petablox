@@ -39,7 +39,7 @@ public class ExtReflectResolver {
     	for (String runID : runIDs) {
     		if (Config.verbose >= 1) Messages.log(STARTING_RUN, runID);
     		List<String> playOutCmd = getPlayOutCmd();
-    		String args = System.getProperty("chord.args." + runID, "");
+    		String args = System.getProperty("petablox.args." + runID, "");
             List<String> fullPoCmd = new ArrayList<String>(playOutCmd);
             fullPoCmd.addAll(Utils.tokenize(args));  
             execCmd(fullPoCmd);

@@ -8,7 +8,7 @@ import petablox.util.Timer;
 import petablox.util.Utils;
 
 /**
- * Entry point of Chord after JVM settings are resolved.
+ * Entry point of Petablox after JVM settings are resolved.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
@@ -58,7 +58,7 @@ public class Main {
         timer.init();
         String initTime = timer.getInitTimeStr();
         if (Config.verbose >= 0)
-            System.out.println("Chord run initiated at: " + initTime);
+            System.out.println("Petablox run initiated at: " + initTime);
         if (Config.verbose >= 2)
             Config.print();
         Program program = Program.g();
@@ -87,7 +87,7 @@ public class Main {
         timer.done();
         String doneTime = timer.getDoneTimeStr();
         if (Config.verbose >= 0) {
-            System.out.println("Chord run completed at: " + doneTime);
+            System.out.println("Petablox run completed at: " + doneTime);
             System.out.println("Total time: " + timer.getInclusiveTimeStr());
         }
     }

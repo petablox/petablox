@@ -2,7 +2,7 @@
 	version="2.0"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:chord="http://chord.stanford.edu/">
+    xmlns:chord="http://petablox.stanford.edu/">
 
 <xsl:include href="A.xsl"/>
 <xsl:include href="E.xsl"/>

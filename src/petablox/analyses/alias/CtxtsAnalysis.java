@@ -52,13 +52,13 @@ import petablox.util.soot.SootUtilities;
  * </ul>
  * Recognized system properties:
  * <ul>
- *   <li>chord.inst.ctxt.kind: the kind of context sensitivity to use for each instance method (and all its locals).
+ *   <li>petablox.inst.ctxt.kind: the kind of context sensitivity to use for each instance method (and all its locals).
  *       One of 'ci' (context insensitive), 'cs' (k-CFA), or 'co' (k-object-sensitive).  Default is 'ci'.</li>
- *   <li>chord.stat.ctxt.kind: the kind of context sensitivity to use for each static method (and all its locals).
+ *   <li>petablox.stat.ctxt.kind: the kind of context sensitivity to use for each static method (and all its locals).
  *       One of 'ci' (context insensitive), 'cs' (k-CFA), or 'co' (copy-context-sensitive).  Default is 'ci'.</li>
- *   <li>chord.ctxt.kind: the kind of context sensitivity to use for each method (and all its locals).
- *       One of 'ci', 'cs', or 'co'.  Serves as shorthand for properties chord.inst.ctxt.kind and chord.stat.ctxt.kind.</li>
- *   <li>chord.kobj.k and chord.kcfa.k: the 'k' value to use for each object allocation site and each method call site, 
+ *   <li>petablox.ctxt.kind: the kind of context sensitivity to use for each method (and all its locals).
+ *       One of 'ci', 'cs', or 'co'.  Serves as shorthand for properties petablox.inst.ctxt.kind and petablox.stat.ctxt.kind.</li>
+ *   <li>petablox.kobj.k and petablox.kcfa.k: the 'k' value to use for each object allocation site and each method call site, 
  *       respectively.  Default is 0.</li>
  * </ul>
  * <p>
@@ -161,12 +161,12 @@ public class CtxtsAnalysis extends JavaAnalysis {
         
         mainMeth = Program.g().getMainMethod();
 
-        String ctxtKindStr = System.getProperty("chord.ctxt.kind", "ci");
-        Config.check(ctxtKindStr, new String[] { "ci", "cs", "co" }, "chord.ctxt.kind");
-        String instCtxtKindStr = System.getProperty("chord.inst.ctxt.kind", ctxtKindStr);
-        Config.check(instCtxtKindStr, new String[] { "ci", "cs", "co" }, "chord.inst.ctxt.kind");
-        String statCtxtKindStr = System.getProperty("chord.stat.ctxt.kind", ctxtKindStr);
-        Config.check(statCtxtKindStr, new String[] { "ci", "cs", "co" }, "chord.stat.ctxt.kind");
+        String ctxtKindStr = System.getProperty("petablox.ctxt.kind", "ci");
+        Config.check(ctxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.ctxt.kind");
+        String instCtxtKindStr = System.getProperty("petablox.inst.ctxt.kind", ctxtKindStr);
+        Config.check(instCtxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.inst.ctxt.kind");
+        String statCtxtKindStr = System.getProperty("petablox.stat.ctxt.kind", ctxtKindStr);
+        Config.check(statCtxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.stat.ctxt.kind");
         if (instCtxtKindStr.equals("ci")) {
             instCtxtKind = CTXTINS;
         } else if (instCtxtKindStr.equals("cs")) {
@@ -180,9 +180,9 @@ public class CtxtsAnalysis extends JavaAnalysis {
         } else
             statCtxtKind = CTXTCPY;
 
-        int kobjK = Integer.getInteger("chord.kobj.k", 1);
+        int kobjK = Integer.getInteger("petablox.kobj.k", 1);
         assert (kobjK > 0);
-        int kcfaK = Integer.getInteger("chord.kcfa.k", 0);
+        int kcfaK = Integer.getInteger("petablox.kcfa.k", 0);
         // assert (kobjK <= kcfaK+1)
 
         int numV = domV.size();
@@ -214,7 +214,7 @@ public class CtxtsAnalysis extends JavaAnalysis {
 				ItoQ[i] = invk;
 			}
 
-        	String kvals = System.getProperty("chord.kvals", null);
+        	String kvals = System.getProperty("petablox.kvals", null);
 			if (kvals != null) {
 				String[] list = kvals.split(",");
 				for (String elem : list) {
@@ -247,7 +247,7 @@ public class CtxtsAnalysis extends JavaAnalysis {
 				methKind[mIdx] = kind;
 			}
 			// override default kind of context-sensitivity if defined in a file
-			String ctxts = System.getProperty("chord.ctxts", null);
+			String ctxts = System.getProperty("petablox.ctxts", null);
 			if (ctxts != null) {
 				String[] list = ctxts.split(",");
 				for (String elem : list) {
@@ -632,9 +632,9 @@ public class CtxtsAnalysis extends JavaAnalysis {
     }
 
     public static String getCspaKind() {
-        String ctxtKindStr = System.getProperty("chord.ctxt.kind", "ci");
-        String instCtxtKindStr = System.getProperty("chord.inst.ctxt.kind", ctxtKindStr);
-        String statCtxtKindStr = System.getProperty("chord.stat.ctxt.kind", ctxtKindStr);
+        String ctxtKindStr = System.getProperty("petablox.ctxt.kind", "ci");
+        String instCtxtKindStr = System.getProperty("petablox.inst.ctxt.kind", ctxtKindStr);
+        String statCtxtKindStr = System.getProperty("petablox.stat.ctxt.kind", ctxtKindStr);
         int instCtxtKind, statCtxtKind;
         if (instCtxtKindStr.equals("ci")) {
             instCtxtKind = CtxtsAnalysis.CTXTINS;

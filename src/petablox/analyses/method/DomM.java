@@ -50,7 +50,7 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
     @Override
     public String toFIString(SootMethod m) {
     	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if(printId) sb.append("(" + indexOf(m) +")");
     	sb.append(m.getName() + "@" + m.getDeclaringClass().getName());
     	return sb.toString();

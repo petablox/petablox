@@ -34,7 +34,7 @@ import petablox.util.tuple.object.Pair;
  */
 public class RTA implements ScopeBuilder {
     private static final String MAIN_CLASS_NOT_DEFINED =
-        "ERROR: RTA: Property chord.main.class must be set to specify the main class of program to be analyzed.";
+        "ERROR: RTA: Property petablox.main.class must be set to specify the main class of program to be analyzed.";
     private static final String MAIN_METHOD_NOT_FOUND =
         "ERROR: RTA: Could not find main class '%s' or main method in that class.";
     private static final String METHOD_NOT_FOUND_IN_SUBTYPE =

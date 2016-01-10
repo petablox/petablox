@@ -40,7 +40,7 @@ public class KOBJProbGenerator extends petablox.project.analyses.provenance.Refi
 		domI = (DomI) ClassicProject.g().getTrgt("I");
 		domK = (DomK) ClassicProject.g().getTrgt("K");
 		domH = (DomH) ClassicProject.g().getTrgt("H");
-		client = System.getProperty("chord.provenance.client", "polysite");
+		client = System.getProperty("petablox.provenance.client", "polysite");
 		IKRel = (ProgramRel) ClassicProject.g().getTrgt("IK");
 	
 		HKRel = (ProgramRel) ClassicProject.g().getTrgt("HK");

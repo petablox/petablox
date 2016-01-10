@@ -34,11 +34,11 @@ import petablox.util.tuple.integer.IntTrio;
  * <p>
  * Recognized system properties:
  * <ul>
- * <li><tt>chord.crude.trace.file</tt> (default is <tt>${chord.out.dir}/crude_trace.txt</tt>):
+ * <li><tt>petablox.crude.trace.file</tt> (default is <tt>${petablox.out.dir}/crude_trace.txt</tt>):
  * specifies the location of the binary file from which the original trace is read.</li>
- * <li><tt>chord.final.trace.file</tt> (default is <tt>${chord.out.dir}/final_trace.txt</tt>):
+ * <li><tt>petablox.final.trace.file</tt> (default is <tt>${petablox.out.dir}/final_trace.txt</tt>):
  * specifies the location of the binary file to which the transformed trace is written.</li>
- * <li><tt>chord.trace.block.size</tt> (default is 4096): the number of bytes to be read/written
+ * <li><tt>petablox.trace.block.size</tt> (default is 4096): the number of bytes to be read/written
  * from/to the original/transformed trace file in a single file operation.</li>
  * </ul>
  *

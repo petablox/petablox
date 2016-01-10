@@ -11,7 +11,7 @@ import petablox.project.analyses.ProgramDom;
  * An abstract thread is a triple (o,c,m) denoting the thread whose abstract object
  * is 'o' and which starts at method 'm' in abstract context 'c'.
  *
- * @see chord.analyses.thread.ThreadsAnalysis
+ * @see petablox.analyses.thread.ThreadsAnalysis
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

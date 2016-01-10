@@ -26,7 +26,7 @@ import CnCHJ.runtime.ItemCollectionFactory;
  */
 public class ModernProject extends Project {
     private static final String MULTIPLE_STEPS_PRODUCING_DATA =
-        "ERROR: ModernProject: Multiple step collections (%s) producing data collection '%s'; include exactly one of them via -Dchord.run.analyses";
+        "ERROR: ModernProject: Multiple step collections (%s) producing data collection '%s'; include exactly one of them via -Dpetablox.run.analyses";
     private static final String STEP_PRODUCING_DATA_NOT_FOUND =
         "ERROR: ModernProject: No step collection producing data collection '%s' found in project";
 

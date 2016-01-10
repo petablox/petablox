@@ -17,7 +17,7 @@ import petablox.instr.InstrScheme.EventFormat;
  * This handler should suffice for offline dynamic program analyses
  * (i.e. those that handle the events in a separate JVM, either during
  * or after the instrumented program's execution, depending upon
- * whether the value of system property <tt>chord.trace.pipe</tt> is
+ * whether the value of system property <tt>petablox.trace.pipe</tt> is
  * true or false, respectively).
  * 
  * Online analyses (i.e. those that handle events during the

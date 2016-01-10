@@ -16,8 +16,8 @@ import petablox.project.analyses.DynamicAnalysis;
  * Dynamic heap analysis.
  *
  * Relevant system properties:
- * - chord.dyn.strong.updates=[true|false] (default=true)
- * - chord.dyn.smash.aryelems=[true|false] (default=false)
+ * - petablox.dyn.strong.updates=[true|false] (default=true)
+ * - petablox.dyn.smash.aryelems=[true|false] (default=false)
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
@@ -25,9 +25,9 @@ import petablox.project.analyses.DynamicAnalysis;
     name = "dyn-heap-java"
 )
 public class DynamicHeapAnalysis extends DynamicAnalysis {
-    protected boolean doStrongUpdates = System.getProperty("chord.dyn.strong.updates", "true").equals("true");
+    protected boolean doStrongUpdates = System.getProperty("petablox.dyn.strong.updates", "true").equals("true");
      // smashArrayElems is true => use field 0 in domF instead of array indices in maps OtoFOlistFwd/OtoFOlistInv
-    protected boolean smashArrayElems = System.getProperty("chord.dyn.smash.aryelems", "false").equals("true");
+    protected boolean smashArrayElems = System.getProperty("petablox.dyn.smash.aryelems", "false").equals("true");
     // Map from each object to a list of each instance field of ref type along with the pointed object.
     // Fields with null value are not stored.
      // Invariant: OtoFOlistFwd(o) contains (f,o1) and (f,o2) => o1==o2

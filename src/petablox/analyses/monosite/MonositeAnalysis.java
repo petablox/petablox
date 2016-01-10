@@ -25,7 +25,7 @@ import petablox.project.analyses.ProgramRel;
  * Recognized system properties:
  * <ul>
  * <li>All system properties recognized by abstract contexts analysis
- * (see {@link chord.analyses.alias.CtxtsAnalysis}).</li>
+ * (see {@link petablox.analyses.alias.CtxtsAnalysis}).</li>
  * </ul>
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)

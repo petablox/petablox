@@ -40,7 +40,7 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
     @Override
     public String toFIString(SootField f) {
     	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if(printId) sb.append("(" + indexOf(f) + ")");
     	if (f != null) sb.append(f.getName() + "@" + f.getDeclaringClass().getName());
     	return sb.toString();

@@ -29,7 +29,7 @@ public class RelAllTypestateQueries extends ProgramRel {
     @Override
     public void fill() {
     	
-    	String cipaName = System.getProperty("chord.typestate.cipa", "cipa-java");
+    	String cipaName = System.getProperty("petablox.typestate.cipa", "cipa-java");
         cipa = (CIPAAnalysis) ClassicProject.g().getTask(cipaName);
         ClassicProject.g().runTask(cipa);
         

@@ -21,9 +21,9 @@ import petablox.util.Utils;
  * - String apply(String)
  *
  * Recognized system properties:
- * - chord.parallel.host (default = localhost)
- * - chord.parallel.port (default = 8888)
- * - chord.parallel.mode (default = null; must be [master|worker])
+ * - petablox.parallel.host (default = localhost)
+ * - petablox.parallel.port (default = 8888)
+ * - petablox.parallel.mode (default = null; must be [master|worker])
  */
 public abstract class ParallelAnalysis extends JavaAnalysis implements BlackBox {
 	protected Execution X;
@@ -80,27 +80,27 @@ public abstract class ParallelAnalysis extends JavaAnalysis implements BlackBox 
 
 	public String getMasterHost() {
 		if (masterHost == null)
-			masterHost = System.getProperty("chord.parallel.host", "localhost");
+			masterHost = System.getProperty("petablox.parallel.host", "localhost");
 		return masterHost;
 	}
 
 	public int getMasterPort() {
 		if (masterPort == -1)
-			masterPort = Integer.getInteger("chord.parallel.port", 8888);
+			masterPort = Integer.getInteger("petablox.parallel.port", 8888);
 		return masterPort;
 	}
 
 	public Mode getMode() {
 		if (mode == null) {
-			String s = System.getProperty("chord.parallel.mode", null);
+			String s = System.getProperty("petablox.parallel.mode", null);
 			if (s == null)
-				throw new RuntimeException("Property chord.parallel.mode=[master|worker] expected by analysis " + getName());
+				throw new RuntimeException("Property petablox.parallel.mode=[master|worker] expected by analysis " + getName());
 			if (s.equals("master"))
 				mode = Mode.MASTER;
 			else if (s.equals("worker"))
 				mode = Mode.WORKER;
 			else
-				throw new RuntimeException("Unknown value '" + mode + "' for property chord.parallel.mode=[master|worker]");
+				throw new RuntimeException("Unknown value '" + mode + "' for property petablox.parallel.mode=[master|worker]");
 		}
 		return mode;
 	}

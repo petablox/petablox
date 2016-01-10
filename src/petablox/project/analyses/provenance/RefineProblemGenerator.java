@@ -18,7 +18,7 @@ public abstract class RefineProblemGenerator extends JavaAnalysis {
 	
 	@Override
 	public void run(){
-		out = System.getProperty("chord.provenance.refineProblemOut", out);
+		out = System.getProperty("petablox.provenance.refineProblemOut", out);
 		for(ITask task : this.getTasks()){
 //			ClassicProject.g().resetTaskDone(task);
 			ClassicProject.g().runTask(task);

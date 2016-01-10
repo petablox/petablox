@@ -22,7 +22,7 @@ import petablox.project.analyses.ProgramRel;
 /**
  * A relation over domain M containing additional entry points for the program.
  * The values of this relation are derived from the file indicated by property 
- * chord.entrypoints.file.
+ * petablox.entrypoints.file.
  * 
  * File should be a list whose entries are class names, interface names, or fully qualified method names.
  *  (A fully qualified method name is of the form <method_subsignature>@<classname>.)
@@ -32,8 +32,8 @@ import petablox.project.analyses.ProgramRel;
  */
 public class RelExtraEntryPoints extends ProgramRel {
 
-    public final static String extraMethodsFile = System.getProperty("chord.entrypoints.file");
-    public final static String extraMethodsList = System.getProperty("chord.entrypoints");
+    public final static String extraMethodsFile = System.getProperty("petablox.entrypoints.file");
+    public final static String extraMethodsList = System.getProperty("petablox.entrypoints");
     static LinkedHashSet<SootMethod> methods;
 
     @Override

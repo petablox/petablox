@@ -14,7 +14,7 @@ import soot.SootResolver;
 /**
  * Used to rewrite method calls, to facilitate stub implementations or
  * analyzable models.
- * If property chord.methodRemapFile is set, will read a map from that file.
+ * If property petablox.methodRemapFile is set, will read a map from that file.
  * There two sorts of entries supported: overriding a particular concrete method,
  * and overriding an entire class.
  * 
@@ -127,7 +127,7 @@ public class StubRewrite {
             classLookupTable = new LinkedHashMap<RefLikeType, RefType>();
         }
         try {
-            String fileNames = System.getProperty("chord.methodRemapFile");
+            String fileNames = System.getProperty("petablox.methodRemapFile");
             if(fileNames == null)
                 return;
             String[] names = fileNames.split(",");

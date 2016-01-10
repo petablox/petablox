@@ -618,7 +618,7 @@ public class MetaBackAnalysis {
 
 		@Override
 		public void casePhiStmt( Local dest, PhiExpr src ) {
-			System.out.println(System.getProperty("chord.ssa.kind"));
+			System.out.println(System.getProperty("petablox.ssa.kind"));
 			throw new RuntimeException("PHI is not supported!");
 		}
 

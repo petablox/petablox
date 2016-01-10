@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Representation of an object-sensitive abstract object.
  * <p>
- * It is a set of abstract contexts (see {@link chord.analyses.alias.Ctxt}).
+ * It is a set of abstract contexts (see {@link petablox.analyses.alias.Ctxt}).
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

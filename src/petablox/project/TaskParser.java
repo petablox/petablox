@@ -126,13 +126,13 @@ public class TaskParser {
         for (String fileName : fileNames) {
             File file = new File(fileName);
             if (!file.exists()) {
-                nonexistentPathElem(fileName, "chord.java.analysis.path");
+                nonexistentPathElem(fileName, "petablox.java.analysis.path");
                 continue;
             }
             try {
                list.add(file.toURL());
             } catch (MalformedURLException ex) {
-                malformedPathElem(fileName, "chord.java.analysis.path", ex.getMessage());
+                malformedPathElem(fileName, "petablox.java.analysis.path", ex.getMessage());
                 continue;
            }
         }
@@ -163,7 +163,7 @@ public class TaskParser {
         for (String fileName : fileNames) {
             File file = new File(fileName);
             if (!file.exists()) {
-                nonexistentPathElem(fileName, "chord.dlog.analysis.path");
+                nonexistentPathElem(fileName, "petablox.dlog.analysis.path");
                 continue;
             }
             processDlogAnalysis(file);
@@ -279,7 +279,7 @@ public class TaskParser {
                     }
                 }
             } catch (IOException ex) {
-                malformedPathElem(fileName, "chord.dlog.analysis.path", ex.getMessage());
+                malformedPathElem(fileName, "petablox.dlog.analysis.path", ex.getMessage());
             }
         }
     }

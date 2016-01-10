@@ -31,9 +31,9 @@ public class ClassHierarchy {
     private static final String IGNORED_DUPLICATE_TYPES =
         "INFO: Class hierarchy builder: Ignored the following duplicate classes/interfaces coming from the indicated classpath elements:";
     private static final String EXCLUDED_TYPES_IN_CHORD =
-        "WARN: Excluded the following classes/interfaces from scope because the classpath elements from which they originate are in chord.main.class.path:";
+        "WARN: Excluded the following classes/interfaces from scope because the classpath elements from which they originate are in petablox.main.class.path:";
     private static final String EXCLUDED_TYPES_NOT_DYN_LOADED =
-        "WARN: Excluded the following classes/interfaces from scope because they were not loaded dynamically and chord.ch.dynamic=true:";
+        "WARN: Excluded the following classes/interfaces from scope because they were not loaded dynamically and petablox.ch.dynamic=true:";
     private static final String MISSING_TYPES =
         "WARN: Class hierarchy builder: Following classes/interfaces were not found in scope but each of them was either declared as a superclass or an implemented/extended interface of some class/interface in scope:";
     private static final String MISSING_SUPERCLASSES =

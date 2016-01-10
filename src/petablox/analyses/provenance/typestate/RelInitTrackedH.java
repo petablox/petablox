@@ -31,7 +31,7 @@ public class RelInitTrackedH extends ProgramRel {
 
 	@Override
 	public void fill() {
-		isOnlyTrackedTypes = Utils.buildBoolProperty("chord.provenance.onlyTrackedTypes", true);
+		isOnlyTrackedTypes = Utils.buildBoolProperty("petablox.provenance.onlyTrackedTypes", true);
 		domH = (DomH) doms[0];
 
 		relCheckExcludedH = (ProgramRel) ClassicProject.g().getTrgt("checkExcludedH");

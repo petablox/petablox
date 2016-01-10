@@ -51,7 +51,7 @@ public class DomI extends ProgramDom<Unit> implements IInvokeInstVisitor {
     @Override
     public String toFIString(Unit u) {
     	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if(printId) sb.append("(" + indexOf(u) + ")");
     	InvokeExpr ie = SootUtilities.getInvokeExpr(u);
     	if(ie instanceof DynamicInvokeExpr){

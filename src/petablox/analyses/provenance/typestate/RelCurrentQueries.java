@@ -33,7 +33,7 @@ public class RelCurrentQueries extends ProgramRel {
     	relAllQueries.close();
     	
     	Collections.shuffle(allQueries);
-    	int numQueries = Integer.getInteger("chord.provenance.typestateQueries", 500);
+    	int numQueries = Integer.getInteger("petablox.provenance.typestateQueries", 500);
     	for(int i = 0; i < numQueries && i < allQueries.size(); i++){
     		Pair<Unit,Unit> chosenQuery = allQueries.get(i);
     		add(chosenQuery.val0,chosenQuery.val1);

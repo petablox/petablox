@@ -42,17 +42,17 @@ import soot.jimple.InstanceFieldRef;
 import soot.toolkits.graph.Block;
 
 /**
- * chord.ssa = [true|false] (default = true)<br>
- * chord.rhs.timeout = N milliseconds (default = 0, no timeouts)<br>
- * chord.iter-thresc-java.mode = [master|worker] (default = null)<br>
- * chord.iter-thresc-java.optimize = [true|false] (default = false)<br>
- * chord.iter-thresc-java.debug= [true|false] (default = false)<br>
- * chord.iter-thresc-java.disjuncts = [int] (default = 1)<br>
- * chord.iter-thresc-java.query = [int] (default = -1)<br>
- * chord.iter-thresc-java.explode = [int] (default = -1)<br>
- * chord.iter-thresc-java.jobpatch = [int] (default = 100)<br>
- * chord.iter-thresc-java.iterlimit = [int] (default = 1000)<br>
- * chord.iter-thresc-java.xmlToHtmlTask = [String] (default = null)
+ * petablox.ssa = [true|false] (default = true)<br>
+ * petablox.rhs.timeout = N milliseconds (default = 0, no timeouts)<br>
+ * petablox.iter-thresc-java.mode = [master|worker] (default = null)<br>
+ * petablox.iter-thresc-java.optimize = [true|false] (default = false)<br>
+ * petablox.iter-thresc-java.debug= [true|false] (default = false)<br>
+ * petablox.iter-thresc-java.disjuncts = [int] (default = 1)<br>
+ * petablox.iter-thresc-java.query = [int] (default = -1)<br>
+ * petablox.iter-thresc-java.explode = [int] (default = -1)<br>
+ * petablox.iter-thresc-java.jobpatch = [int] (default = 100)<br>
+ * petablox.iter-thresc-java.iterlimit = [int] (default = 1000)<br>
+ * petablox.iter-thresc-java.xmlToHtmlTask = [String] (default = null)
  * 
  * @author xin
  *

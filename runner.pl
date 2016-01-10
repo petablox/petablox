@@ -67,228 +67,228 @@ my @programs = keys %benchmarks;
 
 my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj");
 
-# Lowest priority options, but still higher than $petablox_dir/chord.properties
+# Lowest priority options, but still higher than $petablox_dir/petablox.properties
 my @global_options = (
-    "-Dchord.max.heap=8192m",
-    "-Dchord.bddbddb.max.heap=4096m"
+    "-Dpetablox.max.heap=8192m",
+    "-Dpetablox.bddbddb.max.heap=4096m"
 );
 
 # Medium priority options
 my %local_options_map = (
     "thresc_hybrid" =>
         [
-            "-Dchord.rhs.timeout=300000",
-            "-Dchord.escape.optimize=false",
-            "-Dchord.escape.both=false",
-            "-Dchord.print.results=true",
-            "-Dchord.rhs.merge=pjoin",
-            "-Dchord.ssa.kind=nophi",
-            "-Dchord.reuse.scope=true",
-            "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-            "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-            "-Dchord.run.analyses=cipa-0cfa-dlog,queryE,path-thresc-java,full-thresc-java"
+            "-Dpetablox.rhs.timeout=300000",
+            "-Dpetablox.escape.optimize=false",
+            "-Dpetablox.escape.both=false",
+            "-Dpetablox.print.results=true",
+            "-Dpetablox.rhs.merge=pjoin",
+            "-Dpetablox.ssa.kind=nophi",
+            "-Dpetablox.reuse.scope=true",
+            "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+            "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog,queryE,path-thresc-java,full-thresc-java"
         ],
     "thresc_metaback" =>
         [
-            "-Dchord.iter-thresc-java.optimize=false",
-            "-Dchord.iter-thresc-java.explode=1000",
-            "-Dchord.iter-thresc-java.disjuncts=5",
-            "-Dchord.iter-thresc-java.timeout=300000",
-            "-Dchord.iter-thresc-java.iterlimit=100",
-            "-Dchord.iter-thresc-java.xmlToHtmlTask=thresc-xml2html",
-            "-Dchord.iter-thresc-java.jobpatch=100",
-            "-Dchord.iter-thresc-java.negate=true",
-            "-Dchord.iter-thresc-java.prune=true",
-            "-Dchord.reflect.kind=dynamic",
-            "-Dchord.ssa.kind=nophi",
-            "-Dchord.rhs.timeout=300000",
-            "-Dchord.rhs.merge=pjoin",
-            "-Dchord.rhs.trace=shortest",
-            "-Dchord.reuse.scope=true",
-            "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-            "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-            "-Dchord.run.analyses=queryE,iter-thresc-java"
+            "-Dpetablox.iter-thresc-java.optimize=false",
+            "-Dpetablox.iter-thresc-java.explode=1000",
+            "-Dpetablox.iter-thresc-java.disjuncts=5",
+            "-Dpetablox.iter-thresc-java.timeout=300000",
+            "-Dpetablox.iter-thresc-java.iterlimit=100",
+            "-Dpetablox.iter-thresc-java.xmlToHtmlTask=thresc-xml2html",
+            "-Dpetablox.iter-thresc-java.jobpatch=100",
+            "-Dpetablox.iter-thresc-java.negate=true",
+            "-Dpetablox.iter-thresc-java.prune=true",
+            "-Dpetablox.reflect.kind=dynamic",
+            "-Dpetablox.ssa.kind=nophi",
+            "-Dpetablox.rhs.timeout=300000",
+            "-Dpetablox.rhs.merge=pjoin",
+            "-Dpetablox.rhs.trace=shortest",
+            "-Dpetablox.reuse.scope=true",
+            "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+            "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+            "-Dpetablox.run.analyses=queryE,iter-thresc-java"
         ],
     "typestate_metaback" =>
         [
-            "-Dchord.iter-typestate-java.optimize=false",
-            "-Dchord.iter-typestate-java.explode=1000",
-            "-Dchord.iter-typestate-java.disjuncts=5",
-            "-Dchord.iter-typestate-java.timeout=300000",
-            "-Dchord.iter-typestate-java.iterlimit=100",
-            "-Dchord.iter-typestate-java.xmlToHtmlTask=typestate-xml2html",
-            "-Dchord.iter-typestate-java.jobpatch=30",
-            "-Dchord.iter-typestate-java.negate=true",
-            "-Dchord.iter-typestate-java.prune=true",
-            "-Dchord.reflect.kind=dynamic",
-            "-Dchord.ssa.kind=nophi",
-            "-Dchord.rhs.timeout=300000",
-            "-Dchord.rhs.merge=pjoin",
-            "-Dchord.rhs.trace=shortest",
-            "-Dchord.reuse.scope=true",
-            "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-            "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-            "-Dchord.run.analyses=cipa-0cfa-dlog,iter-typestate-java",
-	    "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
-	    "-Dchord.scope.exclude=com.,sun."
+            "-Dpetablox.iter-typestate-java.optimize=false",
+            "-Dpetablox.iter-typestate-java.explode=1000",
+            "-Dpetablox.iter-typestate-java.disjuncts=5",
+            "-Dpetablox.iter-typestate-java.timeout=300000",
+            "-Dpetablox.iter-typestate-java.iterlimit=100",
+            "-Dpetablox.iter-typestate-java.xmlToHtmlTask=typestate-xml2html",
+            "-Dpetablox.iter-typestate-java.jobpatch=30",
+            "-Dpetablox.iter-typestate-java.negate=true",
+            "-Dpetablox.iter-typestate-java.prune=true",
+            "-Dpetablox.reflect.kind=dynamic",
+            "-Dpetablox.ssa.kind=nophi",
+            "-Dpetablox.rhs.timeout=300000",
+            "-Dpetablox.rhs.merge=pjoin",
+            "-Dpetablox.rhs.trace=shortest",
+            "-Dpetablox.reuse.scope=true",
+            "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+            "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog,iter-typestate-java",
+	    "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+	    "-Dpetablox.scope.exclude=com.,sun."
         ],
 
     "mustalias" =>
         [
-            "-Dchord.run.analyses=mustaliasoracle-java",
-            "-Dchord.mustaliaslibanalysis.type=oracle",
-            "-Dchord.typestate.specfile=generic_typestatespec.txt",
-            "-Dchord.typestate.cipa=cipa-java",
-            "-Dchord.typestate.cicg=cicg-java",
-            "-Dchord.typestate.maxdepth=2",
-            "-Dchord.rhs.merge=pjoin",
-            "-Dchord.ssa.kind=nomovephi",
+            "-Dpetablox.run.analyses=mustaliasoracle-java",
+            "-Dpetablox.mustaliaslibanalysis.type=oracle",
+            "-Dpetablox.typestate.specfile=generic_typestatespec.txt",
+            "-Dpetablox.typestate.cipa=cipa-java",
+            "-Dpetablox.typestate.cicg=cicg-java",
+            "-Dpetablox.typestate.maxdepth=2",
+            "-Dpetablox.rhs.merge=pjoin",
+            "-Dpetablox.ssa.kind=nomovephi",
 
-            "-Dchord.reflect.exclude=true",
-            "-Dchord.reuse.scope=true",
-            "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-            "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
+            "-Dpetablox.reflect.exclude=true",
+            "-Dpetablox.reuse.scope=true",
+            "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+            "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
 
-            "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
+            "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
         ],
     "mustalias-td" =>
         [
-            "-Dchord.run.analyses=cipa-0cfa-dlog,hybrid-mustalias-java",
-	    "-Dchord.mustalias.tdlimit=-1",
-	    "-Dchord.mustalias.bupelimit=1000000",
-            "-Dchord.mustalias.cipa=cipa-java",
-            "-Dchord.mustalias.cicg=cicg-java",
-            "-Dchord.mustalias.maxdepth=2",
-            "-Dchord.ssa.kind=nophi",
-	    "-Dchord.mustalias.buallms=true",
-	    "-Dchord.mustalias.statistics=true",
-	    "-Dchord.mustalias.jumpempty=false",
-	    "-Dchord.rhs.merge=pjoin",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog,hybrid-mustalias-java",
+	    "-Dpetablox.mustalias.tdlimit=-1",
+	    "-Dpetablox.mustalias.bupelimit=1000000",
+            "-Dpetablox.mustalias.cipa=cipa-java",
+            "-Dpetablox.mustalias.cicg=cicg-java",
+            "-Dpetablox.mustalias.maxdepth=2",
+            "-Dpetablox.ssa.kind=nophi",
+	    "-Dpetablox.mustalias.buallms=true",
+	    "-Dpetablox.mustalias.statistics=true",
+	    "-Dpetablox.mustalias.jumpempty=false",
+	    "-Dpetablox.rhs.merge=pjoin",
 
-            "-Dchord.reflect.exclude=true",
-            "-Dchord.reuse.scope=false",
-	    "-Dchord.reflect.kind=dynamic",
-#           "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-#           "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-	    "-Dchord.scope.exclude=com.,sun.",
-            "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
+            "-Dpetablox.reflect.exclude=true",
+            "-Dpetablox.reuse.scope=false",
+	    "-Dpetablox.reflect.kind=dynamic",
+#           "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+#           "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+	    "-Dpetablox.scope.exclude=com.,sun.",
+            "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
         ],
     "mustalias-tdbu" =>
         [
-            "-Dchord.run.analyses=cipa-0cfa-dlog,hybrid-mustalias-java",
-	    "-Dchord.mustalias.tdlimit=5",
-	    "-Dchord.mustalias.bupelimit=1000000",
-            "-Dchord.mustalias.cipa=cipa-java",
-            "-Dchord.mustalias.cicg=cicg-java",
-            "-Dchord.mustalias.maxdepth=2",
-            "-Dchord.ssa.kind=nophi",
-	    "-Dchord.mustalias.buallms=true",
-	    "-Dchord.mustalias.statistics=true",
-	    "-Dchord.mustalias.jumpempty=false",
-	    "-Dchord.rhs.merge=pjoin",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog,hybrid-mustalias-java",
+	    "-Dpetablox.mustalias.tdlimit=5",
+	    "-Dpetablox.mustalias.bupelimit=1000000",
+            "-Dpetablox.mustalias.cipa=cipa-java",
+            "-Dpetablox.mustalias.cicg=cicg-java",
+            "-Dpetablox.mustalias.maxdepth=2",
+            "-Dpetablox.ssa.kind=nophi",
+	    "-Dpetablox.mustalias.buallms=true",
+	    "-Dpetablox.mustalias.statistics=true",
+	    "-Dpetablox.mustalias.jumpempty=false",
+	    "-Dpetablox.rhs.merge=pjoin",
 
-            "-Dchord.reflect.exclude=true",
-            "-Dchord.reuse.scope=false",
-	    "-Dchord.reflect.kind=dynamic",
-#           "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-#           "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-	    "-Dchord.scope.exclude=com.,sun.",
-            "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
+            "-Dpetablox.reflect.exclude=true",
+            "-Dpetablox.reuse.scope=false",
+	    "-Dpetablox.reflect.kind=dynamic",
+#           "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+#           "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+	    "-Dpetablox.scope.exclude=com.,sun.",
+            "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
         ],
      "mustalias-bu" =>
         [
-            "-Dchord.run.analyses=cipa-0cfa-dlog,bu-mustalias-java",
-	    "-Dchord.mustalias.bupelimit=1000000",
-            "-Dchord.mustalias.cipa=cipa-java",
-            "-Dchord.mustalias.cicg=cicg-java",
-            "-Dchord.ssa.kind=nophi",
-	    "-Dchord.mustalias.buallms=true",
-	    "-Dchord.mustalias.statistics=true",
-	    "-Dchord.mustalias.jumpempty=false",
-	    "-Dchord.bottom-up.merge=pjoin",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog,bu-mustalias-java",
+	    "-Dpetablox.mustalias.bupelimit=1000000",
+            "-Dpetablox.mustalias.cipa=cipa-java",
+            "-Dpetablox.mustalias.cicg=cicg-java",
+            "-Dpetablox.ssa.kind=nophi",
+	    "-Dpetablox.mustalias.buallms=true",
+	    "-Dpetablox.mustalias.statistics=true",
+	    "-Dpetablox.mustalias.jumpempty=false",
+	    "-Dpetablox.bottom-up.merge=pjoin",
 
-            "-Dchord.reflect.exclude=true",
-            "-Dchord.reuse.scope=false",
-	    "-Dchord.reflect.kind=dynamic",
-#           "-Dchord.reflect.file=\${chord.work.dir}/reflect.txt",
-#           "-Dchord.methods.file=\${chord.work.dir}/methods.txt",
-	    "-Dchord.scope.exclude=com.,sun.",
-            "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
+            "-Dpetablox.reflect.exclude=true",
+            "-Dpetablox.reuse.scope=false",
+	    "-Dpetablox.reflect.kind=dynamic",
+#           "-Dpetablox.reflect.file=\${petablox.work.dir}/reflect.txt",
+#           "-Dpetablox.methods.file=\${petablox.work.dir}/methods.txt",
+	    "-Dpetablox.scope.exclude=com.,sun.",
+            "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org."
         ],   
     "provenance-instr" =>
      	[
-	    "-Dchord.run.analyses=cipa-0cfa-dlog,ctxts-java,argCopy-dlog,provenance-instr",
-	    "-Dchord.scope.exclude=java.,javax.,com.,sun.,org.",
+	    "-Dpetablox.run.analyses=cipa-0cfa-dlog,ctxts-java,argCopy-dlog,provenance-instr",
+	    "-Dpetablox.scope.exclude=java.,javax.,com.,sun.,org.",
 	],
     "print-polysite" =>
     	[
-	    "-Dchord.run.analyses=cipa-0cfa-dlog,ctxts-java,argCopy-dlog,cspa-kcfa-dlog,polysite-dlog,provenance-vis",
-	    "-Dchord.provenance.out_r=polySite",
-	    "-Dchord.ctxt.kind=cs",
+	    "-Dpetablox.run.analyses=cipa-0cfa-dlog,ctxts-java,argCopy-dlog,cspa-kcfa-dlog,polysite-dlog,provenance-vis",
+	    "-Dpetablox.provenance.out_r=polySite",
+	    "-Dpetablox.ctxt.kind=cs",
 	],
      	"provenance-kcfa" =>
      [
-      	"-Dchord.run.analyses=kcfa-refiner",
-	"-Dchord.scope.exclude=com,sun",
-        "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
-	"-Dchord.provenance.cfa2=false",
-	"-Dchord.provenance.query=all",
-	"-Dchord.provenance.heap=true",
-	"-Dchord.provenance.mono=true",
-	"-Dchord.provenance.queryWeight=0",
-	"-Dchord.provenance.boolDomain=true",
-	"-Dchord.provenance.invkK=5",
-	"-Dchord.provenance.allocK=5",
-	"-Dchord.max.heap=16g",
-        "-Dchord.reflect.exclude=true",
-        "-Dchord.reuse.scope=false",
-	"-Dchord.reflect.kind=dynamic",
+      	"-Dpetablox.run.analyses=kcfa-refiner",
+	"-Dpetablox.scope.exclude=com,sun",
+        "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+	"-Dpetablox.provenance.cfa2=false",
+	"-Dpetablox.provenance.query=all",
+	"-Dpetablox.provenance.heap=true",
+	"-Dpetablox.provenance.mono=true",
+	"-Dpetablox.provenance.queryWeight=0",
+	"-Dpetablox.provenance.boolDomain=true",
+	"-Dpetablox.provenance.invkK=5",
+	"-Dpetablox.provenance.allocK=5",
+	"-Dpetablox.max.heap=16g",
+        "-Dpetablox.reflect.exclude=true",
+        "-Dpetablox.reuse.scope=false",
+	"-Dpetablox.reflect.kind=dynamic",
 
      ],
      	"refinegen-kobj" =>
      [
-      	"-Dchord.run.analyses=kobj-gen",
-	"-Dchord.scope.exclude=com.,sun.",
-        "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
-	"-Dchord.max.heap=16g",
-        "-Dchord.reflect.exclude=true",
-        "-Dchord.reuse.scope=false",
-	"-Dchord.reflect.kind=dynamic",
+      	"-Dpetablox.run.analyses=kobj-gen",
+	"-Dpetablox.scope.exclude=com.,sun.",
+        "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+	"-Dpetablox.max.heap=16g",
+        "-Dpetablox.reflect.exclude=true",
+        "-Dpetablox.reuse.scope=false",
+	"-Dpetablox.reflect.kind=dynamic",
      ],
      	"provenance-kobj" =>
      [
-      	"-Dchord.run.analyses=kobj-refiner",
-	"-Dchord.scope.exclude=com.,sun.",
-        "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
-	"-Dchord.provenance.obj2=false",
-	"-Dchord.provenance.query=all",
-	"-Dchord.provenance.heap=true",
-	"-Dchord.provenance.mono=true",
-	"-Dchord.provenance.queryWeight=0",
-	"-Dchord.provenance.boolDomain=true",
-	"-Dchord.provenance.invkK=10",
-	"-Dchord.provenance.allocK=10",
-	"-Dchord.max.heap=16g",
-        "-Dchord.reflect.exclude=true",
-        "-Dchord.reuse.scope=false",
-	"-Dchord.reflect.kind=dynamic",
+      	"-Dpetablox.run.analyses=kobj-refiner",
+	"-Dpetablox.scope.exclude=com.,sun.",
+        "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+	"-Dpetablox.provenance.obj2=false",
+	"-Dpetablox.provenance.query=all",
+	"-Dpetablox.provenance.heap=true",
+	"-Dpetablox.provenance.mono=true",
+	"-Dpetablox.provenance.queryWeight=0",
+	"-Dpetablox.provenance.boolDomain=true",
+	"-Dpetablox.provenance.invkK=10",
+	"-Dpetablox.provenance.allocK=10",
+	"-Dpetablox.max.heap=16g",
+        "-Dpetablox.reflect.exclude=true",
+        "-Dpetablox.reuse.scope=false",
+	"-Dpetablox.reflect.kind=dynamic",
 
      ],
   	"provenance-typestate" =>
      [
-      	"-Dchord.run.analyses=cipa-0cfa-dlog,typestate-refiner",
-	"-Dchord.scope.exclude=com.,sun.",
-        "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
-	"-Dchord.provenance.query=all",
-	"-Dchord.provenance.heap=true",
-	"-Dchord.provenance.mono=true",
-	"-Dchord.provenance.queryWeight=0",
-	"-Dchord.max.heap=16g",
-	"-Dchord.bddbddb.max.heap=4g",
-	"-Dchord.ssa.kind=nomovephi",
-        "-Dchord.reflect.exclude=true",
-        "-Dchord.reuse.scope=false",
-	"-Dchord.reflect.kind=dynamic",
+      	"-Dpetablox.run.analyses=cipa-0cfa-dlog,typestate-refiner",
+	"-Dpetablox.scope.exclude=com.,sun.",
+        "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher.,org.",
+	"-Dpetablox.provenance.query=all",
+	"-Dpetablox.provenance.heap=true",
+	"-Dpetablox.provenance.mono=true",
+	"-Dpetablox.provenance.queryWeight=0",
+	"-Dpetablox.max.heap=16g",
+	"-Dpetablox.bddbddb.max.heap=4g",
+	"-Dpetablox.ssa.kind=nomovephi",
+        "-Dpetablox.reflect.exclude=true",
+        "-Dpetablox.reuse.scope=false",
+	"-Dpetablox.reflect.kind=dynamic",
      ],
 );
 
@@ -301,76 +301,76 @@ my %bench_options_map = (
     "mustalias-tdbu" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		 "luindex" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "toba-s" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
 	    ],
 	    "kawa-c" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
  	    ]
 
    	},
     "mustalias-td" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		 "luindex" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "toba-s" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
 	    ],
 	    "kawa-c" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
  	    ]
 
 
@@ -378,42 +378,42 @@ my %bench_options_map = (
     "mustalias-bu" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		 "luindex" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "toba-s" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
 	    ],
 	    "kawa-c" => [
-		"-Dchord.reflect.kind=none"
+		"-Dpetablox.reflect.kind=none"
  	    ]
 
    	},
@@ -421,32 +421,32 @@ my %bench_options_map = (
     "typestate_metaback" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		"luindex" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	   	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ]
 
 
@@ -454,36 +454,36 @@ my %bench_options_map = (
     "provenance-kcfa" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		"luindex" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ]
 
 
@@ -491,132 +491,132 @@ my %bench_options_map = (
 "refinegen-kobj" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		 "luindex" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		"schroeder-m" => [
-	    	"-Dchord.max.heap=64000m",
+	    	"-Dpetablox.max.heap=64000m",
 	    ],
 
    	},
 "provenance-kobj" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "luindex" => [
-		    "-Dchord.max.heap=64000m",
-		    "-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+		    "-Dpetablox.max.heap=64000m",
+		    "-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "bloat" => [
-	    	"-Dchord.max.heap=64000m",
+	    	"-Dpetablox.max.heap=64000m",
 	    ],
 	    "chart" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "fop" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "pmd" => [
-	    	"-Dchord.max.heap=64000m",
+	    	"-Dpetablox.max.heap=64000m",
 	    ],
 	    "xalan" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "schroeder-m" => [
-		    "-Dchord.max.heap=64000m",
+		    "-Dpetablox.max.heap=64000m",
 	    ],
 
    	},
     "provenance-typestate" =>
    	{
     	    "lusearch" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 		"luindex" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "avrora" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "hsqldb" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "antlr" => [
-	    	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "batik" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "sunflow" => [
-	    	"-Dchord.max.heap=16000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	    	"-Dpetablox.max.heap=16000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ],
 	    "rhino-a" => [
-	   	"-Dchord.max.heap=64000m",
-		"-Dchord.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
+	   	"-Dpetablox.max.heap=64000m",
+		"-Dpetablox.check.exclude=java.,com.,sun.,sunw.,javax.,launcher."
 	    ]
 
 
@@ -709,8 +709,8 @@ my $bench_options = $bench_options_map{$chosen_analysis}{$chosen_program};
 if (!$bench_options) { @$bench_options = (); }
 # NOTE: order of cmdline, bench, local, global options on following line is important
 my @options = (@global_options, @$local_options, @$bench_options, @cmdline_options);
-@options = map { s/\${chord.work.dir}/$bench_dir/; $_ } @options;
-unshift (@options, "-Dchord.work.dir=$bench_dir");
+@options = map { s/\${petablox.work.dir}/$bench_dir/; $_ } @options;
+unshift (@options, "-Dpetablox.work.dir=$bench_dir");
 given ($mode) {
     when("master") {
         &run_master(@options);
@@ -731,20 +731,20 @@ given ($mode) {
 ######################################################################################
 
 sub run_serial {
-    my @final_options = ("-Dchord.out.dir=./chord_output_$chosen_analysis", @_);
+    my @final_options = ("-Dpetablox.out.dir=./petablox_output_$chosen_analysis", @_);
     runcmd_in_background(@final_options);
 }
 
 sub run_master {
-    my @final_options = (("-Dchord.parallel.mode=master", "-Dchord.parallel.host=$master_host", "-Dchord.parallel.port=$master_port",
-        "-Dchord.out.dir=./chord_output_$chosen_analysis/Master"), @_);
+    my @final_options = (("-Dpetablox.parallel.mode=master", "-Dpetablox.parallel.host=$master_host", "-Dpetablox.parallel.port=$master_port",
+        "-Dpetablox.out.dir=./petablox_output_$chosen_analysis/Master"), @_);
     runcmd_in_background(@final_options);
 }
 
 sub run_worker {
-    my @final_options = (("-Dchord.parallel.mode=worker", "-Dchord.parallel.host=$master_host", "-Dchord.parallel.port=$master_port"), @_);
+    my @final_options = (("-Dpetablox.parallel.mode=worker", "-Dpetablox.parallel.host=$master_host", "-Dpetablox.parallel.port=$master_port"), @_);
     for (my $i = 1; $i <= $num_workers; $i++) {
-        runcmd_in_background("-Dchord.out.dir=./chord_output_$chosen_analysis/Worker$i", @final_options);
+        runcmd_in_background("-Dpetablox.out.dir=./petablox_output_$chosen_analysis/Worker$i", @final_options);
     }
 }
 

@@ -14,7 +14,7 @@ import petablox.project.analyses.ProgramRel;
 )
 public class RelExcludeInitMethods extends ProgramRel {
     public void fill() {
-        if (System.getProperty("chord.datarace.exclude.init", "true").equals("true"))
+        if (System.getProperty("petablox.datarace.exclude.init", "true").equals("true"))
             add(1);
     }
 }

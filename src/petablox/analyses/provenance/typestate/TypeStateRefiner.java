@@ -30,13 +30,13 @@ import soot.Unit;
 
 /**
  * A general class to run experiments based on k-cfa analysis.
- * -Dchord.provenance.queryOption=<all/separate/single>: specify the way to solve queries
- * -Dchord.provenance.heap=<true/false>: specify whether to turn on heap-cloning
- * -Dchord.provenance.mono=<true/false>: specify whether to monotonically grow the k values
- * -Dchord.provenance.queryWeight=<Integer>: specify the weight we want to use for queries; if -1, treat them as hard constraints.
+ * -Dpetablox.provenance.queryOption=<all/separate/single>: specify the way to solve queries
+ * -Dpetablox.provenance.heap=<true/false>: specify whether to turn on heap-cloning
+ * -Dpetablox.provenance.mono=<true/false>: specify whether to monotonically grow the k values
+ * -Dpetablox.provenance.queryWeight=<Integer>: specify the weight we want to use for queries; if -1, treat them as hard constraints.
  * If 0, use the sum(input weight) + 1
- * -Dchord.provenance.onlyTrackedTypes=<true/false>:specify if we only want queries where the types of alloc sites are those from the SAFE paper.
- * -Dchord.provenance.typestateQueries: number of queries to track
+ * -Dpetablox.provenance.onlyTrackedTypes=<true/false>:specify if we only want queries where the types of alloc sites are those from the SAFE paper.
+ * -Dpetablox.provenance.typestateQueries: number of queries to track
  * 
  * @author xin
  * 
@@ -117,16 +117,16 @@ public class TypeStateRefiner extends JavaAnalysis {
 
 		absMap = new HashMap<Tuple, Set<Local>>();
 
-		String opt = System.getProperty("chord.provenance.queryOption", "all");
-		ifMono = Boolean.getBoolean("chord.provenance.mono");
-		queryWeight = Integer.getInteger("chord.provenance.queryWeight", MaxSatGenerator.QUERY_HARD);
-		numQueries = Integer.getInteger("chord.provenance.typestateQueries", 500);
-		ifUpdateTS = Boolean.getBoolean("chord.provenance.typestateUpdateTrackedH");
+		String opt = System.getProperty("petablox.provenance.queryOption", "all");
+		ifMono = Boolean.getBoolean("petablox.provenance.mono");
+		queryWeight = Integer.getInteger("petablox.provenance.queryWeight", MaxSatGenerator.QUERY_HARD);
+		numQueries = Integer.getInteger("petablox.provenance.typestateQueries", 500);
+		ifUpdateTS = Boolean.getBoolean("petablox.provenance.typestateUpdateTrackedH");
 		
-		System.out.println("chord.provenance.queryOption = "+opt);
-		System.out.println("chord.provenance.mono = "+ifMono);
-		System.out.println("chord.provenance.queryWeight = "+queryWeight);
-		System.out.println("chord.provenance.typestateQueries = "+numQueries);
+		System.out.println("petablox.provenance.queryOption = "+opt);
+		System.out.println("petablox.provenance.mono = "+ifMono);
+		System.out.println("petablox.provenance.queryWeight = "+queryWeight);
+		System.out.println("petablox.provenance.typestateQueries = "+numQueries);
 		
 		//Initialize the queries
 		unresolvedQs =getQueries();
@@ -140,7 +140,7 @@ public class TypeStateRefiner extends JavaAnalysis {
 			runSeparate();
 		}
 		if (opt.equals("single")) {
-			String queryString = System.getProperty("chord.provenance.query");
+			String queryString = System.getProperty("petablox.provenance.query");
 			Tuple t = new Tuple(queryString);
 			runSingle(t);
 		}

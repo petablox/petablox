@@ -73,7 +73,7 @@ public class DomV extends ProgramDom<Local> implements IMethodVisitor {
     @Override
     public String toFIString(Local v) {
     	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if(printId) sb.append("(" + indexOf(v) + ")");
     	sb.append("LCL:" + getMethod(v).getName() + "@" + getMethod(v).getDeclaringClass().getName());
     	return sb.toString();

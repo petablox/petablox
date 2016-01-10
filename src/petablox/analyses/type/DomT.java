@@ -31,7 +31,7 @@ public class DomT extends ProgramDom<Type> {
     @Override
     public String toFIString(Type t){
     	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if(printId) sb.append("(" + indexOf(t) + ")");
     	if (t == null || t instanceof NullType)
     		sb.append("null");

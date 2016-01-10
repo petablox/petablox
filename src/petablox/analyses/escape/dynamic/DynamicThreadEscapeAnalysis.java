@@ -34,8 +34,8 @@ import petablox.analyses.dynamic.FldObj;
  * Relation accE is the disjoint union of relations escE and locE.
  *
  * Recognized system properties:
- * - chord.check.exclude
- * - chord.scope.exclude
+ * - petablox.check.exclude
+ * - petablox.scope.exclude
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

@@ -28,19 +28,19 @@ import soot.Unit;
 
 /**
  * A general class to run experiments based on k-obj analysis.
- * -Dchord.provenance.client=<polysite/downcast>: specify the client to use
- * -Dchord.provenance.obj2=<true/false>: specify whether to run only with the queries solvable using 2-OBJ
- * -Dchord.provenance.queryOption=<all/separate/single>: specify the way to solve queries
- * -Dchord.provenance.heap=<true/false>: specify whether to turn on heap-cloning
- * -Dchord.provenance.mono=<true/false>: specify whether to monotonically grow the k values
- * -Dchord.provenance.queryWeight=<Integer>: specify the weight we want to use for queries; if -1, treat them as hard constraints.
- * -Dchord.provenance.model=<default>: specify what model to use to bias the refinement. Default: default(no bias)
+ * -Dpetablox.provenance.client=<polysite/downcast>: specify the client to use
+ * -Dpetablox.provenance.obj2=<true/false>: specify whether to run only with the queries solvable using 2-OBJ
+ * -Dpetablox.provenance.queryOption=<all/separate/single>: specify the way to solve queries
+ * -Dpetablox.provenance.heap=<true/false>: specify whether to turn on heap-cloning
+ * -Dpetablox.provenance.mono=<true/false>: specify whether to monotonically grow the k values
+ * -Dpetablox.provenance.queryWeight=<Integer>: specify the weight we want to use for queries; if -1, treat them as hard constraints.
+ * -Dpetablox.provenance.model=<default>: specify what model to use to bias the refinement. Default: default(no bias)
  * If 0, use the sum(input weight) + 1
- * -Dchord.provenance.boolDomain=<true/false>: specify whether we want to use boolean domain based kcfa
- * -Dchord.provenance.invkK=<2>: if we use boolean domain, what is the k value we want for invoke sites
- * -Dchord.provenance.allocK=<2>: if we use boolean domain, what is the k value we want for alloc sites 
- * -Dchord.provenance.numQueries: randomly track given number of queries, default(-1) to track all queries
- * -Dchord.provenance.maxsatDebug: turn on debug options of the maxsat solver
+ * -Dpetablox.provenance.boolDomain=<true/false>: specify whether we want to use boolean domain based kcfa
+ * -Dpetablox.provenance.invkK=<2>: if we use boolean domain, what is the k value we want for invoke sites
+ * -Dpetablox.provenance.allocK=<2>: if we use boolean domain, what is the k value we want for alloc sites 
+ * -Dpetablox.provenance.numQueries: randomly track given number of queries, default(-1) to track all queries
+ * -Dpetablox.provenance.maxsatDebug: turn on debug options of the maxsat solver
  * @author xin
  * 
  */
@@ -96,7 +96,7 @@ public class KOBJRefiner extends JavaAnalysis {
 			throw new RuntimeException(e);
 		}
 		
-		String client = System.getProperty("chord.provenance.client");
+		String client = System.getProperty("petablox.provenance.client");
 		if (client.equals("polysite")) {
 			this.client = 0;
 			clientFile = "polysite-dlog_XZ89_";
@@ -121,7 +121,7 @@ public class KOBJRefiner extends JavaAnalysis {
 		}else
 			throw new RuntimeException("Unknown client: " + this.client);
 		
-		MaxSatGenerator.DEBUG = Boolean.getBoolean("chord.provenance.maxsatDebug");
+		MaxSatGenerator.DEBUG = Boolean.getBoolean("petablox.provenance.maxsatDebug");
 
 		//The analyses we need to run
 		tasks = new ArrayList<ITask>();
@@ -132,9 +132,9 @@ public class KOBJRefiner extends JavaAnalysis {
 		tasks.add(ClassicProject.g().getTask("pro-cspa-kobj-dlog_XZ89_"));
 		tasks.add(ClassicProject.g().getTask(clientFile));
 
-		System.setProperty("chord.ctxt.kind", "co");
-		System.setProperty("chord.kobj.khighest", "" + max);
-		System.setProperty("chord.kcfa.khighest", "" + max);
+		System.setProperty("petablox.ctxt.kind", "co");
+		System.setProperty("petablox.kobj.khighest", "" + max);
+		System.setProperty("petablox.kcfa.khighest", "" + max);
 		String chordMain = System.getenv("CHORD_MAIN");
 		String kinitConfig = chordMain + File.separator + "src/chord/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.config";
 		String kobjConfig = chordMain + File.separator + "src/chord/analyses/provenance/kobj/pro-cspa-kobj-dlog_XZ89_.config";
@@ -165,27 +165,27 @@ public class KOBJRefiner extends JavaAnalysis {
 		}
 		IKRel.save();	
 		
-		String opt = System.getProperty("chord.provenance.queryOption", "all");
-		ifCfa2 = Boolean.getBoolean("chord.provenance.obj2");
-		ifHeap = Boolean.getBoolean("chord.provenance.heap");
-		ifMono = Boolean.getBoolean("chord.provenance.mono");
-		queryWeight = Integer.getInteger("chord.provenance.queryWeight", MaxSatGenerator.QUERY_HARD);
-		ifBool = Boolean.getBoolean("chord.provenance.boolDomain");
-		invkK = Integer.getInteger("chord.provenance.invkK",2);
-		allocK = Integer.getInteger("chord.provenance.allocK",2);
-		numQueries = Integer.getInteger("chord.provenance.numQueries", -1);
+		String opt = System.getProperty("petablox.provenance.queryOption", "all");
+		ifCfa2 = Boolean.getBoolean("petablox.provenance.obj2");
+		ifHeap = Boolean.getBoolean("petablox.provenance.heap");
+		ifMono = Boolean.getBoolean("petablox.provenance.mono");
+		queryWeight = Integer.getInteger("petablox.provenance.queryWeight", MaxSatGenerator.QUERY_HARD);
+		ifBool = Boolean.getBoolean("petablox.provenance.boolDomain");
+		invkK = Integer.getInteger("petablox.provenance.invkK",2);
+		allocK = Integer.getInteger("petablox.provenance.allocK",2);
+		numQueries = Integer.getInteger("petablox.provenance.numQueries", -1);
 		
-		modelStr = System.getProperty("chord.provenance.model", "default");
+		modelStr = System.getProperty("petablox.provenance.model", "default");
 		
-		System.out.println("chord.provenance.queryOption = "+opt);
-		System.out.println("chord.provenance.obj2 = "+ifCfa2);
-		System.out.println("chord.provenance.mono = "+ifMono);
-		System.out.println("chord.provenance.queryWeight = "+queryWeight);
-		System.out.println("chord.provenance.boolDomain = "+ifBool);
-		System.out.println("chord.provenance.invkK = "+invkK);
-		System.out.println("chord.provenance.allocK = "+allocK);
-		System.out.println("chord.provenance.numQueries = "+numQueries);
-		System.out.println("chord.provenance.model = "+modelStr);
+		System.out.println("petablox.provenance.queryOption = "+opt);
+		System.out.println("petablox.provenance.obj2 = "+ifCfa2);
+		System.out.println("petablox.provenance.mono = "+ifMono);
+		System.out.println("petablox.provenance.queryWeight = "+queryWeight);
+		System.out.println("petablox.provenance.boolDomain = "+ifBool);
+		System.out.println("petablox.provenance.invkK = "+invkK);
+		System.out.println("petablox.provenance.allocK = "+allocK);
+		System.out.println("petablox.provenance.numQueries = "+numQueries);
+		System.out.println("petablox.provenance.model = "+modelStr);
 		
 		//Initialize the queries
 		unresolvedQs = this.runClientWithK(0);
@@ -215,7 +215,7 @@ public class KOBJRefiner extends JavaAnalysis {
 			runSeparate();
 		}
 		if (opt.equals("single")) {
-			String queryString = System.getProperty("chord.provenance.query");
+			String queryString = System.getProperty("petablox.provenance.query");
 			Tuple t = new Tuple(queryString);
 			// DBG Tuple t = new Tuple("polySite(64)");
 			runSingle(t);

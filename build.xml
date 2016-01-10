@@ -19,9 +19,9 @@
 		compile   Compile Petablox sources and build petablox.jar (default)
 		run       Run Petablox
 		          Optional properties:
-		          - chord.main.class (main class of analyzed program)
-		          - chord.class.path (classpath of analyzed program)
-		          - chord.run.analyses (names of analyses to be run)
+		          - petablox.main.class (main class of analyzed program)
+		          - petablox.class.path (classpath of analyzed program)
+		          - petablox.run.analyses (names of analyses to be run)
 		          - many more ... (see Petablox user guide)
 		clean     Cleanup all generated binary files
 		===============================================================
@@ -69,32 +69,32 @@
 
 	<!--
 		This target does the following things in order:
-		1. Loads file chord.properties from Petablox's main/ directory
-		2. Sets properties chord.use.buddy and chord.use.jvmti to false unless they
+		1. Loads file petablox.properties from Petablox's main/ directory
+		2. Sets properties petablox.use.buddy and petablox.use.jvmti to false unless they
 		   have been already set.
-		3. If either property chord.use.buddy or chord.use.jvmti is set to true then:
-			1. sets property chord.jdk_root to the root of the JDK installation
-			2. sets property chord.arch to '-m32' or '-m64'
-			3. sets property chord.make to 'make' on Linux and to 'gmake' on
+		3. If either property petablox.use.buddy or petablox.use.jvmti is set to true then:
+			1. sets property petablox.jdk_root to the root of the JDK installation
+			2. sets property petablox.arch to '-m32' or '-m64'
+			3. sets property petablox.make to 'make' on Linux and to 'gmake' on
 			   non-GNU operation systems
 	-->
 	<target name="props">
-		<property file="chord.properties"/>
-		<property name="chord.use.buddy" value="false"/>
-		<property name="chord.use.jvmti" value="false"/>
-		<if><or><equals arg1="${chord.use.buddy}" arg2="true"/>
-				<equals arg1="${chord.use.jvmti}" arg2="true"/>
+		<property file="petablox.properties"/>
+		<property name="petablox.use.buddy" value="false"/>
+		<property name="petablox.use.jvmti" value="false"/>
+		<if><or><equals arg1="${petablox.use.buddy}" arg2="true"/>
+				<equals arg1="${petablox.use.jvmti}" arg2="true"/>
 			</or>
 			<then>
 				<path id="jdk_root"><pathelement location="${java.home}/.."/></path>
-				<pathconvert targetos="unix" property="chord.jdk_root" refid="jdk_root"/>
+				<pathconvert targetos="unix" property="petablox.jdk_root" refid="jdk_root"/>
 				<if><equals arg1="${os.name}" arg2="FreeBSD"/>
-					<then><property name="chord.make" value="gmake"/></then>
-					<else><property name="chord.make" value="make"/></else>
+					<then><property name="petablox.make" value="gmake"/></then>
+					<else><property name="petablox.make" value="make"/></else>
 				</if>
 				<if><equals arg1="${sun.arch.data.model}" arg2="32"/>
-					<then><property name="chord.arch" value="-m32"/></then>
-					<else><property name="chord.arch" value="-m64"/></else>
+					<then><property name="petablox.arch" value="-m32"/></then>
+					<else><property name="petablox.arch" value="-m64"/></else>
 				</if>
 			</then>
 		</if>
@@ -175,22 +175,22 @@
 	</target>
 
 	<target name="compile-buddy" depends="props">
-		<if><equals arg1="${chord.use.buddy}" arg2="true"/>
+		<if><equals arg1="${petablox.use.buddy}" arg2="true"/>
 			<then>
-				<exec executable="${chord.make}" dir="bdd">
-					<arg value="JDK_ROOT=${chord.jdk_root}"/>
-					<arg value="M32_FLAG=${chord.arch}"/>
+				<exec executable="${petablox.make}" dir="bdd">
+					<arg value="JDK_ROOT=${petablox.jdk_root}"/>
+					<arg value="M32_FLAG=${petablox.arch}"/>
 				</exec>
 			</then>
 		</if>
 	</target>
 
 	<target name="compile-agent" depends="props">
-		<if><equals arg1="${chord.use.jvmti}" arg2="true"/>
+		<if><equals arg1="${petablox.use.jvmti}" arg2="true"/>
 			<then>
-				<exec executable="${chord.make}" dir="agent">
-					<arg value="JDK_ROOT=${chord.jdk_root}"/>
-					<arg value="M32_FLAG=${chord.arch}"/>
+				<exec executable="${petablox.make}" dir="agent">
+					<arg value="JDK_ROOT=${petablox.jdk_root}"/>
+					<arg value="M32_FLAG=${petablox.arch}"/>
 				</exec>
 			</then>
 		</if>
@@ -333,16 +333,16 @@
 	<target name="clean" depends="props" description="Clean all generated files.">
 		<delete dir="classes"/>
 		<delete file="petablox.jar"/>
-		<if><equals arg1="${chord.use.buddy}" arg2="true"/>
+		<if><equals arg1="${petablox.use.buddy}" arg2="true"/>
 			<then>
-				<exec executable="${chord.make}" dir="bdd">
+				<exec executable="${petablox.make}" dir="bdd">
 					<arg value="clean"/>
 				</exec>
 			</then>
 		</if>
-		<if><equals arg1="${chord.use.jvmti}" arg2="true"/>
+		<if><equals arg1="${petablox.use.jvmti}" arg2="true"/>
 			<then>
-				<exec executable="${chord.make}" dir="agent">
+				<exec executable="${petablox.make}" dir="agent">
 					<arg value="clean"/>
 				</exec>
 			</then>

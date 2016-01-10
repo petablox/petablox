@@ -28,19 +28,19 @@ import petablox.project.Messages;
  * Implementation of the Reps-Horwitz-Sagiv algorithm for context-sensitive dataflow analysis.
  *
  * Relevant system properties:
- * - chord.rhs.merge = [lossy|pjoin|naive] (default = lossy)
- * - chord.rhs.order = [bfs|dfs] (default = bfs) 
- * - chord.rhs.trace = [none|any|shortest] (default = none)
- * - chord.rhs.timeout = N milliseconds (default N = 0, no timeouts)
+ * - petablox.rhs.merge = [lossy|pjoin|naive] (default = lossy)
+ * - petablox.rhs.order = [bfs|dfs] (default = bfs) 
+ * - petablox.rhs.trace = [none|any|shortest] (default = none)
+ * - petablox.rhs.timeout = N milliseconds (default N = 0, no timeouts)
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends JavaAnalysis {
     protected static boolean DEBUG = false;
-    protected static final String CHORD_RHS_MERGE_PROPERTY = "chord.rhs.merge";
-    protected static final String CHORD_RHS_ORDER_PROPERTY = "chord.rhs.order";
-    protected static final String CHORD_RHS_TRACE_PROPERTY = "chord.rhs.trace";
-    protected static final String CHORD_RHS_TIMEOUT_PROPERTY = "chord.rhs.timeout";
+    protected static final String CHORD_RHS_MERGE_PROPERTY = "petablox.rhs.merge";
+    protected static final String CHORD_RHS_ORDER_PROPERTY = "petablox.rhs.order";
+    protected static final String CHORD_RHS_TRACE_PROPERTY = "petablox.rhs.trace";
+    protected static final String CHORD_RHS_TIMEOUT_PROPERTY = "petablox.rhs.timeout";
 
     protected List<Pair<Loc, PE>> workList = new ArrayList<Pair<Loc, PE>>();
     protected Map<Unit, Set<PE>> pathEdges = new HashMap<Unit, Set<PE>>();
@@ -109,7 +109,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
 
     /*********************************************************************************
      * Methods that clients might want to override but is not mandatory; alternatively,
-     * their default behavior can be changed by setting relevant chord.rhs.* property.
+     * their default behavior can be changed by setting relevant petablox.rhs.* property.
      *********************************************************************************/
 
     /**
@@ -153,7 +153,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
     }
 
     public void setTimeout() {
-        timeout = Integer.getInteger("chord.rhs.timeout", 0);
+        timeout = Integer.getInteger("petablox.rhs.timeout", 0);
     }
 
     /*********************************************************************************

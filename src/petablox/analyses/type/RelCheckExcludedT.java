@@ -9,7 +9,7 @@ import petablox.util.Utils;
 
 
 /**
- * Relation containing each type t the prefix of whose name is contained in the value of system property chord.check.exclude.
+ * Relation containing each type t the prefix of whose name is contained in the value of system property petablox.check.exclude.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

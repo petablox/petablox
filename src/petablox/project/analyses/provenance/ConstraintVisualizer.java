@@ -19,10 +19,10 @@ import petablox.project.analyses.ProgramRel;
 
 @Petablox(name = "provenance-vis")
 public class ConstraintVisualizer extends JavaAnalysis {
-	private final static String DLOG_CONFIG = "chord.provenance.instrConfig";
-	private final static String QUERY = "chord.provenance.query";
+	private final static String DLOG_CONFIG = "petablox.provenance.instrConfig";
+	private final static String QUERY = "petablox.provenance.query";
 	// by specify this property, print a certain relation to the given file
-	private final static String OUTPUT_R = "chord.provenance.out_r";
+	private final static String OUTPUT_R = "petablox.provenance.out_r";
 	private List<LookUpRule> rules = new ArrayList<LookUpRule>();
 	private Set<Tuple> solvedTuples = new HashSet<Tuple>();
 	Set<ConstraintItem> constraints;

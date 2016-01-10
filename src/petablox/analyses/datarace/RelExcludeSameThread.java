@@ -14,7 +14,7 @@ import petablox.project.analyses.ProgramRel;
 )
 public class RelExcludeSameThread extends ProgramRel {
     public void fill() {
-        if (System.getProperty("chord.datarace.exclude.eqth", "true").equals("true"))
+        if (System.getProperty("petablox.datarace.exclude.eqth", "true").equals("true"))
             add(1);
         else
         	add(0);

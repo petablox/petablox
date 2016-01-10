@@ -55,13 +55,13 @@ import soot.jimple.internal.JNewMultiArrayExpr;
  * </ul>
  * Recognized system properties:
  * <ul>
- *   <li>chord.inst.ctxt.kind: the kind of context sensitivity to use for each instance method (and all its locals).
+ *   <li>petablox.inst.ctxt.kind: the kind of context sensitivity to use for each instance method (and all its locals).
  *       One of 'ci' (context insensitive), 'cs' (k-CFA), or 'co' (k-object-sensitive).  Default is 'ci'.</li>
- *   <li>chord.stat.ctxt.kind: the kind of context sensitivity to use for each static method (and all its locals).
+ *   <li>petablox.stat.ctxt.kind: the kind of context sensitivity to use for each static method (and all its locals).
  *       One of 'ci' (context insensitive), 'cs' (k-CFA), or 'co' (copy-context-sensitive).  Default is 'ci'.</li>
- *   <li>chord.ctxt.kind: the kind of context sensitivity to use for each method (and all its locals).
- *       One of 'ci', 'cs', or 'co'.  Serves as shorthand for properties chord.inst.ctxt.kind and chord.stat.ctxt.kind.</li>
- *   <li>chord.kobj.k and chord.kcfa.k: the 'k' value to use for each object allocation site and each method call site,
+ *   <li>petablox.ctxt.kind: the kind of context sensitivity to use for each method (and all its locals).
+ *       One of 'ci', 'cs', or 'co'.  Serves as shorthand for properties petablox.inst.ctxt.kind and petablox.stat.ctxt.kind.</li>
+ *   <li>petablox.kobj.k and petablox.kcfa.k: the 'k' value to use for each object allocation site and each method call site,
  *       respectively.  Default is 0.</li>
  * </ul>
  * <p>
@@ -187,12 +187,12 @@ public class SimpleCtxtsAnalysis extends JavaAnalysis {
 
         mainMeth = Program.g().getMainMethod();
 
-        String ctxtKindStr = System.getProperty("chord.ctxt.kind", "ci");
-        Config.check(ctxtKindStr, new String[] { "ci", "cs", "co" }, "chord.ctxt.kind");
-        String instCtxtKindStr = System.getProperty("chord.inst.ctxt.kind", ctxtKindStr);
-        Config.check(instCtxtKindStr, new String[] { "ci", "cs", "co" }, "chord.inst.ctxt.kind");
-        String statCtxtKindStr = System.getProperty("chord.stat.ctxt.kind", ctxtKindStr);
-        Config.check(statCtxtKindStr, new String[] { "ci", "cs", "co" }, "chord.stat.ctxt.kind");
+        String ctxtKindStr = System.getProperty("petablox.ctxt.kind", "ci");
+        Config.check(ctxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.ctxt.kind");
+        String instCtxtKindStr = System.getProperty("petablox.inst.ctxt.kind", ctxtKindStr);
+        Config.check(instCtxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.inst.ctxt.kind");
+        String statCtxtKindStr = System.getProperty("petablox.stat.ctxt.kind", ctxtKindStr);
+        Config.check(statCtxtKindStr, new String[] { "ci", "cs", "co" }, "petablox.stat.ctxt.kind");
         if (instCtxtKindStr.equals("ci")) {
             instCtxtKind = CTXTINS;
         } else if (instCtxtKindStr.equals("cs")) {
@@ -206,19 +206,19 @@ public class SimpleCtxtsAnalysis extends JavaAnalysis {
         } else
             statCtxtKind = CTXTCPY;
 
-        int kobjK = Integer.getInteger("chord.kobj.k", 0);
+        int kobjK = Integer.getInteger("petablox.kobj.k", 0);
         currHighestKobjValue = kobjK;
-        int kheapK = Integer.getInteger("chord.kheap.k", 1);
+        int kheapK = Integer.getInteger("petablox.kheap.k", 1);
         currHighestKheapValue = kheapK;
         //assert (kobjK > 0);
-        int kcfaK = Integer.getInteger("chord.kcfa.k", 0);
+        int kcfaK = Integer.getInteger("petablox.kcfa.k", 0);
         currHighestKcfaValue = kcfaK;
         // assert (kobjK <= kcfaK+1)
 
-        highestKobjValue = Integer.getInteger("chord.kobj.khighest", 100);
+        highestKobjValue = Integer.getInteger("petablox.kobj.khighest", 100);
         //assert (highestKobjValue > 0);
-        highestKheapValue = Integer.getInteger("chord.kheap.khighest", 100);
-        highestKcfaValue = Integer.getInteger("chord.kcfa.khighest", 100);
+        highestKheapValue = Integer.getInteger("petablox.kheap.khighest", 100);
+        highestKcfaValue = Integer.getInteger("petablox.kcfa.khighest", 100);
 
         int numV = domV.size();
         int numM = domM.size();
@@ -711,9 +711,9 @@ public class SimpleCtxtsAnalysis extends JavaAnalysis {
     }
 
     public static String getCspaKind() {
-        String ctxtKindStr = System.getProperty("chord.ctxt.kind", "ci");
-        String instCtxtKindStr = System.getProperty("chord.inst.ctxt.kind", ctxtKindStr);
-        String statCtxtKindStr = System.getProperty("chord.stat.ctxt.kind", ctxtKindStr);
+        String ctxtKindStr = System.getProperty("petablox.ctxt.kind", "ci");
+        String instCtxtKindStr = System.getProperty("petablox.inst.ctxt.kind", ctxtKindStr);
+        String statCtxtKindStr = System.getProperty("petablox.stat.ctxt.kind", ctxtKindStr);
         int instCtxtKind, statCtxtKind;
         if (instCtxtKindStr.equals("ci")) {
             instCtxtKind = SimpleCtxtsAnalysis.CTXTINS;

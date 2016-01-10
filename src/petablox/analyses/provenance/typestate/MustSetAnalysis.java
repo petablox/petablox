@@ -24,7 +24,7 @@ import soot.Unit;
 /**
  * Analysis for pre-computing abstract must sets.
  * Recognized properties:
- * 	chord.provenance.mustsetAlgo - Value can either be 0 or 1. Chooses the algorithm to be used
+ * 	petablox.provenance.mustsetAlgo - Value can either be 0 or 1. Chooses the algorithm to be used
  * 	while constructing the must sets. There is performance vs memory tradeoff between the two
  * 	algorithm. Algo0 has better performance but poorer memory efficiency. 
  * <p>
@@ -84,7 +84,7 @@ public class MustSetAnalysis extends JavaAnalysis {
 	private List<IntPair> relcontainList; //order opposite of relcontain i.e. mustset is the key in this map
 
 	public void run() {
-		mustSetAlgoChoice = Integer.getInteger("chord.provenance.mustsetAlgo", 1);
+		mustSetAlgoChoice = Integer.getInteger("petablox.provenance.mustsetAlgo", 1);
 
 		domV = (DomV) ClassicProject.g().getTrgt("V");
 		domMS = (DomMS) ClassicProject.g().getTrgt("MS");

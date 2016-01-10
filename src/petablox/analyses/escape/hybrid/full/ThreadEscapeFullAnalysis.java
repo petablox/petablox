@@ -54,8 +54,8 @@ import soot.toolkits.graph.Block;
  * Produces files shape_fullEscE.txt, shape_fullLocE.txt, and results.html.
  * 
  * Relevant system properties:
- * - chord.escape.optimize = [true|false] (default = true)
- * - chord.escape.html = [true|false] (default = false)
+ * - petablox.escape.optimize = [true|false] (default = true)
+ * - petablox.escape.html = [true|false] (default = false)
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
@@ -93,18 +93,18 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
         super.init();
 
         // continue configuring the analysis
-        optimizeSumms = System.getProperty("chord.escape.optimize", "true").equals("true");
-        String bothStr = System.getProperty("chord.escape.both", "true");
+        optimizeSumms = System.getProperty("petablox.escape.optimize", "true").equals("true");
+        String bothStr = System.getProperty("petablox.escape.both", "true");
         if (bothStr.equals("true"))
             useBOTH = true;
         else if (bothStr.equals("false"))
             useBOTH = false;
         else
-            Messages.fatal("Unknown value for property chord.escape.both: " + bothStr);
+            Messages.fatal("Unknown value for property petablox.escape.both: " + bothStr);
         if (!useBOTH && mergeKind == MergeKind.LOSSY)
-            Messages.fatal("Cannot use chord.escape.both=false and chord.rhs.merge=lossy.");
-        System.out.println("chord.escape.optimize=" + optimizeSumms);
-        System.out.println("chord.escape.both=" + bothStr);
+            Messages.fatal("Cannot use petablox.escape.both=false and petablox.rhs.merge=lossy.");
+        System.out.println("petablox.escape.optimize=" + optimizeSumms);
+        System.out.println("petablox.escape.both=" + bothStr);
         // finished configuring the analysis
 
         Program program = Program.g();
@@ -177,7 +177,7 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
             vIdx += n;
         }
 
-        boolean HTMLize = Boolean.getBoolean("chord.escape.html");
+        boolean HTMLize = Boolean.getBoolean("petablox.escape.html");
 
         String html = "";
         int pass = 0;

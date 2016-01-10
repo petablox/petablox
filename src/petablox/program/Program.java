@@ -35,6 +35,7 @@ import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
 import soot.options.Options;
+import soot.util.Chain;
 
 /**
  * Quadcode intermediate representation of a Java program.
@@ -45,13 +46,13 @@ public class Program {
     private static final String LOADING_CLASS =
         "INFO: Program: Loading class %s.";
     private static final String MAIN_CLASS_NOT_DEFINED =
-        "ERROR: Program: Property chord.main.class must be set to specify the main class of program to be analyzed.";
+        "ERROR: Program: Property petablox.main.class must be set to specify the main class of program to be analyzed.";
     private static final String MAIN_METHOD_NOT_FOUND =
         "ERROR: Program: Could not find main class '%s' or main method in that class.";
     private static final String CLASS_PATH_NOT_DEFINED =
-        "ERROR: Program: Property chord.class.path must be set to specify location(s) of .class files of program to be analyzed.";
+        "ERROR: Program: Property petablox.class.path must be set to specify location(s) of .class files of program to be analyzed.";
     private static final String SRC_PATH_NOT_DEFINED =
-        "ERROR: Program: Property chord.src.path must be set to specify location(s) of .java files of program to be analyzed.";
+        "ERROR: Program: Property petablox.src.path must be set to specify location(s) of .java files of program to be analyzed.";
     private static final String METHOD_NOT_FOUND =
         "ERROR: Program: Could not find method '%s'.";
     private static final String CLASS_NOT_FOUND =
@@ -117,6 +118,10 @@ public class Program {
 		                               stdlibClPath);
     	Scene.v().addBasicClass(Config.mainClassName);
     	Scene.v().loadBasicClasses();
+    	if(Config.verbose >= 1) {
+    		Chain<SootClass> chc = Scene.v().getClasses();
+    		System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
+    	}
     }
 
     /**
@@ -400,7 +405,7 @@ public class Program {
                 if (s.startsWith("#"))
                     break;
                 
-                if (Utils.buildBoolProperty("chord.reflect.exclude", false)) {
+                if (Utils.buildBoolProperty("petablox.reflect.exclude", false)) {
                     boolean excludeLine = false;
                     String cName = strToClassName(s);
                     for (String c : Config.scopeExcludeAry) {
@@ -812,7 +817,7 @@ public class Program {
         List<String> classNames = new ArrayList<String>();
         String fileName = Config.classesFileName;
         
-        String runBefore = System.getProperty("chord.dynamic.runBeforeCmd");
+        String runBefore = System.getProperty("petablox.dynamic.runBeforeCmd");
         Process beforeProc = null;
         try { 
             
@@ -842,14 +847,14 @@ public class Program {
             basecmd.add("-javaagent:" + Config.jInstrAgentFileName + jAgentArgs);
             for (Map.Entry e : props.entrySet()) {
                 String key = (String) e.getKey();
-                if (key.startsWith("chord."))
+                if (key.startsWith("petablox."))
                     basecmd.add("-D" + key + "=" + e.getValue());
             }
         }
         basecmd.add(mainClassName);
         
         for (String runID : runIDs) {
-            String args = System.getProperty("chord.args." + runID, "");
+            String args = System.getProperty("petablox.args." + runID, "");
             List<String> fullcmd = new ArrayList<String>(basecmd);
             fullcmd.addAll(Utils.tokenize(args));
             OutDirUtils.executeWithWarnOnError(fullcmd, Config.dynamicTimeout);
@@ -872,8 +877,8 @@ public class Program {
     }
 
     /**
-     * Converts and dumps the program's Java source files specified by property {@code chord.src.path}
-     * to HTML files in the directory specified by property {@code chord.out.dir}.
+     * Converts and dumps the program's Java source files specified by property {@code petablox.src.path}
+     * to HTML files in the directory specified by property {@code petablox.out.dir}.
      */
     public void HTMLizeJavaSrcFiles() {
         if (!HTMLizedJavaSrcFiles) {

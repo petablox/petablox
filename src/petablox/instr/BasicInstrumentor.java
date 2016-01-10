@@ -33,7 +33,7 @@ public class BasicInstrumentor extends ExprEditor {
     public final static String USE_JVMTI_KEY = "use_jvmti";
 
     private final static String EXPLICITLY_EXCLUDING_CLASS =
-        "WARN: BasicInstrumentor: Not instrumenting class %s as it was excluded by chord.scope.exclude.";
+        "WARN: BasicInstrumentor: Not instrumenting class %s as it was excluded by petablox.scope.exclude.";
     private final static String IMPLICITLY_EXCLUDING_CLASS =
         "WARN: BasicInstrumentor: Not instrumenting class %s as it was excluded implicity.";
     private final static String EXCLUDING_CLASS =

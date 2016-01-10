@@ -18,7 +18,7 @@ import petablox.util.Utils;
 
 /**
  * Common operations on files in the directory specified by system property
- * <tt>chord.out.dir</tt> to which Chord outputs all files.
+ * <tt>petablox.out.dir</tt> to which Chord outputs all files.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
