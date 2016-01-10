@@ -217,9 +217,7 @@ public class Program {
     		types.add(t);
     		types.add(ArrayType.v(t, 1));
     	}
-    	types.add(NullType.v());
-    	
-    	/*String[] basicClassNames = { "java.lang.Object", 
+    	/*String[] basicClassNames = { "java.lang.Object",
     	        "java.lang.Class",
     	        "java.lang.String",
     	        "java.lang.System",
@@ -260,8 +258,9 @@ public class Program {
         List<Type> typesAry = getBasicTypes();
         int numTypes = typesAry.size();
         Collections.sort(typesAry, comparator);
-        types = new IndexSet<Type>(numTypes);
+        types = new IndexSet<Type>(numTypes+1);
         classes = new IndexSet<RefLikeType>();
+        types.add(NullType.v());
         for (int i = 0; i < numTypes; i++) {
             Type t = typesAry.get(i);
             assert (t != null);
@@ -570,8 +569,8 @@ public class Program {
     private static Comparator<Type> comparator = new Comparator<Type>() {
         @Override
         public int compare(Type t1, Type t2) {
-            String s1 = (t1 instanceof NullType) ? "NULL_TYPE" : t1.toString();
-            String s2 = (t2 instanceof NullType) ? "NULL_TYPE" : t2.toString();
+            String s1 = t1.toString();
+            String s2 = t2.toString();
             return s1.compareTo(s2);
         }
     };
