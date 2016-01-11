@@ -29,26 +29,26 @@ import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
 
 /**
- * A Chord project comprising a set of tasks and a set of targets
+ * A Petablox project comprising a set of tasks and a set of targets
  * produced/consumed by those tasks.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public class TaskParser {
     private static final String ANON_JAVA_TASK =
-        "WARN: TaskParser: Java analysis '%s' is not named via a @Chord(name=\"...\") annotation; using its class name itself as its name.";
+        "WARN: TaskParser: Java analysis '%s' is not named via a @Petablox(name=\"...\") annotation; using its class name itself as its name.";
     private static final String ANON_DLOG_TASK =
         "WARN: TaskParser: Dlog analysis '%s' is not named via a # name=... line; using its filename itself as its name.";
     private static final String NON_EXISTENT_PATH_ELEM = "WARN: TaskParser: Ignoring non-existent entry '%s' in path '%s'.";
     private static final String MALFORMED_PATH_ELEM = "WARN: TaskParser: Ignoring malformed entry '%s' in path '%s': %s";
     private static final String JAVA_TASK_REDEFINED =
-        "ERROR: TaskParser: Ignoring Java analysis '%s': its @Chord(name=\"...\") annotation uses name '%s' that is also used for another task '%s'.";
+        "ERROR: TaskParser: Ignoring Java analysis '%s': its @Petablox(name=\"...\") annotation uses name '%s' that is also used for another task '%s'.";
     private static final String DLOG_TASK_REDEFINED =
         "ERROR: TaskParser: Ignoring Dlog analysis '%s': its # name=\"...\" line uses name '%s' that is also used for another task '%s'.";
     private static final String IGNORE_DLOG_TASK =
         "ERROR: TaskParser: Ignoring Dlog analysis '%s'; errors were found while parsing it (see above).";
     private static final String IGNORE_JAVA_TASK =
-        "ERROR: TaskParser: Ignoring Java analysis '%s'; errors were found in its @Chord annotation (see above).";
+        "ERROR: TaskParser: Ignoring Java analysis '%s'; errors were found in its @Petablox annotation (see above).";
     
     private static final Pattern datalogFilePattern;
     static {

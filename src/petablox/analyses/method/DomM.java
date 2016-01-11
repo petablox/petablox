@@ -18,7 +18,7 @@ import petablox.util.Utils;
  * if this method is reachable from the main method of the program.
  * <p>
  * The above two methods are the entry-point methods of the implicitly created main thread and each
- * explicitly created thread, respectively.  Due to Chord's emphasis on concurrency, these methods
+ * explicitly created thread, respectively.  Due to Petablox's emphasis on concurrency, these methods
  * are referenced frequently by various pre-defined program analyses expressed in Datalog, and giving
  * them special indices makes it convenient to reference them in those analyses.
  * 

@@ -78,7 +78,7 @@ public class Dom<T> extends IndexMap<T> {
      *  <tt>N.type</tt>, which contains predicate definitions and <tt>N.csv</tt>, which 
      *  contains <tt>petablox.logicblox.delim</tt>-delimited (index, string) pairs.
      *  
-     *  @throws ChordException if an error occurs
+     *  @throws PetabloxException if an error occurs
      */
     public void saveToLogicBlox(String dirName) {
         LogicBloxExporter exporter = new LogicBloxExporter();

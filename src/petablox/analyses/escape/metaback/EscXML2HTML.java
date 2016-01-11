@@ -24,16 +24,16 @@ public class EscXML2HTML extends JavaAnalysis {
         domE.saveToXMLFile();
 
         OutDirUtils.copyResourceByName("web/style.css");
-        OutDirUtils.copyResourceByName("chord/analyses/method/Mlist.dtd");
-        OutDirUtils.copyResourceByName("chord/analyses/method/M.xsl");
-        OutDirUtils.copyResourceByName("chord/analyses/method/Mlist.dtd");
-		OutDirUtils.copyResourceByName("chord/analyses/heapacc/Elist.dtd");
-		OutDirUtils.copyResourceByName("chord/analyses/heapacc/E.xsl");
-        OutDirUtils.copyResourceByName("chord/analyses/alloc/Hlist.dtd");
-        OutDirUtils.copyResourceByName("chord/analyses/alloc/H.xsl");
-        OutDirUtils.copyResourceByName("chord/analyses/escape/metaback/web/results.dtd");
-        OutDirUtils.copyResourceByName("chord/analyses/escape/metaback/web/results.xml");
-        OutDirUtils.copyResourceByName("chord/analyses/escape/metaback/web/results.xsl");
+        OutDirUtils.copyResourceByName("petablox/analyses/method/Mlist.dtd");
+        OutDirUtils.copyResourceByName("petablox/analyses/method/M.xsl");
+        OutDirUtils.copyResourceByName("petablox/analyses/method/Mlist.dtd");
+		OutDirUtils.copyResourceByName("petablox/analyses/heapacc/Elist.dtd");
+		OutDirUtils.copyResourceByName("petablox/analyses/heapacc/E.xsl");
+        OutDirUtils.copyResourceByName("petablox/analyses/alloc/Hlist.dtd");
+        OutDirUtils.copyResourceByName("petablox/analyses/alloc/H.xsl");
+        OutDirUtils.copyResourceByName("petablox/analyses/escape/metaback/web/results.dtd");
+        OutDirUtils.copyResourceByName("petablox/analyses/escape/metaback/web/results.xml");
+        OutDirUtils.copyResourceByName("petablox/analyses/escape/metaback/web/results.xsl");
 
         OutDirUtils.runSaxon("results.xml", "results.xsl");
 

@@ -16,7 +16,7 @@ public class Config {
 
     private Config() { }
 
-    // properties concerning settings of the JVM running Chord
+    // properties concerning settings of the JVM running Petablox
 
     public final static String maxHeap = System.getProperty("petablox.max.heap");
     public final static String maxStack = System.getProperty("petablox.max.stack");
@@ -65,7 +65,7 @@ public class Config {
     public final static String extReflExcludeStr =
         System.getProperty("petablox.extrefl.exclude", Utils.concat(extReflDefExcludeStr, ",", extReflAddlExcludeStr));
 
-    // properties dictating what gets computed/printed by Chord
+    // properties dictating what gets computed/printed by Petablox
 
     public final static boolean buildScope = Utils.buildBoolProperty("petablox.build.scope", false);
     public final static String runAnalyses = System.getProperty("petablox.run.analyses", "");
@@ -75,18 +75,18 @@ public class Config {
     public final static boolean printProject = Utils.buildBoolProperty("petablox.print.project", false);
     public final static boolean printResults = Utils.buildBoolProperty("petablox.print.results", true);
     public final static boolean saveDomMaps = Utils.buildBoolProperty("petablox.save.maps", true);
-    // Determines verbosity level of Chord:
+    // Determines verbosity level of Petablox:
     // 0 => silent
     // 1 => print task/process enter/leave/time messages and sizes of computed doms/rels
     //      bddbddb: print sizes of relations output by solver
-    // 2 => all other messages in Chord
+    // 2 => all other messages in Petablox
     //      bddbddb: print bdd node resizing messages, gc messages, and solver stats (e.g. how long each iteration took)
     // 3 => bddbddb: noisy=yes for solver
     // 4 => bddbddb: tracesolve=yes for solver
     // 5 => bddbddb: fulltravesolve=yes for solver
     public final static int verbose = Integer.getInteger("petablox.verbose", 1);
 
-    // Chord project properties
+    // Petablox project properties
 
     public final static boolean classic = System.getProperty("petablox.classic").equals("true");
     public final static String stdJavaAnalysisPathName = System.getProperty("petablox.std.java.analysis.path");
@@ -110,7 +110,7 @@ public class Config {
     public final static int dynamicTimeout = Integer.getInteger("petablox.dynamic.timeout", -1);
     public final static int maxConsSize = Integer.getInteger("petablox.max.cons.size", 50000000);
 
-    // properties dictating what is reused across Chord runs
+    // properties dictating what is reused across Petablox runs
 
     public final static boolean reuseScope = Utils.buildBoolProperty("petablox.reuse.scope", false);
     public final static boolean reuseRels =Utils.buildBoolProperty("petablox.reuse.rels", false);
@@ -149,7 +149,7 @@ public class Config {
     public final static String bddbddbMaxHeap = System.getProperty("petablox.bddbddb.max.heap", "1024m");
     public final static String bddCodeFragmentFolder = System.getProperty("petablox.bddbddb.codeFragment.out", "");
 
-    // properties specifying names of Chord's output files and directories
+    // properties specifying names of Petablox's output files and directories
 
     public static String outDirName = System.getProperty("petablox.out.dir", workRel2Abs("petablox_output"));
     public final static String outFileName = System.getProperty("petablox.out.file", outRel2Abs("log.txt"));

@@ -89,7 +89,7 @@ public class Boot {
     static String mainDirName;
 
     public static void main(String[] args) throws Throwable {
-        String chordJarFile = getChordJarFile();
+        String chordJarFile = getPetabloxJarFile();
 
         // resolve Petablox's main dir
 
@@ -99,7 +99,7 @@ public class Boot {
         System.setProperty("petablox.main.dir", mainDirName);
 
         if (SPELLCHECK_ON) {
-            OptionSet optSet = new OptionSet(getChordSysProps());
+            OptionSet optSet = new OptionSet(getPetabloxSysProps());
             optSet.enableSubstitution();
             Checker.checkConf(new OptDictionary(Boot.class.getResourceAsStream("/options.dict") ),
                 optSet);
@@ -247,7 +247,7 @@ public class Boot {
         System.out.println("Boot spawning subprocess with command line: " + cmdLine.toString());
     }
 
-    private static Properties getChordSysProps() {
+    private static Properties getPetabloxSysProps() {
         Properties p = new Properties();
         for (Map.Entry e : System.getProperties().entrySet()) {
             if (e.getKey().toString().startsWith("chord"))
@@ -256,7 +256,7 @@ public class Boot {
         return p;
     }
 
-    private static String getChordJarFile() {
+    private static String getPetabloxJarFile() {
         String cname = Boot.class.getName().replace('.', '/') + ".class";
         URL url = Boot.class.getClassLoader().getResource(cname);
         if (!url.getProtocol().equals("jar"))

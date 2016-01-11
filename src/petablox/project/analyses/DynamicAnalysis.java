@@ -87,7 +87,7 @@ public class DynamicAnalysis extends BasicDynamicAnalysis {
 
     // subclasses MUST override unless this dynamic analysis
     // is performed using an instrumentation scheme (and traces)
-    // stored on disk from a previous run of Chord
+    // stored on disk from a previous run of Petablox
     public InstrScheme getInstrScheme() {
         Messages.fatal(NO_INSTR_SCHEME, getName());
         return null;

@@ -1,7 +1,7 @@
 package petablox.project;
 
 /**
- * Utility for logging messages during Chord's execution.
+ * Utility for logging messages during Petablox's execution.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

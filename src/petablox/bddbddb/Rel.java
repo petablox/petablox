@@ -181,11 +181,11 @@ public class Rel {
         double bddminfree = Double.parseDouble(
             System.getProperty("bddminfree", ".20"));
         // Note: Do not change the argument "java" below to "buddy".
-        // We require a separate BDD factory for each relation in Chord,
+        // We require a separate BDD factory for each relation in Petablox,
         // for modularity purposes.  We also require the ability for
         // multiple such factories to be active simultaneously.  But
         // BuDDyFactory, the factory of choice (since it is more
-        // efficient and is used for solving Datalog analyses in Chord)
+        // efficient and is used for solving Datalog analyses in Petablox)
         // allows at most one instance of itself to be active at a time.
         // Hence, we need to use JFactory here instead, which allows
         // multiple instances of itself be active simultaneously.

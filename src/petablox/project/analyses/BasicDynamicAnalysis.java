@@ -169,7 +169,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
      * implemented in main/agent/ in order to start and end the event handler
      * at runtime.
      *
-     * If any dynamic analysis uses this JVMTI agent, then Chord must have been
+     * If any dynamic analysis uses this JVMTI agent, then Petablox must have been
      * compiled by setting petablox.use.jvmti=true (default is false) either on
      * the command line or in file main/petablox.properties.
      *
@@ -283,7 +283,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
         boolean reuse = false;
         if (reuseTraces()) {
             // check if all trace files from a previous run of
-            // Chord exist; only then can those files be reused
+            // Petablox exist; only then can those files be reused
             boolean failed = false;
             for (String runID : runIDs) {
                 String s = getTraceFileName(0, runID);

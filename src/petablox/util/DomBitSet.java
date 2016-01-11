@@ -8,7 +8,7 @@ import java.util.Set;
 import petablox.bddbddb.Dom;
 
 /**
- * A bitset implementation of Set interface specially for Chord Dom objects. The
+ * A bitset implementation of Set interface specially for Petablox Dom objects. The
  * operations between DomBitSets with the same Dom should be significantly
  * faster than normal Set operations.
  * 

@@ -282,14 +282,14 @@ public class ThreadEscapeFullAnalysis extends RHSAnalysis<Edge, Edge> {
             out.close();
 
             OutDirUtils.copyResourceByName("web/style.css");
-            OutDirUtils.copyResourceByName("chord/analyses/method/Mlist.dtd");
-            OutDirUtils.copyResourceByName("chord/analyses/heapacc/Elist.dtd");
-            OutDirUtils.copyResourceByName("chord/analyses/heapacc/E.xsl");
-            OutDirUtils.copyResourceByName("chord/analyses/alloc/Hlist.dtd");
-            OutDirUtils.copyResourceByName("chord/analyses/alloc/H.xsl");
-            OutDirUtils.copyResourceByName("chord/analyses/escape/web/results.xml");
-            OutDirUtils.copyResourceByName("chord/analyses/escape/web/results.dtd");
-            OutDirUtils.copyResourceByName("chord/analyses/escape/web/results.xsl");
+            OutDirUtils.copyResourceByName("petablox/analyses/method/Mlist.dtd");
+            OutDirUtils.copyResourceByName("petablox/analyses/heapacc/Elist.dtd");
+            OutDirUtils.copyResourceByName("petablox/analyses/heapacc/E.xsl");
+            OutDirUtils.copyResourceByName("petablox/analyses/alloc/Hlist.dtd");
+            OutDirUtils.copyResourceByName("petablox/analyses/alloc/H.xsl");
+            OutDirUtils.copyResourceByName("petablox/analyses/escape/web/results.xml");
+            OutDirUtils.copyResourceByName("petablox/analyses/escape/web/results.dtd");
+            OutDirUtils.copyResourceByName("petablox/analyses/escape/web/results.xsl");
             OutDirUtils.runSaxon("results.xml", "results.xsl");
             Program.g().HTMLizeJavaSrcFiles();
         }

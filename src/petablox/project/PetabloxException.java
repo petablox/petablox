@@ -1,7 +1,7 @@
 package petablox.project;
 
 /**
- * A base class for Chord's runtime exceptions.
+ * A base class for Petablox's runtime exceptions.
  */
 public class PetabloxException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

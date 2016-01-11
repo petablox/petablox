@@ -10,7 +10,7 @@ import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
 
 /**
- * Parser for Chord annotations on classes defining program analyses.
+ * Parser for Petablox annotations on classes defining program analyses.
  *
  * The annotation specifies aspects of the analysis such as its name,
  * its consumed and produced targets, etc.
@@ -18,7 +18,7 @@ import petablox.util.Utils;
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public class PetabloxAnnotParser {
-    private static final String ERROR = "ERROR: PetabloxAnnotParser: @Chord annotation of class '%s': %s";
+    private static final String ERROR = "ERROR: PetabloxAnnotParser: @Petablox annotation of class '%s': %s";
     private static final String SIGN_EMPTY = "Method sign() cannot return empty string.";
     private static final String SIGN_NON_EMPTY = "Method sign() cannot return non-empty string.";
     private static final String PRODUCES_NON_EMPTY = "Method produces() cannot return non-empty string.";
@@ -49,15 +49,15 @@ public class PetabloxAnnotParser {
     /**
      * Constructor.
      * 
-     * @param    type    A class annotated with a Chord annotation.
+     * @param    type    A class annotated with a Petablox annotation.
      */
     public PetabloxAnnotParser(Class type) {
         this.type = type;
     }
     /**
-     * Parses this Chord annotation.
+     * Parses this Petablox annotation.
      * 
-     * @return    true iff the Chord annotation parses successfully.
+     * @return    true iff the Petablox annotation parses successfully.
      */
     public boolean parse() {
         Petablox chord = (Petablox) type.getAnnotation(Petablox.class);
@@ -211,10 +211,10 @@ public class PetabloxAnnotParser {
         }
     }
     /**
-     * Provides the name specified by this Chord annotation of the
+     * Provides the name specified by this Petablox annotation of the
      * associated analysis.
      * 
-     * @return    The name specified by this Chord annotation of the
+     * @return    The name specified by this Petablox annotation of the
      * associated analysis.
      */
     public String getName() {
@@ -222,50 +222,50 @@ public class PetabloxAnnotParser {
     }
     /**
      * Provides the name of the control target specified by this
-     * Chord annotation as prescribing the associated analysis.
+     * Petablox annotation as prescribing the associated analysis.
      * 
      * @return    The name of the control target specified by this
-     * Chord annotation as prescribing the associated analysis.
+     * Petablox annotation as prescribing the associated analysis.
      */
     public String getPrescriber() {
         return prescriber;
     }
     /**
-     * Provides the names of data targets specified by this Chord
+     * Provides the names of data targets specified by this Petablox
      * annotation as consumed by the associated analysis.
      * 
-     * @return    The names of data targets specified by this Chord
+     * @return    The names of data targets specified by this Petablox
      * annotation as consumed by the associated analysis.
      */
     public List<String> getConsumes() {
         return consumes;
     }
     /**
-     * Provides the names of data targets specified by this Chord
+     * Provides the names of data targets specified by this Petablox
      * annotation as produced by the associated analysis.
      * 
-     * @return    The names of data targets specified by this Chord
+     * @return    The names of data targets specified by this Petablox
      * annotation as produced by the associated analysis.
      */
     public List<String> getProduces() {
         return produces;
     }
     /**
-     * Provides the names of control targets specified by this Chord
+     * Provides the names of control targets specified by this Petablox
      * annotation as produced by the associated analysis.
      * 
-     * @return    The names of control targets specified by this Chord
+     * @return    The names of control targets specified by this Petablox
      * annotation as produced by the associated analysis.
      */
     public List<String> getControls() {
         return controls;
     }
     /**
-     * Provides a partial map specified by this Chord annotation from
+     * Provides a partial map specified by this Petablox annotation from
      * names of program relation targets consumed/produced by the
      * associated analysis to their signatures.
      * 
-     * @return    A partial map specified by this Chord annotation from
+     * @return    A partial map specified by this Petablox annotation from
      * names of program relation targets consumed/produced by the
      * associated analysis to their signatures.
      */
@@ -273,11 +273,11 @@ public class PetabloxAnnotParser {
         return nameToSignMap;
     }
     /**
-     * Provides a partial map specified by this Chord annotation from
+     * Provides a partial map specified by this Petablox annotation from
      * names of data targets consumed/produced by the associated
      * analysis to their types.
      * 
-     * @return    A partial map specified by this Chord annotation from
+     * @return    A partial map specified by this Petablox annotation from
      * names of data targets consumed/produced by the associated
      * analysis to their types.
      */
