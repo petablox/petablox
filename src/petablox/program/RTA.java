@@ -639,9 +639,11 @@ public class RTA implements ScopeBuilder {
                         	SootClass r = loadClass(sm);
                         	int dim = s.split("\\[").length - 1;
                         	assert (dim > 0);
-                        	ArrayType arr = ArrayType.v(r.getType(), dim);
-                            if (r != null && arr != null)
-                                processResolvedAryNewInstSite(u, arr, r.getType());
+                            if(r!=null){
+                                ArrayType arr = ArrayType.v(r.getType(), dim);
+                                if (arr != null)
+                                    processResolvedAryNewInstSite(u, arr, r.getType());
+                            }
                         }
                         break;
                     }
