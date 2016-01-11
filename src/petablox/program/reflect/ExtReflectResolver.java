@@ -102,6 +102,11 @@ public class ExtReflectResolver {
         basecmd.add("-d");
         basecmd.add(dstDirName); 
         basecmd.add(mainClassName);
+        //Booster depends on the fact that the scope exclude string is the last argument.
+        if (Config.scopeExcludeStr.equals(""))
+        	basecmd.add("petablox_empty");
+        else
+        	basecmd.add(Config.scopeExcludeStr);
         return basecmd;
     }
     
