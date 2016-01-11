@@ -53,7 +53,7 @@ public class ObjNewInstAnalysis extends JavaAnalysis {
         List<Pair<Unit, List<RefLikeType>>> l =
             Program.g().getReflect().getResolvedObjNewInstSites();
         for (Pair<Unit, List<RefLikeType>> p : l) {
-            Unit q = p.val0;
+			Unit q = p.val0;
             int iIdx = domI.indexOf(q);
             if(iIdx < 0)
                 System.err.println("ObjNewInstAnalysis can't resolve quad " + q + " in " + SootUtilities.getMethod(q) + " " + SootUtilities.getMethod(q).getDeclaringClass());
@@ -66,13 +66,17 @@ public class ObjNewInstAnalysis extends JavaAnalysis {
                 	RefType r1 = (RefType)r;
                 	SootClass c = r1.getSootClass();
                 	List<SootMethod> meths = c.getMethods();
-                	for(SootMethod m : meths){
-                		if(m.getName().contains("<init>()")){
-                			int mIdx = domM.indexOf(m);
-                            if (mIdx >= 0)
-                                   relObjNewInstIM.add(iIdx, mIdx);
-                		}
-                	}
+					try{
+						SootMethod m = c.getMethod("void <init>()");
+						int mIdx = domM.indexOf(m);
+						if (mIdx >= 0)
+							   relObjNewInstIM.add(iIdx, mIdx);
+						else{
+							System.out.println("RelObjNewInstIM: Method "+m+" not found in DomM");
+						}
+					}catch(Exception e){
+						System.out.println("RelObjNewInstIM Could not get method init from "+c);
+					}
                 }
             }
         }
