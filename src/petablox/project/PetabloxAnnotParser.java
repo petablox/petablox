@@ -17,8 +17,8 @@ import petablox.util.Utils;
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
-public class ChordAnnotParser {
-    private static final String ERROR = "ERROR: ChordAnnotParser: @Chord annotation of class '%s': %s";
+public class PetabloxAnnotParser {
+    private static final String ERROR = "ERROR: PetabloxAnnotParser: @Chord annotation of class '%s': %s";
     private static final String SIGN_EMPTY = "Method sign() cannot return empty string.";
     private static final String SIGN_NON_EMPTY = "Method sign() cannot return non-empty string.";
     private static final String PRODUCES_NON_EMPTY = "Method produces() cannot return non-empty string.";
@@ -51,7 +51,7 @@ public class ChordAnnotParser {
      * 
      * @param    type    A class annotated with a Chord annotation.
      */
-    public ChordAnnotParser(Class type) {
+    public PetabloxAnnotParser(Class type) {
         this.type = type;
     }
     /**

@@ -175,7 +175,7 @@ public class TaskParser {
         } catch (ClassNotFoundException ex) {
             Messages.fatal(ex);
         }
-        ChordAnnotParser info = new ChordAnnotParser(type);
+        PetabloxAnnotParser info = new PetabloxAnnotParser(type);
         boolean success = info.parse();
         if (!success) {
             ignoreJavaTask(className);
