@@ -295,7 +295,8 @@ public class RTA implements ScopeBuilder {
 	    	}
     	}
         try{
-            s.retrieveActiveBody();
+            if(!s.hasActiveBody() && s.isConcrete())
+                s.retrieveActiveBody();
         }catch(Exception e){
             Messages.log(METHOD_BODY_NOT_FOUND,m.getSubSignature(),m.getDeclaringClass().getName());
             s = StubMethodSupport.emptyStub(s);
