@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Iterator;
 
+import petablox.util.soot.SootMethodWrapper;
 import soot.*;
 import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.InvokeExpr;
@@ -109,7 +110,11 @@ public class RTA implements ScopeBuilder {
 
     // worklist for methods seen so far in current iteration but whose
     // CFGs haven't been processed yet
-    private List<SootMethod> methodWorklist;
+    private List<SootMethodWrapper> methodWorklist;
+
+    // List of methods as they are visited along with pre and post
+    // order numbers
+    private List<SootMethodWrapper> methodsAugmented;
 
     // handle to the representation of class java.lang.Object
     private SootClass javaLangObject;
@@ -117,6 +122,9 @@ public class RTA implements ScopeBuilder {
     // flag indicating that another iteration is needed; it is set if
     // set reachableAllocClasses grows in the current iteration
     private boolean repeat = true;
+
+    // Global counter for DFS pre and post order numbering
+    private int counter;
     
     public RTA(String reflectKind) {
         this.reflectKind = reflectKind;
@@ -129,6 +137,15 @@ public class RTA implements ScopeBuilder {
     public IndexSet<SootMethod> getMethods() {
         if (methods == null) build();
         return methods;
+    }
+
+    /**
+     * @see petablox.program.ScopeBuilder#getAugmentedMethods()
+     */
+    @Override
+    public List<SootMethodWrapper> getAugmentedMethods() {
+        if (methods == null) build();
+        return methodsAugmented;
     }
 
     /**
@@ -154,7 +171,9 @@ public class RTA implements ScopeBuilder {
         classesVisitedForClinit = new HashSet<SootClass>();
         reachableAllocClasses = new IndexSet<RefLikeType>();
         methods = new IndexSet<SootMethod>();
-        methodWorklist = new ArrayList<SootMethod>();
+        methodWorklist = new ArrayList<SootMethodWrapper>();
+        methodsAugmented = new ArrayList<SootMethodWrapper>();
+        counter = 0;
     
         if (Config.verbose >= 1) System.out.println("ENTER: RTA");
         Timer timer = new Timer();
@@ -212,6 +231,8 @@ public class RTA implements ScopeBuilder {
             repeat = false;
             classesVisitedForClinit.clear();
             methods.clear();
+            methodsAugmented.clear();
+            counter = 0;
             visitClinits(mainClass);
             visitMethod(mainMethod);
 
@@ -223,10 +244,17 @@ public class RTA implements ScopeBuilder {
                 }
             
             while (!methodWorklist.isEmpty()) {
-                int n = methodWorklist.size();
-                SootMethod m = methodWorklist.remove(n - 1);
-                if (DEBUG) System.out.println("Processing CFG of " + m);
-                processMethod(m);
+                //int n = methodWorklist.size();
+                SootMethodWrapper w = methodWorklist.get(0);
+                if(w.processed){
+                    w.setPostOrder(counter++);
+                    methodWorklist.remove(0);
+                }else {
+                    SootMethod m = w.getSootMethod();
+                    if (DEBUG) System.out.println("Processing CFG of " + m);
+                    processMethod(m);
+                    w.processed = true;
+                }
             }
 
             if (staticReflectResolver != null) {
@@ -304,7 +332,9 @@ public class RTA implements ScopeBuilder {
         if (methods.add(s)) {
             if (DEBUG) System.out.println("\tAdding method: " + s);
             if (!s.isAbstract()) {
-                methodWorklist.add(s);
+                SootMethodWrapper w = new SootMethodWrapper(s,counter++, methodsAugmented.size());
+                methodWorklist.add(0,w);
+                methodsAugmented.add(w);
             }
         }
     }
