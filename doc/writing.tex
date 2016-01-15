@@ -2,10 +2,10 @@
 \chapter{Writing an Analysis}
 \label{chap:writing}
 
-Chord provides several {\it analysis templates}: classes containing boilerplate
+Petablox provides several {\it analysis templates}: classes containing boilerplate
 code that can be extended by users to rapidly prototype different kinds of
 analyses.  These classes are organized in the following hierarchy in package
-\javadoc{chord.project.analyses}{chord/project/analyses/package-summary.html}:
+\javadoc{petablox.project.analyses}{petablox/project/analyses/package-summary.html}:
 
 \begin{verbatim}
 JavaAnalysis
@@ -32,18 +32,18 @@ The following sections describe each of these analysis templates in more detail.
 \section{JavaAnalysis}
 \label{sec:java}
 
-Class \javadoc{chord.project.analyses.JavaAnalysis}{chord/project/analyses/JavaAnalysis.html}
+Class \javadoc{petablox.project.analyses.JavaAnalysis}{petablox/project/analyses/JavaAnalysis.html}
 is the most general template for writing an analysis.  An analysis can be
 created using this template by extending this class as follows:
 
 \begin{framed}
 \begin{verbatim}
-import chord.project.Chord;
-import chord.project.ClassicProject;
-import chord.project.analyses.JavaAnalysis;
-import chord.program.Program;
+import petablox.project.Petablox;
+import petablox.project.ClassicProject;
+import petablox.project.analyses.JavaAnalysis;
+import petablox.program.Program;
 
-@Chord(
+@Petablox(
     name = "<ANALYSIS_NAME>",
     consumes = { "C1", ..., "Cn" },
     produces = { "P1", ..., "Pm" },
@@ -70,12 +70,12 @@ public class ExampleAnalysis extends JavaAnalysis {
 
 To run the analysis, class \code{ExampleAnalysis} must be compiled to a
 {\tt .class} file that occurs in some element (directory or jar/zip file) of
-the path specified by property \code{chord.java.analysis.path}.  This causes
-the analysis to be included in a Chord project as a task that is represented
+the path specified by property \code{petablox.java.analysis.path}.  This causes
+the analysis to be included in a Petablox project as a task that is represented
 as a separate object of class \code{ExampleAnalysis}.
 
-The {\tt @Chord} annotation, defined in class
-\javadoc{chord.project.Chord}{chord/project/Chord.html}, specifies via fields
+The {\tt @Petablox} annotation, defined in class
+\javadoc{petablox.project.Petablox}{petablox/project/Petablox.html}, specifies via fields
 the following aspects of the analysis:
 \begin{itemize}
 \item
@@ -95,7 +95,7 @@ In practice, however, the types of only the targets declared as
 consumed/produced by this analysis are specified.  Moreover, although the type
 of each target that is consumed/produced by the above analysis is specified in
 the above annotation, in practice the types of hardly any targets need to be
-explicitly specified, because they can be automatically inferred by Chord from
+explicitly specified, because they can be automatically inferred by Petablox from
 analyses created using more specialized templates discussed below that also
 consume/produce those targets.
 \end{itemize}
@@ -116,7 +116,7 @@ consumed/produced targets and/or the analysis code in the {\tt run()} method.
 %analyses declaratively in Datalog, called DlogAnalysis
 %(Section \ref{sec:dlog}).  JavaAnalysis is the most general template:
 %it least constrains the kind of analysis that can be written but also offers the
-%least boilerplate code for writing an analysis.  Chord provides several
+%least boilerplate code for writing an analysis.  Petablox provides several
 %additional templates for writing analyses imperatively in Java that are
 %specialized forms of JavaAnalysis, namely, ProgramDom
 %(Section \ref{sec:program-dom}), ProgramRel (Section \ref{sec:program-rel}),
@@ -126,7 +126,7 @@ consumed/produced targets and/or the analysis code in the {\tt run()} method.
 \section{ProgramDom}
 \label{sec:program-dom}
 
-Class \javadoc{chord.project.analyses.ProgramDom}{chord/project/analyses/ProgramDom.html}
+Class \javadoc{petablox.project.analyses.ProgramDom}{petablox/project/analyses/ProgramDom.html}
 is a template for writing a {\it program domain analysis}.
 A {\it program domain} represents an indexed set of values of a fixed
 kind, typically from the program being analyzed, such as the set of all methods
@@ -134,18 +134,18 @@ in the program, the set of all fields in the program, etc.  Indices are
 assigned starting from 0 and in the order in which values are added to the set.
 A program domain primarily serves as an input to Datalog analyses
 (see Section \ref{sec:dlog}).  Thus, it is a kind of target (i.e.,
-analysis result) in a Chord project.  A common way to define a program domain
+analysis result) in a Petablox project.  A common way to define a program domain
 is to create a program domain analysis by extending class {\tt ProgramDom} as
 follows:
 
 \begin{framed}
 \begin{verbatim}
-import chord.project.Chord;
-import chord.project.ClassicProject;
-import chord.project.analyses.ProgramDom;
-import chord.program.Program;
+import petablox.project.Petablox;
+import petablox.project.ClassicProject;
+import petablox.project.analyses.ProgramDom;
+import petablox.program.Program;
 
-@Chord(
+@Petablox(
     name = "<DOM_NAME>",
     consumes = { "C1", ..., "Cn" }
 )
@@ -168,10 +168,10 @@ public class ExampleDom extends ProgramDom<DOM_TYPE> {
 
 To run the analysis, class \code{ExampleDom} must be compiled to a {\tt .class}
 file that occurs in some element (directory or jar/zip file) of the path
-specified by property \code{chord.java.analysis.path}.  This causes the
-analysis to be included in a Chord project as a task that is represented as a
+specified by property \code{petablox.java.analysis.path}.  This causes the
+analysis to be included in a Petablox project as a task that is represented as a
 separate object of class \code{ExampleDom}.  Moreover, that object also denotes
-a target in the Chord project.  Both the task and target have the same name
+a target in the Petablox project.  Both the task and target have the same name
 \code{<DOM_NAME>}.
 
 The \code{ProgramDom} template can be viewed as providing the following
@@ -180,11 +180,11 @@ specialized form of the general \code{JavaAnalysis} template:
 \begin{itemize}
 \item
 It consumes any number and kinds of targets explicitly declared in the 
-{\tt @Chord} annotation ({\tt C1}, ..., {\tt Cn}).
+{\tt @Petablox} annotation ({\tt C1}, ..., {\tt Cn}).
 \item
 It produces a single target, namely, the defined program domain itself
 (named \code{<DOM_NAME>} and of type \code{ExampleDom}).  It is a runtime error
-to explicitly declare any produced targets in the {\tt @Chord} annotation (see
+to explicitly declare any produced targets in the {\tt @Petablox} annotation (see
 below).
 \item
 Its \code{run()} method adds values to the defined program domain.  Typically,
@@ -194,21 +194,21 @@ it suffices to override the {\tt fill()} method (which is called by the
 \end{itemize}
 
 It is a runtime error to explicitly specify any produced targets in the
-{\tt @Chord} annotation of a class extending {\tt ProgramDom}.  If you wish to
+{\tt @Petablox} annotation of a class extending {\tt ProgramDom}.  If you wish to
 define an analysis that produces additional targets besides a program domain,
 then you can still define the program domain in a class such as
 {\tt ExampleDom} that extends {\tt ProgramDom}, but you must not annotate it
-with the {\tt @Chord} annotation (since this annotation causes the class to be 
+with the {\tt @Petablox} annotation (since this annotation causes the class to be 
 egarded as defining an analysis).  Instead, define the analysis in a separate
 class that extends {\tt JavaAnalysis}, as follows:
 
 \begin{framed}
 \begin{verbatim}
-import chord.project.Chord;
-import chord.project.ClassicProject;
-import chord.project.analyses.JavaAnalysis;
+import petablox.project.Petablox;
+import petablox.project.ClassicProject;
+import petablox.project.analyses.JavaAnalysis;
 
-@Chord(
+@Petablox(
     name = "<ANALYSIS_NAME>",
     consumes = { "C1", ..., "Cn" },
     produces = { "<DOM_NAME>", ... }
@@ -224,31 +224,31 @@ public class ExampleAnalysis extends JavaAnalysis {
 \end{framed}
 
 Note that targets {\tt C1}, ..., {\tt Cn} that were declared as consumed in
-the {\tt @Chord} annotation of class {\tt ExampleDom} (and any other fields
+the {\tt @Petablox} annotation of class {\tt ExampleDom} (and any other fields
 such as {\tt namesOfTypes} and {\tt types}) must now be provided in the
-{\tt @Chord} annotation of class \code{ExampleAnalysis}.
+{\tt @Petablox} annotation of class \code{ExampleAnalysis}.
 
 \section{ProgramRel}
 \label{sec:program-rel}
 
-Class \javadoc{chord.project.analyses.ProgramRel}{chord/project/analyses/ProgramRel.html}
+Class \javadoc{petablox.project.analyses.ProgramRel}{petablox/project/analyses/ProgramRel.html}
 is a template for writing a {\it program relation analysis}.
 A {\it program relation} represents a set of tuples over one or more fixed 
 program domains.  A program relation primarily serves as an input or output of
 Datalog analyses (see Section \ref{sec:dlog}).  Thus, it is a kind of
-target (i.e., analysis result) in a Chord project.  A common way to define a
+target (i.e., analysis result) in a Petablox project.  A common way to define a
 program relation is to create a program domain analysis by extending class
 {\tt ProgramRel} as follows:
 
 \begin{framed}
 \begin{verbatim}
-import chord.project.Chord;
-import chord.project.ClassicProject;
-import chord.project.analyses.ProgramDom;
-import chord.project.analyses.ProgramRel;
-import chord.program.Program;
+import petablox.project.Petablox;
+import petablox.project.ClassicProject;
+import petablox.project.analyses.ProgramDom;
+import petablox.project.analyses.ProgramRel;
+import petablox.program.Program;
 
-@Chord(
+@Petablox(
     name = "<REL_NAME>",
     consumes = { "C1", ..., "Cn" },
     sign = "<DOM_NAMES>:<DOM_ORDER>"
@@ -277,10 +277,10 @@ public class ExampleRel extends ProgramRel {
 
 To run the analysis, class \code{ExampleRel} must be compiled to a {\tt .class}
 file that occurs in some element (directory or jar/zip file) of the path
-specified by property \code{chord.java.analysis.path}.  This causes the
-analysis to be included in a Chord project as a task that is represented as a
+specified by property \code{petablox.java.analysis.path}.  This causes the
+analysis to be included in a Petablox project as a task that is represented as a
 separate object of class \code{ExampleRel}.  Moreover, that object also denotes
-a target in the Chord project.  Both the task and target have the same name
+a target in the Petablox project.  Both the task and target have the same name
 \code{<REL_NAME>}.
 
 The \code{ProgramRel} template can be viewed as providing the following
@@ -289,13 +289,13 @@ specialized form of the general \code{JavaAnalysis} template:
 \begin{itemize}
 \item
 It consumes any number and kinds of targets explicitly declared in the
-{\tt @Chord} annotation ({\tt C1}, ..., {\tt Cn}) as well as implicit targets
+{\tt @Petablox} annotation ({\tt C1}, ..., {\tt Cn}) as well as implicit targets
 corresponding to the program domains in the schema of the defined program
 relation (named {\tt D1}, ..., {\tt Dm} and having type {\tt ProgramDom}).
 \item
 It produces a single target, namely, the defined program relation itself
 (named \code{<REL_NAME>} and of type \code{ExampleRel}).  It is a runtime error
-to explicitly declare any produced targets in the {\tt @Chord} annotation (see
+to explicitly declare any produced targets in the {\tt @Petablox} annotation (see
 below).
 \item
 Its \code{run()} method adds tuples to the defined program relation.  Typically,
@@ -307,7 +307,7 @@ tuple ({\tt o1}, ..., {\tt om}) to be added to the relation.
 Unlike for program domains, the order in which tuples are added to a program
 relation is irrelevant.  But the relative ordering of the program domains over
 which the program relation is declared matters heavily for performance.
-This is because each program relation in Chord is represented symbolically (as
+This is because each program relation in Petablox is represented symbolically (as
 oppoosed to explicitly) using a data structure called a Binary Decision Diagram
 (BDD for short).  This in turn is because in pratice, a program relation (e.g.,
 one representing context-sensitive points-to information)
@@ -317,7 +317,7 @@ prohibitively and needlessly expensive.  The size of a BDD, on the other hand,
 does not depend at all upon the number of tuples in the program relation that
 the BDD represents.  Instead, it depends heavily upon the relative ordering
 of the program domains over which the program relation is declared.
-Hence, the {\tt @Chord} annotation on a class such as {\tt ExampleRel} that
+Hence, the {\tt @Petablox} annotation on a class such as {\tt ExampleRel} that
 extends \code{ProgramRel} is required to have a {\tt sign} field whose value is
 the {\it sign} of the program relation.
 A sign is a string of the form \code{<DOM_NAMES>:<DOM_ORDER>} where:
@@ -361,21 +361,21 @@ Chapter \ref{chap:datalog} describes how BDDs are represented
 performance of operations on them (Section \ref{sec:tuning-datalog}).
 
 It is a runtime error to explicitly specify any produced targets in the
-{\tt @Chord} annotation of a class extending {\tt ProgramRel}.  If you wish to
+{\tt @Petablox} annotation of a class extending {\tt ProgramRel}.  If you wish to
 define an analysis that produces additional targets besides a program relation,
 then you can still define the program relation in a class such as
 {\tt ExampleRel} that extends {\tt ProgramRel}, but you must not annotate it
-with the {\tt @Chord} annotation (since this annotation causes the class to be 
+with the {\tt @Petablox} annotation (since this annotation causes the class to be 
 egarded as defining an analysis).  Instead, define the analysis in a separate
 class that extends {\tt JavaAnalysis}, as follows:
 
 \begin{framed}
 \begin{verbatim}
-import chord.project.Chord;
-import chord.project.ClassicProject;
-import chord.project.analyses.JavaAnalysis;
+import petablox.project.Petablox;
+import petablox.project.ClassicProject;
+import petablox.project.analyses.JavaAnalysis;
 
-@Chord(
+@Petablox(
     name = "<ANALYSIS_NAME>",
     consumes = { "C1", ..., "Cn" },
     produces = { "<REL_NAME>", ... },
@@ -392,9 +392,9 @@ public class ExampleAnalysis extends JavaAnalysis {
 \end{framed}
 
 Note that targets {\tt C1}, ..., {\tt Cn} that were declared as consumed in
-the {\tt @Chord} annotation of class {\tt ExampleRel} (and any other fields
+the {\tt @Petablox} annotation of class {\tt ExampleRel} (and any other fields
 such as {\tt namesOfTypes} and {\tt types}) must now be provided in the
-{\tt @Chord} annotation of class \code{ExampleAnalysis}.  Just like the
+{\tt @Petablox} annotation of class \code{ExampleAnalysis}.  Just like the
 1-to-1 correspondence between the values of fields {\tt namesOfTypes} and
 {\tt types}, there is a 1-to-1 correspondence between the values of fields
 {\tt namesOfSigns} and {\tt signs}, which allow relating the name of any program
@@ -403,20 +403,20 @@ relation in the project with its sign.
 \section{DlogAnalysis}
 \label{sec:dlog}
 
-A common way to rapidly prototype analyses in Chord is using a declarative
+A common way to rapidly prototype analyses in Petablox is using a declarative
 logic-programming language called Datalog.  A Datalog analysis is defined in a
 {\tt .dlog} file that primarily specifies the following:
 \begin{itemize}
 \item
 A set of {\it program domains} {\tt D1}, ..., {\tt Dk}.  A program domain is a
-set of values of a fixed kind.  Each program domain in a Chord project is
+set of values of a fixed kind.  Each program domain in a Petablox project is
 a target that is represented as a separate object of class \code{ProgramDom}
 (see Section \ref{sec:program-dom}).
 \item
 A set of {\it program relations}, including input relations {\tt I1}, ..., {\tt In}
 and output relations {\tt O1}, ..., {\tt Om}.  A program relation is a set of
 tuples over one or more fixed program domains {\tt D1}, ..., {\tt Dk}.  Each program
-relation in a Chord project is a target that is represented as a separate object
+relation in a Petablox project is a target that is represented as a separate object
 of class \code{ProgramRel} (see Section \ref{sec:program-rel}).
 \item
 A set of rules (constraints) {\tt R} specifying how to compute the output
@@ -426,10 +426,10 @@ An example such file is shown in Chapter \ref{chap:datalog} which also
 explains all aspects of Datalog analyses.
 
 To run the analysis, the {\tt .dlog} file must occur in some element (directory
-or jar/zip file) of the path specified by property \code{chord.dlog.analysis.path}.
- This causes the analysis to be included in a Chord project as a task that is
+or jar/zip file) of the path specified by property \code{petablox.dlog.analysis.path}.
+ This causes the analysis to be included in a Petablox project as a task that is
 represented as a separate object of class
-\javadoc{chord.project.analyses.DlogAnalysis}{chord/project/analyses/DlogAnalysis.html}.
+\javadoc{petablox.project.analyses.DlogAnalysis}{petablox/project/analyses/DlogAnalysis.html}.
 Note that, unlike class {\tt JavaAnalysis}, users must not extend class
 {\tt DlogAnalysis} but must instead define the analysis in a {\tt .dlog} file.
 
@@ -491,13 +491,13 @@ by solving constraints {\tt R}.
 
 %\section{Core relations}
 
-%Chord includes code to build a very large number of relations. These standard relations are very useful in writing your own analyses.  For example, relation \texttt{sub} includes all pairs of types \texttt{(t1, t2)} where \texttt{t2} is a subclass of \texttt{t1}.  Most of these standard relations are in the package \texttt{chord.rels}.
+%Petablox includes code to build a very large number of relations. These standard relations are very useful in writing your own analyses.  For example, relation \texttt{sub} includes all pairs of types \texttt{(t1, t2)} where \texttt{t2} is a subclass of \texttt{t1}.  Most of these standard relations are in the package \texttt{petablox.rels}.
 
-%A Java analysis should extend JavaAnalysis or ProgramRel.  It's usually easiest if an analysis only produces one relation, in which case extending ProgramRel is the best approach.  If you extend ProgramRel, all the work of creating and saving the relation is taken care of for you; all you need to do is add tuples to the relation.Typically you do this by calling \texttt{super.add(...)} with the tuple you wish to add to the relation.  For forther convenience, you can implement one of the Visitor interfaces defined in \texttt{chord.program.visitors}.  This will force you to implement some \texttt{visit} methods that iterate over all elements in some domain, such as all methods or all invocation points. 
+%A Java analysis should extend JavaAnalysis or ProgramRel.  It's usually easiest if an analysis only produces one relation, in which case extending ProgramRel is the best approach.  If you extend ProgramRel, all the work of creating and saving the relation is taken care of for you; all you need to do is add tuples to the relation.Typically you do this by calling \texttt{super.add(...)} with the tuple you wish to add to the relation.  For forther convenience, you can implement one of the Visitor interfaces defined in \texttt{petablox.program.visitors}.  This will force you to implement some \texttt{visit} methods that iterate over all elements in some domain, such as all methods or all invocation points. 
 
 %Sometimes, you need to create two different relations at the same time. In this case, the right approach is to extend JavaAnalysis, and explicitly create and save the relations on your own.
 
-%Regardless of which of these approaches you take, every Java analysis must have an \texttt{@Chord} annotation.  This annotation is a set of named fields.  At a minimum, this annotation must specify the name of the analysis.  If you extend ProgramRel, the name of the analysis will be treated as the same as that of the generated relation.  For example, \texttt{@Chord(name = "F")} is a valid annotation.  The name of the Java class that generates the relation is ignored by Chord -- only the annotation matters.
+%Regardless of which of these approaches you take, every Java analysis must have an \texttt{@Petablox} annotation.  This annotation is a set of named fields.  At a minimum, this annotation must specify the name of the analysis.  If you extend ProgramRel, the name of the analysis will be treated as the same as that of the generated relation.  For example, \texttt{@Petablox(name = "F")} is a valid annotation.  The name of the Java class that generates the relation is ignored by Petablox -- only the annotation matters.
 
 %\textbf{MAYUR, IS SIGN MANDATORY?   IF NOT, WHEN CAN IT BE OMITTED?}
 

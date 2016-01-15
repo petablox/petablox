@@ -2,9 +2,9 @@
 \chapter{Datalog Analysis}
 \label{chap:datalog}
 
-A common way to rapidly prototype an analysis in Chord is using a declarative
+A common way to rapidly prototype an analysis in Petablox is using a declarative
 logic-programming language called Datalog.  This chapter describes all aspects
-of Datalog analyses in Chord.  Section \ref{sec:writing-datalog} explains how to
+of Datalog analyses in Petablox.  Section \ref{sec:writing-datalog} explains how to
 write and run a Datalog analysis while Section \ref{sec:tuning-datalog} explains how
 to tune its performance.
 
@@ -15,7 +15,7 @@ A Datalog analysis declares a bunch of input/output program relations, each over
 one or more program domains, and provides a bunch of rules (constraints)
 specifying how to compute the output relations from the input relations.  It can
 be defined in any file with suffix {\tt .dlog} in any directory in the path
-specified by property \code{chord.dlog.analysis.path}.  An example Datalog
+specified by property \code{petablox.dlog.analysis.path}.  An example Datalog
 analysis is shown below:
 
 \texonly{\newpage}
@@ -93,7 +93,7 @@ Each rule in the analysis is a Horn clause of the form
 meaning that if relations {\tt R1}, ..., {\tt Rn} contain tuples {\tt t1}, ..., {\tt tn}
 respectively, then relation {\tt R} contains tuple {\tt t}.
 A backslash may be used at the end of a line to break long rules for readability.
-The BDD-based Datalog solver bddbddb used in Chord does not apply any
+The BDD-based Datalog solver bddbddb used in Petablox does not apply any
 sophisticated optimizations to simplify the rules; besides the BDD variable order,
 the manner in which these rules are expressed heavily affects the performance of
 the solver.  For instance, an important manual optimization involves breaking down
@@ -102,8 +102,8 @@ See Section \ref{sec:tuning-datalog} for hints on tuning the performance
 of Datalog analyses.
 
 Running a Datalog analysis is no different from running any other kind of
-analysis in Chord.  See Section \ref{sec:running-predefined} for an example of
-running a Datalog analysis predefined in Chord.  Also, see Chapter
+analysis in Petablox.  See Section \ref{sec:running-predefined} for an example of
+running a Datalog analysis predefined in Petablox.  Also, see Chapter
 \ref{chap:running} for how to run an analysis in general, whether written in
 Java or in Datalog, and whether predefined or user-defined.
 
@@ -122,7 +122,7 @@ relations in the analysis are not produced by any other analysis.
 \label{sec:tuning-datalog}
 
 There are several tricks analysis writers can try to improve the
-performance of bddbddb, the Datalog solver used by Chord, often
+performance of bddbddb, the Datalog solver used by Petablox, often
 by several orders of magnitude.
 Try these tricks by running the following command:
 
@@ -136,8 +136,8 @@ where {\tt <FILE>} is the file defining the Datalog analysis
 to be tuned, and {\tt <DIR>} is the directory containing the
 program domains ({\tt *.dom} files) and program relations ({\tt *.bdd} files)
 consumed by the analysis (this is by default the
-\code{chord_output/bddbddb/} directory generated
-by a previous run of Chord.
+\code{petablox_output/bddbddb/} directory generated
+by a previous run of Petablox.
 
 \begin{enumerate}
 
@@ -234,7 +234,7 @@ you tweak other things.
 \item
 
 The relative order of values *within* domains (e.g.,
-in domains named \verb+M+, \verb+H+, \verb+C+, etc. in Chord) affects the
+in domains named \verb+M+, \verb+H+, \verb+C+, etc. in Petablox) affects the
 performance of bddbddb, but
 I've never tried changing this and studying its effect.  It might be
 worth trying.  For instance, John Whaley's PLDI'04 paper describes a
@@ -247,10 +247,10 @@ Finally, it is worth emphasizing that BDDs are not magic.
 If your algorithm itself is fundamentally hard to scale, then BDDs are
 unlikely to help you a whole lot.  Secondly, many things are awkward to
 encode as integers (e.g., the abstract contexts in domain \verb+C+ 
-in Chord) or as Datalog rules.
+in Petablox) or as Datalog rules.
 For instance, I've noticed that summary-based context-sensitive program
 analyses are hard to express in Datalog.  The may-happen-in-parallel
-analysis provided in Chord shows a relatively simple kind of summary-based
+analysis provided in Petablox shows a relatively simple kind of summary-based
 analysis that uses the Reps-Horwitz-Sagiv tabulation algorithm.  But this
 is as far as I could get---more complicated summary-based algorithms are
 best written in Java itself instead of Datalog.
