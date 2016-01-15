@@ -281,13 +281,13 @@ public class RTA implements ScopeBuilder {
      */
     protected void visitMethod(SootMethod m) {
     	SootMethod s = null;
-        if(m.getDeclaringClass().isPhantom())
-            return;
     	if(StubMethodSupport.methodToStub.containsKey(m)) {
     		s = StubMethodSupport.methodToStub.get(m);
     	}else if (StubMethodSupport.methodToStub.containsValue(m)) {
     		s = m;
     	}else{
+            if(m.getDeclaringClass().isPhantom())
+                return;
 	    	if(StubMethodSupport.toReplace(m)){
 	    		s = StubMethodSupport.getStub(m);
 	    	}else if(isExcluded(m)){
