@@ -1,9 +1,7 @@
 package petablox.program;
 
-import java.util.ArrayList;
 import java.util.List;
 import petablox.util.IndexSet;
-import petablox.util.soot.SootMethodWrapper;
 import soot.RefType;
 import soot.RefLikeType;
 import soot.SootClass;
@@ -48,12 +46,7 @@ public class DynamicBuilder implements ScopeBuilder {
         }
         return methods;
     }
-
-    @Override
-    public List<SootMethodWrapper> getAugmentedMethods(){
-        return new ArrayList<SootMethodWrapper>();
-    }
-
+    
     @Override
     public IndexSet<RefLikeType> getClasses(){
     	return classes;

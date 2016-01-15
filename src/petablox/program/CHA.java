@@ -11,7 +11,6 @@ import petablox.project.Messages;
 import petablox.util.IndexSet;
 import petablox.util.Timer;
 import petablox.util.soot.ICFG;
-import petablox.util.soot.SootMethodWrapper;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Hierarchy;
@@ -66,11 +65,6 @@ public class CHA implements ScopeBuilder {
 
     public CHA(ClassHierarchy _ch) {
         ch = _ch;
-    }
-
-    @Override
-    public List<SootMethodWrapper> getAugmentedMethods(){
-        return new ArrayList<SootMethodWrapper>();
     }
 
     @Override
