@@ -121,7 +121,7 @@ public class RelCHA extends ProgramRel {
                         if (SootUtilities.isSubtypeOf(d,c)) {
                             SootMethod n = this.getMethodItr(d, subsig);
                             if(n==null){
-                            	System.out.println("WARN: RelCHA Method not found:"+subsig+" Class:"+d+" Interface:"+c);
+                            	System.out.println("WARN: RelCHA Method not found:"+subsig+" Class:"+d+" SuperType:"+c);
                             	continue;
                             }
                             //assert (n != null);

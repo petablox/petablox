@@ -281,6 +281,8 @@ public class RTA implements ScopeBuilder {
      */
     protected void visitMethod(SootMethod m) {
     	SootMethod s = null;
+        if(m.getDeclaringClass().isPhantom())
+            return;
     	if(StubMethodSupport.methodToStub.containsKey(m)) {
     		s = StubMethodSupport.methodToStub.get(m);
     	}else if (StubMethodSupport.methodToStub.containsValue(m)) {
@@ -410,13 +412,13 @@ public class RTA implements ScopeBuilder {
             for (Pair<Unit, RefType> p : resolvedObjNewInstSites)
                 processResolvedObjNewInstSite(p.val0, p.val1);*/
         }
-        try{
+        /*try{
         	if(!m.hasActiveBody())
         		m.retrieveActiveBody(); // TODO: Hack to ignore methods which have no source
         }catch(Exception e){
         	Messages.log(METHOD_BODY_NOT_FOUND, m.getSubSignature(),m.getDeclaringClass().getName());
         	return;
-        }
+        }*/
         Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
         while(itr.hasNext()){
         	Local l = itr.next();
