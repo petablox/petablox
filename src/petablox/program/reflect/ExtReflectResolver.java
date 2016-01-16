@@ -63,6 +63,11 @@ public class ExtReflectResolver {
         return;
     }
     
+    public void setUserClassPath() {
+    	Config.userClassPathName = Config.workDirName + File.separator + basename(Config.outDirName) +
+                File.separator + REFL_DIRNAME;
+    }
+    
     private List<String> getPlayOutCmd() {
         String mainClassName = Config.mainClassName;
         assert (mainClassName != null);

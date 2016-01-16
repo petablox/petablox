@@ -113,7 +113,10 @@ public class Program {
     	
 		if (Config.reflectKind.equals("external")) {
 			ExtReflectResolver extReflectResolver = new ExtReflectResolver();
-		 	extReflectResolver.run();
+			if (Config.reuseScope == false)
+				extReflectResolver.run();
+			else
+				extReflectResolver.setUserClassPath();
 		}
 		String stdlibClPath = System.getProperty("sun.boot.class.path");
 		Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
