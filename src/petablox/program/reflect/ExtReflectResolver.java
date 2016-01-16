@@ -1,11 +1,11 @@
 package petablox.program.reflect;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import petablox.project.Config;
 import petablox.project.Messages;
@@ -27,7 +27,7 @@ public class ExtReflectResolver {
     private static final String REFL_DATA_FILTERED = "out/refl_filt.log";
     private static final String PO_OUT = "out";
     private static final String PO_SCRATCH = "scratch";
-    private static final String SUPPORTED_REFL ="\"^Class\\.forName\\|^Class\\.newInstance\\|^Constructor\\.newInstance\\|^Field\\.get\\|^Field\\.set\\|^Method\\.invoke\"";
+    private static final String SUPPORTED_REFL ="^Class.forName|^Class.newInstance|^Constructor.newInstance|^Field.get|^Field.set|^Method.invoke";
     private static final String CONFIG_FILE_DIR = ".tamiflex";
     private static final String CONFIG_FILE_NAME = "poa.properties";
     
@@ -159,28 +159,24 @@ public class ExtReflectResolver {
     }
     
     private void createFilteredReflFile() {
-    	StringBuilder sb = new StringBuilder();
-    	if (!Config.extReflExcludeStr.equals("")) {
-    		sb.append(" | grep -v ");
-	    	boolean first = true;
-	    	for (String c : Config.extReflExcludeAry) {
-	    		if (!first)
-	    			sb.append("\\|");
-	    		else
-	    			sb.append("\"");
-	    		sb.append(c);
-	    		first = false;
-	    	}
-	    	sb.append("\" ");
-    	}
-    	String s = sb.toString();
-    	List<String> basecmd = new ArrayList<String>();
-    	basecmd.add("/bin/bash");
-    	basecmd.add("-c");
-    	basecmd.add("grep " + SUPPORTED_REFL + " " +
-    	            basename(Config.outDirName) + File.separator + REFL_DATA_FILENAME + s +
-    			    " > " + basename(Config.outDirName) + File.separator + REFL_DATA_FILTERED);
-        execCmd(basecmd);
+    	File tamiflexOut = new File(basename(Config.outDirName)+File.separator+REFL_DATA_FILENAME);
+        File filteredReflFile = new File(basename(Config.outDirName)+File.separator+REFL_DATA_FILTERED);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(tamiflexOut));
+            PrintWriter pw = new PrintWriter(filteredReflFile);
+            Pattern p = Pattern.compile(SUPPORTED_REFL);
+            while(br.ready()){
+                String line = br.readLine();
+                Matcher m = p.matcher(line);
+                if(m.find()){
+                    pw.write(line+"\n");
+                }
+            }
+            br.close();
+            pw.close();
+        }catch(Exception e){
+            System.out.println("WARN: ExtReflectResolver: Unable to access Tamiflex output");
+        }
         return;
     }
     
