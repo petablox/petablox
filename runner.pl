@@ -65,7 +65,7 @@ my %benchmarks = (
 );
 my @programs = keys %benchmarks;
 
-my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj");
+my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj", "0cfa");
 
 # Lowest priority options, but still higher than $petablox_dir/petablox.properties
 my @global_options = (
@@ -75,6 +75,12 @@ my @global_options = (
 
 # Medium priority options
 my %local_options_map = (
+    "0cfa" =>
+        [
+            "-Dpetablox.reflect.kind=dynamic",
+            "-Dpetablox.run.analyses=cipa-0cfa-dlog",
+            "-Dpetablox.scope.kind=rta"
+        ],
     "thresc_hybrid" =>
         [
             "-Dpetablox.rhs.timeout=300000",

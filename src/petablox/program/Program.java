@@ -6,11 +6,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
+import java.util.Set;
 import java.io.PrintWriter;
 import java.io.IOException;
 
@@ -21,6 +23,7 @@ import petablox.program.reflect.ExtReflectResolver;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
+import petablox.project.PetabloxException;
 import petablox.runtime.BasicEventHandler;
 import petablox.util.IndexSet;
 import petablox.util.ProcessExecutor;
@@ -118,6 +121,8 @@ public class Program {
 		                               stdlibClPath);
     	Scene.v().addBasicClass(Config.mainClassName);
     	Scene.v().loadBasicClasses();
+    	SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
+    	Scene.v().setMainClass(mainCl);
     	if(Config.verbose >= 1) {
     		Chain<SootClass> chc = Scene.v().getClasses();
     		System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
@@ -299,9 +304,41 @@ public class Program {
         return ret;
     }
     
+    private void setScopeExclusion(String excl) {
+    	// This method is called when petablox.reuse.scope = true
+    	String[] recordedScopeAry = Utils.toArray(excl);
+    	if (Config.scopeExcludeStr.equals("")) {
+    		//No explicitly-specified scope - since you are "reusing", use recorded scope and do vanilla reuse_scope actions.
+    		Config.scopeExcludeStr = excl;
+    		Config.scopeExcludeAry = recordedScopeAry;
+    	} else {
+    		Set<String> recorded = new HashSet<String>();
+    		for (int i = 0; i < recordedScopeAry.length; i++) recorded.add(recordedScopeAry[i]);
+    		Set<String> present = new HashSet<String>();
+    		for (int j = 0; j < Config.scopeExcludeAry.length; j++) present.add(Config.scopeExcludeAry[j]);
+    		if (present.equals(recorded)) {
+    			// Nothing extra needs to be done - just vanilla reuse_scope actions.
+    		} else {
+    			String str = excl;
+    			if (excl.equals("")) str = "\"\"";
+    			throw new PetabloxException("Not possible to reuse scope. Recorded scope exclusion " + str 
+    					 + " different from required scope exclusion " + Config.scopeExcludeStr );
+    		}
+    	}
+    }
+
     private void loadMethodsFile(File file) {
     	List<String> l = Utils.readFileToList(file);
         methods = new IndexSet<SootMethod>(l.size());
+    	String first = l.remove(0);
+    	// "first" is the scope exclude string
+    	String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
+    	String scopeExclStr;
+    	if (parts.length < 2)
+    		scopeExclStr = "";
+    	else
+    		scopeExclStr = parts[1];
+        setScopeExclusion(scopeExclStr);
         for (String s : l) {
         	int colonIdx  = s.indexOf(':');
             String cName = s.substring(1, colonIdx); // exclude the initial '<' character
@@ -333,6 +370,7 @@ public class Program {
     private void saveMethodsFile(File file) {
         try {
             PrintWriter out = new PrintWriter(file);
+            out.println("PETABLOX_SCOPE_EXCLUDE_STR=" + Config.scopeExcludeStr);
             for (SootMethod m : methods)
                 out.println(m.getSignature());
             out.close();

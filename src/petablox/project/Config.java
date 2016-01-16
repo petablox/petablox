@@ -176,7 +176,7 @@ public class Config {
     public final static String mainDirName = System.getProperty("petablox.main.dir");
     public final static String javaClassPathName = System.getProperty("java.class.path");
     public final static String toolClassPathName =
-        mainDirName + File.separator + "petablox.jar" + File.pathSeparator + javaAnalysisPathName;
+    		mainDirName + File.separator + "petablox.jar" + File.pathSeparator + javaAnalysisPathName;
     // This source of this agent is defined in main/agent/chord_instr_agent.cpp.
     // See the ccompile target in main/build.xml and main/agent/Makefile for how it is built.
     public final static String cInstrAgentFileName = mainDirName + File.separator + "libchord_instr_agent.so";
@@ -185,7 +185,7 @@ public class Config {
     public final static String jInstrAgentFileName = mainDirName + File.separator + "petablox.jar";
     public final static String javadocURL = "http://petablox.stanford.edu/javadoc/";
 
-    public final static String[] scopeExcludeAry = Utils.toArray(scopeExcludeStr);
+    public static String[] scopeExcludeAry = Utils.toArray(scopeExcludeStr);
     public static boolean isExcludedFromScope(String typeName) {
         for (String c : scopeExcludeAry)
             if (typeName.startsWith(c))
