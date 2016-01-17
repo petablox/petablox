@@ -7,8 +7,8 @@ import petablox.project.analyses.JavaAnalysis;
 import petablox.project.analyses.ProgramRel;
 
 /*
- * chord.printrel.dir      directory where all the .txt files containing the rels will be dumped.
- * chord.printrel.printID  [default: false] will print the index in the dom for each element if set to true.
+ * petablox.printrel.dir      directory where all the .txt files containing the rels will be dumped.
+ * petablox.printrel.printID  [default: false] will print the index in the dom for each element if set to true.
  *                         property used in the printFI method of individual doms.
  */
 
@@ -20,7 +20,7 @@ public class PrintRel extends JavaAnalysis {
 	public void run() {
 		String printDir = null;
 		ProgramRel rel;
-		printDir = System.getProperty("chord.printrel.dir", Config.outDirName);
+		printDir = System.getProperty("petablox.printrel.dir", Config.outDirName);
 		System.out.println("Printing relations in: " + printDir);
 		
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("reachableM");
@@ -29,13 +29,19 @@ public class PrintRel extends JavaAnalysis {
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("reachableT");
 	    rel.load(); rel.printFI(printDir); rel.close();
 	    
-	    rel = (ProgramRel) ClassicProject.g().getTrgt("HT");
+	    rel = (ProgramRel) ClassicProject.g().getTrgt("reachableI");
+	    rel.load(); rel.printFI(printDir); rel.close();
+	    
+		rel = (ProgramRel) ClassicProject.g().getTrgt("HT");
 	    rel.load(); rel.printFI(printDir); rel.close();
 	    
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("cha");
 		rel.load(); rel.printFI(printDir); rel.close();
 		
-	    rel = (ProgramRel) ClassicProject.g().getTrgt("VT");
+	    rel = (ProgramRel) ClassicProject.g().getTrgt("VH");
+		rel.load(); rel.printFI(printDir); rel.close();
+	    
+		rel = (ProgramRel) ClassicProject.g().getTrgt("VT");
 		rel.load(); rel.printFI(printDir); rel.close();
 		
 	    rel = (ProgramRel) ClassicProject.g().getTrgt("sub");
@@ -96,6 +102,9 @@ public class PrintRel extends JavaAnalysis {
 		rel.load(); rel.printFI(printDir); rel.close();
 		
 		rel = (ProgramRel) ClassicProject.g().getTrgt("MputStatFldInst");
+		rel.load(); rel.printFI(printDir); rel.close();
+		
+		rel = (ProgramRel) ClassicProject.g().getTrgt("IHM");
 		rel.load(); rel.printFI(printDir); rel.close();
 	}
 }

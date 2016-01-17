@@ -18,7 +18,7 @@ import soot.Unit;
  * <tt>epsilon</tt>, is the lone context of methods that are
  * analyzed context insensitively.  These include the main method,
  * all class initializer methods, and any additional user-specified
- * methods (see {@link chord.analyses.alias.CtxtsAnalysis}).
+ * methods (see {@link petablox.analyses.alias.CtxtsAnalysis}).
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

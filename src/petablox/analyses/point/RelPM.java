@@ -11,7 +11,7 @@ import petablox.analyses.point.DomP;
 import petablox.program.Program;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 /**
@@ -32,7 +32,7 @@ public class RelPM extends ProgramRel {
 		for (SootMethod m : Program.g().getMethods()) {
 			if(!m.isConcrete())
 				continue;
-			CFG cfg = SootUtilities.getCFG(m);
+			ICFG cfg = SootUtilities.getCFG(m);
 			for(Block bb : cfg.getBlocks()){
 				Iterator<Unit> itr = bb.iterator();
 				while(itr.hasNext()){

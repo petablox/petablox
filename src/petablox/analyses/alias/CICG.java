@@ -12,7 +12,7 @@ import petablox.project.analyses.ProgramRel;
 import petablox.util.ArraySet;
 import petablox.util.SetUtils;
 import petablox.util.graph.AbstractGraph;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 
@@ -141,7 +141,7 @@ public class CICG extends AbstractGraph<SootMethod> implements ICICG {
     }
     public Set<Unit> getLabels(SootMethod srcMeth, SootMethod dstMeth) {
         Set<Unit> invks = new ArraySet<Unit>();
-        CFG cfg = SootUtilities.getCFG(srcMeth);
+        ICFG cfg = SootUtilities.getCFG(srcMeth);
         for (Block bb : cfg.reversePostOrder()) {
         	Iterator<Unit> uit = bb.iterator();
             while (uit.hasNext()) {

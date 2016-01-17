@@ -1,0 +1,66 @@
+// Created by convert.py from ./src/petablox/analyses/datarace/nongrded_include.dlog on 2015-04-20 13:08:42.235257
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: datarace-nongrded-include-dlog
+
+// :domains: A
+// :domains: H
+// :domains: I
+// :domains: M
+// :domains: E
+// :domains: L
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: MI(M,I)
+// :inputs: ME(M,E)
+// :inputs: IM(I,M)
+// :inputs: threadAM(A,M)
+// :inputs: transLI(L,I)
+// :inputs: transLE(L,E)
+// :inputs: threadStartI(I)
+
+// convert.py: following intermediate relation converted to output relation
+// :outputs: invkLock(I,H)
+invkLock(i,h) -> I(i), H(h).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: elemLock(E,H)
+elemLock(e,h) -> E(e), H(h).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: syncH(H)
+syncH(h) -> H(h).
+
+// :inputs: syncLH(L,H)
+
+// convert.py: following intermediate relation converted to output relation
+// :outputs: unlockedM(A,M,H)
+unlockedM(t,m,h) -> A(t), M(m), H(h).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: unlockedI(A,I,H)
+unlockedI(t,i,h) -> A(t), I(i), H(h).
+// :outputs: unlockedE(A,E,H)
+unlockedE(t,e,h) -> A(t), E(e), H(h).
+
+// ###
+// # Constraints
+// ###
+
+syncH(h) <- syncLH(_,h).
+
+invkLock(i,o) <- transLI(l,i), syncLH(l,o).
+elemLock(e,o) <- transLE(l,e), syncLH(l,o).
+
+unlockedM(t,m,o) <- syncH(o), threadAM(t,m).
+
+unlockedI(t,i,o) <- unlockedM(t,m,o), MI(m,i), !invkLock(i,o), !threadStartI(i).
+unlockedM(t,n,o) <- unlockedI(t,i,o), IM(i,n).
+
+unlockedE(t,e,o) <- unlockedM(t,m,o), ME(m,e), !elemLock(e,o).
+

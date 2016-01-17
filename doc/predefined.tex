@@ -2,36 +2,36 @@
 \chapter{Predefined Analyses}
 \label{chap:predefined}
 
-Chord provides many standard analyses.
+Petablox provides many standard analyses.
 This chapter first explains how to run any such analysis and then provides
 descriptions of various predefined analyses.
 
 \section{Running an Analysis}
 \label{sec:running-predefined}
 
-Each analysis in Chord is written modularly, independent of other analyses,
+Each analysis in Petablox is written modularly, independent of other analyses,
 along with lightweight annotations specifying the inputs and outputs of the
-analysis.  Chord's runtime automatically computes dependencies between analyses
+analysis.  Petablox's runtime automatically computes dependencies between analyses
 (e.g., determines which analysis produces as output a result that is needed as
-input by another analysis).  Before running a desired analysis, Chord
+input by another analysis).  Before running a desired analysis, Petablox
 recursively runs other analyses until the inputs to the desired analysis have
 been computed; it finally runs the desired analysis to produce the outputs of
 that analysis.
 
-Each analysis in Chord has a unique name that can be used to run the
+Each analysis in Petablox has a unique name that can be used to run the
 analysis from the command-line.  You can obtain the names of all analyses
-predefined in Chord by running the following command:
+predefined in Petablox by running the following command:
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.out.dir=<OUT_DIR> -Dchord.print.project=true run
+ant -Dpetablox.out.dir=<OUT_DIR> -Dpetablox.print.project=true run
 \end{verbatim}
 \end{framed}
 
 This command produces files \code{targets_sortby_name.html}, \code{targets_sortby_kind.html},
 and \code{targets_sortby_producers.html} in directory \code{<OUT_DIR>}.  These
 files publish the names and descriptions of all analyses that are predefined in
-Chord, along with the inputs and outputs of each analysis.
+Petablox, along with the inputs and outputs of each analysis.
 
 The following command runs the analysis
 named \code{<ANALYSIS_NAME>} on the program specified by directory \code{<WORK_DIR>}
@@ -39,21 +39,21 @@ named \code{<ANALYSIS_NAME>} on the program specified by directory \code{<WORK_D
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=<ANALYSIS_NAME> run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=<ANALYSIS_NAME> run
 \end{verbatim}
 \end{framed}
 
 For instance, the following command runs a basic points-to and call-graph
-analysis (called 0CFA) provided in Chord:
+analysis (called 0CFA) provided in Petablox:
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=cipa-0cfa-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=cipa-0cfa-dlog run
 \end{verbatim}
 \end{framed}
 
-This instructs Chord to run the analysis named \code{cipa-0cfa-dlog},
-which is defined in file \code{main/src/chord/analyses/alias/cipa_0cfa.dlog}.
+This instructs Petablox to run the analysis named \code{cipa-0cfa-dlog},
+which is defined in file \code{main/src/petablox/analyses/alias/cipa_0cfa.dlog}.
 
 The output of the above command is of the form:
 
@@ -63,7 +63,7 @@ The output of the above command is of the form:
 Buildfile: build.xml
 
 run:
-     [java] Chord run initiated at: Mar 13, 2011 10:31:08 PM
+     [java] Petablox run initiated at: Mar 13, 2011 10:31:08 PM
      [java] ENTER: cipa-0cfa-dlog
      [java] ENTER: T
      [java] ENTER: RTA
@@ -83,14 +83,14 @@ run:
      [java] ENTER: statIM
      [java] SAVING rel statIM size: 3359
      [java] LEAVE: statIM
-     [java] Starting command: 'java ... chord_analyses_alias_cipa_0cfa.dlog'
+     [java] Starting command: 'java ... petablox_analyses_alias_cipa_0cfa.dlog'
      [java] Relation VH: 541 nodes, 449.0 elements (V0,H0)
      [java] Relation FH: 137 nodes, 8.0 elements (H0,F0)
      [java] Relation HFH: 199 nodes, 35.0 elements (H0,F0,H1)
      [java] Relation IM: 590 nodes, 69.0 elements (I0,M0)
-     [java] Finished command: 'java ... chord_analyses_alias_cipa_0cfa.dlog'
+     [java] Finished command: 'java ... petablox_analyses_alias_cipa_0cfa.dlog'
      [java] LEAVE: cipa-0cfa-dlog
-     [java] Chord run completed at: Mar 13, 2011 10:31:36 PM
+     [java] Petablox run completed at: Mar 13, 2011 10:31:36 PM
      [java] Total time: 00:00:27:671 hh:mm:ss:ms
 
 BUILD SUCCESSFUL
@@ -133,14 +133,14 @@ that the analyses producing these domains run upfront because these domains are
 consumed by the analyses that produce relations such as \code{MputStatFldInst}
 and \code{statIM}, which in turn are consumed by the desired 0CFA analysis.
 
-During execution, Chord dumps intermediate and final results to files in the
-directory specified by property \code{chord.out.dir}, whose default value is
-\code{[chord.work.dir]/chord_output/} and typically does not need to be changed
+During execution, Petablox dumps intermediate and final results to files in the
+directory specified by property \code{petablox.out.dir}, whose default value is
+\code{[petablox.work.dir]/petablox_output/} and typically does not need to be changed
 by users.  For the above example, this directory is
-\code{<WORK_DIR>/chord_output/}.
+\code{<WORK_DIR>/petablox_output/}.
 
-The verbosity of Chord's output is controlled by property
-\code{chord.verbose}, whose default value is 1.  At verbosity level 0, the above
+The verbosity of Petablox's output is controlled by property
+\code{petablox.verbose}, whose default value is 1.  At verbosity level 0, the above
 command produces less voluminous output of the form:
 
 \begin{framed}
@@ -149,8 +149,8 @@ command produces less voluminous output of the form:
 Buildfile: build.xml
 
 run:
-     [java] Chord run initiated at: Mar 13, 2011 10:35:01 PM
-     [java] Chord run completed at: Mar 13, 2011 10:35:28 PM
+     [java] Petablox run initiated at: Mar 13, 2011 10:35:01 PM
+     [java] Petablox run completed at: Mar 13, 2011 10:35:28 PM
      [java] Total time: 00:00:26:297 hh:mm:ss:ms
 
 BUILD SUCCESSFUL
@@ -161,7 +161,7 @@ Total time: 26 seconds
 
 \section{Points-to and Call-Graph Analyses}
 
-Chord provides several analyses with different precision/scalability tradeoff for
+Petablox provides several analyses with different precision/scalability tradeoff for
 computing points-to and call-graph information of Java programs.  All these
 analyses are defined under directory \code{src/chord/analyses/alias/}.
 
@@ -189,10 +189,10 @@ Flow-sensitive analysis does not offer much precision over flow-insensitive
 analysis in practice, especially in the absence of strong updates and in the
 presence of SSA (Static Single Assignment form), a program representation that
 renders a flow-insensitive analysis almost as precise as a flow-sensitive
-analysis.  Since analyses in Chord currently perform only weak updates, and
+analysis.  Since analyses in Petablox currently perform only weak updates, and
 since they all operate on an SSA form of the input Java program by default, the
 rest of this section focuses only on flow-insensitive analysis, which is the
-predominant kind of points-to/call-graph analysis in Chord.
+predominant kind of points-to/call-graph analysis in Petablox.
 
 We describe context-insensitive analysis first because understanding the
 concepts behind it will help understand the more sophisticated context-sensitive
@@ -233,7 +233,7 @@ program):
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=cipa-0cfa-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=cipa-0cfa-dlog run
 \end{verbatim}
 \end{framed}
 
@@ -287,7 +287,7 @@ between different objects created at the same object allocation site, whereas
 a context-insensitive analysis is always object-insensitive.
 
 Different kinds of context- and object-sensitivity have been proposed in the
-literature.  Chord's context-sensitive points-to/call-graph analysis is highly
+literature.  Petablox's context-sensitive points-to/call-graph analysis is highly
 parametric in the kind of context- and object-sensitivity.  It allows:
 \begin{itemize}
 \item
@@ -328,26 +328,26 @@ program):
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=cspa-hybrid-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=cspa-hybrid-dlog run
 \end{verbatim}
 \end{framed}
 
 System properties recognized by this analysis are:
 \begin{itemize}
 \item
-\code{chord.inst.ctxt.kind}: the kind of context sensitivity to use for each
+\code{petablox.inst.ctxt.kind}: the kind of context sensitivity to use for each
 instance method (and all its locals).  It may be 'ci' (context insensitive), 'cs'
 (k-CFA), or 'co' (k-object-sensitive).  It is 'ci' by default.
 \item
-\code{chord.stat.ctxt.kind}: the kind of context sensitivity to use for each
+\code{petablox.stat.ctxt.kind}: the kind of context sensitivity to use for each
 static method (and all its locals).  It may be 'ci' (context insensitive), 'cs'
 (k-CFA), or 'co' (copy-context-sensitive).  It is 'ci' by default.
 \item
-\code{chord.ctxt.kind}: the kind of context sensitivity to use for each method
+\code{petablox.ctxt.kind}: the kind of context sensitivity to use for each method
 (and all its locals).  It may be one of 'ci', 'cs', or 'co', and serves as
-shorthand for properties \code{chord.inst.ctxt.kind} and \code{chord.stat.ctxt.kind}.
+shorthand for properties \code{petablox.inst.ctxt.kind} and \code{petablox.stat.ctxt.kind}.
 \item
-\code{chord.kobj.k} and \code{chord.kcfa.k}: the 'k' value to use for each object
+\code{petablox.kobj.k} and \code{petablox.kcfa.k}: the 'k' value to use for each object
 allocation site and each method call site, respectively.
 It is 1 by default.
 \end{itemize}
@@ -356,41 +356,41 @@ The above command runs the most general form of context-sensitive
 points-to/call-graph analysis,
 allowing different kinds of context- and object-sensitivity to be mixed in the analysis of
 the same program, but this flexibility comes at the cost of efficiency.
-Hence, Chord provides three specialized forms of this analysis that more
+Hence, Petablox provides three specialized forms of this analysis that more
 efficiently handle certain common instantiations of this analysis that do not
 arbitrarily mix different kinds of context- and object-sensitivity.  We next describe these
 three specialized analyses.
 
-If \code{chord.ctxt.kind} is 'ci' (the default value),
+If \code{petablox.ctxt.kind} is 'ci' (the default value),
 the above command essentially performs a purely context-insensitive
 analysis; in this case, it is preferable to run the following more efficient
 implementation of that analysis:
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=cspa-0cfa-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=cspa-0cfa-dlog run
 \end{verbatim}
 \end{framed}
 
-If \code{chord.ctxt.kind} is 'cs' and \code{chord.kcfa.k} is K,
+If \code{petablox.ctxt.kind} is 'cs' and \code{petablox.kcfa.k} is K,
 the above command essentially performs a purely K-CFA analysis; in this case, it
 is preferable to run the following more efficient implementation of that
 analysis:
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.ctxt.kind=cs -Dchord.kcfa.k=K -Dchord.run.analyses=cspa-kcfa-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.ctxt.kind=cs -Dpetablox.kcfa.k=K -Dpetablox.run.analyses=cspa-kcfa-dlog run
 \end{verbatim}
 \end{framed}
 
-If \code{chord.ctxt.kind} is 'co' and \code{chord.kobj.k} is K,
+If \code{petablox.ctxt.kind} is 'co' and \code{petablox.kobj.k} is K,
 the above command essentially performs a purely K-object-sensitive analysis; in
 this case, it is preferable to run the following more efficient implementation
 of that analysis:
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.ctxt.kind=co -Dchord.kobj.k=K -Dchord.run.analyses=cspa-kobj-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.ctxt.kind=co -Dpetablox.kobj.k=K -Dpetablox.run.analyses=cspa-kobj-dlog run
 \end{verbatim}
 \end{framed}
 
@@ -450,7 +450,7 @@ that instance field \texttt{f} of object \texttt{o1} may point to object
 
 \subsection{Call Graph Variants}
 
-Chord offers two variants of each of the context-insensitive and
+Petablox offers two variants of each of the context-insensitive and
 context-sensitive baseline call graphs presented above, called {\it abbreviated
 thread-insensitive} and {\it abbreviated thread-sensitive} call graphs.  We
 explain these two variants for the context-insensitive case; they are analogous
@@ -514,13 +514,13 @@ certain forms of reachability:
 \item
 An {\it abbreviated} call graph allows to ignore reachability from
 class initializer methods;
-this is used, for instance, in Chord's static datarace analysis to
+this is used, for instance, in Petablox's static datarace analysis to
 suppress reporting races on statements reachable only from class initializer
 methods, which are typically false races in practice.
 \item
 A {\it thread-sensitive} call graph additionally allows to ignore
 ``inter-thread" reachability and focus on ``intra-thread'' reachability; this is
-used, for instance, in Chord's static datarace analysis to prevent reporting
+used, for instance, in Petablox's static datarace analysis to prevent reporting
 false races (t1,e1,t2,e2) where statement e1 (or e2 resp.) is unreachable from
 abstract thread t1 (or t2 resp.).
 \end{itemize}
@@ -532,26 +532,26 @@ for how to setup a program):
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=thrOblAbbrCICG-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=thrOblAbbrCICG-dlog run
 
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=thrSenAbbrCICG-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=thrSenAbbrCICG-dlog run
 
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=thrOblAbbrCSCG-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=thrOblAbbrCSCG-dlog run
 
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=thrSenAbbrCSCG-dlog run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=thrSenAbbrCSCG-dlog run
 \end{verbatim}
 \end{framed}
 
 
 \section{Static Datarace Analysis}
 
-The following command runs Chord's static datarace analysis on the
+The following command runs Petablox's static datarace analysis on the
 program specified by directory \code{<WORK_DIR>} (see Chapter \ref{chap:setup}
 for how to setup a program):
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=datarace-java run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=datarace-java run
 \end{verbatim}
 \end{framed}
 
@@ -576,13 +576,13 @@ abstract object.
 
 \section{Static Deadlock Analysis}
 
-The following command runs Chord's static deadlock analysis on the
+The following command runs Petablox's static deadlock analysis on the
 program specified by directory \code{<WORK_DIR>} (see Chapter \ref{chap:setup}
 for how to setup a program):
 
 \begin{framed}
 \begin{verbatim}
-ant -Dchord.work.dir=<WORK_DIR> -Dchord.run.analyses=deadlock-java run
+ant -Dpetablox.work.dir=<WORK_DIR> -Dpetablox.run.analyses=deadlock-java run
 \end{verbatim}
 \end{framed}
 
@@ -591,5 +591,5 @@ run the deadlock analysis.  First run {\tt ant} in that directory (in order to
 compile the program's {\tt .java} files to {\tt .class} files) and then run the
 above command with \code{<WORK_DIR>} replaced by \code{examples/deadlock_test/}.
 Upon successful completion, the file \code{deadlocks.html} should be produced in
-directory \code{examples/deadlock_test/chord_output/}.
+directory \code{examples/deadlock_test/petablox_output/}.
 

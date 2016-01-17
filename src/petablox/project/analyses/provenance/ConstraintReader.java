@@ -16,8 +16,8 @@ import petablox.project.analyses.JavaAnalysis;
 
 @Petablox(name="provenance-temp")
 public class ConstraintReader extends JavaAnalysis {
-	private final static String DLOG_CONFIG = "chord.provenance.instrConfig";
-	private final static String QUERY = "chord.provenance.query";
+	private final static String DLOG_CONFIG = "petablox.provenance.instrConfig";
+	private final static String QUERY = "petablox.provenance.query";
 	private List<LookUpRule> rules = new ArrayList<LookUpRule>();
 	private Set<Tuple> solvedTuples = new HashSet<Tuple>();
 	Set<ConstraintItem> constraints;

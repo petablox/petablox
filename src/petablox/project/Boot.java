@@ -15,51 +15,51 @@ import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
 
 /**
- * Entry point of Chord before JVM settings are resolved.
+ * Entry point of Petablox before JVM settings are resolved.
  *
- * Resolves JVM settings and spawns Chord in a fresh JVM process with those settings.
+ * Resolves JVM settings and spawns Petablox in a fresh JVM process with those settings.
  *
  * The system properties in the current JVM are altered as follows (in order):
  *
- * 1. Property chord.main.dir is set to the directory containing file petablox.jar
+ * 1. Property petablox.main.dir is set to the directory containing file petablox.jar
  *    from which this class is loaded.
  *
- * 2. All properties from file "[chord.main.dir]/chord.properties" are loaded, if the
+ * 2. All properties from file "[petablox.main.dir]/petablox.properties" are loaded, if the
  *    file exists.
  *
- * 3. Property chord.work.dir is set to "[user.dir]" unless the user has defined it;
- *    in either case, its value is canonicalized, and Chord exits if it is not a
+ * 3. Property petablox.work.dir is set to "[user.dir]" unless the user has defined it;
+ *    in either case, its value is canonicalized, and Petablox exits if it is not a
  *    valid existing directory.
  *
- * 4. All properties from file "[chord.work.dir]/chord.properties" are loaded, if the
- *    file exists, unless the user has defined property chord.props.file, in which
+ * 4. All properties from file "[petablox.work.dir]/petablox.properties" are loaded, if the
+ *    file exists, unless the user has defined property petablox.props.file, in which
  *    case all properties from the file specified by that property are loaded; in the
- *    latter case, Chord exits if the file cannot be read.
+ *    latter case, Petablox exits if the file cannot be read.
  *
  * 5. The following properties are set to the following values unless the user has
  *    already defined them:
  *
  *    Property name    Default value
  *
- *    chord.max.heap  "2048m"
- *    chord.max.stack "32m"
- *    chord.jvmargs   "-ea -Xmx[chord.max.heap] -Xss[chord.max.stack]"
- *    chord.classic   "true"
+ *    petablox.max.heap  "2048m"
+ *    petablox.max.stack "32m"
+ *    petablox.jvmargs   "-ea -Xmx[petablox.max.heap] -Xss[petablox.max.stack]"
+ *    petablox.classic   "true"
  *
- *    chord.std.java.analysis.path "[chord.main.dir]/petablox.jar"
- *    chord.ext.java.analysis.path ""
- *    chord.java.analysis.path     "[chord.std.java.analysis.path]:[chord.ext.java.analysis.path]"
+ *    petablox.std.java.analysis.path "[petablox.main.dir]/petablox.jar"
+ *    petablox.ext.java.analysis.path ""
+ *    petablox.java.analysis.path     "[petablox.std.java.analysis.path]:[petablox.ext.java.analysis.path]"
  *
- *    chord.std.dlog.analysis.path "[chord.main.dir]/petablox.jar"
- *    chord.ext.dlog.analysis.path ""
- *    chord.dlog.analysis.path     "[chord.std.dlog.analysis.path]:[chord.ext.dlog.analysis.path]"
+ *    petablox.std.dlog.analysis.path "[petablox.main.dir]/petablox.jar"
+ *    petablox.ext.dlog.analysis.path ""
+ *    petablox.dlog.analysis.path     "[petablox.std.dlog.analysis.path]:[petablox.ext.dlog.analysis.path]"
  *   
- *    chord.class.path ""
+ *    petablox.class.path ""
  *
- * 6. Property user.dir is set to "[chord.work.dir]".
+ * 6. Property user.dir is set to "[petablox.work.dir]".
  *
  * 7. Property java.class.path is set to
- *    "[chord.main.dir]/petablox.jar:[chord.java.analysis.path]:[chord.dlog.analysis.path]:[chord.class.path]".
+ *    "[petablox.main.dir]/petablox.jar:[petablox.java.analysis.path]:[petablox.dlog.analysis.path]:[petablox.class.path]".
  *
  * The above altered properties plus all other system properties in the current JVM
  * are passed on to the new JVM.
@@ -72,42 +72,42 @@ public class Boot {
     private static final String WARN_DUPLICATE_SYSPROP =
         "WARN: Property '%s' defined multiple times; assuming value '%s' instead of '%s'.";
     private static final String CHORD_JAR_NOT_FOUND =
-        "ERROR: Boot: Expected Chord to be loaded from petablox.jar instead of from '%s'.";
+        "ERROR: Boot: Expected Petablox to be loaded from petablox.jar instead of from '%s'.";
     private static final String USER_DIR_AS_CHORD_WORK_DIR =
-        "WARN: Boot: Property chord.work.dir not set; using value of user.dir '%s' instead.";
+        "WARN: Boot: Property petablox.work.dir not set; using value of user.dir '%s' instead.";
     private static final String CHORD_MAIN_DIR_UNDEFINED =
-        "ERROR: Boot: Property chord.main.dir must be set to location of directory named 'main' in your Chord installation.";
+        "ERROR: Boot: Property petablox.main.dir must be set to location of directory named 'main' in your Petablox installation.";
     private static final String CHORD_MAIN_DIR_NOT_FOUND =
-        "ERROR: Boot: Directory '%s' specified by property chord.main.dir not found.";
+        "ERROR: Boot: Directory '%s' specified by property petablox.main.dir not found.";
     private static final String CHORD_WORK_DIR_UNDEFINED =
-        "ERROR: Boot: Property chord.work.dir must be set to location of working directory desired during Chord's execution.";
+        "ERROR: Boot: Property petablox.work.dir must be set to location of working directory desired during Petablox's execution.";
     private static final String CHORD_WORK_DIR_NOT_FOUND =
-        "ERROR: Boot: Directory '%s' specified by property chord.work.dir not found.";
+        "ERROR: Boot: Directory '%s' specified by property petablox.work.dir not found.";
 
-    public static boolean SPELLCHECK_ON = Utils.buildBoolProperty("chord.useSpellcheck", false);
+    public static boolean SPELLCHECK_ON = Utils.buildBoolProperty("petablox.useSpellcheck", false);
 
     static String mainDirName;
 
     public static void main(String[] args) throws Throwable {
-        String chordJarFile = getChordJarFile();
+        String chordJarFile = getPetabloxJarFile();
 
-        // resolve Chord's main dir
+        // resolve Petablox's main dir
 
         mainDirName = (new File(chordJarFile)).getParent();
         if (mainDirName == null)
             Messages.fatal(CHORD_MAIN_DIR_UNDEFINED);
-        System.setProperty("chord.main.dir", mainDirName);
+        System.setProperty("petablox.main.dir", mainDirName);
 
         if (SPELLCHECK_ON) {
-            OptionSet optSet = new OptionSet(getChordSysProps());
+            OptionSet optSet = new OptionSet(getPetabloxSysProps());
             optSet.enableSubstitution();
             Checker.checkConf(new OptDictionary(Boot.class.getResourceAsStream("/options.dict") ),
                 optSet);
         }
 
-        // resolve Chord's work dir
+        // resolve Petablox's work dir
 
-        String workDirName = System.getProperty("chord.work.dir");
+        String workDirName = System.getProperty("petablox.work.dir");
         if (workDirName == null) {
             workDirName = System.getProperty("user.dir");
             if (workDirName == null)
@@ -122,11 +122,11 @@ public class Boot {
         if (!(new File(workDirName)).isDirectory()) {
             Messages.fatal(CHORD_WORK_DIR_NOT_FOUND, workDirName);
         }
-        System.setProperty("chord.work.dir", workDirName);
+        System.setProperty("petablox.work.dir", workDirName);
 
-        // load program-specific Chord properties, if any
+        // load program-specific Petablox properties, if any
 
-        String propsFileName = System.getProperty("chord.props.file");
+        String propsFileName = System.getProperty("petablox.props.file");
         if (propsFileName != null) {
             try {
                 readProps(propsFileName);
@@ -135,38 +135,38 @@ public class Boot {
             }
         } else {
             try {
-                propsFileName = workDirName + File.separator + "chord.properties";
+                propsFileName = workDirName + File.separator + "petablox.properties";
                 readProps(propsFileName);
             } catch (IOException ex) {
                 // ignore silently; user did not provide this file
             }
         }
 
-        // load system-wide Chord properties, if any
+        // load system-wide Petablox properties, if any
 
         try {
-            readProps(mainDirName + File.separator + "chord.properties");
+            readProps(mainDirName + File.separator + "petablox.properties");
         } catch (IOException ex) {
             // ignore silently; user is not required to provide this file
         }
 
         // process other JVM settings (maximum runtime heap size, classpath, etc.)
 
-        String maxHeap = getOrSetProperty("chord.max.heap", "2048m");
-        String maxStack = getOrSetProperty("chord.max.stack", "32m");
-        String jvmargs = getOrSetProperty("chord.jvmargs", "-ea -Xmx" + maxHeap + " -Xss" + maxStack);
-        boolean isClassic = getOrSetProperty("chord.classic", "true").equals("true");
-        String stdJavaAnalysisPath = getOrSetProperty("chord.std.java.analysis.path", chordJarFile);
-        String extJavaAnalysisPath = getOrSetProperty("chord.ext.java.analysis.path", "");
-        String javaAnalysisPath = getOrSetProperty("chord.java.analysis.path",
+        String maxHeap = getOrSetProperty("petablox.max.heap", "2048m");
+        String maxStack = getOrSetProperty("petablox.max.stack", "32m");
+        String jvmargs = getOrSetProperty("petablox.jvmargs", "-ea -Xmx" + maxHeap + " -Xss" + maxStack);
+        boolean isClassic = getOrSetProperty("petablox.classic", "true").equals("true");
+        String stdJavaAnalysisPath = getOrSetProperty("petablox.std.java.analysis.path", chordJarFile);
+        String extJavaAnalysisPath = getOrSetProperty("petablox.ext.java.analysis.path", "");
+        String javaAnalysisPath = getOrSetProperty("petablox.java.analysis.path",
             Utils.concat(stdJavaAnalysisPath, File.pathSeparator, extJavaAnalysisPath));
-        String stdDlogAnalysisPath = getOrSetProperty("chord.std.dlog.analysis.path", chordJarFile);
-        String extDlogAnalysisPath = getOrSetProperty("chord.ext.dlog.analysis.path", "");
-        String dlogAnalysisPath = getOrSetProperty("chord.dlog.analysis.path",
+        String stdDlogAnalysisPath = getOrSetProperty("petablox.std.dlog.analysis.path", chordJarFile);
+        String extDlogAnalysisPath = getOrSetProperty("petablox.ext.dlog.analysis.path", "");
+        String dlogAnalysisPath = getOrSetProperty("petablox.dlog.analysis.path",
             Utils.concat(stdDlogAnalysisPath, File.pathSeparator, extDlogAnalysisPath));
-        String userClassPath = getOrSetProperty("chord.class.path", "");
-        boolean isFixedCPU = getOrSetProperty("chord.fixCPU", "false").equals("true");
-        String CPUID = getOrSetProperty("chord.CPUID", "0");
+        String userClassPath = getOrSetProperty("petablox.class.path", "");
+        boolean isFixedCPU = getOrSetProperty("petablox.fixCPU", "false").equals("true");
+        String CPUID = getOrSetProperty("petablox.CPUID", "0");
 
         System.setProperty("user.dir", workDirName);
 
@@ -188,7 +188,7 @@ public class Boot {
         }
         if (!userClassPath.equals("")) {
             userClassPath= userClassPath.replace(';', File.pathSeparatorChar);//normalize
-            System.setProperty("chord.class.path", userClassPath);//write back new value
+            System.setProperty("petablox.class.path", userClassPath);//write back new value
 
             String[] a = userClassPath.split(Utils.PATH_SEPARATOR);
             for (String s : a) {
@@ -201,7 +201,7 @@ public class Boot {
             cp += File.pathSeparator + cpList.get(i);
         System.setProperty("java.class.path", cp);
 
-        // build command line arguments of fresh JVM process to run Chord
+        // build command line arguments of fresh JVM process to run Petablox
 
         List<String> cmdList = new ArrayList<String>();
         if (isFixedCPU) {
@@ -247,7 +247,7 @@ public class Boot {
         System.out.println("Boot spawning subprocess with command line: " + cmdLine.toString());
     }
 
-    private static Properties getChordSysProps() {
+    private static Properties getPetabloxSysProps() {
         Properties p = new Properties();
         for (Map.Entry e : System.getProperties().entrySet()) {
             if (e.getKey().toString().startsWith("chord"))
@@ -256,7 +256,7 @@ public class Boot {
         return p;
     }
 
-    private static String getChordJarFile() {
+    private static String getPetabloxJarFile() {
         String cname = Boot.class.getName().replace('.', '/') + ".class";
         URL url = Boot.class.getClassLoader().getResource(cname);
         if (!url.getProtocol().equals("jar"))

@@ -21,7 +21,7 @@ import petablox.project.analyses.JavaAnalysis;
 		name="provenance-statistics"
 		)
 public class DlogStatistic extends JavaAnalysis {
-	public final static String DLOG = "chord.provenance.dlog";
+	public final static String DLOG = "petablox.provenance.dlog";
 	private String dlogName;
 	private Collection inputRelations;
 	private IndexMap allRelations;

@@ -19,14 +19,14 @@ import CnCHJ.runtime.CnCRuntime;
 import CnCHJ.runtime.ItemCollectionFactory;
 
 /**
- * A Chord project comprising a set of tasks and a set of targets
+ * A Petablox project comprising a set of tasks and a set of targets
  * produced/consumed by those tasks.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public class ModernProject extends Project {
     private static final String MULTIPLE_STEPS_PRODUCING_DATA =
-        "ERROR: ModernProject: Multiple step collections (%s) producing data collection '%s'; include exactly one of them via -Dchord.run.analyses";
+        "ERROR: ModernProject: Multiple step collections (%s) producing data collection '%s'; include exactly one of them via -Dpetablox.run.analyses";
     private static final String STEP_PRODUCING_DATA_NOT_FOUND =
         "ERROR: ModernProject: No step collection producing data collection '%s' found in project";
 

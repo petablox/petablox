@@ -2,12 +2,11 @@ package petablox.analyses.alloc;
 
 import java.util.List;
 
+import soot.RefLikeType;
 import soot.Type;
-import soot.RefType;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.internal.JAssignStmt;
-import soot.jimple.InvokeExpr;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
 import soot.jimple.internal.JNewMultiArrayExpr;
@@ -77,12 +76,12 @@ public class RelHT extends ProgramRel {
         processResolvedNewInstSites(reflect.getResolvedAryNewInstSites());
     }
 
-    private void processResolvedNewInstSites(List<Pair<Unit, List<RefType>>> l) {
-        for (Pair<Unit, List<RefType>> p : l) {
+    private void processResolvedNewInstSites(List<Pair<Unit, List<RefLikeType>>> l) {
+        for (Pair<Unit, List<RefLikeType>> p : l) {
             Unit q = p.val0;
             int hIdx = domH.indexOf(q);
             assert (hIdx >= 0);
-            for (RefType t : p.val1) {
+            for (RefLikeType t : p.val1) {
                 int tIdx = domT.indexOf(t);
                 assert (tIdx >= 0);
                 add(hIdx, tIdx);

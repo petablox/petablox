@@ -3,10 +3,6 @@ package petablox.analyses.argret;
 import soot.Local;
 import soot.RefLikeType;
 import soot.SootMethod;
-import soot.util.Chain;
-
-import java.util.Iterator;
-
 import petablox.analyses.method.DomM;
 import petablox.analyses.var.DomV;
 import petablox.project.Petablox;

@@ -1,7 +1,6 @@
 package petablox.project;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,33 +23,32 @@ import org.scannotation.AnnotationDB;
 
 import petablox.bddbddb.RelSign;
 import petablox.core.DatalogMetadata;
-import petablox.project.ITask;
 import petablox.project.analyses.DlogAnalysis;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
 
 /**
- * A Chord project comprising a set of tasks and a set of targets
+ * A Petablox project comprising a set of tasks and a set of targets
  * produced/consumed by those tasks.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public class TaskParser {
     private static final String ANON_JAVA_TASK =
-        "WARN: TaskParser: Java analysis '%s' is not named via a @Chord(name=\"...\") annotation; using its class name itself as its name.";
+        "WARN: TaskParser: Java analysis '%s' is not named via a @Petablox(name=\"...\") annotation; using its class name itself as its name.";
     private static final String ANON_DLOG_TASK =
         "WARN: TaskParser: Dlog analysis '%s' is not named via a # name=... line; using its filename itself as its name.";
     private static final String NON_EXISTENT_PATH_ELEM = "WARN: TaskParser: Ignoring non-existent entry '%s' in path '%s'.";
     private static final String MALFORMED_PATH_ELEM = "WARN: TaskParser: Ignoring malformed entry '%s' in path '%s': %s";
     private static final String JAVA_TASK_REDEFINED =
-        "ERROR: TaskParser: Ignoring Java analysis '%s': its @Chord(name=\"...\") annotation uses name '%s' that is also used for another task '%s'.";
+        "ERROR: TaskParser: Ignoring Java analysis '%s': its @Petablox(name=\"...\") annotation uses name '%s' that is also used for another task '%s'.";
     private static final String DLOG_TASK_REDEFINED =
         "ERROR: TaskParser: Ignoring Dlog analysis '%s': its # name=\"...\" line uses name '%s' that is also used for another task '%s'.";
     private static final String IGNORE_DLOG_TASK =
         "ERROR: TaskParser: Ignoring Dlog analysis '%s'; errors were found while parsing it (see above).";
     private static final String IGNORE_JAVA_TASK =
-        "ERROR: TaskParser: Ignoring Java analysis '%s'; errors were found in its @Chord annotation (see above).";
+        "ERROR: TaskParser: Ignoring Java analysis '%s'; errors were found in its @Petablox annotation (see above).";
     
     private static final Pattern datalogFilePattern;
     static {
@@ -63,7 +61,7 @@ public class TaskParser {
             datalogFilePattern = Pattern.compile("\\.logic$", Pattern.CASE_INSENSITIVE);
             break;
         default:
-            throw new ChordException("Unhandled datalog engine type: " + Config.datalogEngine);
+            throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
     }
 
@@ -126,13 +124,13 @@ public class TaskParser {
         for (String fileName : fileNames) {
             File file = new File(fileName);
             if (!file.exists()) {
-                nonexistentPathElem(fileName, "chord.java.analysis.path");
+                nonexistentPathElem(fileName, "petablox.java.analysis.path");
                 continue;
             }
             try {
                list.add(file.toURL());
             } catch (MalformedURLException ex) {
-                malformedPathElem(fileName, "chord.java.analysis.path", ex.getMessage());
+                malformedPathElem(fileName, "petablox.java.analysis.path", ex.getMessage());
                 continue;
            }
         }
@@ -163,7 +161,7 @@ public class TaskParser {
         for (String fileName : fileNames) {
             File file = new File(fileName);
             if (!file.exists()) {
-                nonexistentPathElem(fileName, "chord.dlog.analysis.path");
+                nonexistentPathElem(fileName, "petablox.dlog.analysis.path");
                 continue;
             }
             processDlogAnalysis(file);
@@ -177,7 +175,7 @@ public class TaskParser {
         } catch (ClassNotFoundException ex) {
             Messages.fatal(ex);
         }
-        ChordAnnotParser info = new ChordAnnotParser(type);
+        PetabloxAnnotParser info = new PetabloxAnnotParser(type);
         boolean success = info.parse();
         if (!success) {
             ignoreJavaTask(className);
@@ -279,7 +277,7 @@ public class TaskParser {
                     }
                 }
             } catch (IOException ex) {
-                malformedPathElem(fileName, "chord.dlog.analysis.path", ex.getMessage());
+                malformedPathElem(fileName, "petablox.dlog.analysis.path", ex.getMessage());
             }
         }
     }

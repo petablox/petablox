@@ -1,25 +1,16 @@
 package petablox.util.soot;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+
 import petablox.project.ClassicProject;
+import petablox.project.Config;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
-import soot.Local;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
-import soot.ArrayType;
-import soot.Body;
-import soot.UnitPrinter;
-import soot.NormalUnitPrinter;
-import soot.PrimType;
-import soot.RefLikeType;
-import soot.RefType;
+import soot.*;
 import soot.jimple.FieldRef;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
@@ -46,15 +37,22 @@ import soot.util.Chain;
 
 public class SootUtilities {
 	private static HashMap <Unit, SootMethod> PMMap = null;
-	private static HashMap <SootMethod,CFG> methodToCFG = new HashMap<SootMethod,CFG>();
+	private static HashMap <SootMethod,ICFG> methodToCFG = new HashMap<SootMethod,ICFG>();
+	private static HashMap <Unit, Block> unitToBlockMap = null;
+	public static Hierarchy h = null;
 	
-	public static CFG getCFG(SootMethod m){
+	public static ICFG getCFG(SootMethod m){
 		if(methodToCFG.containsKey(m)){
 			return methodToCFG.get(m);
 		}else{
 			SSAUtilities.process(m);
-			CFG cfg = new CFG(m);
+			ICFG cfg;
+			if (Config.cfgKind.equals("exception"))
+				cfg = new ECFG(m);
+			else 
+				cfg = new BCFG(m);
 			methodToCFG.put(m, cfg);
+			makeUnitToBlockMap(cfg);
 			return cfg;
 		}
 	}
@@ -121,6 +119,7 @@ public class SootUtilities {
 		}
 		return false;
 	}
+	
 	public static boolean isStoreInst(JAssignStmt a){
 		Value left = a.leftBox.getValue();
 		if(left instanceof JArrayRef){
@@ -150,7 +149,6 @@ public class SootUtilities {
 	}
 	
 	public static boolean isInvoke(Unit q){
-		//assert (q instanceof JInvokeStmt || q instanceof JAssignStmt);
 		if (q instanceof JInvokeStmt)
 	    	return true;
 		else if (q instanceof JAssignStmt) {
@@ -297,6 +295,18 @@ public class SootUtilities {
 		return extendsClass(j.getSuperclass(),k);
 	}
 
+	public static boolean implementsInterface(SootClass c, SootClass inter){
+		if(c.implementsInterface(inter.getName()))
+			return true;
+		while(c.hasSuperclass()){
+			SootClass d = c.getSuperclass();
+			if(d.implementsInterface(inter.getName()))
+				return true;
+			c = d;
+		}
+		return false;
+	}
+
 	public static boolean isSubtypeOf(RefLikeType i, RefLikeType j){
 		if(i instanceof ArrayType && j instanceof ArrayType){
 			ArrayType ia = (ArrayType)i;
@@ -311,6 +321,14 @@ public class SootUtilities {
 					RefType basejr = (RefType)basej;
 					return isSubtypeOf(baseir.getSootClass(),basejr.getSootClass());
 				}
+			}else if(ia.numDimensions > ja.numDimensions) {
+				Type basej = ja.baseType;
+				if(basej instanceof RefType){
+					SootClass c = ((RefType)basej).getSootClass();
+					if(c.getName().equals("java.lang.Object"))
+						return true;
+				}
+				return false;
 			}else{
 				return false;
 			}
@@ -326,33 +344,39 @@ public class SootUtilities {
 		}
 		return false;
 	}
+
 	public static boolean isSubtypeOf(SootClass j, SootClass k) {
-    	if (j.getName().equals(k.getName()))
+    	if(k.getName().equals("java.lang.Object"))
 			return true;
-    	if (k.isInterface() && j.implementsInterface(k.getName()))
-    		return true;
-    	if (!j.hasSuperclass())	
-    		return false;	
-    	else
-    		return isSubtypeOf(j.getSuperclass(),k); 
+		if (j.getName().equals(k.getName()))
+			return true;
+		if(j.isInterface() && k.isInterface()){
+			return h.isInterfaceSubinterfaceOf(j,k);
+		}else if(j.isInterface() && !(k.isInterface()))
+			return false;
+		else if(!(j.isInterface()) && k.isInterface()){
+			Iterator<SootClass> inters = j.getInterfaces().iterator();
+			while(inters.hasNext()){
+				SootClass c = inters.next();
+				if(c.getName().equals(k.getName()))
+					return true;
+				else{
+					boolean temp = false;
+					temp = h.isInterfaceSubinterfaceOf(c,k);
+					if(temp) return temp;
+				}
+			}
+			if(j.hasSuperclass())
+				return isSubtypeOf(j.getSuperclass(),k);
+		}else{
+			// Both j and k are concrete classes
+			if(!j.hasSuperclass())
+				return false;
+			return SootUtilities.isSubtypeOf(j.getSuperclass(),k);
+		}
+		return false;
 	}
 
-	public static boolean isNew(JAssignStmt a){                            //duplicate
-		Value left = a.leftBox.getValue();
-		Value right = a.rightBox.getValue();
-		if(right instanceof JNewExpr){
-			return true;
-		}
-		return false;
-	}
-	public static boolean isNewArray(JAssignStmt a){                       //duplicate
-		Value left = a.leftBox.getValue();
-		Value right = a.rightBox.getValue();
-		if(right instanceof JNewArrayExpr){
-			return true;
-		}
-		return false;
-	}
 	public static boolean isMoveInst(JAssignStmt a){
 		Value left = a.leftBox.getValue();
 		Value right = a.rightBox.getValue();
@@ -383,25 +407,46 @@ public class SootUtilities {
 	 */
 	public static Local[] getMethArgLocals(SootMethod m){
 		int numLocals = m.getParameterCount();
-		if(!m.isStatic())
+		List<Local> regs = m.getActiveBody().getParameterLocals();
+		if(!m.isStatic()) {
 			numLocals++; // Done to consider the "this" parameter passed
+			regs.add(0,m.getActiveBody().getThisLocal());
+		}
 		Local[] locals = new Local[numLocals];
-		if(numLocals==0)
-			return locals;
-		Chain<Local> cl = m.getActiveBody().getLocals();
-		int j = 0;
-		locals[j] = cl.getFirst();
-		for(j=1;j<numLocals;j++){
-			locals[j] = cl.getSuccOf(locals[j-1]);
+		for(int i=0;i<regs.size();i++){
+			locals[i] = regs.get(i);
 		}
 		return locals;
 	}
+	
+	/*
+	 * Returns the local variables of the method - arguments first, followed by temporaries
+	 */
+	public static List<Local> getLocals(SootMethod m){
+		Body b = m.getActiveBody();
+		List<Local> regs = b.getParameterLocals();
+		if(!m.isStatic())
+			regs.add(0, b.getThisLocal());
+		
+		List<Local> temps = new ArrayList<Local>();
+		Chain<Local> allLocals = b.getLocals();
+		Iterator<Local> it = allLocals.iterator();
+		while (it.hasNext()) {
+			Local l = it.next();
+			if (!regs.contains(l)) 
+				temps.add(l);
+		}
+		regs.addAll(temps);
+		return regs;
+	}
+	
 	public static int getBCI(Unit u){
 		try{
 			BytecodeOffsetTag bci = (BytecodeOffsetTag)u.getTag("BytecodeOffsetTag");
 			return bci.getBytecodeOffset();
 		}catch(Exception e){
-			System.out.println("WARN: SootUtilities cannot get BCI"+u);
+			if (Config.verbose >= 2)
+				System.out.println("WARN: SootUtilities cannot get BCI"+u);
 		}
 		return -1;
 	}
@@ -410,8 +455,9 @@ public class SootUtilities {
         return 0;
 	}
 	
-	public static String toByteLocStr(Unit u) {                              //TODO 
-        return "";
+	public static String toByteLocStr(Unit u) {   
+		String x = Integer.toString(getBCI((Unit) u));                  
+	    return x + "!" + getMethod(u);
 	}
 	
 	public static String toLocStr(Unit u) {                              //TODO 
@@ -425,6 +471,17 @@ public class SootUtilities {
 	public static String toVerboseStr(Unit u) {                              //TODO 
 	//return toByteLocStr(u) + " (" + toJavaLocStr(u) + ") [" + printUnit(u) + "]";
         return "";
+	}
+
+	public static String toVerboseStrInst(Object i){
+		String s = null;
+		if(i instanceof Unit){
+			s = SootUtilities.toVerboseStr(((Unit)i));
+		}else if(i instanceof Block){
+			Unit head = ((Block)i).getHead();
+			s = SootUtilities.toVerboseStr(head);
+		}
+		return s;
 	}
 
 	public static List<Integer> getLineNumber(SootMethod m, Local v){      //TODO
@@ -453,10 +510,27 @@ public class SootUtilities {
 		return null;
 	}
 	
-	public static Block getBlock(Unit i){									
-		SootMethod m = SootUtilities.getMethod(i);
-		CFG cfg = new CFG(m);
-		return cfg.getBasicBlock(i); 
+	public static Block getBasicBlock(Unit u){
+		Block b = unitToBlockMap.get(u);
+		if (b == null) {
+			SootMethod m = getMethod(u);
+			ICFG cfg = getCFG(m);
+			makeUnitToBlockMap(cfg);
+		}
+		return unitToBlockMap.get(u);
+	}
+	
+	private static void makeUnitToBlockMap(ICFG cfg){
+		if (unitToBlockMap == null) {
+			unitToBlockMap = new HashMap<Unit, Block>();
+		}
+		for (Block b : cfg.reversePostOrder()){
+			Iterator<Unit> uit = b.iterator();
+			while(uit.hasNext()){
+				Unit u = uit.next();
+				unitToBlockMap.put(u,b);
+			}
+		}
 	}
 	
 	public static Map<Unit,Integer> getBCMap(SootMethod m){					//TODO

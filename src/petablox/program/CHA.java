@@ -10,7 +10,7 @@ import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.util.IndexSet;
 import petablox.util.Timer;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Hierarchy;
@@ -42,7 +42,7 @@ import soot.toolkits.graph.Block;
  */
 public class CHA implements ScopeBuilder {
     private static final String MAIN_CLASS_NOT_DEFINED =
-        "ERROR: Property chord.main.class must be set to specify the main class of program to be analyzed.";
+        "ERROR: Property petablox.main.class must be set to specify the main class of program to be analyzed.";
     private static final String MAIN_METHOD_NOT_FOUND =
         "ERROR: Could not find main class '%s' or main method in that class.";
 
@@ -102,7 +102,7 @@ public class CHA implements ScopeBuilder {
             }catch(Exception e){
             	continue;
             }
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             if (DEBUG) System.out.println("Processing CFG of method: " + m);
             processCFG(cfg);
         }
@@ -126,7 +126,7 @@ public class CHA implements ScopeBuilder {
         }
     }
 
-    private void processCFG(CFG cfg) {
+    private void processCFG(ICFG cfg) {
     	Hierarchy h = new Hierarchy();
     	for(Block bb : cfg.reversePostOrder()){
     		Iterator<Unit> itr = bb.iterator();
@@ -160,12 +160,12 @@ public class CHA implements ScopeBuilder {
                         SootField f = jas.getFieldRef().getField();
                         SootClass c = f.getDeclaringClass();
                         visitClass(c.getType());
-    				}else if(SootUtilities.isNew(jas)){
+    				}else if(SootUtilities.isNewStmt(jas)){
         				if(DEBUG) System.out.println("Unit "+u);
         				JNewExpr jne = ((JNewExpr)jas.rightBox.getValue());
         				SootClass c = ((RefType)jne.getType()).getSootClass();
         				visitClass(c.getType());
-        			}else if(SootUtilities.isNewArray(jas)){
+        			}else if(SootUtilities.isNewArrayStmt(jas)){
         				if(DEBUG) System.out.println("Unit "+u);
         				JNewArrayExpr jne = ((JNewArrayExpr)jas.rightBox.getValue());
         				visitClass(jne.getType());

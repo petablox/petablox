@@ -7,7 +7,7 @@ import petablox.program.Program;
 import petablox.program.visitors.IMethodVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Local;
@@ -23,7 +23,7 @@ import soot.toolkits.graph.Block;
 
 /**
  * Relation containing each tuple (v,t) such that local variable v of reference type has type t.
- * If SSA is used (system property {@code chord.ssa} is set to true) then it is guaranteed that
+ * If SSA is used (system property {@code petablox.ssa} is set to true) then it is guaranteed that
  * each local variable v has a unique type t.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
@@ -50,8 +50,8 @@ public class RelVT extends ProgramRel implements IMethodVisitor {
     public void visit(SootMethod m) {
         if (m.isAbstract())
             return;
-        CFG cfg = SootUtilities.getCFG(m);
-        /*Local[] regs = SootUtilities.getMethArgLocals(m);
+        /*ICFG cfg = SootUtilities.getCFG(m);
+        Local[] regs = SootUtilities.getMethArgLocals(m);
         int numArgs = regs.length;
         for(int i=0; i<numArgs; i++){
         	Type t = regs[i].getType();
@@ -67,7 +67,7 @@ public class RelVT extends ProgramRel implements IMethodVisitor {
                 process(q);
             }
         }*/
-        Iterator<Local> itr = m.getActiveBody().getLocals().iterator();
+        Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
         while(itr.hasNext()){
         	Local l = itr.next();
         	Type t = l.getType();

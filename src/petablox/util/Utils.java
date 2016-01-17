@@ -15,21 +15,18 @@ import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Collection;
-import java.util.Locale;
 
 import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.scannotation.AnnotationDB;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 
 /**
  * Commonly-used utilities.
@@ -570,7 +567,7 @@ public final class Utils {
             if (enumVal.name().equalsIgnoreCase(propVal))
                 return enumVal;
         }
-        throw new ChordException("Property " + propName + " does not specify a valid enum of type "
+        throw new PetabloxException("Property " + propName + " does not specify a valid enum of type "
             + defaultVal.getDeclaringClass().getName());
     }
     

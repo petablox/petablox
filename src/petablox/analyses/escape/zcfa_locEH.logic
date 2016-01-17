@@ -1,0 +1,27 @@
+// Created by convert.py from ./src/petablox/analyses/escape/zcfa_locEH.dlog on 2015-04-20 13:08:42.246823
+// :name: zcfa-locEH-dlog
+
+// :domains: V
+// :domains: H
+// :domains: F
+// :domains: E
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: queryE(E)
+// :inputs: VH(V,H)
+// :inputs: HFH(H,F,H)
+// :inputs: EV(E,V)
+// :outputs: locEH(E,H)
+locEH(e,h) -> E(e), H(h).
+
+// ###
+// # Constraints
+// ###
+
+locEH(e,h) <- queryE(e), EV(e,v), VH(v,h).
+locEH(e,h) <- locEH(e,h2), HFH(h,_,h2).
+

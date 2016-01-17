@@ -4,21 +4,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
-import CnCHJ.api.ItemCollection;
 import petablox.bddbddb.Dom;
 import petablox.program.visitors.IClassVisitor;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
-import petablox.project.ICtrlCollection;
-import petablox.project.IDataCollection;
 import petablox.project.IStepCollection;
 import petablox.project.ITask;
 import petablox.project.ModernProject;
 import petablox.project.VisitorHandler;
-import petablox.project.analyses.ProgramDom;
 
 /**
  * Generic implementation of a program domain (a specialized kind
@@ -64,10 +59,10 @@ public class ProgramDom<T> extends Dom<T> implements ITask {
                 super.saveToLogicBlox(Config.logicbloxWorkDirName);
                 break;
             default:
-                throw new ChordException("Unrecognized datalog engine: " + Config.datalogEngine);
+                throw new PetabloxException("Unrecognized datalog engine: " + Config.datalogEngine);
             }
         } catch (IOException ex) {
-            throw new ChordException(ex);
+            throw new PetabloxException(ex);
         }
         if (Config.classic)
             ClassicProject.g().setTrgtDone(this);

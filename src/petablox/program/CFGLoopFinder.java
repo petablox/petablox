@@ -3,7 +3,7 @@ package petablox.program;
 import java.util.Stack;
 
 import petablox.util.ArraySet;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.tuple.object.Pair;
 
 import java.util.Set;
@@ -34,7 +34,7 @@ public class CFGLoopFinder {
      * 
      * @param cfg A CFG.
      */
-    public void visit(CFG cfg) {
+    public void visit(ICFG cfg) {
         // build back edges
         visitedBef = new ArraySet<Block>();
         visitedAft = new ArraySet<Block>();

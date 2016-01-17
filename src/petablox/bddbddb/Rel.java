@@ -20,12 +20,10 @@ import net.sf.javabdd.BDDException;
 import net.sf.javabdd.BDDFactory;
 import petablox.logicblox.LogicBloxExporter;
 import petablox.logicblox.LogicBloxImporter;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.util.tuple.integer.*;
 import petablox.util.tuple.object.*;
-import petablox.bddbddb.Dom;
-import petablox.bddbddb.RelSign;
 
 
 /**
@@ -183,11 +181,11 @@ public class Rel {
         double bddminfree = Double.parseDouble(
             System.getProperty("bddminfree", ".20"));
         // Note: Do not change the argument "java" below to "buddy".
-        // We require a separate BDD factory for each relation in Chord,
+        // We require a separate BDD factory for each relation in Petablox,
         // for modularity purposes.  We also require the ability for
         // multiple such factories to be active simultaneously.  But
         // BuDDyFactory, the factory of choice (since it is more
-        // efficient and is used for solving Datalog analyses in Chord)
+        // efficient and is used for solving Datalog analyses in Petablox)
         // allows at most one instance of itself to be active at a time.
         // Hence, we need to use JFactory here instead, which allows
         // multiple instances of itself be active simultaneously.
@@ -335,7 +333,7 @@ public class Rel {
      */
     public void saveToLogicBlox(String dirName) {
         if (bdd == null)
-            throw new ChordException("bdd not initialized");
+            throw new PetabloxException("bdd not initialized");
         LogicBloxExporter exporter = new LogicBloxExporter();
         exporter.setWorkDir(dirName);
         exporter.saveRelation(this);
@@ -679,24 +677,24 @@ public class Rel {
     protected void checkRange(Object val, int domIdx) {
         int idx = doms[domIdx].indexOf(val);
         if (idx == -1)
-            throw new ChordException("Cannot find value '" + val +
+            throw new PetabloxException("Cannot find value '" + val +
                 "' in domain #" + domIdx + " named '" + doms[domIdx] +
                 "' in relation named '" + name + "'.");
         int size = doms[domIdx].size();
         if (idx >= size) {
-            throw new ChordException("Object " + val + " has out of range index " + idx +
+            throw new PetabloxException("Object " + val + " has out of range index " + idx +
                 " in domain #" + domIdx + " named '" + doms[domIdx] + "' of size " + size +
                 " in relation named '" + name + "'.");
         }
     }
     protected void checkRange(int idx, int domIdx) {
         if (idx == -1)
-            throw new ChordException("Cannot find value" +
+            throw new PetabloxException("Cannot find value" +
                 " in domain #" + domIdx + " named '" + doms[domIdx] +
                 "' in relation named '" + name + "'.");
         int size = doms[domIdx].size();
         if (idx >= size) {
-            throw new ChordException("Value has out of range index " + idx +
+            throw new PetabloxException("Value has out of range index " + idx +
                 " in domain #" + domIdx + " named '" + doms[domIdx] + "' of size " + size +
                 " in relation named '" + name + "'.");
         }
@@ -2000,7 +1998,7 @@ public class Rel {
             } catch (BDDException e) {
                 for (int i = 0; i < size; ++i)
                     checkRange(idxs[i], i);
-                throw new ChordException(e);
+                throw new PetabloxException(e);
             }
         }
     }
@@ -2012,7 +2010,7 @@ public class Rel {
         
         final int size = vals.length;
         switch (size) {
-        case 0: throw new ChordException("vals must have at least one element.");
+        case 0: throw new PetabloxException("vals must have at least one element.");
         // delegate to unrolled versions if possible
         case 1: return contains(vals[0]);
         case 2: return contains(vals[0], vals[1]);

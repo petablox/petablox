@@ -48,7 +48,7 @@ public class Execution {
 
         addSaveFiles("log.txt", "options.map", "output.map", "addToView");
         
-        String view = System.getProperty("chord."+name+".addToView", null);
+        String view = System.getProperty("petablox."+name+".addToView", null);
         if (view != null) {
             PrintWriter out = Utils.openOut(path("addToView"));
             out.println(view);
@@ -108,7 +108,7 @@ public class Execution {
         flushOutput();
 
         // Delete stuff
-        String files = System.getProperty("chord."+name+".deleteFiles");
+        String files = System.getProperty("petablox."+name+".deleteFiles");
         if (files != null) {
             for (String file : files.split(",")) {
                 if (file.equals("")) continue;
@@ -117,7 +117,7 @@ public class Execution {
             }
         }
 
-        String finalPoolPath = System.getProperty("chord."+name+".finalPoolPath");
+        String finalPoolPath = System.getProperty("petablox."+name+".finalPoolPath");
         if (finalPoolPath != null) {
             String path;
             for (int i = random.nextInt(1000); new File(path = finalPoolPath+"/"+i+".exec").exists(); i++)
@@ -138,7 +138,7 @@ public class Execution {
     }
 
     public String getStringArg(String key, String defaultValue) {
-        String value = System.getProperty("chord."+name+"."+key, defaultValue);
+        String value = System.getProperty("petablox."+name+"."+key, defaultValue);
         if (value != null)
             putOption(key, value);
         return value;

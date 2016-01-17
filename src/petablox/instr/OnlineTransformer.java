@@ -35,7 +35,7 @@ public final class OnlineTransformer implements ClassFileTransformer {
         "INFO: OnlineTransformer: Transforming class %s ...";
 
     // use reflection for Java 1.6 API (class retransformation) so that
-    // Chord is usable with Java 1.5
+    // Petablox is usable with Java 1.5
 
     private static Class instrumentationClass;
     private static Method isRetransformClassesSupportedMethod;

@@ -1,0 +1,12 @@
+# name=checkExcludedV-dlog
+
+.include "M.dom"
+.include "V.dom"
+
+.bddvarorder V0_M0
+
+checkExcludedM(m:M0) input
+MV(m:M0,v:V0) input
+checkExcludedV(v:V0) output
+
+checkExcludedV(v) :- MV(m,v), checkExcludedM(m).

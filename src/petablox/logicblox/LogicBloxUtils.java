@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
@@ -51,7 +51,7 @@ public class LogicBloxUtils {
     
     /**
      * Generates a workspace name by hashing some input string, intended to 
-     * be the absolute path of Chord's working directory.
+     * be the absolute path of Petablox's working directory.
      * 
      * @param seed a seed input
      * @return the workspace name
@@ -60,7 +60,7 @@ public class LogicBloxUtils {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             byte[] hash = md5.digest(seed.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder("chord:");
+            StringBuilder sb = new StringBuilder("petablox:");
             for (int i = 0; i < hash.length; i += 2) {
                 int next = (i + 1 < hash.length ? hash[i + 1] : 0) & 0xFF;
                 int unsigned = ((hash[i] & 0xFF) << 8) | next;
@@ -68,9 +68,9 @@ public class LogicBloxUtils {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new ChordException(e);
+            throw new PetabloxException(e);
         }
     }
     

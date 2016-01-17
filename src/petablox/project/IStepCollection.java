@@ -10,7 +10,7 @@ public interface IStepCollection {
     /**
      * Sets the name of this program analysis.
      * 
-     * @param name A name unique across all program analyses included in a Chord project.
+     * @param name A name unique across all program analyses included in a Petablox project.
      */
     public void setName(String name);
     /**

@@ -12,7 +12,7 @@ import petablox.util.soot.SootUtilities;
 public class RelExcludeThreadStartI extends ProgramRel {
     private static final String[] threadExcludeAry;
     static {
-        String threadExcludeStr = System.getProperty("chord.thread.exclude", "sun.,java.");
+        String threadExcludeStr = System.getProperty("petablox.thread.exclude", "sun.,java.");
         threadExcludeAry = Utils.toArray(threadExcludeStr);
     }
     @Override

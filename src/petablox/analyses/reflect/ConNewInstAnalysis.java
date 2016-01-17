@@ -51,9 +51,9 @@ public class ConNewInstAnalysis extends JavaAnalysis {
         DomI domI = (DomI) ClassicProject.g().getTrgt("I");
         DomH domH = (DomH) ClassicProject.g().getTrgt("H");
         DomM domM = (DomM) ClassicProject.g().getTrgt("M");
-        List<Pair<Unit, List<RefType>>> l =
+        List<Pair<Unit, List<RefLikeType>>> l =
             Program.g().getReflect().getResolvedConNewInstSites();
-        for (Pair<Unit, List<RefType>> p : l) {
+        for (Pair<Unit, List<RefLikeType>> p : l) {
             Unit q = p.val0;
             int iIdx = domI.indexOf(q);
             assert (iIdx >= 0) : ("Quad " + SootUtilities.toLocStr(q) + " not found in domain I.");

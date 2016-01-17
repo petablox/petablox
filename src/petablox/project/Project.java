@@ -2,7 +2,7 @@ package petablox.project;
 
 
 /**
- * A Chord project comprising a set of tasks and a set of targets
+ * A Petablox project comprising a set of tasks and a set of targets
  * produced/consumed by those tasks.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)

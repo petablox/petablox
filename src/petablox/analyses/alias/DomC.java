@@ -13,7 +13,7 @@ import petablox.util.soot.SootUtilities;
  * Domain of abstract contexts.
  * <p>
  * The 0th element in this domain denotes the distinguished abstract context <tt>epsilon</tt>
- * (see {@link chord.analyses.alias.Ctxt}).
+ * (see {@link petablox.analyses.alias.Ctxt}).
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

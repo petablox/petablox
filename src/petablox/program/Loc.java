@@ -1,6 +1,10 @@
 package petablox.program;
 
+import petablox.util.soot.JEntryExitNopStmt;
+import petablox.util.soot.SootUtilities;
+import soot.SootMethod;
 import soot.Unit;
+import soot.toolkits.graph.Block;
 
 
 /**
@@ -13,6 +17,10 @@ public class Loc {
     public final int qIdx;
 
     public Loc(Unit i, int qIdx) {
+        // qIdx is -1 when referring to entry and exit of methods
+        if(i instanceof JEntryExitNopStmt){
+            assert(qIdx == -1);
+        }
         this.i = i;
         this.qIdx = qIdx;
     }
@@ -26,7 +34,9 @@ public class Loc {
     }
 
     public String toString() {
-        return "<" + i.getTag("LineNumberTag") + ", " + i + ">";
+    	SootMethod m = null;
+        m = SootUtilities.getMethod(i);
+        return "<" + m + ", " + i + ">";
     }
 }
 

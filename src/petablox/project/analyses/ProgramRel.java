@@ -3,22 +3,15 @@ package petablox.project.analyses;
 import petablox.bddbddb.Rel;
 import petablox.bddbddb.RelSign;
 import petablox.program.visitors.IClassVisitor;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
-import petablox.project.ICtrlCollection;
-import petablox.project.IDataCollection;
 import petablox.project.IStepCollection;
 import petablox.project.ITask;
 import petablox.project.Messages;
 import petablox.project.ModernProject;
 import petablox.project.VisitorHandler;
 import petablox.util.Utils;
-
-import java.util.List;
-import java.io.File;
-
-import CnCHJ.api.ItemCollection;
 
 /**
  * Generic implementation of a program relation (a specialized kind of Java task).
@@ -98,7 +91,7 @@ public class ProgramRel extends Rel implements ITask {
             super.loadFromLogicBlox(Config.logicbloxWorkspace);
             break;
         default:
-            throw new ChordException("Unhandled datalog engine: " + Config.datalogEngine);
+            throw new PetabloxException("Unhandled datalog engine: " + Config.datalogEngine);
         }
     }
     public void fill() {

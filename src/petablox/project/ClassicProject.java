@@ -27,7 +27,7 @@ import petablox.util.Timer;
 import petablox.util.Utils;
 
 /**
- * A Chord project comprising a set of tasks and a set of targets
+ * A Petablox project comprising a set of tasks and a set of targets
  * produced/consumed by those tasks.
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
@@ -38,7 +38,7 @@ public class ClassicProject extends Project {
     private static final String CANNOT_INSTANTIATE_TRGT =
         "ERROR: ClassicProject: Cannot instantiate trgt '%s': %s.";
     private static final String MULTIPLE_TASKS_PRODUCING_TRGT =
-        "ERROR: ClassicProject: Multiple tasks (%s) producing target '%s'; include exactly one of them via property 'chord.run.analyses'.";
+        "ERROR: ClassicProject: Multiple tasks (%s) producing target '%s'; include exactly one of them via property 'petablox.run.analyses'.";
     private static final String TASK_PRODUCING_TRGT_NOT_FOUND =
         "ERROR: ClassicProject: No task producing target '%s' found in project.";
     private static final String TASK_NOT_FOUND =

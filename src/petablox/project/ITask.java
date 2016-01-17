@@ -11,7 +11,7 @@ public interface ITask {
      * Sets the name of this analysis.
      * 
      * @param    name    A name unique across all analyses included
-     * in a Chord project.
+     * in a Petablox project.
      */
     public void setName(String name);
     /**

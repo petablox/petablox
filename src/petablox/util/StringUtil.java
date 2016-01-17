@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collection;
 
 /** String utilities.
- * Say {@code import static chord.Util.StringUtil.*;} */
+ * Say {@code import static petablox.Util.StringUtil.*;} */
 public final class StringUtil {
 	static public String path(String ... xs) {
 		boolean first = true;

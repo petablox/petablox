@@ -13,7 +13,7 @@ import soot.SootMethod;
  *
  * Constructs scope by running the given Java program on the given input,
  * observing which classes are loaded (either using JVMTI or load-time bytecode
- * instrumentation, depending upon whether property {@code chord.use.jvmti}
+ * instrumentation, depending upon whether property {@code petablox.use.jvmti}
  * is set to true or false, respectively), and then regarding all methods
  * declared in those classes as reachable.
  *

@@ -1,32 +1,20 @@
 package petablox.project.analyses;
 
-import gnu.trove.set.hash.TIntHashSet;
-import petablox.analyses.basicblock.DomB;
-import petablox.analyses.method.DomM;
 import petablox.instr.BasicInstrumentor;
-import petablox.instr.EventKind;
 import petablox.instr.OfflineTransformer;
-import petablox.instr.TracePrinter;
-import petablox.instr.TraceTransformer;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.OutDirUtils;
-import petablox.project.Project;
 import petablox.runtime.BasicEventHandler;
 import petablox.runtime.TraceEventHandler;
 import petablox.util.ByteBufferedFile;
 import petablox.util.Executor;
 import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
-import petablox.util.tuple.object.Pair;
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.Stack;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
@@ -181,9 +169,9 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
      * implemented in main/agent/ in order to start and end the event handler
      * at runtime.
      *
-     * If any dynamic analysis uses this JVMTI agent, then Chord must have been
-     * compiled by setting chord.use.jvmti=true (default is false) either on
-     * the command line or in file main/chord.properties.
+     * If any dynamic analysis uses this JVMTI agent, then Petablox must have been
+     * compiled by setting petablox.use.jvmti=true (default is false) either on
+     * the command line or in file main/petablox.properties.
      *
      * Subclasses can override this method.
      */
@@ -295,7 +283,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
         boolean reuse = false;
         if (reuseTraces()) {
             // check if all trace files from a previous run of
-            // Chord exist; only then can those files be reused
+            // Petablox exist; only then can those files be reused
             boolean failed = false;
             for (String runID : runIDs) {
                 String s = getTraceFileName(0, runID);
@@ -335,7 +323,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
             List<String> basecmd = getBaseCmd(!offline, useJvmti, 0);
             initAllPasses();
             for (String runID : runIDs) {
-                String args = System.getProperty("chord.args." + runID, "");
+                String args = System.getProperty("petablox.args." + runID, "");
                 List<String> fullcmd = new ArrayList<String>(basecmd);
                 fullcmd.addAll(Utils.tokenize(args));
                 if (Config.verbose >= 1) Messages.log(STARTING_RUN, runID, msg);
@@ -366,7 +354,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
                 }
             };
             Executor executor = new Executor(!pipeTraces);
-            String args = System.getProperty("chord.args." + runID, "");
+            String args = System.getProperty("petablox.args." + runID, "");
             final List<String> fullcmd = new ArrayList<String>(basecmd);
             fullcmd.addAll(Utils.tokenize(args));
             Runnable instrProgram = new Runnable() {
@@ -428,7 +416,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
         int timeout = getTimeout();
         boolean haltOnErr = haltOnErr();
         
-        String runBefore = System.getProperty("chord.dynamic.runBeforeCmd");
+        String runBefore = System.getProperty("petablox.dynamic.runBeforeCmd");
         
         try {
             Process beforeProc = null;
@@ -461,7 +449,7 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
             Properties props = System.getProperties();
             for (Map.Entry e : props.entrySet()) {
                 String key = (String) e.getKey();
-                if (key.startsWith("chord."))
+                if (key.startsWith("petablox."))
                     basecmd.add("-D" + key + "=" + e.getValue());
             }
             basecmd.add("-Xbootclasspath/p:" + Config.toolClassPathName);

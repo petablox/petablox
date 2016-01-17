@@ -1,6 +1,8 @@
 package petablox.analyses.point;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import soot.SootMethod;
 import soot.toolkits.graph.Block;
@@ -12,7 +14,7 @@ import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 
 
@@ -30,21 +32,32 @@ import petablox.util.soot.SootUtilities;
 @Petablox(name = "P", consumes = { "M" })
 public class DomP extends ProgramDom<Unit> {
     protected DomM domM;
+    protected Map<Unit, SootMethod> unitToMethodMap;
 
+    public SootMethod getMethod(Unit u) {
+        return unitToMethodMap.get(u);
+    }
+    
+    @Override
+    public void init() {
+        domM = (DomM) (Config.classic ? ClassicProject.g().getTrgt("M") : consumes[0]);
+        unitToMethodMap = new HashMap<Unit, SootMethod>();
+    }
+    
     @Override
     public void fill() {
-        domM = (DomM) (Config.classic ?  ClassicProject.g().getTrgt("M") : consumes[0]);
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
             if (m.isAbstract())
                 continue;
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
             	Iterator<Unit> uit = bb.iterator();
             	while(uit.hasNext()){
             		Unit u = uit.next();
             		add(u);
+            		unitToMethodMap.put(u, m);
             	}  
             }
         }
@@ -52,9 +65,8 @@ public class DomP extends ProgramDom<Unit> {
 
     @Override
     public String toUniqueString(Unit u) {
-        String x = Integer.toString(SootUtilities.getID((Unit) u));                  
-        return x + "!" + SootUtilities.getMethod(u);
-    	//return "";
+        String x = Integer.toString(SootUtilities.getBCI((Unit) u));                  
+        return x + "!" + getMethod(u);
     }
 
     @Override

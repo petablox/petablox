@@ -6,7 +6,7 @@ import petablox.analyses.invk.DomI;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 
-/** Use by saying {@code import static chord.util.RelUtil.*;}. */
+/** Use by saying {@code import static petablox.util.RelUtil.*;}. */
 public final class RelUtil {
     private RelUtil() { /* no instance */ }
 	public static ProgramRel pRel(String name) { return (ProgramRel) ClassicProject.g().getTrgt(name); }

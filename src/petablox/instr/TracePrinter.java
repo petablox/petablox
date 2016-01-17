@@ -16,7 +16,7 @@ import petablox.util.soot.SootUtilities;
  * <p>
  * Recognized system properties:
  * <ul>
- * <li><tt>chord.trace.block.size</tt> (default is 4096): the number of bytes to be read from the original
+ * <li><tt>petablox.trace.block.size</tt> (default is 4096): the number of bytes to be read from the original
  * trace file or written to the transformed trace file in a single file operation.</li>
  * </ul>
  * 

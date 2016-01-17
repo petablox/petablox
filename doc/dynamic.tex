@@ -2,18 +2,18 @@
 \chapter{Dynamic Analysis}
 \label{chap:dynamic}
 
-This chapter describes all aspect of dynamic analysis in Chord.  Section
+This chapter describes all aspect of dynamic analysis in Petablox.  Section
 \ref{sec:writing-dynamic} describes how to write a dynamic analysis, Section
 \ref{sec:running-dynamic} describes how to compile and run it, and Section
 \ref{sec:instr-events} describes common dynamic analysis events supported in
-Chord.
+Petablox.
 
 \section{Writing a Dynamic Analysis}
 \label{sec:writing-dynamic}
 
 Follow the following steps to write your own dynamic analysis.
 
-Create a class extending \code{chord.project.analyses.DynamicAnalysis} and override
+Create a class extending \code{petablox.project.analyses.DynamicAnalysis} and override
 the appropriate methods in it.
 The only methods that must be compulsorily overridden are method \code{getInstrScheme()},
 which must return an instance of the ``instrumentation scheme" required by
@@ -30,12 +30,12 @@ A sample such class \code{MyDynamicAnalysis} is shown below:
 \begin{framed}
 {\small
 \begin{verbatim}
-    import chord.project.Chord;
-    import chord.project.analyses.DynamicAnalysis;
-    import chord.instr.InstrScheme;
+    import petablox.project.Petablox;
+    import petablox.project.analyses.DynamicAnalysis;
+    import petablox.instr.InstrScheme;
 
-    // ***TODO***: analysis won't be recognized by Chord without this annotation
-    @Chord(name = "<ANALYSIS_NAME>")    
+    // ***TODO***: analysis won't be recognized by Petablox without this annotation
+    @Petablox(name = "<ANALYSIS_NAME>")    
     public class MyDynamicAnalysis extends DynamicAnalysis {
         InstrScheme scheme;
         @Override
@@ -88,20 +88,20 @@ A sample such class \code{MyDynamicAnalysis} is shown below:
 \label{sec:running-dynamic}
 
 Compile the analysis by placing the directory containing class \code{MyDynamicAnalysis} created
-above in the path defined by property \code{chord.ext.java.analysis.path}.
+above in the path defined by property \code{petablox.ext.java.analysis.path}.
 
 Provide the IDs of program runs to be generated (say 1, 2, ..., M) and the command-line arguments to be
 used for the program in each of those runs (say \code{<args1>}, ..., \code{<argsM>}) via properties
-\code{chord.run.ids=1,2,...,N} and \code{chord.args.1=<args1>}, ..., \code{chord.args.M=<argsM>}.
-By default, \code{chord.run.ids=0} and \code{chord.args.0=""}, that is, the program will be run only
+\code{petablox.run.ids=1,2,...,N} and \code{petablox.args.1=<args1>}, ..., \code{petablox.args.M=<argsM>}.
+By default, \code{petablox.run.ids=0} and \code{petablox.args.0=""}, that is, the program will be run only
 once (using run ID 0) with no command-line arguments.
 
-To run the analysis, set property \code{chord.run.analyses} to
+To run the analysis, set property \code{petablox.run.analyses} to
 \code{<ANALYSIS_NAME>} (recall that \code{<ANALYSIS_NAME>} is the name provided
-in the \code{@Chord} annotation for class \code{MyDynamicAnalysis} created
+in the \code{@Petablox} annotation for class \code{MyDynamicAnalysis} created
 above).
 
-{\bf Note:} The IBM J9 JVM on Linux is highly recommended if you intend to use Chord for
+{\bf Note:} The IBM J9 JVM on Linux is highly recommended if you intend to use Petablox for
 dynamic program analysis, as it allows you to instrument the entire JDK; using any other
 platform will likely require excluding large parts of the JDK from being instrumented.
 Additionally, if you intend to use online (load-time) bytecode instrumentation in
@@ -114,19 +114,19 @@ see Section \ref{sec:scope-props} and Section \ref{sec:instr-props} in Chapter \
 For instance:
 \begin{itemize}
 \item
-You can set property \code{chord.scope.kind} to {\tt dynamic} so that the program scope
+You can set property \code{petablox.scope.kind} to {\tt dynamic} so that the program scope
 is computed dynamically (i.e., by running the program) instead of statically.
 \item
 You can exclude certain classes (e.g., JDK classes) from being instrumented by setting
-properties \code{chord.std.scope.exclude}, \code{chord.ext.scope.exclude}, and
-\code{chord.scope.exclude}.
+properties \code{petablox.std.scope.exclude}, \code{petablox.ext.scope.exclude}, and
+\code{petablox.scope.exclude}.
 \item
 You can choose between online (i.e. load-time) and offline bytecode instrumentation by
-setting property \code{chord.instr.kind} to {\tt online} or {\tt offline}.
+setting property \code{petablox.instr.kind} to {\tt online} or {\tt offline}.
 \item
 You can require the event-generating and event-handling JVMs to be one and the same (by setting
-property \code{chord.trace.kind} to {\tt none}),
-or to be separate (by setting property {\tt chord.trace.kind} to {\tt full} or {\tt pipe}, depending upon
+property \code{petablox.trace.kind} to {\tt none}),
+or to be separate (by setting property {\tt petablox.trace.kind} to {\tt full} or {\tt pipe}, depending upon
 whether you want the two JVMs to exchange events by a regular file or a POSIX pipe, respectively).
 Using a single JVM can cause correctness/performance issues if event-handling Java code itself is instrumented
 (e.g., say the event-handling code uses class \code{java.util.ArrayList} which is not excluded from program scope).
@@ -138,29 +138,29 @@ and then the event-handling JVM processes the dynamic trace.
 If a POSIX pipe is used to exchange events between the two JVMs, then the JVMs run in lockstep.
 Obviously, a pipe is more efficient for very long traces, but it 
 not portable (e.g., it does not currently work on Windows/Cygwin), and the traces cannot be reused
-across Chord runs (see the following item).
+across Petablox runs (see the following item).
 \item
-You can reuse dynamic traces from a previous Chord run by setting property
-\code{chord.reuse.traces} to {\tt true}.  In this case, you must also set property
-{\tt chord.trace.kind} to {\tt full}.
+You can reuse dynamic traces from a previous Petablox run by setting property
+\code{petablox.reuse.traces} to {\tt true}.  In this case, you must also set property
+{\tt petablox.trace.kind} to {\tt full}.
 \item
-You can set property \code{chord.dynamic.haltonerr} to {\tt false} to prevent Chord from terminating
+You can set property \code{petablox.dynamic.haltonerr} to {\tt false} to prevent Petablox from terminating
 even if the program on which dynamic analysis is being performed crashes.
 \end{itemize}
 
-Chord offers much more flexibility in crafting dynamic analyses.
-You can define your own instrumentor (by subclassing \code{chord.instr.CoreInstrumentor}
-instead of using the default \code{chord.instr.Instrumentor}) and your own event handler (by subclassing \code{chord.runtime.CoreEventHandler}
-instead of using the default \code{chord.runtime.EventHandler}).
+Petablox offers much more flexibility in crafting dynamic analyses.
+You can define your own instrumentor (by subclassing \code{petablox.instr.CoreInstrumentor}
+instead of using the default \code{petablox.instr.Instrumentor}) and your own event handler (by subclassing \code{petablox.runtime.CoreEventHandler}
+instead of using the default \code{petablox.runtime.EventHandler}).
 You can ask the dynamic analysis to use your custom instrumentor and/or your custom event handler by overriding
-methods \code{getInstrumentor()} and \code{getEventHandler()}, respectively, defined in \code{chord.project.analyses.CoreDynamicAnalysis}.
-Finally, you can define your own dynamic analysis template by subclassing \code{chord.project.analyses.CoreDynamicAnalysis}
-instead of subclassing the default \code{chord.project.analyses.DynamicAnalysis}.
+methods \code{getInstrumentor()} and \code{getEventHandler()}, respectively, defined in \code{petablox.project.analyses.CoreDynamicAnalysis}.
+Finally, you can define your own dynamic analysis template by subclassing \code{petablox.project.analyses.CoreDynamicAnalysis}
+instead of subclassing the default \code{petablox.project.analyses.DynamicAnalysis}.
 
 \section{Common Dynamic Analysis Events}
 \label{sec:instr-events}
 
-Chord provides support for instrumenting common dynamic analysis events.
+Petablox provides support for instrumenting common dynamic analysis events.
 The below table describes these events.
 
 \begin{mytable}{|l|p{4.3in}|} 

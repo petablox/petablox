@@ -95,7 +95,7 @@ public class RelCHA extends ProgramRel {
                         SootClass d = ((RefType)s).getSootClass();
                         if (d.isInterface() || d.isAbstract())
                             continue;
-                        if (d.implementsInterface(c.getName())) {
+                        if (SootUtilities.isSubtypeOf(d,c)) {
                             SootMethod n = this.getMethodItr(d,subsig);
                             if(n==null){
                             	System.out.println("WARN: RelCHA Method not found:"+subsig+" Class:"+d+" Interface:"+c);
@@ -118,10 +118,10 @@ public class RelCHA extends ProgramRel {
                         SootClass d = ((RefType)s).getSootClass();
                         if (d.isInterface() || d.isAbstract())
                             continue;
-                        if (SootUtilities.extendsClass(d,c)) {
+                        if (SootUtilities.isSubtypeOf(d,c)) {
                             SootMethod n = this.getMethodItr(d, subsig);
                             if(n==null){
-                            	System.out.println("WARN: RelCHA Method not found:"+subsig+" Class:"+d+" Interface:"+c);
+                            	System.out.println("WARN: RelCHA Method not found:"+subsig+" Class:"+d+" SuperType:"+c);
                             	continue;
                             }
                             //assert (n != null);

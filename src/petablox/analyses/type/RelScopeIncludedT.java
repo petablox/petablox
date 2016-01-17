@@ -8,7 +8,7 @@ import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
 
 /**
- * Relation containing each type t the prefix of whose name is not contained in the value of system property chord.scope.exclude.
+ * Relation containing each type t the prefix of whose name is not contained in the value of system property petablox.scope.exclude.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */

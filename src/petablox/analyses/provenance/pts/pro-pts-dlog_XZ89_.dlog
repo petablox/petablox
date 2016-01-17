@@ -1,0 +1,37 @@
+# name=pro-pts-dlog_XZ89_
+.include "H.dom"
+.include "M.dom"
+.include "T.dom"
+.include "V.dom"
+.include "C.dom"
+.bddvarorder M0_V0xV1_C0xH0xC1
+
+
+#Input relations
+reachableCM(c:C0,m:M0) input
+checkExcludedH(h:H0) input
+checkExcludedV(v:V0) input
+CVC(c:C0,v:V0,o:C1) input
+CH(c:C0,h:H0) input
+MV(m:M0,v:V0) input
+MH(m:M0,h:H0) input
+
+#Output relations
+reachableV(v:V0) output
+reachableH(h:H0) output
+ptsVH(v:V0,h:H0) output
+
+#Instrumented relations
+reachableV_XZ89_0_1(v:V0,m:M0,v_XZ89_0:C0) output
+reachableH_XZ89_1_1(h:H0,m:M0,v_XZ89_0:C0) output
+ptsVH_XZ89_2_1(v:V0,h:H0,v_XZ89_0:C0,o:C1) output
+
+#Original rules
+reachableV(v) :- MV(m,v), reachableCM(_,m).
+reachableH(h) :- MH(m,h), reachableCM(_,m).
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).
+
+#Instrumented rules
+reachableV_XZ89_0_1(v,m,v_XZ89_0) :- MV(m,v), reachableCM(v_XZ89_0,m).
+reachableH_XZ89_1_1(h,m,v_XZ89_0) :- MH(m,h), reachableCM(v_XZ89_0,m).
+ptsVH_XZ89_2_1(v,h,v_XZ89_0,o) :- CVC(v_XZ89_0,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

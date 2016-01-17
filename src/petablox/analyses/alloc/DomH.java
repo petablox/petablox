@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Iterator;
 
 import soot.RefLikeType;
-import soot.RefType;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Type;
@@ -25,7 +24,7 @@ import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.Utils;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import petablox.util.tuple.object.Pair;
 
@@ -63,7 +62,7 @@ public class DomH extends ProgramDom<Object> {
     @Override
     public void init() {
         domM = (DomM) (Config.classic ? ClassicProject.g().getTrgt("M") : consumes[0]);
-        PHANTOM_CLASSES = Utils.buildBoolProperty("chord.add.phantom.classes", false);
+        PHANTOM_CLASSES = Utils.buildBoolProperty("petablox.add.phantom.classes", false);
     }
 
     @Override
@@ -74,7 +73,7 @@ public class DomH extends ProgramDom<Object> {
             SootMethod m = domM.get(mIdx);
             if (m.isAbstract())
                 continue;
-            CFG cfg = SootUtilities.getCFG(m);
+            ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
             	Iterator<Unit> uit = bb.iterator();
             	while(uit.hasNext()){
@@ -101,8 +100,8 @@ public class DomH extends ProgramDom<Object> {
         }
     }
 
-    private void processResolvedNewInstSites(List<Pair<Unit, List<RefType>>> l) {
-        for (Pair<Unit, List<RefType>> p : l)
+    private void processResolvedNewInstSites(List<Pair<Unit, List<RefLikeType>>> l) {
+        for (Pair<Unit, List<RefLikeType>> p : l)
             add(p.val0);
     }
 
@@ -143,7 +142,7 @@ public class DomH extends ProgramDom<Object> {
     public String toFIString(Object o) {
     	StringBuilder sb = new StringBuilder();
     	Unit u = (Unit)o;
-    	boolean printId = Utils.buildBoolProperty("chord.printrel.printID", false);
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
     	if (printId) sb.append("(" + indexOf(u) + ")");
     	Type t = getType(u);
     	if (t == null)

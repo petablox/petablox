@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 
 import petablox.util.IndexMap;
@@ -18,7 +17,7 @@ import petablox.util.Utils;
 
 /**
  * Common operations on files in the directory specified by system property
- * <tt>chord.out.dir</tt> to which Chord outputs all files.
+ * <tt>petablox.out.dir</tt> to which Petablox outputs all files.
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
@@ -141,7 +140,7 @@ public class OutDirUtils {
             result = ProcessExecutor.executeCaptureOutput(cmdarray);
             if (result.getExitCode() != 0) {
                 Messages.error("Failed process standard output:\n%s", result.getError());
-                throw new ChordException("Process failed with retcode=" + result.getExitCode());
+                throw new PetabloxException("Process failed with retcode=" + result.getExitCode());
             }
         } catch (Exception e) {
             Messages.fatal(PROCESS_FAILED, cmd, e.getMessage());

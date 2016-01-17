@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import petablox.bddbddb.RelSign;
 import petablox.core.DatalogMetadata;
 import petablox.core.IDatalogParser;
-import petablox.project.ChordException;
+import petablox.project.PetabloxException;
 import petablox.project.Messages;
 import petablox.util.Utils;
 
@@ -89,10 +89,10 @@ public class LogicBloxParser implements IDatalogParser {
                         domNames.add(domName.trim());
                 } else if ("name".equals(type)) {
                     if (metadata.getDlogName() != null)
-                        throw new ChordException("Got duplicate name entry in: " + file.getAbsolutePath());
+                        throw new PetabloxException("Got duplicate name entry in: " + file.getAbsolutePath());
                     metadata.setDlogName(data);
                 } else {
-                    throw new ChordException("Unrecognized metadata type: " + type);
+                    throw new PetabloxException("Unrecognized metadata type: " + type);
                 }
             }
             
@@ -104,7 +104,7 @@ public class LogicBloxParser implements IDatalogParser {
             
         } catch (UnsupportedEncodingException e) {
             // by standard, utf-8 is always supported
-            throw new ChordException("UTF-8 not supported?", e);
+            throw new PetabloxException("UTF-8 not supported?", e);
         } finally {
             currentRelation = null;
             currentFile = null;
@@ -184,7 +184,7 @@ public class LogicBloxParser implements IDatalogParser {
      * 
      * @param domains the domain specs to check
      * @return <code>true</code> if all minors are specified or <code>false</code> is none are
-     * @throws ChordException if minors are only partially specified
+     * @throws PetabloxException if minors are only partially specified
      */
     private boolean areMinorsSpecified(String[] domains) {
         String first = domains[0];
@@ -193,7 +193,7 @@ public class LogicBloxParser implements IDatalogParser {
             String sigPart = domains[i];
             boolean hasMinor = Character.isDigit(sigPart.charAt(sigPart.length() - 1));
             if (hasMinor != firstHasMinors) {
-               throw new ChordException(String.format(
+               throw new PetabloxException(String.format(
                    "Minor domains only partially specified for relation %s in %s", 
                    currentRelation, currentFile
                ));

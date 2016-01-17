@@ -1,25 +1,25 @@
 \xname{project}
-\chapter{A Chord Project: Tasks, Targets, and Dependencies}
+\chapter{A Petablox Project: Tasks, Targets, and Dependencies}
 \label{chap:project}
 
-In order to facilitate heavy reuse and rapid prototyping, each analysis in Chord is
+In order to facilitate heavy reuse and rapid prototyping, each analysis in Petablox is
 written modularly, independent of other analyses, along with lightweight annotations
 specifying the inputs and outputs of the analysis.
-In each run, upon startup, Chord organizes all analyses and their inputs and outputs
+In each run, upon startup, Petablox organizes all analyses and their inputs and outputs
 (collectively called analysis results) using a global entity
 called a {\it project}.  More concretely, a project consists of a set of
 analyses called {\it tasks}, a set of analysis results called {\it targets}, and
 a set of data/control dependencies between tasks and targets.
 
 The project built in a particular run is of either of the following two kinds,
-depending upon whether the value of property \code{chord.classic} is true or false, respectively.
+depending upon whether the value of property \code{petablox.classic} is true or false, respectively.
 \begin{itemize}
 \item
 a {\it classic project}, represented as an object of
-class \javadoc{chord.project.ClassicProject}{chord/project/ClassicProject.html}.
+class \javadoc{petablox.project.ClassicProject}{petablox/project/ClassicProject.html}.
 \item
 a {\it modern project}, represented as an object of
-class \javadoc{chord.project.ModernProject}{chord/project/ModernProject.html}.
+class \javadoc{petablox.project.ModernProject}{petablox/project/ModernProject.html}.
 \end{itemize}
 The project representation can be obtained by calling static method \code{g()} of the
 corresponding class.
@@ -31,12 +31,12 @@ allowed in a modern project.  The key advantage of a modern project is that it
 can schedule independent tasks in parallel whereas a classic project always
 runs tasks sequentially.  This chapter focusses on classic projects as the
 runtime for modern projects is still under development.
-We next explain how Chord builds a classic project
+We next explain how Petablox builds a classic project
 (a set of tasks, a set of targets, and a set of dependencies between them).
 
 {\bf Tasks:}
 There are two kinds of tasks corresponding to the two broad kinds of analyses in
-Chord: those written imperatively in Java and those written declaratively in
+Petablox: those written imperatively in Java and those written declaratively in
 Datalog.  They are summarized in the following table:
 
 \begin{mytable}{|l||c|c|}
@@ -46,28 +46,28 @@ Datalog.  They are summarized in the following table:
  Location: &
 	\begin{tabular}{c}
 	a {\tt .class} file in the path denoted by property \\
-	\code{chord.java.analysis.path} compiled \\
-	from a \code{@Chord}-annotated class implementing \\
-	interface \javadoc{chord.project.ITask}{chord/project/ITask.html} 
+	\code{petablox.java.analysis.path} compiled \\
+	from a \code{@Petablox}-annotated class implementing \\
+	interface \javadoc{petablox.project.ITask}{petablox/project/ITask.html} 
 	\end{tabular} &
 	\begin{tabular}{c}
 	a {\tt .dlog} file in the path denoted by property \\
-	\code{chord.dlog.analysis.path}
+	\code{petablox.dlog.analysis.path}
 	\end{tabular} \\
 \hline
- Name: & via stmt \verb+name="<NAME>"+ in {\tt @Chord} annotation & via line ``\verb+# name=<NAME>+'' in {\tt .dlog} file \\
+ Name: & via stmt \verb+name="<NAME>"+ in {\tt @Petablox} annotation & via line ``\verb+# name=<NAME>+'' in {\tt .dlog} file \\
 \hline
  Form: &
-	an instance of the \code{@Chord}-annotated class &
+	an instance of the \code{@Petablox}-annotated class &
 	\begin{tabular}{c}
 	an instance of class \\
-    \javadoc{chord.project.analyses.DlogAnalysis}{chord/project/analyses/DlogAnalysis.html}
+    \javadoc{petablox.project.analyses.DlogAnalysis}{petablox/project/analyses/DlogAnalysis.html}
 	\end{tabular}
 \T \\
 \hline
 \end{mytable}
 
-Each task in Chord is of the form ``\code{\{ C1, ..., Cn \} T \{ P1, ..., Pm \}}" where:
+Each task in Petablox is of the form ``\code{\{ C1, ..., Cn \} T \{ P1, ..., Pm \}}" where:
 \begin{itemize}
 \item
 {\tt T} is the code provided by the user to be executed when the task is executed,
@@ -85,11 +85,11 @@ targets may be consumed by other tasks.
 The set of targets in a project includes each target that is specified as
 consumed/produced by some task in the project.  When defining tasks, the user implicitly or
 explicitly provides the class (type) of each target.
-Chord reports a runtime error if a target has no type or has multiple types.
+Petablox reports a runtime error if a target has no type or has multiple types.
 Otherwise, it creates a separate instance of that class to represent that target.
 
 {\bf Dependencies:}
-Chord computes a dependency graph as a directed graph whose
+Petablox computes a dependency graph as a directed graph whose
 nodes are all tasks and targets computed as above, and:
 \begin{itemize}
 \item
@@ -118,7 +118,7 @@ The dependency graph is as follows:
 \includeimage{0.3}{dependency_graph.png}
 \end{center}
 
-Class \javadoc{chord.project.ClassicProject}{chord/project/ClassicProject.html}
+Class \javadoc{petablox.project.ClassicProject}{petablox/project/ClassicProject.html}
 provides a rich API (in the form of public instance methods) for accessing tasks
 and targets in the project, for running tasks, and for resetting tasks and
 targets.  The most commonly used methods are as follows:
@@ -186,12 +186,12 @@ the done bit of the task or target with the specified name to true, and likewise
 methods \code{resetTaskDone(name)} and \code{resetTrgtDone(name)} can be used
 to set the done bit to false.
 
-It is possible to run tasks from the command-line of Chord by specifying the value of property
-\code{chord.run.analyses} as a comma-separated list of the names of tasks to be run in order
+It is possible to run tasks from the command-line of Petablox by specifying the value of property
+\code{petablox.run.analyses} as a comma-separated list of the names of tasks to be run in order
 (see Chapter \ref{chap:running}).
 
 We next illustrate the above concepts using the above example.
-Suppose Chord is run with the value of property \code{chord.run.analyses} as ``{\tt T4}''.
+Suppose Petablox is run with the value of property \code{petablox.run.analyses} as ``{\tt T4}''.
 This causes \code{runTask(T4)} to be called.  The done bit of task {\tt T4} is initialized to false.
 Hence, the done bit of its first consumed target {\tt R1} is checked.
 Since it is also initialized to false, the unique task producing
@@ -200,7 +200,7 @@ producing target {\tt R1} are found in the project, resulting in a runtime error
 reports the ambiguity between tasks {\tt T1} and {\tt T2}.
 
 To resolve the ambiguity (say in favor of task {\tt T1}), the user can
-specify the value of property \code{chord.run.analyses} as ``{\tt T1},{\tt T4}''.  This
+specify the value of property \code{petablox.run.analyses} as ``{\tt T1},{\tt T4}''.  This
 time, \code{runTask(T1)} is called followed by \code{runTask(T4)}.
 Since the done bit of task {\tt T1} is initialized to false and it has no consumed
 targets, \code{runTask(T1)} simply executes the code of task {\tt T1}, and sets

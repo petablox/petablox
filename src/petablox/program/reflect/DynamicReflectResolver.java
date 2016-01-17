@@ -1,12 +1,8 @@
 package petablox.program.reflect;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
-
-import petablox.project.Petablox;
 import petablox.project.Config;
 import petablox.project.analyses.BasicDynamicAnalysis;
 import petablox.util.ByteBufferedFile;

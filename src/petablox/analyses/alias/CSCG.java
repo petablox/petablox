@@ -12,7 +12,7 @@ import petablox.project.analyses.ProgramRel;
 import petablox.util.ArraySet;
 import petablox.util.SetUtils;
 import petablox.util.graph.AbstractGraph;
-import petablox.util.soot.CFG;
+import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import petablox.util.tuple.object.Pair;
 
@@ -123,7 +123,7 @@ public class CSCG extends AbstractGraph<Pair<Ctxt, SootMethod>> implements ICSCG
     public Set<Unit> getLabels(Pair<Ctxt, SootMethod> origNode, Pair<Ctxt, SootMethod> destNode) {
         SootMethod meth1 = origNode.val1;
         Set<Unit> invks = new ArraySet<Unit>();
-        CFG cfg = SootUtilities.getCFG(meth1);
+        ICFG cfg = SootUtilities.getCFG(meth1);
         Ctxt ctxt1 = origNode.val0;
         SootMethod meth2 = destNode.val1;
         Ctxt ctxt2 = destNode.val0;
