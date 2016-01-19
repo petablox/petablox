@@ -8,6 +8,7 @@ import java.util.Map;
 
 import petablox.project.ClassicProject;
 import petablox.project.Config;
+import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
 import soot.*;
@@ -59,6 +60,10 @@ public class SootUtilities {
 	public static SootMethod getMethod (Unit u) {
 		SootMethod m = null;
 		if (PMMap == null) {
+			ProgramDom d = (ProgramDom)ClassicProject.g().getTrgt("P");
+			if(!ClassicProject.g().isTrgtDone(d)){
+                ClassicProject.g().getTaskProducingTrgt(d).run();
+			}
 			ProgramRel pmRel = (ProgramRel) ClassicProject.g().getTrgt("PM");
             if(!ClassicProject.g().isTrgtDone(pmRel)){
                     ClassicProject.g().getTaskProducingTrgt(pmRel).run();

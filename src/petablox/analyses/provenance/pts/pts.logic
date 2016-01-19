@@ -1,0 +1,36 @@
+// Created by convert.py from ./src/chord/analyses/provenance/pts/pts.dlog on 2015-04-20 13:08:42.295854
+// :name: pro-pts-dlog
+
+// :domains: H
+// :domains: M
+// :domains: T
+// :domains: V
+// :domains: C
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: reachableCM(C,M)
+// :inputs: checkExcludedH(H)
+// :inputs: checkExcludedV(V)
+// :inputs: CVC(C,V,C)
+// :inputs: CH(C,H)
+// :inputs: MV(M,V)
+// :inputs: MH(M,H)
+
+// convert.py: following intermediate relation converted to output relation
+// :outputs: reachableV(V)
+reachableV(v) -> V(v).
+// convert.py: following intermediate relation converted to output relation
+// :outputs: reachableH(H)
+reachableH(h) -> H(h).
+
+// :outputs: ptsVH(V,H)
+ptsVH(v,h) -> V(v), H(h).
+
+reachableV(v) <- MV(m,v),reachableCM(_,m).
+reachableH(h) <- MH(m,h),reachableCM(_,m).
+
+ptsVH(v,h) <- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

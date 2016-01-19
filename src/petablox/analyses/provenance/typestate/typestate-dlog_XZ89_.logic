@@ -1,0 +1,859 @@
+// Created by convert.py from ./src/chord/analyses/provenance/typestate/typestate-dlog_XZ89_.dlog on 2015-04-20 13:08:42.296860
+// :name: typestate-dlog_XZ89_
+// :domains: I
+// :domains: M
+// :domains: P
+// :domains: V
+// :domains: Z
+// :domains: H
+// :domains: MS
+// :domains: K
+// :domains: F
+
+
+// #Input relations
+// :inputs: PP(P,P)
+// :inputs: PI(P,I)
+// :inputs: IM(I,M)
+// :inputs: PobjValAsgnInst(P,V,H)
+// :inputs: PobjVarAsgnInst(P,V,V)
+// :inputs: MPhead(M,P)
+// :inputs: rootM(M)
+// :inputs: PobjNullAsgnInst(P,V)
+// :inputs: PgetInstFldInst(P,V,V,F)
+// :inputs: PgetStatFldInst(P,V,F)
+// :inputs: MmethArg(M,Z,V)
+// :inputs: IinvkArg(I0,Z0,V1)
+// :inputs: MP(M,P)
+// :inputs: MPtail(M,P)
+// :inputs: IinvkRet(I,Z,V)
+// :inputs: MmethRet(M0,Z0,V1)
+// :inputs: MZfirst(M,Z)
+// :inputs: MZlast(M,Z)
+// :inputs: MZZ(M,Z,Z)
+// :inputs: MK(M,K)
+// :inputs: gen(MS,V,MS)
+// :inputs: kill(MS,V,MS)
+// :inputs: contain(V,MS)
+// :inputs: virtIM(I,M)
+// :inputs: specIM(I,M)
+// :inputs: PobjRetInst(P,V)
+// :inputs: checkExcludedH(H)
+// :inputs: checkExcludedI(I)
+// :inputs: VH(V,H)
+// :inputs: reachableM(M)
+// :inputs: trackedH(H)
+// :inputs: allow(V)
+// :inputs: deny(V)
+
+// #Output relations
+// :outputs: summary(M,H,MS,H,K)
+summary(m,h,ms1,h2,k) -> M(m), H(h), MS(ms1), H(h2), K(k).
+// :outputs: pathArg(P,Z,M,MS,MS)
+pathArg(p,z,m,ms1,ms2) -> P(p), Z(z), M(m), MS(ms1), MS(ms2).
+// :outputs: path(P,H,MS,H,MS,K)
+path(p,h1,ms1,h2,ms2,k) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), K(k).
+// :outputs: PInvkRetInstFilter(P,M)
+PInvkRetInstFilter(p,m) -> P(p), M(m).
+// :outputs: PInvkRetInstNotFilter(P,M)
+PInvkRetInstNotFilter(p,m) -> P(p), M(m).
+// :outputs: PInvkInst(P,M,V,V,Z)
+PInvkInst(p,m,v,u,z) -> P(p), M(m), V(v), V(u), Z(z).
+// :outputs: PInvkRetInst(P,M,V,V)
+PInvkRetInst(p,m,v,u) -> P(p), M(m), V(v), V(u).
+// :outputs: pathArgInit(P,MS,H)
+pathArgInit(p,ms1,h) -> P(p), MS(ms1), H(h).
+// :outputs: pathArgLast(P,M,MS,MS)
+pathArgLast(p,m,ms1,ms2) -> P(p), M(m), MS(ms1), MS(ms2).
+// :outputs: nonRelevantP(P)
+nonRelevantP(p) -> P(p).
+// :outputs: relevantP(P)
+relevantP(p) -> P(p).
+// :outputs: unprovenQuery(P,H)
+unprovenQuery(p,h) -> P(p), H(h).
+// :outputs: PInvkSkip(P)
+PInvkSkip(p) -> P(p).
+// :outputs: IMFilter(I)
+IMFilter(i) -> I(i).
+// :outputs: path_7_0(P,V,H,P)
+path_7_0(_p,_v,_h,_q) -> P(_p), V(_v), H(_h), P(_q).
+// :outputs: path_8_0(P,V,H,P)
+path_8_0(_p,_v,_h,_q) -> P(_p), V(_v), H(_h), P(_q).
+// :outputs: path_7_3(P,H,MS)
+path_7_3(_p,_h,_ms) -> P(_p), H(_h), MS(_ms).
+// :outputs: path_7_2(P,V,H)
+path_7_2(_p,_v,_h) -> P(_p), V(_v), H(_h).
+// :outputs: path_7_1(P,V,H)
+path_7_1(_p,_v,_h) -> P(_p), V(_v), H(_h).
+// :outputs: path_9_1(P,V,H,MS,H,MS)
+path_9_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_9_0(P,V,P)
+path_9_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_8_2(P,H)
+path_8_2(_p,_h) -> P(_p), H(_h).
+// :outputs: path_8_1(P,V,H)
+path_8_1(_p,_v,_h) -> P(_p), V(_v), H(_h).
+// :outputs: path_11_1(P,V,V,H,MS,H,MS)
+path_11_1(_p,_v,_u,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), V(_u), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_11_2(P,V,H,MS,H,MS)
+path_11_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_11_3(P,V,H,MS,H,MS)
+path_11_3(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_12_0(P,V,V,P)
+path_12_0(_p,_v,_u,_q) -> P(_p), V(_v), V(_u), P(_q).
+// :outputs: path_9_2(P,V,H,MS,H,MS)
+path_9_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_10_0(P,V,P)
+path_10_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_10_1(P,V,H,MS,H,MS)
+path_10_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_11_0(P,V,V,P)
+path_11_0(_p,_v,_u,_q) -> P(_p), V(_v), V(_u), P(_q).
+// :outputs: path_13_2(P,V,H,MS,H,MS)
+path_13_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_14_0(P,V,V,P)
+path_14_0(_p,_v,_u,_q) -> P(_p), V(_v), V(_u), P(_q).
+// :outputs: path_14_1(P,V,V,H,MS,H,MS)
+path_14_1(_p,_v,_u,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), V(_u), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_14_2(P,V,H,MS,H,MS)
+path_14_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_12_1(P,V,V,H,MS,H,MS)
+path_12_1(_p,_v,_u,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), V(_u), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_12_2(P,V,H,MS,H,MS)
+path_12_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_13_0(P,V,V,P)
+path_13_0(_p,_v,_u,_q) -> P(_p), V(_v), V(_u), P(_q).
+// :outputs: path_13_1(P,V,V,H,MS,H,MS)
+path_13_1(_p,_v,_u,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), V(_u), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_16_1(P,V,H,MS,H,MS)
+path_16_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_16_0(P,V,P)
+path_16_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_17_1(P,V,H,MS,H,MS)
+path_17_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_17_0(P,V,P)
+path_17_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_15_0(P,V,P)
+path_15_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_14_3(P,V,H,MS,H,MS)
+path_14_3(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_15_2(P,V,H,MS,H,MS)
+path_15_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_15_1(P,V,H,MS,H,MS)
+path_15_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_19_2(P,V,H,MS,H,MS)
+path_19_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_19_1(P,V,H,MS,H,MS)
+path_19_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_20_1(P,V,H,MS,H,MS)
+path_20_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_20_0(P,V,P)
+path_20_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_18_0(P,V,P)
+path_18_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_17_2(P,V,H,MS,H,MS)
+path_17_2(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_19_0(P,V,P)
+path_19_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_18_1(P,V,H,MS,H,MS)
+path_18_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: pathArg_22_4(M,V,Z,P,MS)
+pathArg_22_4(_m,_v,_z,_q,_ms2) -> M(_m), V(_v), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_23_0(M,V,V,Z,P)
+pathArg_23_0(_m,_v,_u,_z,_q) -> M(_m), V(_v), V(_u), Z(_z), P(_q).
+// :outputs: pathArg_22_2(M,V,V,Z,P,MS)
+pathArg_22_2(_m,_v,_u,_z,_q,_ms2) -> M(_m), V(_v), V(_u), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_22_3(M,V,Z,P,MS)
+pathArg_22_3(_m,_v,_z,_q,_ms2) -> M(_m), V(_v), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_22_0(M,V,V,Z,P)
+pathArg_22_0(_m,_v,_u,_z,_q) -> M(_m), V(_v), V(_u), Z(_z), P(_q).
+// :outputs: pathArg_22_1(M,V,V,Z,P)
+pathArg_22_1(_m,_v,_u,_z,_q) -> M(_m), V(_v), V(_u), Z(_z), P(_q).
+// :outputs: pathArgInit_21_0(P)
+pathArgInit_21_0(_p) -> P(_p).
+// :outputs: pathArgInit_21_1(P)
+pathArgInit_21_1(_q) -> P(_q).
+// :outputs: pathArg_25_0(M,V,V,Z,P)
+pathArg_25_0(_m,_v,_u,_z2,_q) -> M(_m), V(_v), V(_u), Z(_z2), P(_q).
+// :outputs: pathArg_25_1(M,V,V,Z,P,Z)
+pathArg_25_1(_m,_v,_u,_z2,_q,_z1) -> M(_m), V(_v), V(_u), Z(_z2), P(_q), Z(_z1).
+// :outputs: pathArg_24_1(M,V,Z,P)
+pathArg_24_1(_m,_u,_z,_q) -> M(_m), V(_u), Z(_z), P(_q).
+// :outputs: pathArg_24_2(M,V,Z,P,MS)
+pathArg_24_2(_m,_u,_z,_q,_ms2) -> M(_m), V(_u), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_23_3(M,V,Z,P,MS)
+pathArg_23_3(_m,_v,_z,_q,_ms2) -> M(_m), V(_v), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_24_0(M,V,Z,P)
+pathArg_24_0(_m,_u,_z,_q) -> M(_m), V(_u), Z(_z), P(_q).
+// :outputs: pathArg_23_1(M,V,V,Z,P)
+pathArg_23_1(_m,_v,_u,_z,_q) -> M(_m), V(_v), V(_u), Z(_z), P(_q).
+// :outputs: pathArg_23_2(M,V,V,Z,P,MS)
+pathArg_23_2(_m,_v,_u,_z,_q,_ms2) -> M(_m), V(_v), V(_u), Z(_z), P(_q), MS(_ms2).
+// :outputs: pathArg_27_0(M,V,Z,P)
+pathArg_27_0(_m,_u,_z2,_q) -> M(_m), V(_u), Z(_z2), P(_q).
+// :outputs: pathArg_26_3(M,V,Z,P,MS,MS)
+pathArg_26_3(_m,_v,_z2,_q,_ms2,_ms3) -> M(_m), V(_v), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArg_26_2(M,V,V,Z,P,MS,MS)
+pathArg_26_2(_m,_v,_u,_z2,_q,_ms2,_ms3) -> M(_m), V(_v), V(_u), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArg_26_1(M,V,V,Z,P,Z)
+pathArg_26_1(_m,_v,_u,_z2,_q,_z1) -> M(_m), V(_v), V(_u), Z(_z2), P(_q), Z(_z1).
+// :outputs: pathArg_26_0(M,V,V,Z,P)
+pathArg_26_0(_m,_v,_u,_z2,_q) -> M(_m), V(_v), V(_u), Z(_z2), P(_q).
+// :outputs: pathArg_25_4(M,V,Z,P,MS,MS)
+pathArg_25_4(_m,_v,_z2,_q,_ms2,_ms3) -> M(_m), V(_v), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArg_25_3(M,V,Z,P,MS,MS)
+pathArg_25_3(_m,_v,_z2,_q,_ms2,_ms3) -> M(_m), V(_v), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArg_25_2(M,V,V,Z,P,MS,MS)
+pathArg_25_2(_m,_v,_u,_z2,_q,_ms2,_ms3) -> M(_m), V(_v), V(_u), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArgInit_30_2(P,K)
+pathArgInit_30_2(_q,_k) -> P(_q), K(_k).
+// :outputs: pathArgInit_30_1(M,P)
+pathArgInit_30_1(_m,_q) -> M(_m), P(_q).
+// :outputs: pathArgInit_30_0(P,M)
+pathArgInit_30_0(_p,_m) -> P(_p), M(_m).
+// :outputs: path_29_2(MS,H,P,MS)
+path_29_2(_ms2,_h1,_p,_ms3) -> MS(_ms2), H(_h1), P(_p), MS(_ms3).
+// :outputs: path_29_1(MS,H,P)
+path_29_1(_ms2,_h1,_p) -> MS(_ms2), H(_h1), P(_p).
+// :outputs: path_29_0(M,MS,H)
+path_29_0(_m,_ms2,_h1) -> M(_m), MS(_ms2), H(_h1).
+// :outputs: pathArg_27_2(M,V,Z,P,MS,MS)
+pathArg_27_2(_m,_u,_z2,_q,_ms2,_ms3) -> M(_m), V(_u), Z(_z2), P(_q), MS(_ms2), MS(_ms3).
+// :outputs: pathArg_27_1(M,V,Z,P,Z)
+pathArg_27_1(_m,_u,_z2,_q,_z1) -> M(_m), V(_u), Z(_z2), P(_q), Z(_z1).
+// :outputs: path_33_3(P,V,H,MS,MS,H)
+path_33_3(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: path_33_2(P,M,V,H,MS,H,MS,MS)
+path_33_2(_p,_m,_v,_h1,_ms1,_h2,_ms2,_ms3) -> P(_p), M(_m), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2), MS(_ms3).
+// :outputs: path_34_0(P,M,V,P)
+path_34_0(_p,_m,_v,_q) -> P(_p), M(_m), V(_v), P(_q).
+// :outputs: path_33_4(P,V,H,MS,MS,H)
+path_33_4(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: path_34_2(P,M,V,H,MS,H,MS,MS)
+path_34_2(_p,_m,_v,_h1,_ms1,_h2,_ms2,_ms3) -> P(_p), M(_m), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2), MS(_ms3).
+// :outputs: path_34_1(P,M,V,P,H,MS,H,MS)
+path_34_1(_p,_m,_v,_q,_h1,_ms1,_h2,_ms2) -> P(_p), M(_m), V(_v), P(_q), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_35_0(P,M,V,P)
+path_35_0(_p,_m,_v,_q) -> P(_p), M(_m), V(_v), P(_q).
+// :outputs: path_34_3(P,V,H,MS,MS,H)
+path_34_3(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: pathArgLast_31_0(P,M)
+pathArgLast_31_0(_p,_m) -> P(_p), M(_m).
+// :outputs: pathArgInit_30_3(P)
+pathArgInit_30_3(_q) -> P(_q).
+// :outputs: pathArgLast_31_2(M,P,K)
+pathArgLast_31_2(_m,_q,_k) -> M(_m), P(_q), K(_k).
+// :outputs: pathArgLast_31_1(M,P)
+pathArgLast_31_1(_m,_q) -> M(_m), P(_q).
+// :outputs: path_32_0(P,P)
+path_32_0(_p,_q) -> P(_p), P(_q).
+// :outputs: pathArgLast_31_3(M,P)
+pathArgLast_31_3(_m,_q) -> M(_m), P(_q).
+// :outputs: path_33_1(P,M,V,P,H,MS,H,MS)
+path_33_1(_p,_m,_v,_q,_h1,_ms1,_h2,_ms2) -> P(_p), M(_m), V(_v), P(_q), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_33_0(P,M,V,P)
+path_33_0(_p,_m,_v,_q) -> P(_p), M(_m), V(_v), P(_q).
+// :outputs: path_37_0(P,M)
+path_37_0(_p,_m) -> P(_p), M(_m).
+// :outputs: path_37_1(P,M)
+path_37_1(_p,_m) -> P(_p), M(_m).
+// :outputs: path_37_2(P,M,P)
+path_37_2(_p,_m,_q) -> P(_p), M(_m), P(_q).
+// :outputs: path_37_3(P,M,P,H,MS,H,MS)
+path_37_3(_p,_m,_q,_h1,_ms1,_h2,_ms2) -> P(_p), M(_m), P(_q), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_37_4(P,M,H,MS,H,MS,MS)
+path_37_4(_p,_m,_h1,_ms1,_h2,_ms2,_ms3) -> P(_p), M(_m), H(_h1), MS(_ms1), H(_h2), MS(_ms2), MS(_ms3).
+// :outputs: path_38_0(P,V,P)
+path_38_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_38_1(P,V,H,MS,H,MS)
+path_38_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_39_0(P,V,P)
+path_39_0(_p,_v,_q) -> P(_p), V(_v), P(_q).
+// :outputs: path_35_1(P,M,V,P,H,MS,H,MS)
+path_35_1(_p,_m,_v,_q,_h1,_ms1,_h2,_ms2) -> P(_p), M(_m), V(_v), P(_q), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_35_2(P,M,V,H,MS,H,MS,MS)
+path_35_2(_p,_m,_v,_h1,_ms1,_h2,_ms2,_ms3) -> P(_p), M(_m), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2), MS(_ms3).
+// :outputs: path_35_3(P,V,H,MS,MS,H)
+path_35_3(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: path_35_4(P,V,H,MS,MS,H)
+path_35_4(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: path_36_0(P,M,V,P)
+path_36_0(_p,_m,_v,_q) -> P(_p), M(_m), V(_v), P(_q).
+// :outputs: path_36_1(P,M,V,P,H,MS,H,MS)
+path_36_1(_p,_m,_v,_q,_h1,_ms1,_h2,_ms2) -> P(_p), M(_m), V(_v), P(_q), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: path_36_2(P,M,V,H,MS,H,MS,MS)
+path_36_2(_p,_m,_v,_h1,_ms1,_h2,_ms2,_ms3) -> P(_p), M(_m), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2), MS(_ms3).
+// :outputs: path_36_3(P,V,H,MS,MS,H)
+path_36_3(_p,_v,_h1,_ms1,_ms2,_h3) -> P(_p), V(_v), H(_h1), MS(_ms1), MS(_ms2), H(_h3).
+// :outputs: unprovenQuery_51_1(P,I,P)
+unprovenQuery_51_1(_q,_i,_p) -> P(_q), I(_i), P(_p).
+// :outputs: unprovenQuery_51_0(P,I)
+unprovenQuery_51_0(_q,_i) -> P(_q), I(_i).
+// :outputs: path_50_0(P,P)
+path_50_0(_p,_q) -> P(_p), P(_q).
+// :outputs: path_39_1(P,V,H,MS,H,MS)
+path_39_1(_p,_v,_h1,_ms1,_h2,_ms2) -> P(_p), V(_v), H(_h1), MS(_ms1), H(_h2), MS(_ms2).
+// :outputs: unprovenQuery_51_5(P,I,H)
+unprovenQuery_51_5(_q,_i,_h) -> P(_q), I(_i), H(_h).
+// :outputs: unprovenQuery_51_4(P,I,H,MS,V)
+unprovenQuery_51_4(_q,_i,_h,_ms,_v) -> P(_q), I(_i), H(_h), MS(_ms), V(_v).
+// :outputs: unprovenQuery_51_3(P,I,H,MS,V)
+unprovenQuery_51_3(_q,_i,_h,_ms,_v) -> P(_q), I(_i), H(_h), MS(_ms), V(_v).
+// :outputs: unprovenQuery_51_2(P,I,H,MS)
+unprovenQuery_51_2(_q,_i,_h,_ms) -> P(_q), I(_i), H(_h), MS(_ms).
+
+// #Instrumented relations
+// :outputs: unprovenQuery_51_4_XZ89_90(P,I,H,MS,V)
+unprovenQuery_51_4_XZ89_90(q,i,h,ms,v) -> P(q), I(i), H(h), MS(ms), V(v).
+// :outputs: unprovenQuery_51_5_XZ89_91(P,I,H,MS,V)
+unprovenQuery_51_5_XZ89_91(q,i,h,ms,v) -> P(q), I(i), H(h), MS(ms), V(v).
+// :outputs: unprovenQuery_51_2_XZ89_88(P,I,H,MS,P,H,MS,K)
+unprovenQuery_51_2_XZ89_88(q,i,h,ms,p,v_XZ89_0,v_XZ89_1,v_XZ89_2) -> P(q), I(i), H(h), MS(ms), P(p), H(v_XZ89_0), MS(v_XZ89_1), K(v_XZ89_2).
+// :outputs: unprovenQuery_51_3_XZ89_89(P,I,H,MS,V)
+unprovenQuery_51_3_XZ89_89(q,i,h,ms,v) -> P(q), I(i), H(h), MS(ms), V(v).
+// :outputs: path_XZ89_94(P,H)
+path_XZ89_94(p,h) -> P(p), H(h).
+// :outputs: path_XZ89_95(P,H,MS,H,MS,V,MS)
+path_XZ89_95(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: path_XZ89_92(P,M)
+path_XZ89_92(p,m) -> P(p), M(m).
+// :outputs: path_XZ89_93(P,H,MS)
+path_XZ89_93(p,h,ms) -> P(p), H(h), MS(ms).
+// :outputs: path_XZ89_98(P,H,MS,H,MS,V)
+path_XZ89_98(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: pathArg_XZ89_99(P,Z,M,MS,MS,V)
+pathArg_XZ89_99(q,z,m,ms2,ms3,v) -> P(q), Z(z), M(m), MS(ms2), MS(ms3), V(v).
+// :outputs: path_XZ89_96(P,H,MS,H,MS,V)
+path_XZ89_96(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_97(P,H,MS,H,MS,V,MS)
+path_XZ89_97(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: unprovenQuery_XZ89_100(P,H,I)
+unprovenQuery_XZ89_100(q,h,i) -> P(q), H(h), I(i).
+// :outputs: path_XZ89_3(P,H,MS,H,MS,V)
+path_XZ89_3(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_2(P,H,MS,H,MS,V,MS)
+path_XZ89_2(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: path_XZ89_1(P,H,MS,H,MS,V,MS)
+path_XZ89_1(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: path_XZ89_0(P,H,MS,H,MS,V)
+path_XZ89_0(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_7(P,H,MS,H,MS,V)
+path_XZ89_7(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_6(P,H,MS,H,MS,V,MS)
+path_XZ89_6(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: path_XZ89_5(P,H,MS,H,MS,V)
+path_XZ89_5(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_4(P,H,MS,H,MS,V,MS)
+path_XZ89_4(p,h1,ms1,h2,ms3,v,ms2) -> P(p), H(h1), MS(ms1), H(h2), MS(ms3), V(v), MS(ms2).
+// :outputs: path_XZ89_18(P,H,MS,H,MS,P)
+path_XZ89_18(p,h1,ms2,h2,ms3,q) -> P(p), H(h1), MS(ms2), H(h2), MS(ms3), P(q).
+// :outputs: path_XZ89_19(P,H,MS,H,MS,V,MS)
+path_XZ89_19(p,h1,ms1,h3,ms5,v,ms2) -> P(p), H(h1), MS(ms1), H(h3), MS(ms5), V(v), MS(ms2).
+// :outputs: pathArgInit_XZ89_16(P,MS,H,H,MS,K)
+pathArgInit_XZ89_16(q,ms1,h1,v_XZ89_0,v_XZ89_1,v_XZ89_2) -> P(q), MS(ms1), H(h1), H(v_XZ89_0), MS(v_XZ89_1), K(v_XZ89_2).
+// :outputs: pathArgLast_XZ89_17(P,M,MS,H,MS,H,K)
+pathArgLast_XZ89_17(q,m,ms1,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) -> P(q), M(m), MS(ms1), H(v_XZ89_0), MS(v_XZ89_1), H(v_XZ89_2), K(v_XZ89_3).
+// :outputs: path_XZ89_22(P,H,MS,H,MS,V)
+path_XZ89_22(p,h1,ms1,h3,ms2,v) -> P(p), H(h1), MS(ms1), H(h3), MS(ms2), V(v).
+// :outputs: path_XZ89_23(P,H,MS,H,MS,M,H,MS,K)
+path_XZ89_23(p,h1,ms1,h3,ms2,m,h2,ms3,v_XZ89_0) -> P(p), H(h1), MS(ms1), H(h3), MS(ms2), M(m), H(h2), MS(ms3), K(v_XZ89_0).
+// :outputs: path_XZ89_20(P,H,MS,H,MS,V)
+path_XZ89_20(p,h1,ms1,h3,ms2,v) -> P(p), H(h1), MS(ms1), H(h3), MS(ms2), V(v).
+// :outputs: path_XZ89_21(P,H,MS,H,MS,V,MS)
+path_XZ89_21(p,h1,ms1,h3,ms5,v,ms2) -> P(p), H(h1), MS(ms1), H(h3), MS(ms5), V(v), MS(ms2).
+// :outputs: pathArg_XZ89_10(P,Z,M,MS,V)
+pathArg_XZ89_10(q,z,m,ms2,u) -> P(q), Z(z), M(m), MS(ms2), V(u).
+// :outputs: pathArg_XZ89_11(P,Z,M,MS,MS,V,MS)
+pathArg_XZ89_11(q,z2,m,ms2,ms4,v,ms3) -> P(q), Z(z2), M(m), MS(ms2), MS(ms4), V(v), MS(ms3).
+// :outputs: pathArgInit_XZ89_8(P,MS,H,H,MS,K)
+pathArgInit_XZ89_8(q,ms1,h1,v_XZ89_0,v_XZ89_1,v_XZ89_2) -> P(q), MS(ms1), H(h1), H(v_XZ89_0), MS(v_XZ89_1), K(v_XZ89_2).
+// :outputs: pathArg_XZ89_9(P,Z,M,MS,V)
+pathArg_XZ89_9(q,z,m,ms2,v) -> P(q), Z(z), M(m), MS(ms2), V(v).
+// :outputs: pathArgLast_XZ89_14(P,M,MS,MS,Z)
+pathArgLast_XZ89_14(q,m,ms1,ms2,z) -> P(q), M(m), MS(ms1), MS(ms2), Z(z).
+// :outputs: path_XZ89_15(P,H,MS,H,MS)
+path_XZ89_15(p,h1,ms2,h2,ms3) -> P(p), H(h1), MS(ms2), H(h2), MS(ms3).
+// :outputs: pathArg_XZ89_12(P,Z,M,MS,MS,V)
+pathArg_XZ89_12(q,z2,m,ms2,ms3,v) -> P(q), Z(z2), M(m), MS(ms2), MS(ms3), V(v).
+// :outputs: pathArg_XZ89_13(P,Z,M,MS,MS,V)
+pathArg_XZ89_13(q,z2,m,ms2,ms3,u) -> P(q), Z(z2), M(m), MS(ms2), MS(ms3), V(u).
+// :outputs: path_11_2_XZ89_37(P,V,H,MS,H,MS,V)
+path_11_2_XZ89_37(p,v,h1,ms1,h2,ms2,u) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), V(u).
+// :outputs: path_11_1_XZ89_36(P,V,V,H,MS,H,MS,P)
+path_11_1_XZ89_36(p,v,u,h1,ms1,h2,ms2,q) -> P(p), V(v), V(u), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_12_1_XZ89_39(P,V,V,H,MS,H,MS,P)
+path_12_1_XZ89_39(p,v,u,h1,ms1,h2,ms2,q) -> P(p), V(v), V(u), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_11_3_XZ89_38(P,V,H,MS,H,MS)
+path_11_3_XZ89_38(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_9_1_XZ89_33(P,V,H,MS,H,MS,P)
+path_9_1_XZ89_33(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_8_2_XZ89_32(P,H,V)
+path_8_2_XZ89_32(p,h,v) -> P(p), H(h), V(v).
+// :outputs: path_10_1_XZ89_35(P,V,H,MS,H,MS,P)
+path_10_1_XZ89_35(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_9_2_XZ89_34(P,V,H,MS,H,MS)
+path_9_2_XZ89_34(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_7_2_XZ89_29(P,V,H)
+path_7_2_XZ89_29(p,v,h) -> P(p), V(v), H(h).
+// :outputs: path_7_1_XZ89_28(P,V,H,P)
+path_7_1_XZ89_28(p,v,h,q) -> P(p), V(v), H(h), P(q).
+// :outputs: path_8_1_XZ89_31(P,V,H,P)
+path_8_1_XZ89_31(p,v,h,q) -> P(p), V(v), H(h), P(q).
+// :outputs: path_7_3_XZ89_30(P,H,MS,V)
+path_7_3_XZ89_30(p,h,ms,v) -> P(p), H(h), MS(ms), V(v).
+// :outputs: path_XZ89_25(P,H,MS,H,MS,V)
+path_XZ89_25(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_24(P,H,MS,H,MS,V)
+path_XZ89_24(p,h1,ms1,h2,ms2,v) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), V(v).
+// :outputs: path_XZ89_27(P,H,MS,H,MS,K,P)
+path_XZ89_27(p,h1,ms1,h2,ms2,k,q) -> P(p), H(h1), MS(ms1), H(h2), MS(ms2), K(k), P(q).
+// :outputs: summary_XZ89_26(M,H,MS,H,K,P,MS)
+summary_XZ89_26(m,h1,ms1,h2,k,p,v_XZ89_0) -> M(m), H(h1), MS(ms1), H(h2), K(k), P(p), MS(v_XZ89_0).
+// :outputs: path_19_1_XZ89_52(P,V,H,MS,H,MS,P)
+path_19_1_XZ89_52(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_19_2_XZ89_53(P,V,H,MS,H,MS)
+path_19_2_XZ89_53(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_20_1_XZ89_54(P,V,H,MS,H,MS,P)
+path_20_1_XZ89_54(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: pathArg_22_2_XZ89_55(M,V,V,Z,P,MS,H,MS,H,K)
+pathArg_22_2_XZ89_55(m,v,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) -> M(m), V(v), V(u), Z(z), P(q), MS(ms2), H(v_XZ89_0), MS(v_XZ89_1), H(v_XZ89_2), K(v_XZ89_3).
+// :outputs: path_16_1_XZ89_48(P,V,H,MS,H,MS,P)
+path_16_1_XZ89_48(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_17_1_XZ89_49(P,V,H,MS,H,MS,P)
+path_17_1_XZ89_49(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_17_2_XZ89_50(P,V,H,MS,H,MS)
+path_17_2_XZ89_50(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_18_1_XZ89_51(P,V,H,MS,H,MS,P)
+path_18_1_XZ89_51(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_14_2_XZ89_44(P,V,H,MS,H,MS,V)
+path_14_2_XZ89_44(p,v,h1,ms1,h2,ms2,u) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), V(u).
+// :outputs: path_14_3_XZ89_45(P,V,H,MS,H,MS)
+path_14_3_XZ89_45(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_15_1_XZ89_46(P,V,H,MS,H,MS,P)
+path_15_1_XZ89_46(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_15_2_XZ89_47(P,V,H,MS,H,MS)
+path_15_2_XZ89_47(p,v,h1,ms1,h2,ms2) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_12_2_XZ89_40(P,V,H,MS,H,MS,V)
+path_12_2_XZ89_40(p,v,h1,ms1,h2,ms2,u) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), V(u).
+// :outputs: path_13_1_XZ89_41(P,V,V,H,MS,H,MS,P)
+path_13_1_XZ89_41(p,v,u,h1,ms1,h2,ms2,q) -> P(p), V(v), V(u), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_13_2_XZ89_42(P,V,H,MS,H,MS,V)
+path_13_2_XZ89_42(p,v,h1,ms1,h2,ms2,u) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), V(u).
+// :outputs: path_14_1_XZ89_43(P,V,V,H,MS,H,MS,P)
+path_14_1_XZ89_43(p,v,u,h1,ms1,h2,ms2,q) -> P(p), V(v), V(u), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_33_2_XZ89_71(P,M,V,H,MS,H,MS,MS,P)
+path_33_2_XZ89_71(p,m,v,h1,ms1,h2,ms2,ms3,q) -> P(p), M(m), V(v), H(h1), MS(ms1), H(h2), MS(ms2), MS(ms3), P(q).
+// :outputs: path_33_1_XZ89_70(P,M,V,P,H,MS,H,MS)
+path_33_1_XZ89_70(p,m,v,q,h1,ms1,h2,ms2) -> P(p), M(m), V(v), P(q), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_29_2_XZ89_69(MS,H,P,MS)
+path_29_2_XZ89_69(ms2,h1,p,ms3) -> MS(ms2), H(h1), P(p), MS(ms3).
+// :outputs: path_29_1_XZ89_68(MS,H,P,M)
+path_29_1_XZ89_68(ms2,h1,p,m) -> MS(ms2), H(h1), P(p), M(m).
+// :outputs: path_29_0_XZ89_67(M,MS,H,P,MS)
+path_29_0_XZ89_67(m,ms2,h1,q,ms1) -> M(m), MS(ms2), H(h1), P(q), MS(ms1).
+// :outputs: pathArg_27_2_XZ89_66(M,V,Z,P,MS,MS,Z)
+pathArg_27_2_XZ89_66(m,u,z2,q,ms2,ms3,z1) -> M(m), V(u), Z(z2), P(q), MS(ms2), MS(ms3), Z(z1).
+// :outputs: pathArg_26_3_XZ89_65(M,V,Z,P,MS,MS,V)
+pathArg_26_3_XZ89_65(m,v,z2,q,ms2,ms3,u) -> M(m), V(v), Z(z2), P(q), MS(ms2), MS(ms3), V(u).
+// :outputs: pathArg_26_2_XZ89_64(M,V,V,Z,P,MS,MS,Z)
+pathArg_26_2_XZ89_64(m,v,u,z2,q,ms2,ms3,z1) -> M(m), V(v), V(u), Z(z2), P(q), MS(ms2), MS(ms3), Z(z1).
+// :outputs: pathArg_25_4_XZ89_63(M,V,Z,P,MS,MS)
+pathArg_25_4_XZ89_63(m,v,z2,q,ms2,ms3) -> M(m), V(v), Z(z2), P(q), MS(ms2), MS(ms3).
+// :outputs: pathArg_25_3_XZ89_62(M,V,Z,P,MS,MS,V)
+pathArg_25_3_XZ89_62(m,v,z2,q,ms2,ms3,u) -> M(m), V(v), Z(z2), P(q), MS(ms2), MS(ms3), V(u).
+// :outputs: pathArg_25_2_XZ89_61(M,V,V,Z,P,MS,MS,Z)
+pathArg_25_2_XZ89_61(m,v,u,z2,q,ms2,ms3,z1) -> M(m), V(v), V(u), Z(z2), P(q), MS(ms2), MS(ms3), Z(z1).
+// :outputs: pathArg_24_2_XZ89_60(M,V,Z,P,MS,H,MS,H,K)
+pathArg_24_2_XZ89_60(m,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) -> M(m), V(u), Z(z), P(q), MS(ms2), H(v_XZ89_0), MS(v_XZ89_1), H(v_XZ89_2), K(v_XZ89_3).
+// :outputs: pathArg_23_3_XZ89_59(M,V,Z,P,MS,V)
+pathArg_23_3_XZ89_59(m,v,z,q,ms2,u) -> M(m), V(v), Z(z), P(q), MS(ms2), V(u).
+// :outputs: pathArg_23_2_XZ89_58(M,V,V,Z,P,MS,H,MS,H,K)
+pathArg_23_2_XZ89_58(m,v,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) -> M(m), V(v), V(u), Z(z), P(q), MS(ms2), H(v_XZ89_0), MS(v_XZ89_1), H(v_XZ89_2), K(v_XZ89_3).
+// :outputs: pathArg_22_4_XZ89_57(M,V,Z,P,MS)
+pathArg_22_4_XZ89_57(m,v,z,q,ms2) -> M(m), V(v), Z(z), P(q), MS(ms2).
+// :outputs: pathArg_22_3_XZ89_56(M,V,Z,P,MS,V)
+pathArg_22_3_XZ89_56(m,v,z,q,ms2,u) -> M(m), V(v), Z(z), P(q), MS(ms2), V(u).
+// :outputs: path_38_1_XZ89_86(P,V,H,MS,H,MS,P)
+path_38_1_XZ89_86(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_39_1_XZ89_87(P,V,H,MS,H,MS,P)
+path_39_1_XZ89_87(p,v,h1,ms1,h2,ms2,q) -> P(p), V(v), H(h1), MS(ms1), H(h2), MS(ms2), P(q).
+// :outputs: path_37_3_XZ89_84(P,M,P,H,MS,H,MS)
+path_37_3_XZ89_84(p,m,q,h1,ms1,h2,ms2) -> P(p), M(m), P(q), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_37_4_XZ89_85(P,M,H,MS,H,MS,MS,P)
+path_37_4_XZ89_85(p,m,h1,ms1,h2,ms2,ms3,q) -> P(p), M(m), H(h1), MS(ms1), H(h2), MS(ms2), MS(ms3), P(q).
+// :outputs: path_36_2_XZ89_82(P,M,V,H,MS,H,MS,MS,P)
+path_36_2_XZ89_82(p,m,v,h1,ms1,h2,ms2,ms3,q) -> P(p), M(m), V(v), H(h1), MS(ms1), H(h2), MS(ms2), MS(ms3), P(q).
+// :outputs: path_36_3_XZ89_83(P,V,H,MS,MS,H,M,H,MS)
+path_36_3_XZ89_83(p,v,h1,ms1,ms2,h3,m,h2,ms3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3), M(m), H(h2), MS(ms3).
+// :outputs: path_35_4_XZ89_80(P,V,H,MS,MS,H)
+path_35_4_XZ89_80(p,v,h1,ms1,ms2,h3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3).
+// :outputs: path_36_1_XZ89_81(P,M,V,P,H,MS,H,MS)
+path_36_1_XZ89_81(p,m,v,q,h1,ms1,h2,ms2) -> P(p), M(m), V(v), P(q), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_35_2_XZ89_78(P,M,V,H,MS,H,MS,MS,P)
+path_35_2_XZ89_78(p,m,v,h1,ms1,h2,ms2,ms3,q) -> P(p), M(m), V(v), H(h1), MS(ms1), H(h2), MS(ms2), MS(ms3), P(q).
+// :outputs: path_35_3_XZ89_79(P,V,H,MS,MS,H,M,H,MS)
+path_35_3_XZ89_79(p,v,h1,ms1,ms2,h3,m,h2,ms3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3), M(m), H(h2), MS(ms3).
+// :outputs: path_34_3_XZ89_76(P,V,H,MS,MS,H,M,H,MS)
+path_34_3_XZ89_76(p,v,h1,ms1,ms2,h3,m,h2,ms3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3), M(m), H(h2), MS(ms3).
+// :outputs: path_35_1_XZ89_77(P,M,V,P,H,MS,H,MS)
+path_35_1_XZ89_77(p,m,v,q,h1,ms1,h2,ms2) -> P(p), M(m), V(v), P(q), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_34_1_XZ89_74(P,M,V,P,H,MS,H,MS)
+path_34_1_XZ89_74(p,m,v,q,h1,ms1,h2,ms2) -> P(p), M(m), V(v), P(q), H(h1), MS(ms1), H(h2), MS(ms2).
+// :outputs: path_34_2_XZ89_75(P,M,V,H,MS,H,MS,MS,P)
+path_34_2_XZ89_75(p,m,v,h1,ms1,h2,ms2,ms3,q) -> P(p), M(m), V(v), H(h1), MS(ms1), H(h2), MS(ms2), MS(ms3), P(q).
+// :outputs: path_33_3_XZ89_72(P,V,H,MS,MS,H,M,H,MS)
+path_33_3_XZ89_72(p,v,h1,ms1,ms2,h3,m,h2,ms3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3), M(m), H(h2), MS(ms3).
+// :outputs: path_33_4_XZ89_73(P,V,H,MS,MS,H)
+path_33_4_XZ89_73(p,v,h1,ms1,ms2,h3) -> P(p), V(v), H(h1), MS(ms1), MS(ms2), H(h3).
+
+// #Original rules
+PInvkInst(p,m,v,u,z) <- PI(p,i), IM(i,m), IinvkArg(i,z,u), MmethArg(m,z,v).
+PInvkRetInst(p,m,v,u) <- PI(p,i), IM(i,m), IinvkRet(i,z,v), MmethRet(m,z,u).
+PInvkRetInstFilter(p,m) <- PInvkRetInst(p,m,_,_).
+PInvkRetInstNotFilter(p,m) <- !PInvkRetInstFilter(p,m).
+IMFilter(i) <- IM(i,_).
+PInvkSkip(p) <- PI(p,i), !IMFilter(i).
+//path(p,0,0,0,0,0) <- reachableM(m), MPhead(m,p).
+path(p,h0,ms0,h0,ms0,k0) <- reachableM(m), MPhead(m,p), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+//path(p,0,0,h,ms,0) <- path_7_3(p,h,ms), trackedH(h).
+path(p,h0,ms0,h,ms,k0) <- path_7_3(p,h,ms), trackedH(h), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+//path(p,0,0,h,0,0) <- path_8_2(p,h), trackedH(h).
+path(p,h0,ms0,h,ms0,k0) <- path_8_2(p,h), trackedH(h), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_9_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_9_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_10_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_10_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_11_3(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_11_3(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_12_2(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_12_2(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_13_2(p,v,h1,ms1,h2,ms2), deny(v).
+path(p,h1,ms1,h2,ms2,k0) <- path_13_2(p,v,h1,ms1,h2,ms2), deny(v), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_14_3(p,v,h1,ms1,h2,ms2), gen(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_14_3(p,v,h1,ms1,h2,ms2), gen(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_15_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_15_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_16_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_16_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_17_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_17_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_18_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_18_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms3,0) <- path_19_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path(p,h1,ms1,h2,ms3,k0) <- path_19_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,0) <- path_20_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_20_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+pathArgInit(q,ms1,h1) <- pathArgInit_21_1(q), path(q,_,_,h1,ms1,_).
+//pathArg(q,z,m,ms2,ms3) <- pathArg_22_4(m,v,z,q,ms2), gen(0,v,ms3).
+pathArg(q,z,m,ms2,ms3) <- pathArg_22_4(m,v,z,q,ms2), gen(ms0,v,ms3), MS_index[ms0] = 0.
+//pathArg(q,z,m,ms2,0) <- pathArg_23_3(m,v,z,q,ms2), deny(v).
+pathArg(q,z,m,ms2,ms0) <- pathArg_23_3(m,v,z,q,ms2), deny(v), MS_index[ms0] = 0.
+//pathArg(q,z,m,ms2,0) <- pathArg_24_2(m,u,z,q,ms2), !contain(u,ms2).
+pathArg(q,z,m,ms2,ms0) <- pathArg_24_2(m,u,z,q,ms2), !contain(u,ms2), MS_index[ms0] = 0.
+pathArg(q,z2,m,ms2,ms4) <- pathArg_25_4(m,v,z2,q,ms2,ms3), gen(ms3,v,ms4).
+pathArg(q,z2,m,ms2,ms3) <- pathArg_26_3(m,v,z2,q,ms2,ms3), deny(v).
+pathArg(q,z2,m,ms2,ms3) <- pathArg_27_2(m,u,z2,q,ms2,ms3), !contain(u,ms2).
+pathArgLast(q,m,ms1,ms2) <- pathArg(q,z,m,ms1,ms2), MZlast(m,z).
+//path(p,h1,ms2,h2,ms3,0) <- path_29_2(ms2,h1,p,ms3), h1=h2.
+path(p,h1,ms2,h2,ms3,k0) <- path_29_2(ms2,h1,p,ms3), h1=h2, K_index[k0] = 0.
+pathArgInit(q,ms1,h1) <- pathArgInit_30_3(q), path(q,_,_,h1,ms1,_).
+//pathArgLast(q,m,ms1,0) <- pathArgLast_31_3(m,q), path(q,_,_,_,ms1,_).
+pathArgLast(q,m,ms1,ms0) <- pathArgLast_31_3(m,q), path(q,_,_,_,ms1,_), MS_index[ms0] = 0.
+//path(p,h1,ms2,h2,ms3,0) <- path_32_0(p,q), path(q,h1,ms2,h2,ms3,0).
+path(p,h1,ms2,h2,ms3,k0) <- path_32_0(p,q), path(q,h1,ms2,h2,ms3,0), K_index[k0] = 0.
+//path(p,h1,ms1,h3,ms5,0) <- path_33_4(p,v,h1,ms1,ms2,h3), kill(ms2,v,ms5).
+path(p,h1,ms1,h3,ms5,k0) <- path_33_4(p,v,h1,ms1,ms2,h3), kill(ms2,v,ms5), K_index[k0] = 0.
+//path(p,h1,ms1,h3,ms2,0) <- path_34_3(p,v,h1,ms1,ms2,h3), !contain(v,ms2).
+path(p,h1,ms1,h3,ms2,k0) <- path_34_3(p,v,h1,ms1,ms2,h3), !contain(v,ms2), K_index[k0] = 0.
+//path(p,h1,ms1,h3,ms5,0) <- path_35_4(p,v,h1,ms1,ms2,h3), gen(ms2,v,ms5).
+path(p,h1,ms1,h3,ms5,k0) <- path_35_4(p,v,h1,ms1,ms2,h3), gen(ms2,v,ms5), K_index[k0] = 0.
+//path(p,h1,ms1,h3,ms2,0) <- path_36_3(p,v,h1,ms1,ms2,h3), deny(v).
+path(p,h1,ms1,h3,ms2,k0) <- path_36_3(p,v,h1,ms1,ms2,h3), deny(v), K_index[k0] = 0.
+//path(p,h1,ms1,h3,ms2,0) <- path_37_4(p,m,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,_).
+path(p,h1,ms1,h3,ms2,k0) <- path_37_4(p,m,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,_), K_index[k0] = 0.
+//path(p,h1,ms1,h2,ms2,1) <- path_38_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k1) <- path_38_1(p,v,h1,ms1,h2,ms2), contain(v,ms2), K_index[k1] = 1.
+//path(p,h1,ms1,h2,ms2,0) <- path_39_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path(p,h1,ms1,h2,ms2,k0) <- path_39_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2), K_index[k0] = 0.
+summary(m,h1,ms1,h2,k) <- MPtail(m,p), path(p,h1,ms1,h2,_,k).
+relevantP(p) <- PobjValAsgnInst(p,_,_).
+relevantP(p) <- PobjVarAsgnInst(p,_,_).
+relevantP(p) <- PobjNullAsgnInst(p,_).
+relevantP(p) <- PgetInstFldInst(p,_,_,_).
+relevantP(p) <- PgetStatFldInst(p,_,_).
+relevantP(p) <- PI(p,_).
+relevantP(p) <- PobjRetInst(p,_).
+relevantP(p) <- MPhead(_,p).
+nonRelevantP(p) <- PP(_,p), !relevantP(p).
+path(p,h1,ms1,h2,ms2,k) <- path_50_0(p,q), path(q,h1,ms1,h2,ms2,k).
+unprovenQuery(q,h) <- unprovenQuery_51_5(q,i,h), !checkExcludedI(i).
+path_7_0(p,v,h,q) <- PobjValAsgnInst(p,v,h), PP(q,p).
+//path_7_1(p,v,h) <- path_7_0(p,v,h,q), path(q,0,0,0,0,0).
+path_7_1(p,v,h) <- path_7_0(p,v,h,q), path(q,h0,ms0,h0,ms0,k0), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path_7_2(p,v,h) <- path_7_1(p,v,h), allow(v).
+//path_7_3(p,h,ms) <- path_7_2(p,v,h), gen(0,v,ms).
+path_7_3(p,h,ms) <- path_7_2(p,v,h), gen(ms0,v,ms), MS_index[ms0] = 0.
+path_8_0(p,v,h,q) <- PobjValAsgnInst(p,v,h), PP(q,p).
+//path_8_1(p,v,h) <- path_8_0(p,v,h,q), path(q,0,0,0,0,0).
+path_8_1(p,v,h) <- path_8_0(p,v,h,q), path(q,h0,ms0,h0,ms0,k0), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path_8_2(p,h) <- path_8_1(p,v,h), deny(v).
+path_9_0(p,v,q) <- PobjValAsgnInst(p,v,_), PP(q,p).
+//path_9_1(p,v,h1,ms1,h2,ms2) <- path_9_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_9_1(p,v,h1,ms1,h2,ms2) <- path_9_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_9_2(p,v,h1,ms1,h2,ms2) <- path_9_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_10_0(p,v,q) <- PobjValAsgnInst(p,v,_), PP(q,p).
+//path_10_1(p,v,h1,ms1,h2,ms2) <- path_10_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_10_1(p,v,h1,ms1,h2,ms2) <- path_10_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_11_0(p,v,u,q) <- PobjVarAsgnInst(p,v,u), PP(q,p).
+//path_11_1(p,v,u,h1,ms1,h2,ms2) <- path_11_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_11_1(p,v,u,h1,ms1,h2,ms2) <- path_11_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_11_2(p,v,h1,ms1,h2,ms2) <- path_11_1(p,v,u,h1,ms1,h2,ms2), !contain(u,ms2).
+path_11_3(p,v,h1,ms1,h2,ms2) <- path_11_2(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_12_0(p,v,u,q) <- PobjVarAsgnInst(p,v,u), PP(q,p).
+//path_12_1(p,v,u,h1,ms1,h2,ms2) <- path_12_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_12_1(p,v,u,h1,ms1,h2,ms2) <- path_12_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_12_2(p,v,h1,ms1,h2,ms2) <- path_12_1(p,v,u,h1,ms1,h2,ms2), !contain(u,ms2).
+path_13_0(p,v,u,q) <- PobjVarAsgnInst(p,v,u), PP(q,p).
+//path_13_1(p,v,u,h1,ms1,h2,ms2) <- path_13_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_13_1(p,v,u,h1,ms1,h2,ms2) <- path_13_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_13_2(p,v,h1,ms1,h2,ms2) <- path_13_1(p,v,u,h1,ms1,h2,ms2), contain(u,ms2).
+path_14_0(p,v,u,q) <- PobjVarAsgnInst(p,v,u), PP(q,p).
+//path_14_1(p,v,u,h1,ms1,h2,ms2) <- path_14_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_14_1(p,v,u,h1,ms1,h2,ms2) <- path_14_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_14_2(p,v,h1,ms1,h2,ms2) <- path_14_1(p,v,u,h1,ms1,h2,ms2), contain(u,ms2).
+path_14_3(p,v,h1,ms1,h2,ms2) <- path_14_2(p,v,h1,ms1,h2,ms2), allow(v).
+path_15_0(p,v,q) <- PobjNullAsgnInst(p,v), PP(q,p).
+//path_15_1(p,v,h1,ms1,h2,ms2) <- path_15_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_15_1(p,v,h1,ms1,h2,ms2) <- path_15_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_15_2(p,v,h1,ms1,h2,ms2) <- path_15_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_16_0(p,v,q) <- PobjNullAsgnInst(p,v), PP(q,p).
+//path_16_1(p,v,h1,ms1,h2,ms2) <- path_16_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_16_1(p,v,h1,ms1,h2,ms2) <- path_16_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_17_0(p,v,q) <- PgetInstFldInst(p,v,_,_), PP(q,p).
+//path_17_1(p,v,h1,ms1,h2,ms2) <- path_17_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_17_1(p,v,h1,ms1,h2,ms2) <- path_17_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_17_2(p,v,h1,ms1,h2,ms2) <- path_17_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_18_0(p,v,q) <- PgetInstFldInst(p,v,_,_), PP(q,p).
+//path_18_1(p,v,h1,ms1,h2,ms2) <- path_18_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_18_1(p,v,h1,ms1,h2,ms2) <- path_18_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_19_0(p,v,q) <- PgetStatFldInst(p,v,_), PP(q,p).
+//path_19_1(p,v,h1,ms1,h2,ms2) <- path_19_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_19_1(p,v,h1,ms1,h2,ms2) <- path_19_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_19_2(p,v,h1,ms1,h2,ms2) <- path_19_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_20_0(p,v,q) <- PgetStatFldInst(p,v,_), PP(q,p).
+//path_20_1(p,v,h1,ms1,h2,ms2) <- path_20_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_20_1(p,v,h1,ms1,h2,ms2) <- path_20_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+pathArgInit_21_0(p) <- PInvkInst(p,m,_,_,z), MZfirst(m,z).
+pathArgInit_21_1(q) <- pathArgInit_21_0(p), PP(q,p).
+pathArg_22_0(m,v,u,z,q) <- PInvkInst(p,m,v,u,z), PP(q,p).
+pathArg_22_1(m,v,u,z,q) <- pathArg_22_0(m,v,u,z,q), MZfirst(m,z).
+pathArg_22_2(m,v,u,z,q,ms2) <- pathArg_22_1(m,v,u,z,q), path(q,_,_,_,ms2,_).
+pathArg_22_3(m,v,z,q,ms2) <- pathArg_22_2(m,v,u,z,q,ms2), contain(u,ms2).
+pathArg_22_4(m,v,z,q,ms2) <- pathArg_22_3(m,v,z,q,ms2), allow(v).
+pathArg_23_0(m,v,u,z,q) <- PInvkInst(p,m,v,u,z), PP(q,p).
+pathArg_23_1(m,v,u,z,q) <- pathArg_23_0(m,v,u,z,q), MZfirst(m,z).
+pathArg_23_2(m,v,u,z,q,ms2) <- pathArg_23_1(m,v,u,z,q), path(q,_,_,_,ms2,_).
+pathArg_23_3(m,v,z,q,ms2) <- pathArg_23_2(m,v,u,z,q,ms2), contain(u,ms2).
+pathArg_24_0(m,u,z,q) <- PInvkInst(p,m,_,u,z), PP(q,p).
+pathArg_24_1(m,u,z,q) <- pathArg_24_0(m,u,z,q), MZfirst(m,z).
+pathArg_24_2(m,u,z,q,ms2) <- pathArg_24_1(m,u,z,q), path(q,_,_,_,ms2,_).
+pathArg_25_0(m,v,u,z2,q) <- PInvkInst(p,m,v,u,z2), PP(q,p).
+pathArg_25_1(m,v,u,z2,q,z1) <- pathArg_25_0(m,v,u,z2,q), MZZ(m,z1,z2).
+pathArg_25_2(m,v,u,z2,q,ms2,ms3) <- pathArg_25_1(m,v,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+pathArg_25_3(m,v,z2,q,ms2,ms3) <- pathArg_25_2(m,v,u,z2,q,ms2,ms3), contain(u,ms2).
+pathArg_25_4(m,v,z2,q,ms2,ms3) <- pathArg_25_3(m,v,z2,q,ms2,ms3), allow(v).
+pathArg_26_0(m,v,u,z2,q) <- PInvkInst(p,m,v,u,z2), PP(q,p).
+pathArg_26_1(m,v,u,z2,q,z1) <- pathArg_26_0(m,v,u,z2,q), MZZ(m,z1,z2).
+pathArg_26_2(m,v,u,z2,q,ms2,ms3) <- pathArg_26_1(m,v,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+pathArg_26_3(m,v,z2,q,ms2,ms3) <- pathArg_26_2(m,v,u,z2,q,ms2,ms3), contain(u,ms2).
+pathArg_27_0(m,u,z2,q) <- PInvkInst(p,m,_,u,z2), PP(q,p).
+pathArg_27_1(m,u,z2,q,z1) <- pathArg_27_0(m,u,z2,q), MZZ(m,z1,z2).
+pathArg_27_2(m,u,z2,q,ms2,ms3) <- pathArg_27_1(m,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+path_29_0(m,ms2,h1) <- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1).
+path_29_1(ms2,h1,p) <- path_29_0(m,ms2,h1), MPhead(m,p).
+path_29_2(ms2,h1,p,ms3) <- path_29_1(ms2,h1,p), ms2=ms3.
+pathArgInit_30_0(p,m) <- PI(p,i), IM(i,m).
+pathArgInit_30_1(m,q) <- pathArgInit_30_0(p,m), PP(q,p).
+pathArgInit_30_2(q,k) <- pathArgInit_30_1(m,q), MK(m,k).
+pathArgInit_30_3(q) <- pathArgInit_30_2(q,k), k=0.
+pathArgLast_31_0(p,m) <- PI(p,i), IM(i,m).
+pathArgLast_31_1(m,q) <- pathArgLast_31_0(p,m), PP(q,p).
+pathArgLast_31_2(m,q,k) <- pathArgLast_31_1(m,q), MK(m,k).
+pathArgLast_31_3(m,q) <- pathArgLast_31_2(m,q,k), k=0.
+path_32_0(p,q) <- PInvkSkip(p), PP(q,p).
+path_33_0(p,m,v,q) <- PInvkRetInst(p,m,v,_), PP(q,p).
+//path_33_1(p,m,v,q,h1,ms1,h2,ms2) <- path_33_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_33_1(p,m,v,q,h1,ms1,h2,ms2) <- path_33_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_33_2(p,m,v,h1,ms1,h2,ms2,ms3) <- path_33_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_33_3(p,v,h1,ms1,ms2,h3) <- path_33_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,0).
+path_33_3(p,v,h1,ms1,ms2,h3) <- path_33_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k0), K_index[k0] = 0.
+path_33_4(p,v,h1,ms1,ms2,h3) <- path_33_3(p,v,h1,ms1,ms2,h3), contain(v,ms2).
+path_34_0(p,m,v,q) <- PInvkRetInst(p,m,v,_), PP(q,p).
+//path_34_1(p,m,v,q,h1,ms1,h2,ms2) <- path_34_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_34_1(p,m,v,q,h1,ms1,h2,ms2) <- path_34_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_34_2(p,m,v,h1,ms1,h2,ms2,ms3) <- path_34_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_34_3(p,v,h1,ms1,ms2,h3) <- path_34_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,0).
+path_34_3(p,v,h1,ms1,ms2,h3) <- path_34_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k0), K_index[k0] = 0.
+path_35_0(p,m,v,q) <- PInvkRetInst(p,m,v,_), PP(q,p).
+//path_35_1(p,m,v,q,h1,ms1,h2,ms2) <- path_35_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_35_1(p,m,v,q,h1,ms1,h2,ms2) <- path_35_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_35_2(p,m,v,h1,ms1,h2,ms2,ms3) <- path_35_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+path_35_3(p,v,h1,ms1,ms2,h3) <- path_35_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k1), K_index[k1] = 1.
+path_35_4(p,v,h1,ms1,ms2,h3) <- path_35_3(p,v,h1,ms1,ms2,h3), allow(v).
+path_36_0(p,m,v,q) <- PInvkRetInst(p,m,v,_), PP(q,p).
+//path_36_1(p,m,v,q,h1,ms1,h2,ms2) <- path_36_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_36_1(p,m,v,q,h1,ms1,h2,ms2) <- path_36_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_36_2(p,m,v,h1,ms1,h2,ms2,ms3) <- path_36_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+path_36_3(p,v,h1,ms1,ms2,h3) <- path_36_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k1), K_index[k1] = 1.
+path_37_0(p,m) <- PI(p,i), IM(i,m).
+path_37_1(p,m) <- path_37_0(p,m), PInvkRetInstNotFilter(p,m).
+path_37_2(p,m,q) <- path_37_1(p,m), PP(q,p).
+//path_37_3(p,m,q,h1,ms1,h2,ms2) <- path_37_2(p,m,q), path(q,h1,ms1,h2,ms2,0).
+path_37_3(p,m,q,h1,ms1,h2,ms2) <- path_37_2(p,m,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_37_4(p,m,h1,ms1,h2,ms2,ms3) <- path_37_3(p,m,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+path_38_0(p,v,q) <- PobjRetInst(p,v), PP(q,p).
+//path_38_1(p,v,h1,ms1,h2,ms2) <- path_38_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_38_1(p,v,h1,ms1,h2,ms2) <- path_38_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_39_0(p,v,q) <- PobjRetInst(p,v), PP(q,p).
+//path_39_1(p,v,h1,ms1,h2,ms2) <- path_39_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_39_1(p,v,h1,ms1,h2,ms2) <- path_39_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_50_0(p,q) <- nonRelevantP(p), PP(q,p).
+unprovenQuery_51_0(q,i) <- PI(q,i), virtIM(i,_).
+unprovenQuery_51_1(q,i,p) <- unprovenQuery_51_0(q,i), PP(p,q).
+unprovenQuery_51_2(q,i,h,ms) <- unprovenQuery_51_1(q,i,p), path(p,_,_,h,ms,_).
+//unprovenQuery_51_3(q,i,h,ms,v) <- unprovenQuery_51_2(q,i,h,ms), IinvkArg(i,0,v).
+unprovenQuery_51_3(q,i,h,ms,v) <- unprovenQuery_51_2(q,i,h,ms), IinvkArg(i,z0,v), Z_index[z0] = 0.
+unprovenQuery_51_4(q,i,h,ms,v) <- unprovenQuery_51_3(q,i,h,ms,v), VH(v,h).
+unprovenQuery_51_5(q,i,h) <- unprovenQuery_51_4(q,i,h,ms,v), !contain(v,ms).
+
+// #Instrumented rules
+path_XZ89_0(p,h1,ms1,h2,ms2,v) <- path_13_2(p,v,h1,ms1,h2,ms2), deny(v).
+path_XZ89_1(p,h1,ms1,h2,ms3,v,ms2) <- path_14_3(p,v,h1,ms1,h2,ms2), gen(ms2,v,ms3).
+path_XZ89_2(p,h1,ms1,h2,ms3,v,ms2) <- path_15_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path_XZ89_3(p,h1,ms1,h2,ms2,v) <- path_16_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path_XZ89_4(p,h1,ms1,h2,ms3,v,ms2) <- path_17_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path_XZ89_5(p,h1,ms1,h2,ms2,v) <- path_18_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path_XZ89_6(p,h1,ms1,h2,ms3,v,ms2) <- path_19_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path_XZ89_7(p,h1,ms1,h2,ms2,v) <- path_20_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+pathArgInit_XZ89_8(q,ms1,h1,v_XZ89_0,v_XZ89_1,v_XZ89_2) <- pathArgInit_21_1(q), path(q,v_XZ89_0,v_XZ89_1,h1,ms1,v_XZ89_2).
+pathArg_XZ89_9(q,z,m,ms2,v) <- pathArg_23_3(m,v,z,q,ms2), deny(v).
+pathArg_XZ89_10(q,z,m,ms2,u) <- pathArg_24_2(m,u,z,q,ms2), !contain(u,ms2).
+pathArg_XZ89_11(q,z2,m,ms2,ms4,v,ms3) <- pathArg_25_4(m,v,z2,q,ms2,ms3), gen(ms3,v,ms4).
+pathArg_XZ89_12(q,z2,m,ms2,ms3,v) <- pathArg_26_3(m,v,z2,q,ms2,ms3), deny(v).
+pathArg_XZ89_13(q,z2,m,ms2,ms3,u) <- pathArg_27_2(m,u,z2,q,ms2,ms3), !contain(u,ms2).
+pathArgLast_XZ89_14(q,m,ms1,ms2,z) <- pathArg(q,z,m,ms1,ms2), MZlast(m,z).
+path_XZ89_15(p,h1,ms2,h2,ms3) <- path_29_2(ms2,h1,p,ms3), h1=h2.
+pathArgInit_XZ89_16(q,ms1,h1,v_XZ89_0,v_XZ89_1,v_XZ89_2) <- pathArgInit_30_3(q), path(q,v_XZ89_0,v_XZ89_1,h1,ms1,v_XZ89_2).
+pathArgLast_XZ89_17(q,m,ms1,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) <- pathArgLast_31_3(m,q), path(q,v_XZ89_0,v_XZ89_1,v_XZ89_2,ms1,v_XZ89_3).
+//path_XZ89_18(p,h1,ms2,h2,ms3,q) <- path_32_0(p,q), path(q,h1,ms2,h2,ms3,0).
+path_XZ89_18(p,h1,ms2,h2,ms3,q) <- path_32_0(p,q), path(q,h1,ms2,h2,ms3,k0), K_index[k0] = 0.
+path_XZ89_19(p,h1,ms1,h3,ms5,v,ms2) <- path_33_4(p,v,h1,ms1,ms2,h3), kill(ms2,v,ms5).
+path_XZ89_20(p,h1,ms1,h3,ms2,v) <- path_34_3(p,v,h1,ms1,ms2,h3), !contain(v,ms2).
+path_XZ89_21(p,h1,ms1,h3,ms5,v,ms2) <- path_35_4(p,v,h1,ms1,ms2,h3), gen(ms2,v,ms5).
+path_XZ89_22(p,h1,ms1,h3,ms2,v) <- path_36_3(p,v,h1,ms1,ms2,h3), deny(v).
+path_XZ89_23(p,h1,ms1,h3,ms2,m,h2,ms3,v_XZ89_0) <- path_37_4(p,m,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,v_XZ89_0).
+path_XZ89_24(p,h1,ms1,h2,ms2,v) <- path_38_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+path_XZ89_25(p,h1,ms1,h2,ms2,v) <- path_39_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+summary_XZ89_26(m,h1,ms1,h2,k,p,v_XZ89_0) <- MPtail(m,p), path(p,h1,ms1,h2,v_XZ89_0,k).
+path_XZ89_27(p,h1,ms1,h2,ms2,k,q) <- path_50_0(p,q), path(q,h1,ms1,h2,ms2,k).
+//path_7_1_XZ89_28(p,v,h,q) <- path_7_0(p,v,h,q), path(q,0,0,0,0,0).
+path_7_1_XZ89_28(p,v,h,q) <- path_7_0(p,v,h,q), path(q,h0,ms0,h0,ms0,k0), H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path_7_2_XZ89_29(p,v,h) <- path_7_1(p,v,h), allow(v).
+//path_7_3_XZ89_30(p,h,ms,v) <- path_7_2(p,v,h), gen(0,v,ms).
+path_7_3_XZ89_30(p,h,ms,v) <- path_7_2(p,v,h), gen(ms0,v,ms), MS_index[ms0] = 0.
+//path_8_1_XZ89_31(p,v,h,q) <- path_8_0(p,v,h,q), path(q,0,0,0,0,0).
+path_8_1_XZ89_31(p,v,h,q) <- path_8_0(p,v,h,q), path(q,h0,ms0,h0,ms0,k0), , H_index[h0] = 0, MS_index[ms0] = 0, K_index[k0] = 0.
+path_8_2_XZ89_32(p,h,v) <- path_8_1(p,v,h), deny(v).
+//path_9_1_XZ89_33(p,v,h1,ms1,h2,ms2,q) <- path_9_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_9_1_XZ89_33(p,v,h1,ms1,h2,ms2,q) <- path_9_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_9_2_XZ89_34(p,v,h1,ms1,h2,ms2) <- path_9_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+//path_10_1_XZ89_35(p,v,h1,ms1,h2,ms2,q) <- path_10_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_10_1_XZ89_35(p,v,h1,ms1,h2,ms2,q) <- path_10_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+//path_11_1_XZ89_36(p,v,u,h1,ms1,h2,ms2,q) <- path_11_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_11_1_XZ89_36(p,v,u,h1,ms1,h2,ms2,q) <- path_11_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_11_2_XZ89_37(p,v,h1,ms1,h2,ms2,u) <- path_11_1(p,v,u,h1,ms1,h2,ms2), !contain(u,ms2).
+path_11_3_XZ89_38(p,v,h1,ms1,h2,ms2) <- path_11_2(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+//path_12_1_XZ89_39(p,v,u,h1,ms1,h2,ms2,q) <- path_12_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_12_1_XZ89_39(p,v,u,h1,ms1,h2,ms2,q) <- path_12_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_12_2_XZ89_40(p,v,h1,ms1,h2,ms2,u) <- path_12_1(p,v,u,h1,ms1,h2,ms2), !contain(u,ms2).
+//path_13_1_XZ89_41(p,v,u,h1,ms1,h2,ms2,q) <- path_13_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_13_1_XZ89_41(p,v,u,h1,ms1,h2,ms2,q) <- path_13_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_13_2_XZ89_42(p,v,h1,ms1,h2,ms2,u) <- path_13_1(p,v,u,h1,ms1,h2,ms2), contain(u,ms2).
+//path_14_1_XZ89_43(p,v,u,h1,ms1,h2,ms2,q) <- path_14_0(p,v,u,q), path(q,h1,ms1,h2,ms2,0).
+path_14_1_XZ89_43(p,v,u,h1,ms1,h2,ms2,q) <- path_14_0(p,v,u,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_14_2_XZ89_44(p,v,h1,ms1,h2,ms2,u) <- path_14_1(p,v,u,h1,ms1,h2,ms2), contain(u,ms2).
+path_14_3_XZ89_45(p,v,h1,ms1,h2,ms2) <- path_14_2(p,v,h1,ms1,h2,ms2), allow(v).
+//path_15_1_XZ89_46(p,v,h1,ms1,h2,ms2,q) <- path_15_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_15_1_XZ89_46(p,v,h1,ms1,h2,ms2,q) <- path_15_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_15_2_XZ89_47(p,v,h1,ms1,h2,ms2) <- path_15_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+//path_16_1_XZ89_48(p,v,h1,ms1,h2,ms2,q) <- path_16_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_16_1_XZ89_48(p,v,h1,ms1,h2,ms2,q) <- path_16_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+//path_17_1_XZ89_49(p,v,h1,ms1,h2,ms2,q) <- path_17_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_17_1_XZ89_49(p,v,h1,ms1,h2,ms2,q) <- path_17_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_17_2_XZ89_50(p,v,h1,ms1,h2,ms2) <- path_17_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+//path_18_1_XZ89_51(p,v,h1,ms1,h2,ms2,q) <- path_18_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_18_1_XZ89_51(p,v,h1,ms1,h2,ms2,q) <- path_18_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+//path_19_1_XZ89_52(p,v,h1,ms1,h2,ms2,q) <- path_19_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_19_1_XZ89_52(p,v,h1,ms1,h2,ms2,q) <- path_19_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_19_2_XZ89_53(p,v,h1,ms1,h2,ms2) <- path_19_1(p,v,h1,ms1,h2,ms2), contain(v,ms2).
+//path_20_1_XZ89_54(p,v,h1,ms1,h2,ms2,q) <- path_20_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_20_1_XZ89_54(p,v,h1,ms1,h2,ms2,q) <- path_20_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+pathArg_22_2_XZ89_55(m,v,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) <- pathArg_22_1(m,v,u,z,q), path(q,v_XZ89_0,v_XZ89_1,v_XZ89_2,ms2,v_XZ89_3).
+pathArg_22_3_XZ89_56(m,v,z,q,ms2,u) <- pathArg_22_2(m,v,u,z,q,ms2), contain(u,ms2).
+pathArg_22_4_XZ89_57(m,v,z,q,ms2) <- pathArg_22_3(m,v,z,q,ms2), allow(v).
+pathArg_23_2_XZ89_58(m,v,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) <- pathArg_23_1(m,v,u,z,q), path(q,v_XZ89_0,v_XZ89_1,v_XZ89_2,ms2,v_XZ89_3).
+pathArg_23_3_XZ89_59(m,v,z,q,ms2,u) <- pathArg_23_2(m,v,u,z,q,ms2), contain(u,ms2).
+pathArg_24_2_XZ89_60(m,u,z,q,ms2,v_XZ89_0,v_XZ89_1,v_XZ89_2,v_XZ89_3) <- pathArg_24_1(m,u,z,q), path(q,v_XZ89_0,v_XZ89_1,v_XZ89_2,ms2,v_XZ89_3).
+pathArg_25_2_XZ89_61(m,v,u,z2,q,ms2,ms3,z1) <- pathArg_25_1(m,v,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+pathArg_25_3_XZ89_62(m,v,z2,q,ms2,ms3,u) <- pathArg_25_2(m,v,u,z2,q,ms2,ms3), contain(u,ms2).
+pathArg_25_4_XZ89_63(m,v,z2,q,ms2,ms3) <- pathArg_25_3(m,v,z2,q,ms2,ms3), allow(v).
+pathArg_26_2_XZ89_64(m,v,u,z2,q,ms2,ms3,z1) <- pathArg_26_1(m,v,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+pathArg_26_3_XZ89_65(m,v,z2,q,ms2,ms3,u) <- pathArg_26_2(m,v,u,z2,q,ms2,ms3), contain(u,ms2).
+pathArg_27_2_XZ89_66(m,u,z2,q,ms2,ms3,z1) <- pathArg_27_1(m,u,z2,q,z1), pathArg(q,z1,m,ms2,ms3).
+path_29_0_XZ89_67(m,ms2,h1,q,ms1) <- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1).
+path_29_1_XZ89_68(ms2,h1,p,m) <- path_29_0(m,ms2,h1), MPhead(m,p).
+path_29_2_XZ89_69(ms2,h1,p,ms3) <- path_29_1(ms2,h1,p), ms2=ms3.
+//path_33_1_XZ89_70(p,m,v,q,h1,ms1,h2,ms2) <- path_33_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_33_1_XZ89_70(p,m,v,q,h1,ms1,h2,ms2) <- path_33_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_33_2_XZ89_71(p,m,v,h1,ms1,h2,ms2,ms3,q) <- path_33_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_33_3_XZ89_72(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_33_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,0).
+path_33_3_XZ89_72(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_33_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k0), K_index[k0] = 0.
+path_33_4_XZ89_73(p,v,h1,ms1,ms2,h3) <- path_33_3(p,v,h1,ms1,ms2,h3), contain(v,ms2).
+//path_34_1_XZ89_74(p,m,v,q,h1,ms1,h2,ms2) <- path_34_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_34_1_XZ89_74(p,m,v,q,h1,ms1,h2,ms2) <- path_34_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_34_2_XZ89_75(p,m,v,h1,ms1,h2,ms2,ms3,q) <- path_34_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_34_3_XZ89_76(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_34_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,0).
+path_34_3_XZ89_76(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_34_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k0), K_index[k0] = 0.
+//path_35_1_XZ89_77(p,m,v,q,h1,ms1,h2,ms2) <- path_35_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_35_1_XZ89_77(p,m,v,q,h1,ms1,h2,ms2) <- path_35_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_35_2_XZ89_78(p,m,v,h1,ms1,h2,ms2,ms3,q) <- path_35_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_35_3_XZ89_79(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_35_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,1).
+path_35_3_XZ89_79(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_35_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k1), K_index[k1] = 1.
+path_35_4_XZ89_80(p,v,h1,ms1,ms2,h3) <- path_35_3(p,v,h1,ms1,ms2,h3), allow(v).
+//path_36_1_XZ89_81(p,m,v,q,h1,ms1,h2,ms2) <- path_36_0(p,m,v,q), path(q,h1,ms1,h2,ms2,0).
+path_36_1_XZ89_81(p,m,v,q,h1,ms1,h2,ms2) <- path_36_0(p,m,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_36_2_XZ89_82(p,m,v,h1,ms1,h2,ms2,ms3,q) <- path_36_1(p,m,v,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_36_3_XZ89_83(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_36_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,1).
+path_36_3_XZ89_83(p,v,h1,ms1,ms2,h3,m,h2,ms3) <- path_36_2(p,m,v,h1,ms1,h2,ms2,ms3), summary(m,h2,ms3,h3,k1), K_index[k1] = 1.
+//path_37_3_XZ89_84(p,m,q,h1,ms1,h2,ms2) <- path_37_2(p,m,q), path(q,h1,ms1,h2,ms2,0).
+path_37_3_XZ89_84(p,m,q,h1,ms1,h2,ms2) <- path_37_2(p,m,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+path_37_4_XZ89_85(p,m,h1,ms1,h2,ms2,ms3,q) <- path_37_3(p,m,q,h1,ms1,h2,ms2), pathArgLast(q,m,ms2,ms3).
+//path_38_1_XZ89_86(p,v,h1,ms1,h2,ms2,q) <- path_38_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_38_1_XZ89_86(p,v,h1,ms1,h2,ms2,q) <- path_38_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+//path_39_1_XZ89_87(p,v,h1,ms1,h2,ms2,q) <- path_39_0(p,v,q), path(q,h1,ms1,h2,ms2,0).
+path_39_1_XZ89_87(p,v,h1,ms1,h2,ms2,q) <- path_39_0(p,v,q), path(q,h1,ms1,h2,ms2,k0), K_index[k0] = 0.
+unprovenQuery_51_2_XZ89_88(q,i,h,ms,p,v_XZ89_0,v_XZ89_1,v_XZ89_2) <- unprovenQuery_51_1(q,i,p), path(p,v_XZ89_0,v_XZ89_1,h,ms,v_XZ89_2).
+//unprovenQuery_51_3_XZ89_89(q,i,h,ms,v) <- unprovenQuery_51_2(q,i,h,ms), IinvkArg(i,0,v).
+unprovenQuery_51_3_XZ89_89(q,i,h,ms,v) <- unprovenQuery_51_2(q,i,h,ms), IinvkArg(i,z0,v), Z_index[z0] = 0.
+unprovenQuery_51_4_XZ89_90(q,i,h,ms,v) <- unprovenQuery_51_3(q,i,h,ms,v), VH(v,h).
+unprovenQuery_51_5_XZ89_91(q,i,h,ms,v) <- unprovenQuery_51_4(q,i,h,ms,v), !contain(v,ms).
+path_XZ89_92(p,m) <- reachableM(m), MPhead(m,p).
+path_XZ89_93(p,h,ms) <- path_7_3(p,h,ms), trackedH(h).
+path_XZ89_94(p,h) <- path_8_2(p,h), trackedH(h).
+path_XZ89_95(p,h1,ms1,h2,ms3,v,ms2) <- path_9_2(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path_XZ89_96(p,h1,ms1,h2,ms2,v) <- path_10_1(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+path_XZ89_97(p,h1,ms1,h2,ms3,v,ms2) <- path_11_3(p,v,h1,ms1,h2,ms2), kill(ms2,v,ms3).
+path_XZ89_98(p,h1,ms1,h2,ms2,v) <- path_12_2(p,v,h1,ms1,h2,ms2), !contain(v,ms2).
+//pathArg_XZ89_99(q,z,m,ms2,ms3,v) <- pathArg_22_4(m,v,z,q,ms2), gen(0,v,ms3).
+pathArg_XZ89_99(q,z,m,ms2,ms3,v) <- pathArg_22_4(m,v,z,q,ms2), gen(ms0,v,ms3), MS_index[ms0] = 0.
+unprovenQuery_XZ89_100(q,h,i) <- unprovenQuery_51_5(q,i,h), !checkExcludedI(i).
