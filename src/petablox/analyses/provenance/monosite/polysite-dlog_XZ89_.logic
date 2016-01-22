@@ -1,0 +1,35 @@
+// Created by convert.py from ./src/chord/analyses/provenance/monosite/polysite-dlog_XZ89_.dlog on 2015-04-20 13:08:42.293406
+// :name: polysite-dlog_XZ89_
+// :domains: M
+// :domains: I
+// :domains: C
+
+
+// #Input relations
+// :inputs: CICM(C,I,C,M)
+// :inputs: virtIM(I,M)
+// :inputs: reachableCI(C,I)
+// :inputs: checkExcludedI(I)
+
+// #Output relations
+// :outputs: virtI(I)
+virtI(i) -> I(i).
+// :outputs: polySite(I)
+polySite(i) -> I(i).
+// :outputs: insvIM(I,M)
+insvIM(i,m) -> I(i), M(m).
+
+// #Instrumented relations
+// :outputs: insvIM_XZ89_0(I,M,C,C)
+insvIM_XZ89_0(i,m,v_XZ89_0,v_XZ89_1) -> I(i), M(m), C(v_XZ89_0), C(v_XZ89_1).
+// :outputs: polySite_XZ89_3(I,M,M)
+polySite_XZ89_3(i,m1,m2) -> I(i), M(m1), M(m2).
+
+// #Original rules
+insvIM(i,m) <- CICM(_,i,_,m).
+virtI(i) <- virtIM(i,_).
+polySite(i) <- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.
+
+// #Instrumented rules
+insvIM_XZ89_0(i,m,v_XZ89_0,v_XZ89_1) <- CICM(v_XZ89_0,i,v_XZ89_1,m).
+polySite_XZ89_3(i,m1,m2) <- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.

@@ -1,0 +1,340 @@
+// Created by convert.py from ./src/chord/analyses/provenance/kcfa/pro-cspa-kcfa-dlog_XZ89_.dlog on 2015-04-20 13:08:42.272426
+// :name: pro-cspa-kcfa-dlog_XZ89_
+// :domains: F
+// :domains: H
+// :domains: I
+// :domains: M
+// :domains: T
+// :domains: V
+// :domains: Z
+// :domains: C
+
+
+// #Input relations
+// :inputs: HT(H0,T1)
+// :inputs: cha(M1,T1,M0)
+// :inputs: sub(T1,T0)
+// :inputs: MI(M,I)
+// :inputs: statIM(I,M)
+// :inputs: specIM(I,M)
+// :inputs: virtIM(I,M)
+// :inputs: MobjValAsgnInst(M,V,H)
+// :inputs: MobjVarAsgnInst(M,V,V)
+// :inputs: MgetInstFldInst(M,V,V,F)
+// :inputs: MputInstFldInst(M,V,F,V)
+// :inputs: MgetStatFldInst(M,V,F)
+// :inputs: MputStatFldInst(M,F,V)
+// :inputs: clsForNameIT(I,T)
+// :inputs: objNewInstIH(I,H)
+// :inputs: objNewInstIM(I,M)
+// :inputs: conNewInstIH(I,H)
+// :inputs: conNewInstIM(I,M)
+// :inputs: aryNewInstIH(I,H)
+// :inputs: classT(T)
+// :inputs: staticTM(T,M)
+// :inputs: staticTF(T,F)
+// :inputs: clinitTM(T,M)
+// :inputs: MmethArg(M,Z,V)
+// :inputs: IinvkArg(I0,Z0,V1)
+// :inputs: IinvkArg0(I0,V1)
+// :inputs: IinvkRet(I,Z,V)
+// :inputs: argCopy(I,V,M,V)
+// :inputs: retCopy(I,V,M,V)
+// :inputs: VCfilter(V,C)
+// :inputs: CH(C,H)
+// :inputs: epsilonM(M)
+// :inputs: kcfaSenM(M)
+// :inputs: CIC(C,I,C)
+// :inputs: CHC(C,H,C)
+
+// #Output relations
+// :outputs: RobjValAsgnInst(C,V,H)
+RobjValAsgnInst(c,l,h) -> C(c), V(l), H(h).
+// :outputs: RgetInstFldInst(C,V,V,F)
+RgetInstFldInst(c,l,b,f) -> C(c), V(l), V(b), F(f).
+// :outputs: RobjVarAsgnInst(C,V,V)
+RobjVarAsgnInst(c,l,r) -> C(c), V(l), V(r).
+// :outputs: RgetStatFldInst(C,V,F)
+RgetStatFldInst(c,l,f) -> C(c), V(l), F(f).
+// :outputs: RputInstFldInst(C,V,F,V)
+RputInstFldInst(c,b,f,r) -> C(c), V(b), F(f), V(r).
+// :outputs: RputStatFldInst(C,F,V)
+RputStatFldInst(c,f,r) -> C(c), F(f), V(r).
+// :outputs: IHM(I,H,M)
+IHM(i,h,m) -> I(i), H(h), M(m).
+// :outputs: DIC(C,I,C)
+DIC(c,i,c1) -> C(c), I(i), C(c1).
+// :outputs: DIH(C,I,H)
+DIH(c,i,h) -> C(c), I(i), H(h).
+// :outputs: reachableT(T)
+reachableT(t) -> T(t).
+// :outputs: kcfaDIC(C,I,C)
+kcfaDIC(c,i,c1) -> C(c), I(i), C(c1).
+// :outputs: ctxtInsIHM(I,H,M)
+ctxtInsIHM(i,h,m) -> I(i), H(h), M(m).
+// :outputs: kcfaSenIHM(I,H,M)
+kcfaSenIHM(i,h,m) -> I(i), H(h), M(m).
+// :outputs: DI(C,I)
+DI(c,i) -> C(c), I(i).
+// :outputs: DVDV(C,V,C,V)
+DVDV(c,u,d,v) -> C(c), V(u), C(d), V(v).
+// :outputs: kcfaSenStatIM(I,M)
+kcfaSenStatIM(i,m) -> I(i), M(m).
+// :outputs: ctxtInsStatIM(I,M)
+ctxtInsStatIM(i,m) -> I(i), M(m).
+// :outputs: kcfaSenSpecIM(I,M)
+kcfaSenSpecIM(i,m) -> I(i), M(m).
+// :outputs: ctxtInsSpecIM(I,M)
+ctxtInsSpecIM(i,m) -> I(i), M(m).
+// :outputs: CICM(C,I,C,M)
+CICM(c,i,d,m) -> C(c), I(i), C(d), M(m).
+// :outputs: rootCM(C,M)
+rootCM(c,m) -> C(c), M(m).
+// :outputs: reachableCM(C,M)
+reachableCM(c,m) -> C(c), M(m).
+// :outputs: reachableCI(C,I)
+reachableCI(c,i) -> C(c), I(i).
+// :outputs: CFC(C,F,C)
+CFC(c1,f,c2) -> C(c1), F(f), C(c2).
+// :outputs: FC(F,C)
+FC(f,c) -> F(f), C(c).
+// :outputs: CVC(C,V,C)
+CVC(c1,v,c2) -> C(c1), V(v), C(c2).
+// :outputs: CMCM(C,M,C,M)
+CMCM(c,m,d,n) -> C(c), M(m), C(d), M(n).
+// :outputs: CFC_34_0(C,F,V,C)
+CFC_34_0(_c,_f,_r,_c1) -> C(_c), F(_f), V(_r), C(_c1).
+// :outputs: CVC_30_0(C,V,F,C)
+CVC_30_0(_c,_l,_f,_c1) -> C(_c), V(_l), F(_f), C(_c1).
+
+// #Instrumented relations
+// :outputs: CICM_XZ89_4(C,I,C,M)
+CICM_XZ89_4(c,i,d,m) -> C(c), I(i), C(d), M(m).
+// :outputs: CICM_XZ89_5(C,I,M)
+CICM_XZ89_5(c,i,m) -> C(c), I(i), M(m).
+// :outputs: CICM_XZ89_6(C,I,C,M)
+CICM_XZ89_6(c,i,d,m) -> C(c), I(i), C(d), M(m).
+// :outputs: DVDV_XZ89_7(C,V,C,V,I,M)
+DVDV_XZ89_7(d,v,c,u,i,m) -> C(d), V(v), C(c), V(u), I(i), M(m).
+// :outputs: kcfaDIC_XZ89_0(I,C,M)
+kcfaDIC_XZ89_0(i,d,m) -> I(i), C(d), M(m).
+// :outputs: kcfaDIC_XZ89_1(C,I,C,M)
+kcfaDIC_XZ89_1(c,i,d,m) -> C(c), I(i), C(d), M(m).
+// :outputs: CICM_XZ89_2(C,I,C,M,H)
+CICM_XZ89_2(c,i,d,m,h) -> C(c), I(i), C(d), M(m), H(h).
+// :outputs: CICM_XZ89_3(C,I,M)
+CICM_XZ89_3(c,i,m) -> C(c), I(i), M(m).
+// :outputs: CVC_XZ89_12(C,V,C,F,C)
+CVC_XZ89_12(c,l,c2,f,c1) -> C(c), V(l), C(c2), F(f), C(c1).
+// :outputs: CVC_XZ89_13(C,V,C,F)
+CVC_XZ89_13(c,l,o,f) -> C(c), V(l), C(o), F(f).
+// :outputs: CFC_XZ89_14(C,F,C,C,V)
+CFC_XZ89_14(c1,f,c2,c,r) -> C(c1), F(f), C(c2), C(c), V(r).
+// :outputs: FC_XZ89_15(F,C,C,V)
+FC_XZ89_15(f,o,c,r) -> F(f), C(o), C(c), V(r).
+// :outputs: DVDV_XZ89_8(C,V,C,V,I,M)
+DVDV_XZ89_8(c,u,d,v,i,m) -> C(c), V(u), C(d), V(v), I(i), M(m).
+// :outputs: CVC_XZ89_9(C,V,C,C,V)
+CVC_XZ89_9(c,u,o,d,v) -> C(c), V(u), C(o), C(d), V(v).
+// :outputs: CVC_XZ89_10(C,V,C,H)
+CVC_XZ89_10(c,l,o,h) -> C(c), V(l), C(o), H(h).
+// :outputs: CVC_XZ89_11(C,V,C,V)
+CVC_XZ89_11(c,l,c1,r) -> C(c), V(l), C(c1), V(r).
+// :outputs: CVC_XZ89_21(C,V,C,I,H)
+CVC_XZ89_21(c,v,o,i,h) -> C(c), V(v), C(o), I(i), H(h).
+// :outputs: CVC_XZ89_20(C,V,C,I,H)
+CVC_XZ89_20(c,v,o,i,h) -> C(c), V(v), C(o), I(i), H(h).
+// :outputs: CVC_30_0_XZ89_23(C,V,F,C,V)
+CVC_30_0_XZ89_23(c,l,f,c1,b) -> C(c), V(l), F(f), C(c1), V(b).
+// :outputs: CMCM_XZ89_22(C,M,C,M,I)
+CMCM_XZ89_22(c,m,d,n,i) -> C(c), M(m), C(d), M(n), I(i).
+// :outputs: CVC_XZ89_17(C,V,C,I,H)
+CVC_XZ89_17(c,v,o,i,h) -> C(c), V(v), C(o), I(i), H(h).
+// :outputs: CVC_XZ89_16(C,V,C,I,M,H)
+CVC_XZ89_16(c,v,o,i,m,h) -> C(c), V(v), C(o), I(i), M(m), H(h).
+// :outputs: CVC_XZ89_19(C,V,C,I,M,H)
+CVC_XZ89_19(c,v,o,i,m,h) -> C(c), V(v), C(o), I(i), M(m), H(h).
+// :outputs: CVC_XZ89_18(C,V,C,I,M,V,C)
+CVC_XZ89_18(c,v,o2,i,m,u,o) -> C(c), V(v), C(o2), I(i), M(m), V(u), C(o).
+// :outputs: DI_XZ89_29(C,I,H)
+DI_XZ89_29(c,i,v_XZ89_0) -> C(c), I(i), H(v_XZ89_0).
+// :outputs: DIH_XZ89_28(C,I,H,C)
+DIH_XZ89_28(c,i,h,o) -> C(c), I(i), H(h), C(o).
+// :outputs: RobjValAsgnInst_XZ89_31(C,V,H,M)
+RobjValAsgnInst_XZ89_31(c,l,h,m) -> C(c), V(l), H(h), M(m).
+// :outputs: CICM_XZ89_30(C,I,M,H)
+CICM_XZ89_30(c,i,m,h) -> C(c), I(i), M(m), H(h).
+// :outputs: reachableCM_XZ89_25(C,M,C,I)
+reachableCM_XZ89_25(c,m,v_XZ89_0,v_XZ89_1) -> C(c), M(m), C(v_XZ89_0), I(v_XZ89_1).
+// :outputs: CFC_34_0_XZ89_24(C,F,V,C,V)
+CFC_34_0_XZ89_24(c,f,r,c1,b) -> C(c), F(f), V(r), C(c1), V(b).
+// :outputs: DIC_XZ89_27(C,I,C,V)
+DIC_XZ89_27(c,i,o,v) -> C(c), I(i), C(o), V(v).
+// :outputs: reachableCI_XZ89_26(C,I,M)
+reachableCI_XZ89_26(c,i,m) -> C(c), I(i), M(m).
+// :outputs: reachableCM_XZ89_38(C,M,I)
+reachableCM_XZ89_38(c,m,i) -> C(c), M(m), I(i).
+// :outputs: reachableT_XZ89_39(T,C,I,H)
+reachableT_XZ89_39(t,v_XZ89_0,i,h) -> T(t), C(v_XZ89_0), I(i), H(h).
+// :outputs: RputStatFldInst_XZ89_36(C,F,V,M)
+RputStatFldInst_XZ89_36(c,f,r,m) -> C(c), F(f), V(r), M(m).
+// :outputs: reachableCM_XZ89_37(C,M,I)
+reachableCM_XZ89_37(c,m,i) -> C(c), M(m), I(i).
+// :outputs: RgetStatFldInst_XZ89_34(C,V,F,M)
+RgetStatFldInst_XZ89_34(c,l,f,m) -> C(c), V(l), F(f), M(m).
+// :outputs: RputInstFldInst_XZ89_35(C,V,F,V,M)
+RputInstFldInst_XZ89_35(c,b,f,r,m) -> C(c), V(b), F(f), V(r), M(m).
+// :outputs: RobjVarAsgnInst_XZ89_32(C,V,V,M)
+RobjVarAsgnInst_XZ89_32(c,l,r,m) -> C(c), V(l), V(r), M(m).
+// :outputs: RgetInstFldInst_XZ89_33(C,V,V,F,M)
+RgetInstFldInst_XZ89_33(c,l,b,f,m) -> C(c), V(l), V(b), F(f), M(m).
+// :outputs: reachableT_XZ89_46(T,T)
+reachableT_XZ89_46(t,s) -> T(t), T(s).
+// :outputs: rootCM_XZ89_47(M,T)
+rootCM_XZ89_47(m,t) -> M(m), T(t).
+// :outputs: reachableT_XZ89_44(T,C,M,F,V)
+reachableT_XZ89_44(t,v_XZ89_0,m,f,v_XZ89_1) -> T(t), C(v_XZ89_0), M(m), F(f), V(v_XZ89_1).
+// :outputs: reachableT_XZ89_45(T,C,M,V,F)
+reachableT_XZ89_45(t,v_XZ89_0,m,v_XZ89_1,f) -> T(t), C(v_XZ89_0), M(m), V(v_XZ89_1), F(f).
+// :outputs: reachableT_XZ89_42(T,C,M,V,H)
+reachableT_XZ89_42(t,v_XZ89_0,m,v_XZ89_1,h) -> T(t), C(v_XZ89_0), M(m), V(v_XZ89_1), H(h).
+// :outputs: reachableT_XZ89_43(T,C,M)
+reachableT_XZ89_43(t,v_XZ89_0,m) -> T(t), C(v_XZ89_0), M(m).
+// :outputs: reachableT_XZ89_40(T,C,I,H)
+reachableT_XZ89_40(t,v_XZ89_0,i,h) -> T(t), C(v_XZ89_0), I(i), H(h).
+// :outputs: reachableT_XZ89_41(T,C,I)
+reachableT_XZ89_41(t,v_XZ89_0,i) -> T(t), C(v_XZ89_0), I(i).
+// :outputs: reachableCM_XZ89_49(M,T)
+reachableCM_XZ89_49(m,t) -> M(m), T(t).
+
+// #Original rules
+IHM(i,h,m2) <- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
+ctxtInsIHM(i,h,m) <- IHM(i,h,m), epsilonM(m).
+kcfaSenIHM(i,h,m) <- IHM(i,h,m), kcfaSenM(m).
+kcfaSenSpecIM(i,m) <- specIM(i,m), kcfaSenM(m).
+ctxtInsSpecIM(i,m) <- specIM(i,m), epsilonM(m).
+kcfaSenStatIM(i,m) <- statIM(i,m), kcfaSenM(m).
+ctxtInsStatIM(i,m) <- statIM(i,m), epsilonM(m).
+//reachableCM(0,0).
+reachableCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+//reachableCM(0,m) <- clinitTM(t,m), reachableT(t).
+reachableCM(c0,m) <- clinitTM(t,m), reachableT(t), C_index[c0] = 0.
+reachableCM(c,m) <- CICM(_,_,c,m).
+reachableCI(c,i) <- MI(m,i), reachableCM(c,m).
+DIC(c,i,o) <- IinvkArg0(i,v), CVC(c,v,o).
+DIH(c,i,h) <- DIC(c,i,o), CH(o,h).
+DI(c,i) <- DIH(c,i,_).
+//kcfaDIC(0,i,d) <- CIC(0,i,d), MI(m,i), epsilonM(m).
+kcfaDIC(c0,i,d) <- CIC(c0,i,d), MI(m,i), epsilonM(m), C_index[c0] = 0.
+kcfaDIC(c,i,d) <- CIC(c,i,d), MI(m,i), kcfaSenM(m).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h), C_index[c0] = 0.
+CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenIHM(i,h,m), DIH(c,i,h), kcfaDIC(c,i,d).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i), C_index[c0] = 0.
+CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenSpecIM(i,m), DI(c,i), kcfaDIC(c,i,d).
+//CICM(c,i,0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM(c,i,c0,m) <- reachableCI(c,i), ctxtInsStatIM(i,m), C_index[c0] = 0.
+CICM(c,i,d,m) <- reachableCI(c,i), kcfaSenStatIM(i,m), kcfaDIC(c,i,d).
+DVDV(d,v,c,u) <- argCopy(i,u,m,v), CICM(c,i,d,m).
+DVDV(c,u,d,v) <- retCopy(i,u,m,v), CICM(c,i,d,m).
+CVC(c,u,o) <- DVDV(c,u,d,v), CVC(d,v,o), VCfilter(u,o).
+RobjValAsgnInst(c,l,h) <- reachableCM(c,m), MobjValAsgnInst(m,l,h).
+CVC(c,l,o) <- RobjValAsgnInst(c,l,h), CHC(c,h,o).
+RobjVarAsgnInst(c,l,r) <- reachableCM(c,m), MobjVarAsgnInst(m,l,r).
+CVC(c,l,c1) <- RobjVarAsgnInst(c,l,r), CVC(c,r,c1), VCfilter(l,c1).
+RgetInstFldInst(c,l,b,f) <- reachableCM(c,m), MgetInstFldInst(m,l,b,f).
+CVC(c,l,c2) <- CVC_30_0(c,l,f,c1), CFC(c1,f,c2).
+RgetStatFldInst(c,l,f) <- reachableCM(c,m), MgetStatFldInst(m,l,f).
+CVC(c,l,o) <- RgetStatFldInst(c,l,f), FC(f,o).
+RputInstFldInst(c,b,f,r) <- reachableCM(c,m), MputInstFldInst(m,b,f,r).
+CFC(c1,f,c2) <- CFC_34_0(c,f,r,c1), CVC(c,r,c2).
+RputStatFldInst(c,f,r) <- reachableCM(c,m), MputStatFldInst(m,f,r).
+FC(f,o) <- RputStatFldInst(c,f,r), CVC(c,r,o).
+reachableCM(c,m) <- reachableCI(c,i), objNewInstIM(i,m).
+reachableCM(c,m) <- reachableCI(c,i), conNewInstIM(i,m).
+//CVC(c,v,o) <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
+//CVC(c,v,o) <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//CVC(c,v,o2) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), CVC(c,u,o), CFC(o,0,o2).
+//CVC(c,v,o) <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
+//CVC(c,v,o) <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//CVC(c,v,o) <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC(c,v,o) <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,z0,v), objNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+CVC(c,v,o) <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+CVC(c,v,o2) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,z1,u), MmethArg(m,z1,v), CVC(c,u,o), CFC(o,f0,o2), Z_index[z1] = 1, F_index[f0] = 0.
+CVC(c,v,o) <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,z0,v), conNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+CVC(c,v,o) <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+CVC(c,v,o) <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+reachableT(t) <- reachableCI(_,i), conNewInstIH(i,h), HT(h,t).
+reachableT(t) <- reachableCI(_,i), objNewInstIH(i,h), HT(h,t).
+reachableT(t) <- reachableCI(_,i), clsForNameIT(i,t).
+reachableT(t) <- reachableCM(_,m), MobjValAsgnInst(m,_,h), HT(h,t).
+reachableT(t) <- reachableCM(_,m), staticTM(t,m).
+reachableT(t) <- reachableCM(_,m), MputStatFldInst(m,f,_), staticTF(t,f).
+reachableT(t) <- reachableCM(_,m), MgetStatFldInst(m,_,f), staticTF(t,f).
+reachableT(t) <- classT(t), reachableT(s), sub(s,t).
+//rootCM(0,0).
+rootCM(c0,m0) <- C_index[c0] = 0, M_index[m0] = 0.
+//rootCM(0,m) <- reachableT(t), clinitTM(t,m).
+rootCM(c0,m) <- reachableT(t), clinitTM(t,m), C_index[c0] = 0.
+CMCM(c,m,d,n) <- CICM(c,i,d,n), MI(m,i).
+CVC_30_0(c,l,f,c1) <- RgetInstFldInst(c,l,b,f), CVC(c,b,c1).
+CFC_34_0(c,f,r,c1) <- RputInstFldInst(c,b,f,r), CVC(c,b,c1).
+
+// #Instrumented rules
+//kcfaDIC_XZ89_0(i,d,m) <- CIC(0,i,d), MI(m,i), epsilonM(m).
+kcfaDIC_XZ89_0(i,d,m) <- CIC(c0,i,d), MI(m,i), epsilonM(m), C_index[c0] = 0.
+kcfaDIC_XZ89_1(c,i,d,m) <- CIC(c,i,d), MI(m,i), kcfaSenM(m).
+CICM_XZ89_2(c,i,d,m,h) <- reachableCI(c,i), kcfaSenIHM(i,h,m), DIH(c,i,h), kcfaDIC(c,i,d).
+CICM_XZ89_3(c,i,m) <- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM_XZ89_4(c,i,d,m) <- reachableCI(c,i), kcfaSenSpecIM(i,m), DI(c,i), kcfaDIC(c,i,d).
+CICM_XZ89_5(c,i,m) <- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM_XZ89_6(c,i,d,m) <- reachableCI(c,i), kcfaSenStatIM(i,m), kcfaDIC(c,i,d).
+DVDV_XZ89_7(d,v,c,u,i,m) <- argCopy(i,u,m,v), CICM(c,i,d,m).
+DVDV_XZ89_8(c,u,d,v,i,m) <- retCopy(i,u,m,v), CICM(c,i,d,m).
+CVC_XZ89_9(c,u,o,d,v) <- DVDV(c,u,d,v), CVC(d,v,o), VCfilter(u,o).
+CVC_XZ89_10(c,l,o,h) <- RobjValAsgnInst(c,l,h), CHC(c,h,o).
+CVC_XZ89_11(c,l,c1,r) <- RobjVarAsgnInst(c,l,r), CVC(c,r,c1), VCfilter(l,c1).
+CVC_XZ89_12(c,l,c2,f,c1) <- CVC_30_0(c,l,f,c1), CFC(c1,f,c2).
+CVC_XZ89_13(c,l,o,f) <- RgetStatFldInst(c,l,f), FC(f,o).
+CFC_XZ89_14(c1,f,c2,c,r) <- CFC_34_0(c,f,r,c1), CVC(c,r,c2).
+FC_XZ89_15(f,o,c,r) <- RputStatFldInst(c,f,r), CVC(c,r,o).
+//CVC_XZ89_16(c,v,o,i,m,h) <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
+//CVC_XZ89_17(c,v,o,i,h) <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//CVC_XZ89_18(c,v,o2,i,m,u,o) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), CVC(c,u,o), CFC(o,0,o2).
+//CVC_XZ89_19(c,v,o,i,m,h) <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
+//CVC_XZ89_20(c,v,o,i,h) <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+//CVC_XZ89_21(c,v,o,i,h) <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC_XZ89_16(c,v,o,i,m,h) <- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,z0,v), objNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+CVC_XZ89_17(c,v,o,i,h) <- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+CVC_XZ89_18(c,v,o2,i,m,u,o) <- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,z1,u), MmethArg(m,z1,v), CVC(c,u,o), CFC(o,f0,o2), Z_index[z1] = 1, F_index[f0] = 0.
+CVC_XZ89_19(c,v,o,i,m,h) <- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,z0,v), conNewInstIH(i,h), CHC(c,h,o), Z_index[z0] = 0.
+CVC_XZ89_20(c,v,o,i,h) <- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+CVC_XZ89_21(c,v,o,i,h) <- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,z0,v), CHC(c,h,o), Z_index[z0] = 0.
+CMCM_XZ89_22(c,m,d,n,i) <- CICM(c,i,d,n), MI(m,i).
+CVC_30_0_XZ89_23(c,l,f,c1,b) <- RgetInstFldInst(c,l,b,f), CVC(c,b,c1).
+CFC_34_0_XZ89_24(c,f,r,c1,b) <- RputInstFldInst(c,b,f,r), CVC(c,b,c1).
+reachableCM_XZ89_25(c,m,v_XZ89_0,v_XZ89_1) <- CICM(v_XZ89_0,v_XZ89_1,c,m).
+reachableCI_XZ89_26(c,i,m) <- MI(m,i), reachableCM(c,m).
+DIC_XZ89_27(c,i,o,v) <- IinvkArg0(i,v), CVC(c,v,o).
+DIH_XZ89_28(c,i,h,o) <- DIC(c,i,o), CH(o,h).
+DI_XZ89_29(c,i,v_XZ89_0) <- DIH(c,i,v_XZ89_0).
+CICM_XZ89_30(c,i,m,h) <- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+RobjValAsgnInst_XZ89_31(c,l,h,m) <- reachableCM(c,m), MobjValAsgnInst(m,l,h).
+RobjVarAsgnInst_XZ89_32(c,l,r,m) <- reachableCM(c,m), MobjVarAsgnInst(m,l,r).
+RgetInstFldInst_XZ89_33(c,l,b,f,m) <- reachableCM(c,m), MgetInstFldInst(m,l,b,f).
+RgetStatFldInst_XZ89_34(c,l,f,m) <- reachableCM(c,m), MgetStatFldInst(m,l,f).
+RputInstFldInst_XZ89_35(c,b,f,r,m) <- reachableCM(c,m), MputInstFldInst(m,b,f,r).
+RputStatFldInst_XZ89_36(c,f,r,m) <- reachableCM(c,m), MputStatFldInst(m,f,r).
+reachableCM_XZ89_37(c,m,i) <- reachableCI(c,i), objNewInstIM(i,m).
+reachableCM_XZ89_38(c,m,i) <- reachableCI(c,i), conNewInstIM(i,m).
+reachableT_XZ89_39(t,v_XZ89_0,i,h) <- reachableCI(v_XZ89_0,i), conNewInstIH(i,h), HT(h,t).
+reachableT_XZ89_40(t,v_XZ89_0,i,h) <- reachableCI(v_XZ89_0,i), objNewInstIH(i,h), HT(h,t).
+reachableT_XZ89_41(t,v_XZ89_0,i) <- reachableCI(v_XZ89_0,i), clsForNameIT(i,t).
+reachableT_XZ89_42(t,v_XZ89_0,m,v_XZ89_1,h) <- reachableCM(v_XZ89_0,m), MobjValAsgnInst(m,v_XZ89_1,h), HT(h,t).
+reachableT_XZ89_43(t,v_XZ89_0,m) <- reachableCM(v_XZ89_0,m), staticTM(t,m).
+reachableT_XZ89_44(t,v_XZ89_0,m,f,v_XZ89_1) <- reachableCM(v_XZ89_0,m), MputStatFldInst(m,f,v_XZ89_1), staticTF(t,f).
+reachableT_XZ89_45(t,v_XZ89_0,m,v_XZ89_1,f) <- reachableCM(v_XZ89_0,m), MgetStatFldInst(m,v_XZ89_1,f), staticTF(t,f).
+reachableT_XZ89_46(t,s) <- classT(t), reachableT(s), sub(s,t).
+rootCM_XZ89_47(m,t) <- reachableT(t), clinitTM(t,m).
+reachableCM_XZ89_49(m,t) <- clinitTM(t,m), reachableT(t).

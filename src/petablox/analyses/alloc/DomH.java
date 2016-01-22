@@ -36,7 +36,7 @@ import petablox.util.tuple.object.Pair;
  *
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
-@Petablox(name = "H", consumes = { "M", "PM" })
+@Petablox(name = "H", consumes = { "M" })
 public class DomH extends ProgramDom<Object> {
     protected DomM domM;
     protected int lastA;

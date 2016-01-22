@@ -20,7 +20,7 @@ import petablox.util.soot.SootUtilities;
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
-@Petablox(name = "L", consumes = { "M", "PM" })
+@Petablox(name = "L", consumes = { "M" })
 public class DomL extends ProgramDom<Unit> implements IAcqLockInstVisitor {
     protected DomM domM;
     protected SootMethod ctnrMethod;

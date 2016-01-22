@@ -1,0 +1,50 @@
+// Created by convert.py from ./src/chord/analyses/provenance/kcfa/kcfa-init-dlog_XZ89_.dlog on 2015-04-20 13:08:42.268711
+// :name: kcfa-init-dlog_XZ89_
+// :domains: I
+// :domains: M
+// :domains: K
+// :domains: C
+// :domains: H
+
+
+// #Input relations
+// :inputs: initCIC(C,I,C)
+// :inputs: initCHC(C,H,C)
+// :inputs: truncCKC(C,K,C)
+// :inputs: IK(I,K)
+// :inputs: HK(H,K)
+// :inputs: IM(I,M)
+// :inputs: MI(M,I)
+// :inputs: MH(M,H)
+// :inputs: roots(M)
+
+// #Output relations
+// :outputs: CM(C,M)
+CM(c,m) -> C(c), M(m).
+// :outputs: CIC(C,I,C)
+CIC(c,i,c1) -> C(c), I(i), C(c1).
+// :outputs: CHC(C,H,C)
+CHC(c,h,c1) -> C(c), H(h), C(c1).
+
+// #Instrumented relations
+// :outputs: CM_XZ89_0(M)
+CM_XZ89_0(m) -> M(m).
+// :outputs: CIC_XZ89_1(C,I,C,M,K,C)
+CIC_XZ89_1(c1,i,c3,m,k,c2) -> C(c1), I(i), C(c3), M(m), K(k), C(c2).
+// :outputs: CM_XZ89_2(C,M,C,I)
+CM_XZ89_2(c,m,v_XZ89_0,i) -> C(c), M(m), C(v_XZ89_0), I(i).
+// :outputs: CHC_XZ89_3(C,H,C,M,K,C)
+CHC_XZ89_3(c1,h,c3,m,k,c2) -> C(c1), H(h), C(c3), M(m), K(k), C(c2).
+
+// #Original rules
+//CM(0,m) <- roots(m).
+CM(c0,m) <- C_index[c0] = 0, roots(m).
+CIC(c1,i,c3) <- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3).
+CM(c,m) <- CIC(_,i,c), IM(i,m).
+CHC(c1,h,c3) <- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).
+
+// #Instrumented rules
+CM_XZ89_0(m) <- roots(m).
+CIC_XZ89_1(c1,i,c3,m,k,c2) <- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3).
+CM_XZ89_2(c,m,v_XZ89_0,i) <- CIC(v_XZ89_0,i,c), IM(i,m).
+CHC_XZ89_3(c1,h,c3,m,k,c2) <- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).
