@@ -21,7 +21,7 @@ import petablox.util.soot.SootUtilities;
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
-@Petablox(name = "E", consumes = { "M", "PM" })
+@Petablox(name = "E", consumes = { "M" })
 public class DomE extends ProgramDom<Unit> implements IHeapInstVisitor {
     protected DomM domM;
 

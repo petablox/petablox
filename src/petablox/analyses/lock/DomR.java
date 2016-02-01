@@ -20,7 +20,7 @@ import petablox.util.soot.SootUtilities;
  * 
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
-@Petablox(name = "R", consumes = { "M", "PM" })
+@Petablox(name = "R", consumes = { "M" })
 public class DomR extends ProgramDom<Unit> implements IRelLockInstVisitor {
     protected DomM domM;
 

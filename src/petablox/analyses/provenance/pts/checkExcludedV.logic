@@ -1,0 +1,13 @@
+// Created by convert.py from ./src/chord/analyses/provenance/pts/checkExcludedV.dlog on 2015-04-20 13:08:42.294641
+// :name: checkExcludedV-dlog
+
+// :domains: M
+// :domains: V
+
+
+// :inputs: checkExcludedM(M)
+// :inputs: MV(M,V)
+// :outputs: checkExcludedV(V)
+checkExcludedV(v) -> V(v).
+
+checkExcludedV(v) <- MV(m,v), checkExcludedM(m).

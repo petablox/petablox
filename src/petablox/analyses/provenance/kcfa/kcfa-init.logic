@@ -1,0 +1,71 @@
+// Created by convert.py from ./src/chord/analyses/provenance/kcfa/kcfa-init.dlog on 2015-04-20 13:08:42.270633
+// # Copyright (c) 2008-2010, Intel Corporation.
+// # Copyright (c) 2006-2007, The Trustees of Stanford University.
+// # All rights reserved.
+// # Licensed under the terms of the New BSD License.
+
+// # Author: Mayur Naik (mhn@cs.stanford.edu)
+// :name: kcfa-init-dlog
+
+// :domains: I
+// :domains: M
+// :domains: K
+// :domains: C
+// :domains: H
+
+
+// ###
+// # Relations
+// ###
+
+// :inputs: initCIC(C,I,C)
+// :inputs: initCHC(C,H,C)
+// :inputs: truncCKC(C,K,C)
+// :inputs: IK(I,K)
+// :inputs: HK(H,K)
+// :inputs: IM(I,M)
+// :inputs: MI(M,I)
+// :inputs: MH(M,H)
+// :inputs: roots(M)
+
+// #CM_1(c:C, m:M)
+// #CIC_1(c:C, i:I, c:C)
+// #CIC_2(c:C, i:I, c:C)
+// #CIC_3(c:C, i:I, c:C)
+
+// #CHC_1(c:C, h:H, c:C)
+// #CHC_2(c:C, h:H, c:C)
+// #CHC_3(c:C, h:H, c:C)
+
+// :outputs: CM(C,M)
+CM(c,m) -> C(c), M(m).
+// :outputs: CIC(C,I,C)
+CIC(c,i,c1) -> C(c), I(i), C(c1).
+// :outputs: CHC(C,H,C)
+CHC(c,h,c1) -> C(c), H(h), C(c1).
+
+// ###
+// # Constraints
+// ###
+
+// #initialize CM for root methods with emptycontext
+// #CM_1(0,m) :- roots(m).
+// #CIC_1(c1,i,c3) :- MI(m,i), CM_1(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2, k, c3).
+// #CM_1(c,m) :- CIC_1(_,i,c), IM(i,m).
+// #CIC_2(c1,i,c2) :- CIC_1(c1,i,c2), initCIC(c1,i,c2).
+// #CIC_3(c1,i,c3) :- !CIC_2(c1,i,c3), CIC_1(c1,i,c3).
+
+//CM(0,m) <- roots(m).
+CM(c0,m) <- roots(m), C_index[c0] = 0.
+// #CIC(c1,i,c3) :- CIC_2(c1,i,c3).
+// #CIC(c1,i,c3) :- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3), CIC_3(c1,i,c3).
+CIC(c1,i,c3) <- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3).
+CM(c,m) <- CIC(_,i,c), IM(i,m).
+
+// #CHC_1(c1,h,c3) :- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).
+// #CHC_2(c1,h,c2) :- CHC_1(c1,h,c2), initCHC(c1,h,c2).
+// #CHC_3(c1,h,c3) :- !CHC_2(c1,h,c3), CHC_1(c1,h,c3).
+
+// #CHC(c1,h,c3) :- CHC_2(c1,h,c3).
+// #CHC(c1,h,c3) :- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3), CHC_3(c1,h,c3).
+CHC(c1,h,c3) <- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).
