@@ -17,14 +17,13 @@ use feature "switch";
 # Lowest priority options: those defined in global_options below. They are options independent of both the analysis and benchmark.
 
 my $petablox_dir = &getenv("PETABLOX");
-my $pjbench_dir = &getenv("PJBENCH");
-my $mainBench_dir = &getenv("PAG_BENCH");
+my $mainBench_dir = &getenv("PETABLOX_BENCH");
 
 
 my $dacapo_dir = "dacapo/benchmarks/";
 my $ashes_dir = "ashesJSuite/benchmarks/";
 
-# Map from program name to program directory relative to $pjbench_dir
+# Map from program name to program directory relative to $mainBench_dir
 my %benchmarks = (
     "test" => "test",
     "cache4j" => "cache4j",
@@ -708,7 +707,7 @@ my $bench_dir;
 if (!grep {$_ eq $chosen_program} @programs) {
    $bench_dir = "$mainBench_dir/$chosen_program";
 }else{
-	$bench_dir = "$pjbench_dir/$benchmarks{$chosen_program}";
+	$bench_dir = "$mainBench_dir/$benchmarks{$chosen_program}";
 }
 
 my $bench_options = $bench_options_map{$chosen_analysis}{$chosen_program};
