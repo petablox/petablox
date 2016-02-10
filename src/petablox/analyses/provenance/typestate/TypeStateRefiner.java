@@ -107,8 +107,8 @@ public class TypeStateRefiner extends JavaAnalysis {
 		tasks.add(ClassicProject.g().getTask("mustSet-java"));
 		tasks.add(ClassicProject.g().getTask("typestate-dlog_XZ89_"));
 
-		String chordIncu = System.getenv("CHORD_INCUBATOR");
-		String typestateConfig = chordIncu + File.separator + "src/petablox/analyses/provenance/typestate/typestate-dlog_XZ89_.config";
+		String petabloxMain = System.getenv("PETABLOX");
+		String typestateConfig = petabloxMain + File.separator + "src/petablox/analyses/provenance/typestate/typestate-dlog_XZ89_.config";
 		configFiles = new String[]{ typestateConfig };
 
 		allowRel = (ProgramRel) ClassicProject.g().getTrgt("allow");

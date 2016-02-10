@@ -135,10 +135,10 @@ public class KOBJRefiner extends JavaAnalysis {
 		System.setProperty("petablox.ctxt.kind", "co");
 		System.setProperty("petablox.kobj.khighest", "" + max);
 		System.setProperty("petablox.kcfa.khighest", "" + max);
-		String chordMain = System.getenv("CHORD_MAIN");
-		String kinitConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.config";
-		String kobjConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kobj/pro-cspa-kobj-dlog_XZ89_.config";
-		String clientConfig = chordMain + File.separator + clientConfigPath;
+		String petabloxMain = System.getenv("PETABLOX");
+		String kinitConfig = petabloxMain + File.separator + "src/petablox/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.config";
+		String kobjConfig = petabloxMain + File.separator + "src/petablox/analyses/provenance/kobj/pro-cspa-kobj-dlog_XZ89_.config";
+		String clientConfig = petabloxMain + File.separator + clientConfigPath;
 		configFiles = new String[]{ kinitConfig, kobjConfig, clientConfig };
 
 		IKRel = (ProgramRel) ClassicProject.g().getTrgt("IK");

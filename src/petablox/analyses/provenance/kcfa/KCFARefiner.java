@@ -124,10 +124,10 @@ public class KCFARefiner extends JavaAnalysis {
 		System.setProperty("petablox.ctxt.kind", "cs");
 		System.setProperty("petablox.kobj.khighest", "" + max);
 		System.setProperty("petablox.kcfa.khighest", "" + max);
-		String chordMain = System.getenv("CHORD_MAIN");
-		String kinitConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kcfa/kcfa-bit-init-dlog_XZ89_.config";
-		String kcfaConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kcfa/pro-cspa-kcfa-dlog_XZ89_.config";
-		String clientConfig = chordMain + File.separator + clientConfigPath;
+		String petabloxMain = System.getenv("PETABLOX");
+		String kinitConfig = petabloxMain + File.separator + "src/petablox/analyses/provenance/kcfa/kcfa-bit-init-dlog_XZ89_.config";
+		String kcfaConfig = petabloxMain + File.separator + "src/petablox/analyses/provenance/kcfa/pro-cspa-kcfa-dlog_XZ89_.config";
+		String clientConfig = petabloxMain + File.separator + clientConfigPath;
 		configFiles = new String[]{ kinitConfig, kcfaConfig, clientConfig };
 
 		OKRel = (ProgramRel) ClassicProject.g().getTrgt("OK");
