@@ -75,7 +75,7 @@ public class MaxSatGenerator {
 		this.queryWeight = queryWeight;
 		String mifuFileName = System.getProperty("petablox.provenance.mifu", "mifumax");
 		this.mifuPath = System.getenv("PETABLOX") + File.separator + "src" + File.separator +
-				"chord" + File.separator + "project" + File.separator + "analyses" + File.separator +
+				"petablox" + File.separator + "project" + File.separator + "analyses" + File.separator +
 				"provenance" + File.separator + mifuFileName;
 	}
 	
