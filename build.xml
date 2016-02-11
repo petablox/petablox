@@ -160,6 +160,7 @@
 				<include name="**/*.xml"/>
 				<include name="**/*.dtd"/>
 				<include name="**/*.config"/>
+				<include name="**/mifumax*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="petablox.project.Boot"/>

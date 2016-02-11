@@ -1,19 +1,12 @@
 package petablox.project.analyses.provenance;
 
+import static petablox.util.ExceptionUtil.fail;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import petablox.project.Config;
-import petablox.util.ProcessExecutor;
-import petablox.util.Timer;
-import petablox.util.tuple.object.Pair;
 
-import static petablox.util.ExceptionUtil.fail;
-import static petablox.util.StringUtil.path;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TimerTask;
+
+import petablox.project.Config;
+import petablox.util.ProcessExecutor;
+import petablox.util.ResourceUtil;
+import petablox.util.Timer;
+import petablox.util.tuple.object.Pair;
 
 
 /**
@@ -49,7 +47,7 @@ public class MaxSatGenerator {
 	private Map<Tuple, Set<Integer>> consMap;
 	private boolean tuplePoolChanged = false;
 	private int queryWeight;
-	private String mifuPath;
+	private static String mifuPath = null;
 	
 	// model: It points to a model that will put a bias in our MaxSat encoding.
 	// Intuitively, this model object identifies derived tuples that are likely to hold.
@@ -74,17 +72,25 @@ public class MaxSatGenerator {
 		this.model = model;
 		this.queryWeight = queryWeight;
 		String mifuFileName = System.getProperty("petablox.provenance.mifu", "mifumax");
-		this.mifuPath = System.getenv("PETABLOX") + File.separator + "src" + File.separator +
-				"petablox" + File.separator + "project" + File.separator + "analyses" + File.separator +
-				"provenance" + File.separator + mifuFileName;
+		if(mifuPath == null)
+			mifuPath = ResourceUtil.extractFileFromJar("petablox" + File.separator + "project" + File.separator + "analyses" + File.separator +
+					"provenance" + File.separator + mifuFileName).getPath();
+//		this.mifuPath = System.getenv("PETABLOX") + File.separator + "src" + File.separator +
+//				"petablox" + File.separator + "project" + File.separator + "analyses" + File.separator +
+//				"provenance" + File.separator + mifuFileName;
 	}
 	
 	private void initRules() {
 		if (rules == null) {
 			rules = new ArrayList<LookUpRule>();
 			for (String conFile : configFiles) {
+				InputStream ins = ResourceUtil.getResourceByPath(null, conFile);
 				try {
-					Scanner sc = new Scanner(new File(conFile));
+					Scanner sc = null;
+					if(ins == null)
+						sc = new Scanner(new File(conFile));
+					else
+						sc = new Scanner(ins);
 					while (sc.hasNext()) {
 						String line = sc.nextLine().trim();
 						if (!line.equals("")) {
@@ -92,6 +98,7 @@ public class MaxSatGenerator {
 							rules.add(rule);
 						}
 					}
+					sc.close();
 				} catch (FileNotFoundException e) {
 					throw new RuntimeException(e);
 				}
