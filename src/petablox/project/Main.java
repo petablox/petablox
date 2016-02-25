@@ -2,6 +2,8 @@ package petablox.project;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.Exception;
+import java.io.FileNotFoundException;
 
 import petablox.program.Program;
 import petablox.util.Timer;
@@ -48,6 +50,15 @@ public class Main {
             System.setErr(errStream);
         }
         run();
+        try{
+        	File tempFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"temp");
+        	if(tempFile.exists()){
+        		for (File f : tempFile.listFiles())
+        			f.delete();
+        		if (!tempFile.delete())
+        			throw new FileNotFoundException("Failed to delete file: " + tempFile);
+        	}
+        }catch(Exception e){};
         if (outStream != null)
             outStream.close();
         if (errStream != null && errStream != outStream)
