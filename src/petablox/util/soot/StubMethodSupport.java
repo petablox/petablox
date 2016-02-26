@@ -47,6 +47,11 @@ public class StubMethodSupport {
 		return false;
 	}
 	
+	/**
+	 * Creates a skeleton SootMethod with a simple body if the method is concrete.
+	 * removeNative allows for stubbed native methods -- it is necessary to remove
+	 *   the native modifier for anything given a body
+	 */
 	private static SootMethod genericMethod(SootMethod m, boolean removeSync, boolean removeNative) {
 		SootClass c = m.getDeclaringClass();
 		SootMethod s = new SootMethod(m.getName(), m.getParameterTypes(), m.getReturnType(), m.getModifiers());
