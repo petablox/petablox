@@ -9,7 +9,7 @@ import petablox.project.analyses.ProgramRel;
 /**
  * Relation containing all synchronized methods.
  *
- * @author Mayur Naik (mhn@cs.stanford.edu)
+ * @author Joe Cox (cox@cs.ucla.edu)
  */
 @Petablox(
     name = "nativeM",
