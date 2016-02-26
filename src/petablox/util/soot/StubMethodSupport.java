@@ -47,12 +47,16 @@ public class StubMethodSupport {
 		return false;
 	}
 	
-	private static SootMethod genericMethod(SootMethod m, boolean removeSync) {
+	private static SootMethod genericMethod(SootMethod m, boolean removeSync, boolean removeNative) {
 		SootClass c = m.getDeclaringClass();
-		SootMethod s = new SootMethod(m.getName(), m.getParameterTypes(), m.getReturnType(), m.getModifiers() & ~Modifier.NATIVE);
+		SootMethod s = new SootMethod(m.getName(), m.getParameterTypes(), m.getReturnType(), m.getModifiers());
+		
+		if (removeNative) s.setModifiers(s.getModifiers() & ~Modifier.NATIVE);
 		if (removeSync) s.setModifiers(s.getModifiers() & ~Modifier.SYNCHRONIZED);
+		
 		c.removeMethod(m);
 		c.addMethod(s);
+		
 		if (s.isConcrete()) {
 			JimpleBody body = Jimple.v().newBody(s);
 			Chain<Unit> units = body.getUnits();
@@ -79,7 +83,7 @@ public class StubMethodSupport {
 	 * Stub for instance method "void start()" in class java.lang.Thread.
 	 */	
 	private static SootMethod getThreadStartEquiv(SootMethod m) {
-		SootMethod s = genericMethod(m, true);
+		SootMethod s = genericMethod(m, true, false);
 		JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 		SootClass c = s.getDeclaringClass();
 		String runSig = "void run()";
@@ -98,7 +102,7 @@ public class StubMethodSupport {
 	 * Stub for instance method "java.lang.Object clone()" in class java.lang.Object.
 	 */
 	private static SootMethod getCloneEquiv(SootMethod m) {
-		SootMethod s = genericMethod(m, false);
+		SootMethod s = genericMethod(m, false, true);
 		JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 		SootClass c = s.getDeclaringClass();
 		Chain<Unit> units = body.getUnits();
@@ -125,7 +129,7 @@ public class StubMethodSupport {
 	 * return
 	 */
 	private static SootMethod getArrayCopyEquiv(SootMethod m) {
-		SootMethod s = genericMethod(m, false);
+		SootMethod s = genericMethod(m, false, true);
 		JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 		SootClass c = s.getDeclaringClass();
 		Chain<Unit> units = body.getUnits();
@@ -173,7 +177,7 @@ public class StubMethodSupport {
 	 * return
 	 */
 	private static SootMethod getArraySetEquiv(SootMethod m) {
-		SootMethod s = genericMethod(m, false);
+		SootMethod s = genericMethod(m, false, true);
 		JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 		SootClass c = s.getDeclaringClass();
 		Chain<Unit> units = body.getUnits();
@@ -208,7 +212,7 @@ public class StubMethodSupport {
 	 * return t0
 	 */
 	private static SootMethod getDoPrivileged(SootMethod m){
-		SootMethod s = genericMethod(m,false);
+		SootMethod s = genericMethod(m, false, true);
 		JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 		List<Type> paramTypes = m.getParameterTypes();
 		RefType param1 = (RefType)paramTypes.get(0);
@@ -232,7 +236,7 @@ public class StubMethodSupport {
 	 * Empty stub for unsupported native methods / excluded methods
 	 */
 	public static SootMethod emptyStub(SootMethod m) {
-        SootMethod s = genericMethod(m, false);
+        SootMethod s = genericMethod(m, false, false);
         if (s.isConcrete()) {
 			JimpleBody body =(JimpleBody) s.retrieveActiveBody();
 			SootClass c = s.getDeclaringClass();
