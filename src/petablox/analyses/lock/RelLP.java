@@ -44,7 +44,7 @@ public class RelLP extends ProgramRel implements IMethodVisitor {
     }
     public void visit(SootClass c) { }
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         ICFG cfg = SootUtilities.getCFG(m);
         Block entry = cfg.getHeads().get(0);

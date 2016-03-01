@@ -234,7 +234,7 @@ public class CtxtsAnalysis extends JavaAnalysis {
 			for (int mIdx = 0; mIdx < numM; mIdx++) {
 				SootMethod m = domM.get(mIdx);
 				int kind;
-				if (m == mainMeth || m.getName().contains("<clinit>") || m.isAbstract())
+				if (m == mainMeth || m.getName().contains("<clinit>") || !m.isConcrete())
 					kind = CTXTINS;
 				else
 					kind = m.isStatic() ? statCtxtKind : instCtxtKind;

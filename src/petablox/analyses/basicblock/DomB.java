@@ -21,7 +21,7 @@ public class DomB extends ProgramDom<Block> implements IMethodVisitor {
 
     @Override
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         ICFG cfg = SootUtilities.getCFG(m);
         for (Block b : cfg.reversePostOrder())

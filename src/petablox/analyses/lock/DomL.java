@@ -35,7 +35,7 @@ public class DomL extends ProgramDom<Unit> implements IAcqLockInstVisitor {
 
     @Override
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         if (m.isSynchronized()) {
             ICFG cfg = SootUtilities.getCFG(m);

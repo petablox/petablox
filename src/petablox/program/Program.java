@@ -959,7 +959,7 @@ public class Program {
     
     private void printMethod(SootMethod m) {
         System.out.println("Method: " + m);
-        if (!m.isAbstract()) {
+        if (m.isConcrete()) {
         	Body b = m.retrieveActiveBody();
             System.out.println(b.toString());
         }
@@ -993,4 +993,3 @@ public class Program {
             printClass(c);
     }
 }
-

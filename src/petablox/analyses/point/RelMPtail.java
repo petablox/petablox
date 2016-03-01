@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
 public class RelMPtail extends ProgramRel implements IMethodVisitor {
     public void visit(SootClass c) { }
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         ICFG cfg = SootUtilities.getCFG(m);
         Unit bx = cfg.getTails().get(0).getHead();

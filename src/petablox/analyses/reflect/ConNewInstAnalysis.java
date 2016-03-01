@@ -67,7 +67,7 @@ public class ConNewInstAnalysis extends JavaAnalysis {
                     List<SootMethod> meths = c.getMethods();
                     for (int i = 0; i < meths.size(); i++) {
                     	SootMethod m = meths.get(i);
-                    	if(m.isAbstract() || m.isStatic())
+                    	if(!m.isConcrete() || m.isStatic())
                     		continue;
                         if (m.getName().toString().equals("<init>")) {
                             int mIdx = domM.indexOf(m);
@@ -82,4 +82,3 @@ public class ConNewInstAnalysis extends JavaAnalysis {
         relConNewInstIM.save();
     }
 }
-

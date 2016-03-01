@@ -39,7 +39,7 @@ public class DynamicBuilder implements ScopeBuilder {
             classes.add(rc);
             List<SootMethod> meths = c.getMethods();
             for(SootMethod m : meths){
-            	if(!m.isAbstract())
+            	if(m.isConcrete())
             		m.releaseActiveBody();
             	methods.add(m);
             }

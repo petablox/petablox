@@ -49,7 +49,7 @@ public class DomP extends ProgramDom<Unit> {
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
-            if (m.isAbstract())
+            if (!m.isConcrete())
                 continue;
             ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {

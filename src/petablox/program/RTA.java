@@ -305,7 +305,7 @@ public class RTA implements ScopeBuilder {
         }
         if (methods.add(s)) {
             if (DEBUG) System.out.println("\tAdding method: " + s);
-            if (!s.isAbstract() && !s.isNative()) {
+            if (s.isConcrete()) {
                 methodWorklist.add(s);
             }
         }

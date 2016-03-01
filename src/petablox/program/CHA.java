@@ -119,7 +119,7 @@ public class CHA implements ScopeBuilder {
     
     private void visitMethod(SootMethod m) {
         if (methods.add(m)) {
-            if (!m.isAbstract()) {
+            if (m.isConcrete()) {
                 if (DEBUG) System.out.println("\tAdding method: " + m);
                 methodWorklist.add(m);
             }

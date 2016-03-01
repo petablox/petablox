@@ -34,7 +34,7 @@ public class DomR extends ProgramDom<Unit> implements IRelLockInstVisitor {
 
     @Override
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         if (m.isSynchronized()) {
             ICFG cfg = SootUtilities.getCFG(m);

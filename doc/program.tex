@@ -611,7 +611,7 @@ Under construction.
 %};
 %Program program = Program.g();
 %for (jq_Method m : program.getMethods()) {
-%    if (!m.isAbstract()) {
+%    if (m.isConcrete()) {
 %        ControlFlowGraph cfg = m.getCFG();
 %        ListIterator.BasicBlock it = cfg.reversePostOrderIterator();
 %        while (it.hasNext()) {
@@ -625,4 +625,3 @@ Under construction.
 %}
 %\end{verbatim}
 %\end{framed}
-

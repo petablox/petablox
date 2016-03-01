@@ -26,7 +26,7 @@ public class RelMZlast extends ProgramRel {
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
-            if (m.isAbstract())
+            if (!m.isConcrete())
                 continue;
             Local[] args = SootUtilities.getMethArgLocals(m);
             int numArgs = args.length;

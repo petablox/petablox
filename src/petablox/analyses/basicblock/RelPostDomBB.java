@@ -30,7 +30,7 @@ public class RelPostDomBB extends ProgramRel implements IMethodVisitor {
         new HashMap<Block, Set<Block>>();
     public void visit(SootClass c) { }
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         pdomMap.clear();
         ICFG cfg = SootUtilities.getCFG(m);

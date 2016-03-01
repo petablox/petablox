@@ -25,7 +25,7 @@ public class RelThisMV extends ProgramRel {
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
-            if (m.isAbstract() || m.isStatic())
+            if (!m.isConcrete() || m.isStatic())
                 continue;
             Local v = m.getActiveBody().getThisLocal();
             int vIdx = domV.indexOf(v);

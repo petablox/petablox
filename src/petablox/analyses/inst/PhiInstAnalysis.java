@@ -43,7 +43,7 @@ public class PhiInstAnalysis extends JavaAnalysis {
         relPhiDst.zero();
         relPhiMax.zero();
         for (SootMethod m : Program.g().getMethods()) {
-            if (m.isAbstract())
+            if (!m.isConcrete())
                 continue;
             ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {

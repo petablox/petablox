@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
 public class RelMPhead extends ProgramRel implements IMethodVisitor {
     public void visit(SootClass c) { }
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         ICFG cfg = SootUtilities.getCFG(m);
         Unit be = cfg.getHeads().get(0).getHead();

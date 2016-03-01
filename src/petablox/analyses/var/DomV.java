@@ -52,7 +52,7 @@ public class DomV extends ProgramDom<Local> implements IMethodVisitor {
 
     @Override
     public void visit(SootMethod m) {
-        if (m.isAbstract())
+        if (!m.isConcrete())
             return;
         List<Local> vars = SootUtilities.getLocals(m);
         Iterator<Local> varsIt = vars.iterator();

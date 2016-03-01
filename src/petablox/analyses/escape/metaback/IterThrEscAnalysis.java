@@ -218,7 +218,7 @@ public class IterThrEscAnalysis extends ParallelAnalysis {
 		quadToRPOid = new TObjectIntHashMap<Object>();
 		invkQuadToLoc = new HashMap<Unit, Loc>();
 		for (SootMethod m : cicg.getNodes()) {
-			if (m.isAbstract())
+			if (!m.isConcrete())
 				continue;
 			ICFG cfg = SootUtilities.getCFG(m);
 			quadToRPOid.put(cfg.getHeads().get(0), 0);
