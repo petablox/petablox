@@ -251,6 +251,13 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
      */
     public void doneAllPasses() {
     }
+    
+    /**
+     * Subclasses can override this method.
+     */
+    public String getXbootclasspath(){
+    	return Config.toolClassPathName;
+    }
 
     // provides name of regular (i.e. non-pipe) file to store entire trace
     // provides name of POSIX pipe file to store streaming trace as it is
@@ -452,13 +459,13 @@ public class BasicDynamicAnalysis extends JavaAnalysis {
                 if (key.startsWith("petablox."))
                     basecmd.add("-D" + key + "=" + e.getValue());
             }
-            basecmd.add("-Xbootclasspath/p:" + Config.toolClassPathName);
+            basecmd.add("-Xbootclasspath/p:" + getXbootclasspath());              
             basecmd.add("-cp");
             basecmd.add(classPathName);
         } else {
             String bootClassesDirName = Config.bootClassesDirName;
             String userClassesDirName = Config.userClassesDirName;
-            basecmd.add("-Xbootclasspath/p:" + Config.toolClassPathName +
+            basecmd.add("-Xbootclasspath/p:" + getXbootclasspath() +
                 File.pathSeparator + bootClassesDirName);
             basecmd.add("-cp");
             basecmd.add(userClassesDirName + File.pathSeparator + classPathName);

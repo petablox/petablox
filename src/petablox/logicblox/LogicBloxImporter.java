@@ -46,7 +46,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
         if( relation == null ) throw new NullPointerException("relation is null");
         relation.zero();
         
-        String[] cmds = {Config.logicbloxCommand, "query", "--readonly", workspace, buildQuery(relation)};
+        String[] cmds = {Config.logicbloxCommand, "query", workspace, buildQuery(relation)};
         try {
             Process proc = Runtime.getRuntime().exec(cmds);
             new StreamGobbler(proc.getErrorStream(), System.err).start();

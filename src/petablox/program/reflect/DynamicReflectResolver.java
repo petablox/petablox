@@ -3,10 +3,19 @@ package petablox.program.reflect;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+
 import petablox.project.Config;
 import petablox.project.analyses.BasicDynamicAnalysis;
 import petablox.util.ByteBufferedFile;
 import petablox.util.tuple.object.Pair;
+import petablox.util.ResourceUtil;
+
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
 
 /**
  * Dynamic analysis for resolving reflection.
@@ -95,6 +104,27 @@ public class DynamicReflectResolver extends BasicDynamicAnalysis {
 			throw new RuntimeException("Unknown opcode: " + opcode);
 		}
 	}
+	
+	@Override
+	public String getXbootclasspath() {
+		String tempDirStr = Config.workDirName + File.separator + Config.outDirName + File.separator +"temp";
+		try{
+			JarFile jarFile = new JarFile(Config.mainDirName + File.separator + "petablox.jar");
+			JarEntry je = jarFile.getJarEntry("reflection-instr.jar");
+			InputStream is  = jarFile.getInputStream(je);
+			File tempDir = new File(tempDirStr);
+			if(!tempDir.exists())
+				tempDir.mkdir();
+			File jar = new File(tempDirStr + File.separator + "reflection-instr.jar");
+		    FileOutputStream fos = new java.io.FileOutputStream(jar);
+		    while (is.available() > 0)
+		        fos.write(is.read());
+		    fos.close();
+		    is.close();
+		}catch(Exception e){}
+		return tempDirStr + File.separator + "reflection-instr.jar";
+    }
+	
 	private static void add(List<Pair<String, List<String>>> l, String q, String c) {
 		for (Pair<String, List<String>> p : l) {
 			if (p.val0.equals(q)) {

@@ -100,23 +100,23 @@ public class KOBJRefiner extends JavaAnalysis {
 		if (client.equals("polysite")) {
 			this.client = 0;
 			clientFile = "polysite-dlog_XZ89_";
-			clientConfigPath = "src/petablox/analyses/provenance/monosite/polysite-dlog_XZ89_.config";
+			clientConfigPath = "petablox/analyses/provenance/monosite/polysite-dlog_XZ89_.config";
 			queryRelName = "polySite";
 		} else if (client.equals("downcast")) {
 			this.client = 1;
 			clientFile = "pro-downcast-dlog_XZ89_";
-			clientConfigPath = "src/petablox/analyses/provenance/downcast/pro-downcast-dlog_XZ89_.config";
+			clientConfigPath = "petablox/analyses/provenance/downcast/pro-downcast-dlog_XZ89_.config";
 			queryRelName = "unsafeDowncast";
 		} else if (client.equals("datarace")){
 			throw new RuntimeException("Unsupported client!");
 //			this.client = 2;
 //			clientFile = "pro-datarace-dlog_XZ89_";
-//			clientConfigPath = "src/petablox/analyses/provenance/race/pro-datarace-dlog_XZ89_.config";
+//			clientConfigPath = "petablox/analyses/provenance/race/pro-datarace-dlog_XZ89_.config";
 //			queryRelName = "racePairs";
 		}else if (client.equals("pts")){
 			this.client = 3;
 			clientFile = "pro-pts-dlog_XZ89_";
-			clientConfigPath = "src/petablox/analyses/provenance/pts/pro-pts-dlog_XZ89_.config";
+			clientConfigPath = "petablox/analyses/provenance/pts/pro-pts-dlog_XZ89_.config";
 			queryRelName = "ptsVH";
 		}else
 			throw new RuntimeException("Unknown client: " + this.client);
@@ -135,10 +135,9 @@ public class KOBJRefiner extends JavaAnalysis {
 		System.setProperty("petablox.ctxt.kind", "co");
 		System.setProperty("petablox.kobj.khighest", "" + max);
 		System.setProperty("petablox.kcfa.khighest", "" + max);
-		String chordMain = System.getenv("CHORD_MAIN");
-		String kinitConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.config";
-		String kobjConfig = chordMain + File.separator + "src/petablox/analyses/provenance/kobj/pro-cspa-kobj-dlog_XZ89_.config";
-		String clientConfig = chordMain + File.separator + clientConfigPath;
+		String kinitConfig = "petablox/analyses/provenance/kobj/kobj-bit-init-dlog_XZ89_.config";
+		String kobjConfig = "petablox/analyses/provenance/kobj/pro-cspa-kobj-dlog_XZ89_.config";
+		String clientConfig = clientConfigPath;
 		configFiles = new String[]{ kinitConfig, kobjConfig, clientConfig };
 
 		IKRel = (ProgramRel) ClassicProject.g().getTrgt("IK");

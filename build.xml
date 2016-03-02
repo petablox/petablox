@@ -132,21 +132,8 @@
 				<pathelement location="lib/confspellcheck-0.1.jar"/>
 			</classpath>
 		</javac>
-		<jar destfile="petablox.jar" basedir="classes" includes="**/*.class" duplicate="fail">
-            <zipfileset includes="**/*.class" src="lib/joeq.jar"/>
-            <zipfileset includes="**/*.class" src="lib/jwutil.jar"/>
-            <zipfileset includes="**/*.class" src="lib/jdom.jar"/>
-            <zipfileset includes="**/*.class" src="lib/bddbddb.jar"/>
-            <zipfileset includes="**/*.class" src="lib/javabdd-1.0b2.jar"/>
-            <zipfileset includes="**/*.class" src="lib/javassist.jar"/>
-            <zipfileset includes="**/*.class" src="lib/hj.jar"/>
-            <zipfileset includes="**/*.class" src="lib/CnCHj.jar"/>
-            <zipfileset includes="**/*.class" src="lib/trove-3.0.2.jar"/>
-            <zipfileset includes="**/*.class" src="lib/scannotation-1.0.2.jar"/>
-            <zipfileset includes="**/*.class" src="lib/j2h.jar"/>
-            <zipfileset includes="**/*.class" src="lib/saxon9.jar"/>
-            <zipfileset includes="**/*.class" src="lib/soot-trunk.jar"/>
-            <zipfileset includes="**/*.class" src="lib/confspellcheck-0.1.jar"/>
+		<jar destfile="./lib/reflection-instr.jar" basedir="classes" includes="**/*.class" duplicate="fail">
+			<zipfileset includes="**/*.class" src="lib/javassist.jar"/>	
 			<fileset dir=".">
 				<include name="web/*"/>
 			</fileset>
@@ -160,6 +147,45 @@
 				<include name="**/*.xml"/>
 				<include name="**/*.dtd"/>
 				<include name="**/*.config"/>
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="petablox.project.Boot"/>
+				<attribute name="Premain-Class" value="petablox.instr.OnlineTransformer"/>
+				<attribute name="Can-Retransform-Classes" value="true"/>
+			</manifest>
+		</jar>
+		<jar destfile="petablox.jar" basedir="classes" includes="**/*.class" duplicate="fail">
+			<zipfileset includes="**/*.class" src="lib/joeq.jar"/>
+            <zipfileset includes="**/*.class" src="lib/jwutil.jar"/>
+            <zipfileset includes="**/*.class" src="lib/jdom.jar"/>
+            <zipfileset includes="**/*.class" src="lib/bddbddb.jar"/>
+            <zipfileset includes="**/*.class" src="lib/javabdd-1.0b2.jar"/>
+            <zipfileset includes="**/*.class" src="lib/javassist.jar"/>
+            <zipfileset includes="**/*.class" src="lib/hj.jar"/>
+            <zipfileset includes="**/*.class" src="lib/CnCHj.jar"/>
+            <zipfileset includes="**/*.class" src="lib/trove-3.0.2.jar"/>
+            <zipfileset includes="**/*.class" src="lib/scannotation-1.0.2.jar"/>
+            <zipfileset includes="**/*.class" src="lib/j2h.jar"/>
+            <zipfileset includes="**/*.class" src="lib/saxon9.jar"/>
+            <zipfileset includes="**/*.class" src="lib/soot-trunk.jar"/>
+            <zipfileset includes="**/*.class" src="lib/confspellcheck-0.1.jar"/>
+            <fileset dir="lib/">
+				<include name="reflection-instr.jar"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="web/*"/>
+			</fileset>
+			<file file="lib/options.dict"/>
+			<fileset dir="src">
+				<include name="**/*.txt"/>
+				<include name="**/*.dlog"/>
+				<include name="**/*.datalog"/>
+				<include name="**/*.logic"/>
+				<include name="**/*.xsl"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.config"/>
+				<include name="**/mifumax*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="petablox.project.Boot"/>
