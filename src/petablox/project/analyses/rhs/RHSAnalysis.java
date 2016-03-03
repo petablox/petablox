@@ -199,7 +199,7 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         quadToRPOid = new TObjectIntHashMap<Unit>();
         invkQuadToLoc = new HashMap<Unit, Loc>();
         for (SootMethod m : cicg.getNodes()) {
-            if (m.isAbstract()) continue;
+            if (!m.isConcrete()) continue;
             ICFG cfg = SootUtilities.getCFG(m);
             quadToRPOid.put(cfg.getHeads().get(0).getHead(), 0);
             int rpoId = 1;
@@ -779,4 +779,3 @@ public abstract class RHSAnalysis<PE extends IEdge, SE extends IEdge> extends Ja
         wpeMap.put(new Pair<Unit, PE>(i, peCopy), wpe);
     }
 }
-
