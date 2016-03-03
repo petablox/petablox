@@ -7,7 +7,7 @@ import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 
 /**
- * Relation containing all synchronized methods.
+ * Relation containing all native methods.
  *
  * @author Joe Cox (cox@cs.ucla.edu)
  */
