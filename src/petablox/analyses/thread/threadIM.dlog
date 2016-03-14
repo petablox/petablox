@@ -40,9 +40,9 @@ nonMainThreadM(m:M0) output
 # Constraints
 ###
 
-runCHA(h,n) :- cha("run:()V@java.lang.Runnable",t,n), HT(h,t).
+runCHA(h,n) :- cha("<java.lang.Runnable: void run()>",t,n), HT(h,t).
 
-threadRunM("run:()V@java.lang.Thread").
+threadRunM("<java.lang.Thread: void run()>").
 
 threadAllocIH0(i,h) :- threadAllocI(i), IinvkArg(i,0,v), VH(v,h).
 threadAllocIH1(i,h) :- threadAllocI(i), IinvkArg(i,1,v), VH(v,h).
