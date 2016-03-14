@@ -22,10 +22,6 @@ import petablox.util.soot.SootUtilities;
 )
 public class RelEF extends ProgramRel {
     public void fill() {
-    	int within=0;
-    	int isload=0;
-    	int out=0;
-    	int notassgn=0;
         DomE domE = (DomE) doms[0];
         DomF domF = (DomF) doms[1];
         int numE = domE.size();
@@ -33,28 +29,17 @@ public class RelEF extends ProgramRel {
             Unit e = (Unit)domE.get(eIdx);
             //jq_Field f = e.getField();
             if(e instanceof JAssignStmt){
-            	
             	JAssignStmt j = (JAssignStmt)e;
             	if(j.containsFieldRef()){
-            		within++;
             		SootField f = j.getFieldRef().getField();
                 	int fIdx = domF.indexOf(f);
                     assert (fIdx >= 0);
                     add(eIdx, fIdx);
             	}
             	else if(SootUtilities.isLoadInst(j) || SootUtilities.isStoreInst(j)){
-            		isload++;
-            		int fIdx = 0;//domF.indexOf(null);
-                    assert (fIdx >= 0);
-                    add(eIdx, fIdx);
+                    add(eIdx, 0);
             	}
-            	else{
-            		out++;
-            		System.out.println("\nPRT Else part"+eIdx);
-            	}
-            }
-           
+            }  
         }
-        System.out.println("\nTotal :  "+numE+"  WIthin containsfieldref: "+within+"    Isload:  "+isload+"   Else: "+out+"   Not assign: "+notassgn);
     }
 }
