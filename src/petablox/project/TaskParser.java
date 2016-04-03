@@ -27,6 +27,7 @@ import petablox.project.analyses.DlogAnalysis;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
+import petablox.util.tuple.object.Pair;
 
 /**
  * A Petablox project comprising a set of tasks and a set of targets
@@ -65,6 +66,9 @@ public class TaskParser {
         }
     }
 
+    private ArrayList<Pair<String,PetabloxAnnotParser>> validJavaAnalysis = new ArrayList<Pair<String,PetabloxAnnotParser>>();
+    private HashSet<String> relationNames = new HashSet<String>();
+    
     private final Map<String, Class<ITask>> nameToJavaTaskMap =
         new HashMap<String, Class<ITask>>();
     private final Map<String, DlogAnalysis> nameToDlogTaskMap =
@@ -110,6 +114,7 @@ public class TaskParser {
     }
 
     public boolean run() {
+    	// MULTIPGM: we depend on the order of calls below: dlog analysis map should be built before java analysis map.
         buildDlogAnalysisMap();
         buildJavaAnalysisMap();
         return hasNoErrors;
@@ -149,7 +154,10 @@ public class TaskParser {
         if (classNames == null)
             return;
         for (String className : classNames) {
-            processJavaAnalysis(className);
+            parseAnnotJavaAnalysis(className);
+        }
+        for (Pair<String,PetabloxAnnotParser> pr : validJavaAnalysis) {
+            processJavaAnalysis(pr);
         }
     }
 
@@ -168,71 +176,112 @@ public class TaskParser {
         }
     }
 
-    private void processJavaAnalysis(String className) {
-        Class<ITask> type = null;
-        try {
-            type = (Class<ITask>) Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            Messages.fatal(ex);
-        }
-        PetabloxAnnotParser info = new PetabloxAnnotParser(type);
-        boolean success = info.parse();
-        if (!success) {
-            ignoreJavaTask(className);
-            return;
-        }
+    private void parseAnnotJavaAnalysis(String className) {
+    	  Class<ITask> type = null;
+          try {
+              type = (Class<ITask>) Class.forName(className);
+          } catch (ClassNotFoundException ex) {
+              Messages.fatal(ex);
+          }
+          PetabloxAnnotParser info = new PetabloxAnnotParser(type);
+          boolean success = info.parse();
+          if (!success)
+              ignoreJavaTask(className);    
+          else {
+        	  String name = info.getName();
+        	  if (name.equals("")) {
+        		  if (Config.verbose >= 2) Messages.log(ANON_JAVA_TASK, className);
+        		  name = className;
+        	  }
+        	  if (Config.populate && Utils.isSubclass(type, ProgramRel.class))
+        		  relationNames.add(name);
+        	  DlogAnalysis dlogTask = nameToDlogTaskMap.get(name);
+              if (dlogTask != null) {
+                  redefinedJavaTask(className, name, dlogTask.getFileName());
+                  return;
+              }
+        	  Class<ITask> javaTask = nameToJavaTaskMap.get(name);
+              if (javaTask != null) {
+                  redefinedJavaTask(className, name, javaTask.getName());
+                  return;
+              }
+        	  validJavaAnalysis.add(new Pair<String,PetabloxAnnotParser>(className, info));
+        	  nameToJavaTaskMap.put(name, type);
+          }
+          return;
+    }
+    
+    // MULTIPGM: A Java analysis might specify "consumes" and "produces" that might contain both doms and relations.
+    // To handle this, we process all dlog analyses first: all "produced" and "consumed" by dlog analyses are relations.
+    // Next, we parse all the Java analyses files so we know the total set of relations being produced.
+    // In the method below, everything that appears in the "produces" and "consumes" of Java analyses that belong to
+    // the above set are relations (their names get modified). Otherwise, they are domains (no name change).
+    // One gap: If a Java analysis "produces" a relation and does not specify its signature and it is not consumed by any
+    // dlog analysis OR is consumed by a Java analysis without specifying signature, then name modification will fail.
+    private void processJavaAnalysis(Pair<String,PetabloxAnnotParser> pr) {
+    	String className = pr.val0;
+    	PetabloxAnnotParser info = pr.val1;
+    	
         String name = info.getName();
-        if (name.equals("")) {
-            if (Config.verbose >= 2) Messages.log(ANON_JAVA_TASK, className);
-            name = className;
-        }
-        DlogAnalysis dlogTask = nameToDlogTaskMap.get(name);
-        if (dlogTask != null) {
-            redefinedJavaTask(className, name, dlogTask.getFileName());
-            return;
-        }
-        Class<ITask> javaTask = nameToJavaTaskMap.get(name);
-        if (javaTask != null) {
-            redefinedJavaTask(className, name, javaTask.getName());
-            return;
-        }
+        if (name.equals("")) name = className;
+       
         Map<String, Class  > nameToTypeMap = info.getNameToTypeMap();
         Map<String, RelSign> nameToSignMap = info.getNameToSignMap();
         for (Map.Entry<String, Class> e : nameToTypeMap.entrySet()) {
             String name2 = e.getKey();
             Class type2 = e.getValue();
             RelSign sign2 = nameToSignMap.get(name2);
-            if (sign2 != null)
+            if (sign2 != null) {
+            	if (Config.populate) name2 = Config.multiTag + name2;
                 createTrgt(name2, type2, className, sign2);
-            else
+            } else {
                 createTrgt(name2, type2, className);
+            }
         }
         for (Map.Entry<String, RelSign> e : nameToSignMap.entrySet()) {
             String name2 = e.getKey();
             if (nameToTypeMap.containsKey(name2))
                 continue;
             RelSign sign2 = e.getValue();
+            if (Config.populate) name2 = Config.multiTag + name2;
             createTrgt(name2, ProgramRel.class, className, sign2);
         }
         String prescriberName = info.getPrescriber();
         nameToPrescriberNameMap.put(name, prescriberName);
         List<String> consumeNames = info.getConsumes();
-        nameToConsumeNamesMap.put(name, consumeNames);
+        if (Config.populate) {
+        	List<String> modConsumeNames = new ArrayList<String>();
+        	for (String s : consumeNames) {
+        		if (relationNames.contains(s) || nameToSignMap.containsKey(s)) s = Config.multiTag + s;
+        	    modConsumeNames.add(s);
+        	}
+        	nameToConsumeNamesMap.put(name, modConsumeNames);
+        } else
+        	nameToConsumeNamesMap.put(name, consumeNames);
         List<String> produceNames = info.getProduces();
-        nameToProduceNamesMap.put(name, produceNames);
+        if (Config.populate) {
+        	List<String> modProduceNames = new ArrayList<String>();
+        	for (String s : produceNames) {
+        		if (relationNames.contains(s) || nameToSignMap.containsKey(s)) s = Config.multiTag + s;
+        	    modProduceNames.add(s);
+        	}
+        	nameToProduceNamesMap.put(name, modProduceNames);
+        } else
+        	nameToProduceNamesMap.put(name, produceNames);
         List<String> controlNames = info.getControls();
         nameToControlNamesMap.put(name, controlNames);
         for (String s : consumeNames) {
             if (!nameToTypeMap.containsKey(s) && !nameToSignMap.containsKey(s)) {
+            	if (Config.populate && relationNames.contains(s)) s = Config.multiTag + s;
                 createTrgt(s, null, className);
             }
         }
         for (String s : produceNames) {
             if (!nameToTypeMap.containsKey(s) && !nameToSignMap.containsKey(s)) {
+            	if (Config.populate && relationNames.contains(s)) s = Config.multiTag + s;
                 createTrgt(s, null, className);
             }
         }
-        nameToJavaTaskMap.put(name, type);
     }
 
     private void processDlogAnalysis(File file) {
@@ -320,12 +369,18 @@ public class TaskParser {
             String relName = e.getKey();
             RelSign relSign = e.getValue();
             createTrgt(relName, ProgramRel.class, fileName, relSign);
+            if (Config.populate) {
+            	relationNames.add(relName.substring(Config.multiTag.length()));
+            }
         }
         Map<String, RelSign> producedRelsMap = task.getProducedRels();
         for (Map.Entry<String, RelSign> e : producedRelsMap.entrySet()) {
             String relName = e.getKey();
             RelSign relSign = e.getValue();
             createTrgt(relName, ProgramRel.class, fileName, relSign);
+            if (Config.populate) {
+            	relationNames.add(relName.substring(Config.multiTag.length()));
+            }
         }
         task.setName(name);
         nameToPrescriberNameMap.put(name, name);

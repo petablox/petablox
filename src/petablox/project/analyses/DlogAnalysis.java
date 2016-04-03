@@ -3,12 +3,12 @@ package petablox.project.analyses;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import CnCHJ.api.ItemCollection;
-
 import petablox.bddbddb.BDDBDDBParser;
 import petablox.bddbddb.RelSign;
 import petablox.bddbddb.Solver;
@@ -78,7 +78,29 @@ public class DlogAnalysis extends JavaAnalysis {
     
     public DatalogMetadata parse(String fileName) throws IOException {
         metadata = parser.parseMetadata(new File(fileName));
+        if (Config.populate)
+        	modifyRelationNames();
         return metadata;
+    }
+    
+    private void modifyRelationNames() {
+    	Map<String, RelSign> modConsumedRels = new HashMap<String, RelSign>();
+    	for (Map.Entry<String, RelSign> e : metadata.getConsumedRels().entrySet()) {
+            String name = e.getKey();
+            RelSign sign = e.getValue();
+            name = Config.multiTag + name;
+            modConsumedRels.put(name, sign);
+        }
+    	metadata.setConsumedRels(modConsumedRels);
+    	Map<String, RelSign> modProducedRels = new HashMap<String, RelSign>();
+    	for (Map.Entry<String, RelSign> e : metadata.getProducedRels().entrySet()) {
+            String name = e.getKey();
+            RelSign sign = e.getValue();
+            name = Config.multiTag + name;
+            modProducedRels.put(name, sign);
+        }
+    	metadata.setProducedRels(modProducedRels);
+    	return;
     }
     
     /*private void error(String errMsg) {

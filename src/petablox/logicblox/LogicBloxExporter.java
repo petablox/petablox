@@ -1,10 +1,14 @@
 package petablox.logicblox;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Scanner;
+
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
 import petablox.project.PetabloxException;
@@ -21,13 +25,21 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     // configuration variables
     private String delim = Config.logicbloxInputDelim;
     private String workDir = Config.logicbloxWorkDirName;
+    private static HashMap<String,Integer> domNdxMap = null;
+    private static HashMap<String,Integer> newDomNdxMap = new HashMap<String,Integer>();
     
     public LogicBloxExporter() {
         super();
+        domNdxMap = LogicBloxUtils.getDomNdxMap();
     }
     
     public LogicBloxExporter(DatalogEngineType engineType) {
         super(engineType);
+        domNdxMap = LogicBloxUtils.getDomNdxMap();
+    }
+    
+    public static HashMap<String,Integer> getNewDomNdxMap() {
+    	return newDomNdxMap;
     }
     
     /**
@@ -37,9 +49,16 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @throws PetabloxException if an error occurs
      */
     public void saveDomain(Dom<?> dom) {
+    	int sz = 0;
+    	if (Config.populate) {
+	    	if (domNdxMap.containsKey(dom.getName()))  
+	    		sz = domNdxMap.get(dom.getName());
+	    	newDomNdxMap.put(dom.getName(), sz + dom.size());
+    	}
+    	
         String domName = dom.getName();
         File factsFile = new File(workDir, domName + ".csv");
-        saveDomainData(dom, factsFile);
+        saveDomainData(dom, factsFile, sz);
         
         File typeFile = new File(workDir, domName + ".type");
         saveDomainType(dom, typeFile);
@@ -47,9 +66,12 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         File importFile = new File(workDir, domName + ".import");
         saveDomainImport(dom, importFile, factsFile);
         
-        LogicBloxUtils.addBlock(typeFile);
-        LogicBloxUtils.execFile(importFile);   
+        if (!(Config.populate && LogicBloxUtils.domsExist()))
+        	LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);  
     }
+    
+    
     
     /**
      * Saves a given relation to file and loads it into the LB workspace.
@@ -79,11 +101,11 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @param factsFile  the destination file
      * @throws PetabloxException if an error occurs saving the data
      */
-    private void saveDomainData(Dom<?> dom, File factsFile) {
+    private void saveDomainData(Dom<?> dom, File factsFile, int sz) {
         final String DELIM = this.delim;
         PrintWriter out = createPrintWriter(factsFile);
         for (int i = 0, size = dom.size(); i < size; ++i) {
-            out.print(i);
+            out.print(i + sz);
             out.print(DELIM);
             out.println(dom.toUniqueString(i));
         }
@@ -195,11 +217,24 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         final String DELIM = this.delim;
         PrintWriter out = createPrintWriter(destination);
 
+        Dom<?>[] relDoms = relation.getDoms();
+        int[] domSz = new int[relDoms.length];
+        int i = 0;
+        for (Dom<?> d : relDoms) {
+        	if (Config.populate) {
+	        	if (domNdxMap.containsKey(d.getName()))
+	        		domSz[i++] = domNdxMap.get(d.getName());
+	        	else
+	        		domSz[i++] = 0;
+        	} else
+        		domSz[i++] = 0;
+        }
         StringBuilder sb = new StringBuilder();
         for (int[] row: relation.getAryNIntTuples()) {
             sb.setLength(0);
+            i = 0;
             for (int col: row)
-                sb.append(col).append(DELIM);
+                sb.append(col + domSz[i++]).append(DELIM);
             sb.setLength(sb.length() - DELIM.length()); // remove trailing delim
             out.println(sb.toString());
         }

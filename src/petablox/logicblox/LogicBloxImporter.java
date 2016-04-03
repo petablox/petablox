@@ -3,7 +3,9 @@ package petablox.logicblox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.regex.Pattern;
+
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
 import petablox.project.PetabloxException;
@@ -24,13 +26,17 @@ public class LogicBloxImporter extends LogicBloxIOBase {
     // lb query prints these around the results
     private static final Pattern headerOrFooter = 
         Pattern.compile("[/\\\\]--------------- _ ---------------[/\\\\]");
-
+    private static HashMap<String,Integer> domNdxMap = null;
+    
+   
     public LogicBloxImporter() {
         super();
+        domNdxMap = LogicBloxUtils.getDomNdxMap();
     }
     
     public LogicBloxImporter(DatalogEngineType engineType) {
         super(engineType);
+        domNdxMap = LogicBloxUtils.getDomNdxMap();
     }
     
     /**
@@ -62,6 +68,20 @@ public class LogicBloxImporter extends LogicBloxIOBase {
                     continue;
                 }
                 int[] indexes = parseIntRow(line);
+                Dom<?>[] relDoms = relation.getDoms();
+                int[] domSz = new int[relDoms.length];
+                int i = 0;
+                for (Dom<?> d : relDoms) {
+                	if (Config.populate) {
+        	        	if (domNdxMap.containsKey(d.getName()))
+        	        		domSz[i] = domNdxMap.get(d.getName());
+        	        	else
+        	        		domSz[i] = 0;
+                	} else
+                		domSz[i] = 0;
+                	indexes[i] = indexes[i] - domSz[i];
+                	i++;
+                }
                 relation.add(indexes);
             }
             Utils.close(reader);

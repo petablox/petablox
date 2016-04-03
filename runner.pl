@@ -78,7 +78,12 @@ my %local_options_map = (
         [
             "-Dpetablox.reflect.kind=dynamic",
             "-Dpetablox.run.analyses=cipa-0cfa-dlog",
-            "-Dpetablox.scope.kind=rta"
+            "-Dpetablox.scope.kind=rta",
+            "-Dpetablox.datalog.engine=logicblox4",
+            "-Dpetablox.logicblox.workspace=LBexpt1",
+            "-Dpetablox.logicblox.work.dir=/home/sulekha/exptDir1",
+            "-Dpetablox.multipgm.populate=true",
+            #"-Dpetablox.multipgm.crosspgm.analysis=false"
         ],
     "thresc_hybrid" =>
         [

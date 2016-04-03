@@ -220,6 +220,7 @@ public class PetabloxAnnotParser {
     public String getName() {
         return name;
     }
+    
     /**
      * Provides the name of the control target specified by this
      * Petablox annotation as prescribing the associated analysis.

@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.lang.Exception;
 import java.io.FileNotFoundException;
 
+import petablox.logicblox.LogicBloxUtils;
 import petablox.program.Program;
 import petablox.util.Timer;
 import petablox.util.Utils;
@@ -63,6 +64,7 @@ public class Main {
             outStream.close();
         if (errStream != null && errStream != outStream)
             errStream.close();
+        LogicBloxUtils.writeDomIndexFile();
     }
     private static void run() {
         Timer timer = new Timer("chord");
