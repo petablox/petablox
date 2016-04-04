@@ -137,7 +137,9 @@ public class DlogAnalysis extends JavaAnalysis {
 					String rel = parsed[0];
 					String[] relParsed = rel.split("\\(");
 					String relName = tags.get(0)+relParsed[0];
-					String lineBuild = relName+"("+relParsed[1]+"->"+parsed[1];
+					String lineBuild = relName+"("+relParsed[1]+" ";
+					if(parsed.length >1)
+						lineBuild = lineBuild + parsed[1];
 					pw.println(lineBuild);
 					// TODO : for analyze phase, add similar lines for all tags
 				}else if(line.contains(":-")){
@@ -225,8 +227,17 @@ public class DlogAnalysis extends JavaAnalysis {
 		// 0th tag is always the tag for the output
 		List<String> tags = new ArrayList<String>();
 		tags.add(Config.multiTag);
+		boolean analyze = !Config.analyze.equals("");
+		if(analyze){
+			//Analyze mode, add the tags to the list
+			String[] list = Config.analyze.split(",");
+			for(String t : list){
+				tags.add(t+"_");
+			}
+		}
 		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
 		HashMap<String,Integer> newDomNdxMap = LogicBloxExporter.getNewDomNdxMap();
+		Map<String,RelSign> consumedRels = metadata.getConsumedRels();
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(origFile));
 			PrintWriter pw = new PrintWriter(newFile);
@@ -245,7 +256,6 @@ public class DlogAnalysis extends JavaAnalysis {
 					String relName = tags.get(0)+relParsed[0];
 					String lineBuild = relName+"("+relParsed[1]+"->"+parsed[1];
 					pw.println(lineBuild);
-					// TODO : for analyze phase, add similar lines for all tags
 				}else if(line.contains("<-")){
 					StringBuilder sb = new StringBuilder();
 
@@ -276,6 +286,8 @@ public class DlogAnalysis extends JavaAnalysis {
 							String l = temp.substring(0,eqIndx);
 							sb.append(" ");
 							sb.append(l+" = "+offset);
+						}else if(temp.contains("<") || temp.contains(">")){
+							sb.append(" "+temp);
 						}else{
 							relParsed = temp.split("\\(");
 							relName = relParsed[0];
@@ -294,12 +306,77 @@ public class DlogAnalysis extends JavaAnalysis {
 					pw.println(sb.toString());
 				}
 			}
+			// Generate union constraints
+			if(analyze){
+				for(String name : consumedRels.keySet()){
+					RelSign r = consumedRels.get(name);
+					List<String> cons = buildUnionCons(name, r, tags);
+					for(String c : cons){
+						pw.println(c);
+					}
+				}
+			}
 			br.close();
 			pw.close();
 		}catch(Exception e){
 			System.out.println("Exception "+e);
 			throw new PetabloxException("Exception in generating multi program dlog");
 		}
+	}
+	private List<String> buildUnionCons(String relName,RelSign sign,List<String> tags){
+		String[] doms = sign.getDomNames();
+		StringBuilder relDefLsb = new StringBuilder();
+		StringBuilder relDefRsb = new StringBuilder();
+		//relDefL.append(tags.get(0));
+		relDefLsb.append(relName);
+		relDefLsb.append('(');
+		
+		relDefRsb.append(" -> ");
+		
+		HashMap<String,Integer> domVars= new HashMap<String,Integer>();
+		for(int i=0;i<doms.length;i++){
+			String dom = doms[i];
+			for(int j=0;j<dom.length();j++){
+				if(Character.isDigit(dom.charAt(j))){
+					dom = dom.substring(0, j);
+					break;
+				}
+			}
+			if(!domVars.containsKey(dom))
+				domVars.put(dom, -1);
+			String domVar = dom.toLowerCase();
+			int indx = domVars.get(dom)+1;
+			domVar = domVar+indx;
+			domVars.put(dom, indx);
+			relDefLsb.append(domVar);
+			
+			relDefRsb.append(dom);
+			relDefRsb.append('(');
+			relDefRsb.append(domVar);
+			relDefRsb.append(')');
+			
+			if(i!=(doms.length-1)){
+				relDefLsb.append(',');
+				relDefRsb.append(',');
+			}
+		}
+		relDefLsb.append(')');
+		String relDefL = relDefLsb.toString();
+		String relDefR = relDefRsb.toString();
+		
+		List<String> cons = new ArrayList<String>();
+		String predDecl = tags.get(0)+relDefL+relDefR+".";
+		
+		cons.add(predDecl);
+		
+		for(int i=1;i<tags.size();i++){
+			String rule = tags.get(0)+relDefL+" <- "+tags.get(i)+relDefL+".";
+			cons.add(rule);
+		}
+		
+		
+		return cons;
+		
 	}
 	private void multiPrgmDlogGen(){
 		if(!Config.multiPgmMode)
@@ -317,7 +394,7 @@ public class DlogAnalysis extends JavaAnalysis {
 		String newFile = path+File.separator+nameExt[0]+"_"+Config.multiTag+"."+nameExt[1];
 		switch (datalogEngine) {
 	    case BDDBDDB:
-	        multiPrgmDlogGenBDD(origFile, newFile);
+	        //multiPrgmDlogGenBDD(origFile, newFile);
 	        break;
 	    case LOGICBLOX3:
 	    case LOGICBLOX4:
