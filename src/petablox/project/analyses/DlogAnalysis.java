@@ -1,7 +1,10 @@
 package petablox.project.analyses;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +17,7 @@ import petablox.bddbddb.RelSign;
 import petablox.bddbddb.Solver;
 import petablox.core.DatalogMetadata;
 import petablox.core.IDatalogParser;
+import petablox.logicblox.LogicBloxExporter;
 import petablox.logicblox.LogicBloxParser;
 import petablox.logicblox.LogicBloxUtils;
 import petablox.project.PetabloxException;
@@ -84,33 +88,252 @@ public class DlogAnalysis extends JavaAnalysis {
     }
     
     private void modifyRelationNames() {
-    	Map<String, RelSign> modConsumedRels = new HashMap<String, RelSign>();
-    	for (Map.Entry<String, RelSign> e : metadata.getConsumedRels().entrySet()) {
-            String name = e.getKey();
-            RelSign sign = e.getValue();
-            name = Config.multiTag + name;
-            modConsumedRels.put(name, sign);
-        }
-    	metadata.setConsumedRels(modConsumedRels);
-    	Map<String, RelSign> modProducedRels = new HashMap<String, RelSign>();
-    	for (Map.Entry<String, RelSign> e : metadata.getProducedRels().entrySet()) {
-            String name = e.getKey();
-            RelSign sign = e.getValue();
-            name = Config.multiTag + name;
-            modProducedRels.put(name, sign);
-        }
-    	metadata.setProducedRels(modProducedRels);
-    	return;
+		Map<String, RelSign> modConsumedRels = new HashMap<String, RelSign>();
+		for (Map.Entry<String, RelSign> e : metadata.getConsumedRels().entrySet()) {
+			String name = e.getKey();
+			RelSign sign = e.getValue();
+			name = Config.multiTag + name;
+			modConsumedRels.put(name, sign);
+		}
+		metadata.setConsumedRels(modConsumedRels);
+		Map<String, RelSign> modProducedRels = new HashMap<String, RelSign>();
+		for (Map.Entry<String, RelSign> e : metadata.getProducedRels().entrySet()) {
+			String name = e.getKey();
+			RelSign sign = e.getValue();
+			name = Config.multiTag + name;
+			modProducedRels.put(name, sign);
+		}
+		metadata.setProducedRels(modProducedRels);
+		return;
     }
     
     /*private void error(String errMsg) {
         Messages.log("ERROR: DlogAnalysis: " + fileName + ": line " + lineNum + ": " + errMsg);
         hasNoErrors = false;
     }*/
+
+	private void multiPrgmDlogGenBDD(String origFile, String newFile){
+		// List of tags to be used in the dlog
+		// 0th tag is always the tag for the output
+		List<String> tags = new ArrayList<String>();
+		tags.add(Config.multiTag);
+		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
+		HashMap<String,Integer> newDomNdxMap = LogicBloxExporter.getNewDomNdxMap();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(origFile));
+			PrintWriter pw = new PrintWriter(newFile);
+			while(br.ready()){
+				String line = br.readLine();
+				//System.out.println(line);
+				if(line.equals(""))
+					continue;
+				if(line.startsWith("#")||line.startsWith(".")){
+					pw.println(line);
+					continue;
+				}
+				if(!line.contains(":-")){
+					// Relation definitions
+					String[] parsed = line.split(" ");
+					String rel = parsed[0];
+					String[] relParsed = rel.split("\\(");
+					String relName = tags.get(0)+relParsed[0];
+					String lineBuild = relName+"("+relParsed[1]+"->"+parsed[1];
+					pw.println(lineBuild);
+					// TODO : for analyze phase, add similar lines for all tags
+				}else if(line.contains(":-")){
+					StringBuilder sb = new StringBuilder();
+
+					String[] parsed = line.split(":-");
+					String rel = parsed[0].trim();
+					String[] relParsed = rel.split("\\(");
+					String relName = tags.get(0)+relParsed[0];
+
+					sb.append(relName+"("+relParsed[1]+" ");
+					sb.append(":-");
+					List<String> tokens = parseRule(parsed[1]);
+					for(int i=0;i<tokens.size();i++){
+						String token = tokens.get(i);
+						if(token.equals(""))
+							continue;
+						String temp = token;
+						temp = temp.trim();
+						if(temp.contains("=")){
+							int _indx = temp.indexOf('_');
+							String domName = temp.substring(0, _indx);
+							int eqIndx = temp.indexOf('=');
+							String offsetStr = temp.substring(eqIndx+1);
+							offsetStr = offsetStr.trim();
+							int offset = Integer.parseInt(offsetStr);
+							if(domNdxMap.containsKey(domName)){
+								offset = offset+domNdxMap.get(domName);
+							}
+							String l = temp.substring(0,eqIndx);
+							sb.append(" ");
+							sb.append(l+" = "+offset);
+						}else{
+							relParsed = temp.split("\\(");
+							relName = relParsed[0];
+							if(newDomNdxMap.containsKey(relName)){
+								sb.append(" "+temp);
+							}else{
+								relName = tags.get(0)+relParsed[0];
+								sb.append(" "+relName+"("+relParsed[1]);
+							}
+						}
+						if(i!=(tokens.size()-1)){
+							sb.append(",");
+						}
+					}
+					sb.append('.');
+					pw.println(sb.toString());
+				}else{
+					pw.println(line);
+				}
+			}
+			br.close();
+			pw.close();
+		}catch(Exception e){
+			System.out.println("Exception "+e);
+			throw new PetabloxException("Exception in generating multi program dlog");
+		}
+	}
+
+	private List<String> parseRule(String rule){
+		List<String> tokens = new ArrayList<String>();
+		int state = 0;// 0 - normal, 2- ( encountered, 1 - ) encountered
+		int start = 0;
+		for(int i=0;i<rule.length();i++){
+			if(rule.charAt(i)== ' ')
+				continue;
+			if(rule.charAt(i)=='('){
+				state = 2;
+			}else if(rule.charAt(i)==')'){
+				state = 1;
+			}else if(rule.charAt(i)==',' && state < 2){
+				String temp = rule.substring(start,i);
+				tokens.add(temp);
+				start = i+1;
+			}else if(rule.charAt(i)=='.'){
+				String temp = rule.substring(start,i);
+				tokens.add(temp);
+			}
+		}
+		return tokens;
+	}
+	private void multiPrgmDlogGenLogic(String origFile, String newFile){
+		// List of tags to be used in the dlog
+		// 0th tag is always the tag for the output
+		List<String> tags = new ArrayList<String>();
+		tags.add(Config.multiTag);
+		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
+		HashMap<String,Integer> newDomNdxMap = LogicBloxExporter.getNewDomNdxMap();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(origFile));
+			PrintWriter pw = new PrintWriter(newFile);
+			while(br.ready()){
+				String line = br.readLine();
+				//System.out.println(line);
+				if(line.startsWith("//")){
+					pw.println(line);
+					continue;
+				}
+				if(line.contains("->")){
+					// Relation definitions
+					String[] parsed = line.split("->");
+					String rel = parsed[0];
+					String[] relParsed = rel.split("\\(");
+					String relName = tags.get(0)+relParsed[0];
+					String lineBuild = relName+"("+relParsed[1]+"->"+parsed[1];
+					pw.println(lineBuild);
+					// TODO : for analyze phase, add similar lines for all tags
+				}else if(line.contains("<-")){
+					StringBuilder sb = new StringBuilder();
+
+					String[] parsed = line.split("<-");
+					String rel = parsed[0].trim();
+					String[] relParsed = rel.split("\\(");
+					String relName = tags.get(0)+relParsed[0];
+
+					sb.append(relName+"("+relParsed[1]+" ");
+					sb.append("<-");
+					List<String> tokens = parseRule(parsed[1]);
+					for(int i=0;i<tokens.size();i++){
+						String token = tokens.get(i);
+						if(token.equals(""))
+							continue;
+						String temp = token;
+						temp = temp.trim();
+						if(temp.contains("=")){
+							int _indx = temp.indexOf('_');
+							String domName = temp.substring(0, _indx);
+							int eqIndx = temp.indexOf('=');
+							String offsetStr = temp.substring(eqIndx+1);
+							offsetStr = offsetStr.trim();
+							int offset = Integer.parseInt(offsetStr);
+							if(domNdxMap.containsKey(domName)){
+								offset = offset+domNdxMap.get(domName);
+							}
+							String l = temp.substring(0,eqIndx);
+							sb.append(" ");
+							sb.append(l+" = "+offset);
+						}else{
+							relParsed = temp.split("\\(");
+							relName = relParsed[0];
+							if(newDomNdxMap.containsKey(relName)){
+								sb.append(" "+temp);
+							}else{
+								relName = tags.get(0)+relParsed[0];
+								sb.append(" "+relName+"("+relParsed[1]);
+							}
+						}
+						if(i!=(tokens.size()-1)){
+							sb.append(",");
+						}
+					}
+					sb.append('.');
+					pw.println(sb.toString());
+				}
+			}
+			br.close();
+			pw.close();
+		}catch(Exception e){
+			System.out.println("Exception "+e);
+			throw new PetabloxException("Exception in generating multi program dlog");
+		}
+	}
+	private void multiPrgmDlogGen(){
+		if(!Config.multiPgmMode)
+			return;
+		String origFile = metadata.getFileName();
+		int lastSep = 0;
+		for(int i=0;i<origFile.length();i++){
+			if(origFile.charAt(i)==File.separatorChar){
+				lastSep = i;
+			}
+		}
+		String path = origFile.substring(0,lastSep);
+		String fileName = origFile.substring(lastSep+1);
+		String[] nameExt = fileName.split("\\.");
+		String newFile = path+File.separator+nameExt[0]+"_"+Config.multiTag+"."+nameExt[1];
+		switch (datalogEngine) {
+	    case BDDBDDB:
+	        multiPrgmDlogGenBDD(origFile, newFile);
+	        break;
+	    case LOGICBLOX3:
+	    case LOGICBLOX4:
+	        multiPrgmDlogGenLogic(origFile, newFile);
+	        break;
+	    default:
+	        throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
+	    }
+		metadata.setFileName(newFile);
+	}
+
     /**
      * Executes this Datalog analysis.
      */
     public void run() {
+    	multiPrgmDlogGen();
         switch (datalogEngine) {
         case BDDBDDB:
             Solver.run(metadata.getFileName());
