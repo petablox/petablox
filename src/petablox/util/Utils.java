@@ -663,9 +663,20 @@ public final class Utils {
 			if (out.checkError()) {
 			    throw new PetabloxException("Error writing " + ndxFile.getAbsolutePath());
 			}
-	    	autoGenMultiTag = tagPrefix + ndx;
+	    	autoGenMultiTag = tagPrefix + ndx + "_";
     	}
-    	System.out.println("MULTIPGM: Auto-generated tag for relation names: " + autoGenMultiTag);
     	return autoGenMultiTag;
+    }
+    
+    public static void clearWorkingArea() {
+    	try{
+    		File tempFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"temp");
+    		if(tempFile.exists()){
+    			for (File f : tempFile.listFiles())
+    				f.delete();
+    			if (!tempFile.delete())
+    				throw new FileNotFoundException("Failed to delete file: " + tempFile);
+    		}
+    	}catch(Exception e){};
     }
 }

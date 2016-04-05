@@ -1,19 +1,18 @@
 package petablox.logicblox;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
 import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Config.DatalogEngineType;
+import petablox.util.ArraySet;
 import petablox.util.Utils;
 
 /**
@@ -23,10 +22,18 @@ import petablox.util.Utils;
  */
 public class LogicBloxExporter extends LogicBloxIOBase {
     // configuration variables
+	private int LB3_DOM_NAME_LIM = 1024;
+	private int LB3_TAG_NAME_LIM = 65536;
+	private String DOMS = "Doms";
+	private String TAGS = "Tags";
+	private String DOM_RANGES = "domRanges";
+	private String SUB_TAGS = "subTags";
+	
     private String delim = Config.logicbloxInputDelim;
     private String workDir = Config.logicbloxWorkDirName;
     private static HashMap<String,Integer> domNdxMap = null;
     private static HashMap<String,Integer> newDomNdxMap = new HashMap<String,Integer>();
+    private static ArraySet<String> newDomASet = new ArraySet<String>();
     
     public LogicBloxExporter() {
         super();
@@ -61,14 +68,16 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         saveDomainData(dom, factsFile, sz);
         
         File typeFile = new File(workDir, domName + ".type");
-        saveDomainType(dom, typeFile);
+        saveDomainType(dom.getName(), dom.size(), typeFile);
         
         File importFile = new File(workDir, domName + ".import");
-        saveDomainImport(dom, importFile, factsFile);
+        saveDomainImport(dom.getName(), importFile, factsFile);
         
         if (!(Config.populate && LogicBloxUtils.domsExist()))
+        //if (!(Config.populate && LogicBloxUtils.domsExist() && LogicBloxUtils.domContains(dom.getName())))
         	LogicBloxUtils.addBlock(typeFile);
         LogicBloxUtils.execFile(importFile);  
+        if (Config.populate && !LogicBloxUtils.domContains(dom.getName())) newDomASet.add(dom.getName());
     }
     
     
@@ -132,9 +141,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @param typeFile  the output file
      * @throws PetabloxException if an error occurs writing the file
      */
-    private void saveDomainType(Dom<?> dom, File typeFile) {
-        String name    = dom.getName();
-
+    private void saveDomainType(String name, int size, File typeFile) {
         // a new entity type with ref-mode of index
         StringBuilder type = new StringBuilder(name).append("(x), ")
             .append(name).append("_index(x:index) -> ").append(getIntType()).append("(index).\n");
@@ -148,7 +155,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
             type.append("lang:physical:storageModel[`").append(name)
                 .append("] = \"ScalableSparse\".\n")
                 .append("lang:physical:capacity[`").append(name).append("] = ")
-                .append(dom.size()).append(".\n");
+                .append(size).append(".\n");
         }
         
         PrintWriter out = createPrintWriter(typeFile, true);
@@ -169,8 +176,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @param factsFile   the delimited data file that will be imported
      * @throws PetabloxException if an error occurs writing the file
      */
-    private void saveDomainImport(Dom<?> dom, File importFile, File factsFile) {
-        String name = dom.getName();
+    private void saveDomainImport(String name, File importFile, File factsFile) {
         PrintWriter out = createPrintWriter(importFile);
         out.println(createImportRelation("id, val",  getIntType() + "(id), string(val)", factsFile));
         out.println();
@@ -345,4 +351,92 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         this.workDir = workDir;
     }
     
+    public void saveDomsDomain() {	
+        String domName = DOMS;
+        File factsFile = new File(workDir, domName + ".csv");
+        final String DELIM = this.delim;
+        PrintWriter out = createPrintWriter(factsFile);
+        ArraySet<String> oldDoms = LogicBloxUtils.getDomASet();
+        int sz = oldDoms.size();
+        for (int i = 0, size = newDomASet.size(); i < size; ++i) {
+            out.print(i + sz);
+            out.print(DELIM);
+            out.println(newDomASet.get(i));
+        }
+        Utils.close(out);
+        if (out.checkError()) {
+            throw new PetabloxException("Error writing " + domName
+                + " domain facts to " + factsFile.getAbsolutePath());
+        }
+        
+        File typeFile = new File(workDir, domName + ".type");
+        saveDomainType(domName, LB3_DOM_NAME_LIM, typeFile);
+        
+        File importFile = new File(workDir, domName + ".import");
+        saveDomainImport(domName, importFile, factsFile);
+        
+        if (!(Config.populate && LogicBloxUtils.domsExist()))
+        	LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);  
+    }
+    
+    public void saveTagsDomain() {
+    	 String domName = TAGS;
+         File factsFile = new File(workDir, domName + ".csv");
+         final String DELIM = this.delim;
+         PrintWriter out = createPrintWriter(factsFile);
+         ArraySet<String> tags = LogicBloxUtils.getTagASet();
+         out.print(tags.size());
+         out.print(DELIM);
+         out.println(Config.multiTag);
+         Utils.close(out);
+         if (out.checkError()) {
+             throw new PetabloxException("Error writing " + domName
+                 + " domain facts to " + factsFile.getAbsolutePath());
+         }
+         
+         File typeFile = new File(workDir, domName + ".type");
+         saveDomainType(domName, LB3_TAG_NAME_LIM, typeFile);
+         
+         File importFile = new File(workDir, domName + ".import");
+         saveDomainImport(domName, importFile, factsFile);
+         
+         if (!(Config.populate && LogicBloxUtils.domsExist()))
+         	LogicBloxUtils.addBlock(typeFile);
+         LogicBloxUtils.execFile(importFile);  
+    }
+    
+    public void savedomRangeRelation() {
+        String relName = DOM_RANGES;
+        File factsFile = new File(workDir, relName + ".csv");
+        saveDomRangeData(relName, factsFile);
+        
+        File typeFile = new File(workDir, relName + ".type");
+        saveDomRangeType(relName, typeFile);
+        
+        File importFile = new File(workDir, relName + ".import");
+        saveDomRangeImport(relName, importFile, factsFile);
+        
+        if (!(Config.populate && LogicBloxUtils.domsExist()))
+        	LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);
+    }
+    
+    private void saveDomRangeData(String relName, File factsFile) {
+    	
+    }
+    
+    private void saveDomRangeType(String relName, File typeFile) {  
+        PrintWriter out = createPrintWriter(typeFile, true);
+        out.println(relName + "(d0,d1,d2,d3) -> " + TAGS + "(d0)," + DOMS + "(d1),int(d2),int(d3).");
+        Utils.close(out);
+        if (out.checkError()) {
+            throw new PetabloxException("An error occurred writing relation type for " +
+                relName + " to " + typeFile.getAbsolutePath());
+        }
+    }
+ 
+    private void saveDomRangeImport(String relName, File importFile, File factsFile) {
+    	
+    }
 }

@@ -37,6 +37,7 @@ public class Main {
                 System.out.println("Redirecting stderr to file: " + errFile);
             }
         }
+        
         PrintStream outStream = null;
         PrintStream errStream = null;
         if (outFile != null) {
@@ -50,22 +51,16 @@ public class Main {
                 errStream = new PrintStream(errFile);
             System.setErr(errStream);
         }
+       
         run();
-        try{
-        	File tempFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"temp");
-        	if(tempFile.exists()){
-        		for (File f : tempFile.listFiles())
-        			f.delete();
-        		if (!tempFile.delete())
-        			throw new FileNotFoundException("Failed to delete file: " + tempFile);
-        	}
-        }catch(Exception e){};
+       
+        Utils.clearWorkingArea();
         if (outStream != null)
             outStream.close();
         if (errStream != null && errStream != outStream)
             errStream.close();
-        LogicBloxUtils.writeDomIndexFile();
     }
+    
     private static void run() {
         Timer timer = new Timer("chord");
         timer.init();
@@ -98,6 +93,8 @@ public class Main {
             project.print();
         }
         timer.done();
+        LogicBloxUtils.writeDomIndexFile();
+        
         String doneTime = timer.getDoneTimeStr();
         if (Config.verbose >= 0) {
             System.out.println("Petablox run completed at: " + doneTime);

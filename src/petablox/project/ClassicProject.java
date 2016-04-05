@@ -72,19 +72,21 @@ public class ClassicProject extends Project {
     public void build() {
         if (isBuilt)
             return;
-
-        TaskParser taskParser = new TaskParser();
-        if (!taskParser.run())
-            abort();
         
+        LogicBloxUtils.validateMultiPgmOptions();
         switch (Config.datalogEngine) {
         case LOGICBLOX3:
         case LOGICBLOX4:
             LogicBloxUtils.initializeWorkspace(Config.logicbloxWorkspace);
+            LogicBloxUtils.setMultiTag();           
             break;
         case BDDBDDB:
             break;
         }
+        
+        TaskParser taskParser = new TaskParser();
+        if (!taskParser.run())
+            abort();
 
         // build nameToTaskMap
         Map<String, Class<ITask>> nameToJavaTaskMap = taskParser.getNameToJavaTaskMap();
@@ -427,9 +429,12 @@ public class ClassicProject extends Project {
             runTask(task2);
         }
         timer.resume();
-        if (!(Config.populate && task == lastTask && Config.crossPgmAnalysis))
-        	task.run();
-        else
+        if (!(Config.populate && task == lastTask && Config.crossPgmAnalysis)) {
+        	if (Config.analyze.equals(""))
+        		task.run();
+        	else if (!Config.analyze.equals("") && task == lastTask)
+        		task.run();
+        } else
         	System.out.println("Skipping task: " + task.getName() + " because it is the \"populate\" phase of Multiple Program Support.");
         timer.done();
         if (Config.verbose >= 1) {
