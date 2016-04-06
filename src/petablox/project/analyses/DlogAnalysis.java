@@ -232,7 +232,7 @@ public class DlogAnalysis extends JavaAnalysis {
 			//Analyze mode, add the tags to the list
 			String[] list = Config.analyze.split(",");
 			for(String t : list){
-				tags.add(t+"_");
+				tags.add(t);
 			}
 		}
 		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();

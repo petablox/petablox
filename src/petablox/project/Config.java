@@ -166,7 +166,7 @@ public class Config {
 
     // properties for multi-program support
     public final static boolean populate = Utils.buildBoolProperty("petablox.multipgm.populate", false);
-    public final static String analyze = System.getProperty("petablox.multipgm.analyze", "");
+    public static String analyze = System.getProperty("petablox.multipgm.analyze", "");
     public static String multiTag = System.getProperty("petablox.multipgm.tag", "");
     public final static boolean crossPgmAnalysis = Utils.buildBoolProperty("petablox.multipgm.crosspgm.analysis", true);
     

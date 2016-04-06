@@ -663,7 +663,7 @@ public final class Utils {
 			if (out.checkError()) {
 			    throw new PetabloxException("Error writing " + ndxFile.getAbsolutePath());
 			}
-	    	autoGenMultiTag = tagPrefix + ndx + "_";
+	    	autoGenMultiTag = tagPrefix + ndx;
     	}
     	return autoGenMultiTag;
     }
