@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -18,6 +19,7 @@ import petablox.util.ArraySet;
 import petablox.util.ProcessExecutor;
 import petablox.util.Timer;
 import petablox.util.Utils;
+import petablox.util.tuple.object.Pair;
 
 /**
  * Utilities for interacting with the LogicBlox engine.
@@ -33,6 +35,15 @@ public class LogicBloxUtils {
     private static HashMap<String,Integer> newDomNdxMap = null;
     private static ArraySet<String> domASet = null;
     private static ArraySet<String> tagASet = null;  
+    
+    public static String DOMS = "Doms";
+	public static String TAGS = "Tags";
+	public static String DOM_RANGES = "domRanges";
+	public static String SUB_TAGS = "subTags";
+	
+	public static HashMap<String, HashMap<String, ArrayList<Pair<Integer, Integer>>>> domRanges =
+			      new HashMap<String, HashMap<String, ArrayList<Pair<Integer, Integer>>>>();
+	public static HashMap<String, String> subTags = new HashMap<String, String>();
     
     static {
     	assert alphabet.length == 64 : "Alphabet is not 64 characters long.";
@@ -171,14 +182,25 @@ public class LogicBloxUtils {
 		if (result.getOutput().indexOf(ws + "\n") >= 0) {
 			domsPres = true;
 			readDomIndexFile();  
-			//LogicBloxImporter.loadDomsDomain();
-			//LogicBloxImporter.loadTagssDomain();
+			LogicBloxImporter.loadDomain(DOMS, domASet);
+			LogicBloxImporter.loadDomain(TAGS, tagASet);
+			LogicBloxImporter.loadSubTagRelation();
+			LogicBloxImporter.loadDomRangeRelation();
 		} 
 		return domsPres;
     }
     
     public static boolean domsExist() {
     	return domsPres;
+    }
+    
+    public static void finalTasks() {
+    	writeDomIndexFile();
+    	LogicBloxExporter lbe = new LogicBloxExporter();
+    	lbe.saveDomsDomain();
+    	lbe.saveTagsDomain();
+    	lbe.saveDomRangeRelation();
+    	lbe.saveSubTagRelation();
     }
     
     /**

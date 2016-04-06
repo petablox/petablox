@@ -3,17 +3,23 @@ package petablox.logicblox;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
+import petablox.project.OutDirUtils;
 import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.project.Config.DatalogEngineType;
+import petablox.util.ArraySet;
+import petablox.util.ProcessExecutor;
 import petablox.util.Utils;
 import petablox.util.ProcessExecutor.StreamGobbler;
+import petablox.util.tuple.object.Pair;
 
 /**
  * An importer for loading data from a LogicBlox workspace.
@@ -123,5 +129,74 @@ public class LogicBloxImporter extends LogicBloxIOBase {
         for (int i = 0; i < size; ++i)
             result[i] = Integer.parseInt(parts[i], 10);
         return result;
+    }
+    
+    public static void loadDomain(String domName, ArraySet<String> domSet) {
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithFailOnError(
+	            Config.logicbloxCommand,
+	            "print",
+	            Config.logicbloxWorkspace,
+	            domName + "_string"
+	        );
+		String op = result.getOutput();
+		String[] lines = op.split("\n");
+		String[] elems = new String[lines.length];
+		for(String line : lines) {
+			List<String> parts = Utils.tokenize(line);
+			int len = parts.get(2).length();
+			elems[Integer.parseInt(parts.get(1))] = parts.get(2).substring(1,len-1);
+		}
+		for(String s : elems) domSet.add(s);
+    }
+    
+    public static void loadDomRangeRelation() {
+    	ArraySet<String> tagASet = LogicBloxUtils.getTagASet();
+    	ArraySet<String> domASet = LogicBloxUtils.getDomASet();
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithFailOnError(
+	            Config.logicbloxCommand,
+	            "print",
+	            Config.logicbloxWorkspace,
+	            LogicBloxUtils.DOM_RANGES
+	        );
+		String op = result.getOutput();
+		String[] lines = op.split("\n");
+		for(String l : lines) {
+			List<String> parts = Utils.tokenize(l);
+			String tagName = tagASet.get(Integer.parseInt(parts.get(1)));
+			String domName = domASet.get(Integer.parseInt(parts.get(3)));
+			int startRange = Integer.parseInt(parts.get(4));
+			int endRange = Integer.parseInt(parts.get(5));
+			Pair<Integer,Integer> pr = new Pair<Integer,Integer>(startRange, endRange);
+			HashMap<String, ArrayList<Pair<Integer, Integer>>> perTagRange = LogicBloxUtils.domRanges.get(tagName);
+			if (perTagRange == null) {
+				perTagRange = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
+				LogicBloxUtils.domRanges.put(tagName, perTagRange);
+			}
+			ArrayList<Pair<Integer, Integer>> alist = perTagRange.get(domName);
+			if (alist == null) {
+				alist = new ArrayList<Pair<Integer, Integer>>();
+				perTagRange.put(domName, alist);
+			}
+			alist.add(pr);
+		}
+    }
+    
+    public static void loadSubTagRelation() {
+    	ArraySet<String> tagASet = LogicBloxUtils.getTagASet();
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithWarnOnError(
+	            Config.logicbloxCommand,
+	            "print",
+	            Config.logicbloxWorkspace,
+	            LogicBloxUtils.SUB_TAGS
+	        );
+    	if (result.getExitCode() != 0) return;
+		String op = result.getOutput();
+		String[] lines = op.split("\n");
+		for(String l : lines) {
+			List<String> parts = Utils.tokenize(l);
+			String tagName = tagASet.get(Integer.parseInt(parts.get(1)));
+			String childTag = tagASet.get(Integer.parseInt(parts.get(3)));
+			LogicBloxUtils.subTags.put(tagName, childTag);		
+		}
     }
 }

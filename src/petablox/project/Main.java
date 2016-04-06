@@ -93,7 +93,7 @@ public class Main {
             project.print();
         }
         timer.done();
-        LogicBloxUtils.writeDomIndexFile();
+        LogicBloxUtils.finalTasks();
         
         String doneTime = timer.getDoneTimeStr();
         if (Config.verbose >= 0) {

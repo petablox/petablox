@@ -166,4 +166,20 @@ public class OutDirUtils {
         }
         Messages.log(PROCESS_FINISHED, cmd);
     }
+    
+    public static ProcessExecutor.Result executeCaptureWithWarnOnError(String... cmdarray) {
+        boolean verbose = Config.verbose >= 1;
+        String cmd = Utils.join(Arrays.asList(cmdarray), " ");
+        ProcessExecutor.Result result = null;
+        if (verbose) Messages.log(PROCESS_STARTING, cmd);
+        try {
+            result = ProcessExecutor.executeCaptureOutput(cmdarray);
+            if (result.getExitCode() != 0) {
+                Messages.log("Failed process standard output:\n%s", result.getError());
+            }
+        } catch (Exception e) {
+            Messages.log(PROCESS_FAILED, cmd, e.getMessage());
+        }
+        return result;
+    }
 }
