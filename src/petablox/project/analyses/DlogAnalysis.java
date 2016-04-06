@@ -291,7 +291,7 @@ public class DlogAnalysis extends JavaAnalysis {
 						}else{
 							relParsed = temp.split("\\(");
 							relName = relParsed[0];
-							if(newDomNdxMap.containsKey(relName)){
+							if(newDomNdxMap.containsKey(relName) || domNdxMap.containsKey(relName)){
 								sb.append(" "+temp);
 							}else{
 								relName = tags.get(0)+relParsed[0];
