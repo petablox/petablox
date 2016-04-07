@@ -414,7 +414,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
          File importFile = new File(workDir, domName + ".import");
          saveDomainImport(domName, importFile, factsFile);
          
-         if (!(Config.populate && LogicBloxUtils.domsExist()))
+         if (!(Config.multiPgmMode && LogicBloxUtils.domsExist()))
          	LogicBloxUtils.addBlock(typeFile);
          LogicBloxUtils.execFile(importFile);  
     }
@@ -430,7 +430,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         File importFile = new File(workDir, relName + ".import");
         saveDomRangeImport(relName, importFile, factsFile);
         
-        if (!(Config.populate && LogicBloxUtils.domsExist()))
+        if (!(Config.multiPgmMode && LogicBloxUtils.domsExist()))
         	LogicBloxUtils.addBlock(typeFile);
         LogicBloxUtils.execFile(importFile);
     }
@@ -514,7 +514,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         File importFile = new File(workDir, relName + ".import");
         saveSubTagImport(relName, importFile, factsFile);
         
-        if (!(Config.populate && LogicBloxUtils.domsExist()))
+        if (!(Config.multiPgmMode && LogicBloxUtils.subTags.keySet().size() > 0))
         	LogicBloxUtils.addBlock(typeFile);
         LogicBloxUtils.execFile(importFile);
     }
@@ -525,13 +525,12 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     	final String DELIM = this.delim;
     	PrintWriter out = createPrintWriter(factsFile);
 
-    	StringBuilder sb = new StringBuilder();
     	for(String child : Config.analyze.split(",")) {
+    		StringBuilder sb = new StringBuilder();
     		sb.append(sz).append(DELIM);
     		sb.append(tagASet.indexOf(child));
+    		out.println(sb.toString());
     	}
-    	out.println(sb.toString());
-
     	out.flush();
     	Utils.close(out);
     	if (out.checkError()) {
