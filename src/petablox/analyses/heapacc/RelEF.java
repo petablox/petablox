@@ -8,6 +8,7 @@ import petablox.project.analyses.ProgramRel;
 import soot.SootField;
 import soot.Unit;
 import soot.jimple.internal.JAssignStmt;
+import petablox.util.soot.SootUtilities;
 
 /**
  * Relation containing each tuple (e,f) such that quad e accesses
@@ -35,7 +36,10 @@ public class RelEF extends ProgramRel {
                     assert (fIdx >= 0);
                     add(eIdx, fIdx);
             	}
-            }
+            	else if(SootUtilities.isLoadInst(j) || SootUtilities.isStoreInst(j)){
+                    add(eIdx, 0);
+            	}
+            }  
         }
     }
 }

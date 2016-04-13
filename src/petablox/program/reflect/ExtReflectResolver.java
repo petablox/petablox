@@ -77,6 +77,7 @@ public class ExtReflectResolver {
         basecmd.add("java");
         String jvmArgs = Config.runtimeJvmargs;
         basecmd.addAll(Utils.tokenize(jvmArgs));
+        basecmd.add("-Duser.home="+Config.workDirName);
         basecmd.add("-javaagent:" + Config.mainDirName + File.separator +"lib" + File.separator + PLAY_OUT_JAR);
         basecmd.add("-cp");
         basecmd.add(classPathName);
@@ -202,7 +203,7 @@ public class ExtReflectResolver {
     }
      
     private void dumpConfig() {
-    	String cfgDir = System.getenv("HOME") + File.separator + CONFIG_FILE_DIR;
+    	String cfgDir = Config.workDirName + File.separator + CONFIG_FILE_DIR;
     	if (Utils.mkdirs(cfgDir)) { 
 	    	PrintWriter pw = null;
 	    	try {

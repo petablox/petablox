@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import petablox.project.Config;
+import petablox.project.Messages;
+import petablox.project.PetabloxException;
 import petablox.project.analyses.BasicDynamicAnalysis;
 import petablox.util.ByteBufferedFile;
 import petablox.util.tuple.object.Pair;
@@ -107,7 +109,7 @@ public class DynamicReflectResolver extends BasicDynamicAnalysis {
 	
 	@Override
 	public String getXbootclasspath() {
-		String tempDirStr = Config.workDirName + File.separator + Config.outDirName + File.separator +"temp";
+		String tempDirStr = Config.outDirName + File.separator +"temp";
 		try{
 			JarFile jarFile = new JarFile(Config.mainDirName + File.separator + "petablox.jar");
 			JarEntry je = jarFile.getJarEntry("reflection-instr.jar");
@@ -121,7 +123,11 @@ public class DynamicReflectResolver extends BasicDynamicAnalysis {
 		        fos.write(is.read());
 		    fos.close();
 		    is.close();
-		}catch(Exception e){}
+		    jarFile.close();
+		}catch(Exception e){
+			e.printStackTrace();
+			Messages.fatal(new PetabloxException("Unable to copy reflection instrumentor jar file"));
+		}
 		return tempDirStr + File.separator + "reflection-instr.jar";
     }
 	
