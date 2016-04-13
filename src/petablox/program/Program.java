@@ -740,11 +740,7 @@ public class Program {
      * if it is deemed reachable, and null otherwise.
      */
     public SootMethod getThreadStartMethod() {
-    	if (Config.isExcludedFromScope("java.")) {
-    		Messages.log("WARNING: java. is excluded from scope - hence returning null for ThreadStartMethod.");
-    		return null;
-    	} else
-    		return getMethod("<java.lang.Thread: void start()>");
+    	return getMethod("<java.lang.Thread: void start()>");
     }
 
     /**
