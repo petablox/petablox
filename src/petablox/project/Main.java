@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 
 import petablox.logicblox.LogicBloxUtils;
 import petablox.program.Program;
+import petablox.project.Config.DatalogEngineType;
 import petablox.util.Timer;
 import petablox.util.Utils;
 
@@ -93,7 +94,8 @@ public class Main {
             project.print();
         }
         timer.done();
-        LogicBloxUtils.finalTasks();
+        if(Config.datalogEngine==DatalogEngineType.LOGICBLOX3 || Config.datalogEngine == DatalogEngineType.LOGICBLOX4)
+        	LogicBloxUtils.finalTasks();
         
         String doneTime = timer.getDoneTimeStr();
         if (Config.verbose >= 0) {
