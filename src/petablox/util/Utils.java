@@ -670,7 +670,7 @@ public final class Utils {
     
     public static void clearWorkingArea() {
     	try{
-    		File tempFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"temp");
+    		File tempFile = new File(Config.outDirName+ File.separator +"temp");
     		if(tempFile.exists()){
     			for (File f : tempFile.listFiles())
     				f.delete();

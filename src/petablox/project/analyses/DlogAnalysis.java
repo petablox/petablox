@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -235,18 +236,49 @@ public class DlogAnalysis extends JavaAnalysis {
 				tags.add(t);
 			}
 		}
+		HashSet<String> ignoredDoms = new HashSet<String>();
+		ignoredDoms.add("Tags");
 		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
 		HashMap<String,Integer> newDomNdxMap = LogicBloxExporter.getNewDomNdxMap();
 		Map<String,RelSign> consumedRels = metadata.getConsumedRels();
+		boolean first = true;
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(origFile));
 			PrintWriter pw = new PrintWriter(newFile);
 			while(br.ready()){
 				String line = br.readLine();
 				//System.out.println(line);
-				if(line.startsWith("//")){
+				if(line.startsWith("//") || line.equals("")){
 					pw.println(line);
 					continue;
+				}else if(first && analyze){
+					first = false;
+					for(String domTagged : newDomNdxMap.keySet()){
+						String dom = domTagged.substring(Config.multiTag.length());
+						String newDom = tags.get(0)+dom;
+						
+						StringBuilder type = new StringBuilder(newDom).append("(x), ")
+					            .append(newDom).append("_index(x:index) -> ").append("int").append("(index).\n");  
+						 type.append(newDom).append("_string[x] = s -> ").append(newDom).append("(x), string(s).\n");
+						 
+					     pw.print(type.toString());
+					     for(int i=1;i<tags.size();i++){
+					    	 String othDom = tags.get(i)+dom;
+					    	 StringBuilder unionDomSB = new StringBuilder();
+					    	 unionDomSB.append("+"+newDom+"(x), +"+newDom+"_index[x] = id, +"+newDom+"_string[x] = s <-");
+					    	 unionDomSB.append("+"+othDom+"(y), "+othDom+"_index[y] = id, "+othDom+"_string[y] = s.");
+					    	 pw.println(unionDomSB.toString());
+					     }
+					}
+					// Generate union constraints
+					for(String name : consumedRels.keySet()){
+						name = name.substring(Config.multiTag.length());
+						RelSign r = consumedRels.get(name);
+						List<String> cons = buildUnionCons(name, r, tags);
+						for(String c : cons){
+							pw.println(c);
+						}
+					}
 				}
 				if(line.contains("->")){
 					// Relation definitions
@@ -254,7 +286,19 @@ public class DlogAnalysis extends JavaAnalysis {
 					String rel = parsed[0];
 					String[] relParsed = rel.split("\\(");
 					String relName = tags.get(0)+relParsed[0];
-					String lineBuild = relName+"("+relParsed[1]+"->"+parsed[1];
+					String[] domsParsed = parsed[1].split(",");
+					String lineBuild = relName+"("+relParsed[1]+"->";
+					for(int i=0;i<domsParsed.length;i++){
+						String domDecl = domsParsed[i];
+						domDecl = domDecl.trim();
+						String domName = domDecl.substring(0, domDecl.indexOf('('));
+						if(ignoredDoms.contains(domName))
+							lineBuild = lineBuild+domsParsed[i];
+						else
+							lineBuild = lineBuild+tags.get(0)+domsParsed[i];
+						if(i!=(domsParsed.length-1))
+							lineBuild = lineBuild +",";
+					}
 					pw.println(lineBuild);
 				}else if(line.contains("<-")){
 					StringBuilder sb = new StringBuilder();
@@ -273,10 +317,10 @@ public class DlogAnalysis extends JavaAnalysis {
 							continue;
 						String temp = token;
 						temp = temp.trim();
-						if(temp.contains("=")){
+						if(temp.contains("=") || temp.contains("<") || temp.contains(">")){
 							int _indx = temp.indexOf('_');
 							String domName = temp.substring(0, _indx);
-							int eqIndx = temp.indexOf('=');
+							/*int eqIndx = temp.indexOf('=');
 							String offsetStr = temp.substring(eqIndx+1);
 							offsetStr = offsetStr.trim();
 							int offset = Integer.parseInt(offsetStr);
@@ -285,13 +329,15 @@ public class DlogAnalysis extends JavaAnalysis {
 							}
 							String l = temp.substring(0,eqIndx);
 							sb.append(" ");
-							sb.append(l+" = "+offset);
-						}else if(temp.contains("<") || temp.contains(">")){
-							sb.append(" "+temp);
+							sb.append(l+" = "+offset);*/
+							if(ignoredDoms.contains(domName))
+								sb.append(" "+temp);
+							else
+								sb.append(" "+tags.get(0)+temp);
 						}else{
 							relParsed = temp.split("\\(");
 							relName = relParsed[0];
-							if(newDomNdxMap.containsKey(relName) || domNdxMap.containsKey(relName)){
+							if(ignoredDoms.contains(relName)){
 								sb.append(" "+temp);
 							}else{
 								relName = tags.get(0)+relParsed[0];
@@ -306,16 +352,6 @@ public class DlogAnalysis extends JavaAnalysis {
 					pw.println(sb.toString());
 				}
 			}
-			// Generate union constraints
-			if(analyze){
-				for(String name : consumedRels.keySet()){
-					RelSign r = consumedRels.get(name);
-					List<String> cons = buildUnionCons(name, r, tags);
-					for(String c : cons){
-						pw.println(c);
-					}
-				}
-			}
 			br.close();
 			pw.close();
 		}catch(Exception e){
@@ -324,18 +360,28 @@ public class DlogAnalysis extends JavaAnalysis {
 		}
 	}
 	private List<String> buildUnionCons(String relName,RelSign sign,List<String> tags){
+		// %1$s - output tag
+		// %2$s - input tag
+		
+		String outFormat = "%1$s",inFormat = "%2$s";
+		
 		String[] doms = sign.getDomNames();
-		StringBuilder relDefLsb = new StringBuilder();
+		StringBuilder relDefLsb = new StringBuilder(); 
 		StringBuilder relDefRsb = new StringBuilder();
-		//relDefL.append(tags.get(0));
+		StringBuilder relRuleRsbCons = new StringBuilder();
+		StringBuilder relRuleRsbUnion = new StringBuilder();
+		relDefLsb.append(outFormat);
 		relDefLsb.append(relName);
 		relDefLsb.append('(');
 		
 		relDefRsb.append(" -> ");
 		
+		relRuleRsbUnion.append(inFormat+relName+"(");
+		
 		HashMap<String,Integer> domVars= new HashMap<String,Integer>();
 		for(int i=0;i<doms.length;i++){
 			String dom = doms[i];
+			dom = dom.substring(Config.multiTag.length());
 			for(int j=0;j<dom.length();j++){
 				if(Character.isDigit(dom.charAt(j))){
 					dom = dom.substring(0, j);
@@ -348,29 +394,42 @@ public class DlogAnalysis extends JavaAnalysis {
 			int indx = domVars.get(dom)+1;
 			domVar = domVar+indx;
 			domVars.put(dom, indx);
-			relDefLsb.append(domVar);
+			relDefLsb.append(outFormat+domVar);
 			
-			relDefRsb.append(dom);
+			
+			relDefRsb.append(outFormat+dom);
 			relDefRsb.append('(');
 			relDefRsb.append(domVar);
 			relDefRsb.append(')');
 			
+			relRuleRsbCons.append(outFormat+dom).append("("+outFormat+domVar+"), ");
+			relRuleRsbCons.append(inFormat+dom).append("("+inFormat+domVar+"), ");
+			relRuleRsbCons.append(outFormat+dom).append("_index["+outFormat+domVar+"] = "+inFormat+dom+"_index["+inFormat+domVar+"]");
+			
+			relRuleRsbUnion.append(inFormat+domVar);
+			
 			if(i!=(doms.length-1)){
 				relDefLsb.append(',');
 				relDefRsb.append(',');
+				relRuleRsbCons.append(',');
+				relRuleRsbUnion.append(',');
 			}
 		}
 		relDefLsb.append(')');
+		relRuleRsbUnion.append(')');
+		
 		String relDefL = relDefLsb.toString();
 		String relDefR = relDefRsb.toString();
+		String relRuleRCons = relRuleRsbCons.toString();
+		String relRuleRUnion = relRuleRsbUnion.toString();
 		
 		List<String> cons = new ArrayList<String>();
-		String predDecl = tags.get(0)+relDefL+relDefR+".";
+		String predDecl = String.format(relDefL,tags.get(0))+String.format(relDefR, tags.get(0))+".";
 		
 		cons.add(predDecl);
 		
 		for(int i=1;i<tags.size();i++){
-			String rule = tags.get(0)+relDefL+" <- "+tags.get(i)+relDefL+".";
+			String rule = String.format(relDefL,tags.get(0))+" <- "+String.format(relRuleRCons, tags.get(0),tags.get(i))+","+String.format(relRuleRUnion, tags.get(0), tags.get(i))+".";
 			cons.add(rule);
 		}
 		
