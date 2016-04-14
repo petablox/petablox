@@ -293,9 +293,9 @@ public class DlogAnalysis extends JavaAnalysis {
 						domDecl = domDecl.trim();
 						String domName = domDecl.substring(0, domDecl.indexOf('('));
 						if(ignoredDoms.contains(domName))
-							lineBuild = lineBuild+domsParsed[i];
+							lineBuild = lineBuild+domDecl;
 						else
-							lineBuild = lineBuild+tags.get(0)+domsParsed[i];
+							lineBuild = lineBuild+tags.get(0)+domDecl;
 						if(i!=(domsParsed.length-1))
 							lineBuild = lineBuild +",";
 					}
