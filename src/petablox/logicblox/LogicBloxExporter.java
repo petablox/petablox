@@ -279,10 +279,14 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         PrintWriter out = createPrintWriter(importFile);
         String idList = makeVarList("id", domNames.length);
         String intType = getIntType();
+        String strType = getStringType();
         
         StringBuilder sb = new StringBuilder();
         for (int i = 0, size = domNames.length; i < size; ++i)
-            sb.append(intType).append("(id").append(i).append("),");
+        	if (domNames[i].equals("string"))
+        		sb.append(strType).append("(id").append(i).append("),");
+        	else
+        		sb.append(intType).append("(id").append(i).append("),");
         sb.setLength(sb.length() - 1);
         String idConstraints = sb.toString();
         
@@ -296,7 +300,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         sb.append("), ");
         for (int i = 0, size = domNames.length; i < size; ++i) {
             String domName = domNames[i];
-            if (!domName.equals("int"))
+            if (!domName.equals("int") && !domName.equals("string"))
             	sb.append(domName).append("_index[d").append(i).append("] = id").append(i).append(',');
             else
             	sb.append("d").append(i).append(" = id").append(i).append(',');
