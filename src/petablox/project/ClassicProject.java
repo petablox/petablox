@@ -354,7 +354,7 @@ public class ClassicProject extends Project {
     public Object getTrgt(String name) {
         build();
         Object trgt = nameToTrgtMap.get(name);
-        if (trgt == null && Config.populate) {
+        if (trgt == null && Config.multiPgmMode) {
         	trgt = nameToTrgtMap.get(Config.multiTag + name);
         }
         if (trgt == null)

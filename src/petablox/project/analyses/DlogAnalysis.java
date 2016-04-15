@@ -83,7 +83,7 @@ public class DlogAnalysis extends JavaAnalysis {
     
     public DatalogMetadata parse(String fileName) throws IOException {
         metadata = parser.parseMetadata(new File(fileName));
-        if (Config.populate) {
+        if (Config.multiPgmMode) {
         	modifyDomNames();
         	modifyRelationNames();
 	}

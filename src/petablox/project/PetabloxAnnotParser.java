@@ -67,7 +67,7 @@ public class PetabloxAnnotParser {
         name = chord.name();
 
         nameToTypeMap = new HashMap<String, Class>();
-        if (Config.populate &&
+        if (Config.multiPgmMode &&
             (Utils.isSubclass(type, ProgramRel.class) || Utils.isSubclass(type, ProgramDom.class))
            )
         	name = Config.multiTag + name;
@@ -143,7 +143,7 @@ public class PetabloxAnnotParser {
                     error(NAMES_OF_TYPES_FORBIDDEN);
                     continue;
                 }
-                if (Config.populate) name2 = Config.multiTag + name2;
+                if (Config.multiPgmMode) name2 = Config.multiTag + name2;
                 if (name2.equals(name)) {
                     error(NAMES_OF_TYPES_FORBIDDEN);
                     continue;
@@ -167,7 +167,7 @@ public class PetabloxAnnotParser {
                     error(NAMES_OF_SIGNS_FORBIDDEN);
                     continue;
                 }
-                if (Config.populate) name2 = Config.multiTag + name2;
+                if (Config.multiPgmMode) name2 = Config.multiTag + name2;
                 if (name2.equals(name)) {
                     error(NAMES_OF_SIGNS_FORBIDDEN);
                     continue;
@@ -197,10 +197,10 @@ public class PetabloxAnnotParser {
         String name2;
         if (i == -1) {
             name2 = s;
-            if (Config.populate) name2 = Config.multiTag + name2;
+            if (Config.multiPgmMode) name2 = Config.multiTag + name2;
         } else {
             name2 = s.substring(0, i);
-            if (Config.populate) name2 = Config.multiTag + name2;
+            if (Config.multiPgmMode) name2 = Config.multiTag + name2;
             String t = s.substring(i + 1);
             if (t.startsWith("sign=")) {
                 RelSign relSign2 = parseRelSign(t.substring(5));
@@ -221,7 +221,7 @@ public class PetabloxAnnotParser {
         String[] domNamesAry = sign.split(",");
         String[] modDomNamesAry = new String[domNamesAry.length];
         for (int j = 0; j < domNamesAry.length; j++) {
-        	if (Config.populate)
+        	if (Config.multiPgmMode)
         		modDomNamesAry[j] = Config.multiTag + domNamesAry[j];
         	else
         		modDomNamesAry[j] = domNamesAry[j];
