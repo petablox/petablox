@@ -82,8 +82,7 @@ my %local_options_map = (
             "-Dpetablox.datalog.engine=logicblox4",
             "-Dpetablox.logicblox.workspace=LBexpt1",
             "-Dpetablox.logicblox.work.dir=/home/sulekha/exptDir1",
-            "-Dpetablox.multipgm.populate=true",
-            #"-Dpetablox.multipgm.crosspgm.analysis=false"
+            "-Dpetablox.multipgm.mode=populate",
         ],
     "thresc_hybrid" =>
         [
