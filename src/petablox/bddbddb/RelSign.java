@@ -3,6 +3,7 @@ package petablox.bddbddb;
 import java.util.ArrayList;
 import java.util.List;
 
+import petablox.project.Config;
 import petablox.util.Utils;
 import petablox.util.tuple.object.Pair;
 
@@ -58,6 +59,26 @@ public class RelSign extends Pair<String[], String> {
             }
         }
     }
+    
+    public static String fixMultiPgmVarOrder(String o) {
+    	String delims = "[_x]+";
+    	String temp = o;
+    	String[] tokens = o.split(delims);
+    	temp = temp.replaceAll("[^x_]","");
+    	char[] seps = temp.toCharArray();
+    	
+    	assert (tokens.length == seps.length + 1);
+    	for (int i = 0; i < tokens.length; i++)
+    		tokens[i] = Config.multiTag + tokens[i];
+    	StringBuilder sb = new StringBuilder();
+    	for (int i = 0; i < tokens.length - 1; i++) {
+    		sb.append(tokens[i]);
+    		sb.append(seps[i]);
+    	}
+    	sb.append(tokens[tokens.length - 1]);
+    	return sb.toString();
+    }
+    
     /**
      * Provides an ordered list of domain names specified by this signature.
      *

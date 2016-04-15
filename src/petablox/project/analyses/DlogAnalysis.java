@@ -83,8 +83,10 @@ public class DlogAnalysis extends JavaAnalysis {
     
     public DatalogMetadata parse(String fileName) throws IOException {
         metadata = parser.parseMetadata(new File(fileName));
-        if (Config.populate)
+        if (Config.populate) {
+        	modifyDomNames();
         	modifyRelationNames();
+	}
         return metadata;
     }
     
@@ -94,7 +96,7 @@ public class DlogAnalysis extends JavaAnalysis {
 			String name = e.getKey();
 			RelSign sign = e.getValue();
 			name = Config.multiTag + name;
-			modConsumedRels.put(name, sign);
+			modConsumedRels.put(name, getModifiedRelSign(sign));
 		}
 		metadata.setConsumedRels(modConsumedRels);
 		Map<String, RelSign> modProducedRels = new HashMap<String, RelSign>();
@@ -102,11 +104,33 @@ public class DlogAnalysis extends JavaAnalysis {
 			String name = e.getKey();
 			RelSign sign = e.getValue();
 			name = Config.multiTag + name;
-			modProducedRels.put(name, sign);
+			modProducedRels.put(name, getModifiedRelSign(sign));
 		}
 		metadata.setProducedRels(modProducedRels);
 		return;
     }
+    
+    private RelSign getModifiedRelSign (RelSign rs) {
+    	String[] domNames = rs.getDomNames();
+    	String[] modDomNames = new String[domNames.length];
+    	for (int j = 0; j < domNames.length; j++) {
+        	modDomNames[j] = Config.multiTag + domNames[j];
+        }
+    	String domOrder = rs.getDomOrder();
+    	String modOrder = RelSign.fixMultiPgmVarOrder(domOrder);
+    	RelSign newRs = new RelSign(modDomNames, modOrder);
+    	return newRs;
+    }
+    
+    private void modifyDomNames() {
+  		HashSet<String> modDoms = new HashSet<String>();
+  		for (String d : metadata.getMajorDomNames()) {
+  			d = Config.multiTag + d;
+  			modDoms.add(d);
+  		}
+  		metadata.setMajorDomNames(modDoms);
+  		return;
+      }
     
     /*private void error(String errMsg) {
         Messages.log("ERROR: DlogAnalysis: " + fileName + ": line " + lineNum + ": " + errMsg);
@@ -228,10 +252,10 @@ public class DlogAnalysis extends JavaAnalysis {
 		// 0th tag is always the tag for the output
 		List<String> tags = new ArrayList<String>();
 		tags.add(Config.multiTag);
-		boolean analyze = !Config.analyze.equals("");
+		boolean analyze = Config.analyze;
 		if(analyze){
 			//Analyze mode, add the tags to the list
-			String[] list = Config.analyze.split(",");
+			String[] list = Config.tagList.split(",");
 			for(String t : list){
 				tags.add(t);
 			}

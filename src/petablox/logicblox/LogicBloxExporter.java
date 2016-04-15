@@ -74,6 +74,8 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         if (!(Config.populate && LogicBloxUtils.domsExist() && LogicBloxUtils.domContains(dom.getName())))
         	LogicBloxUtils.addBlock(typeFile);
         LogicBloxUtils.execFile(importFile);  
+        
+        if (Config.populate) saveDomToTagRelation(dom, sz);
         if (Config.populate && !LogicBloxUtils.domContains(dom.getName())) newDomASet.add(dom.getName());
     }
     
@@ -457,8 +459,8 @@ public class LogicBloxExporter extends LogicBloxIOBase {
 	    		sb.append(newDomNdxMap.get(domName) - 1);
 	    		out.println(sb.toString());
 	    	}
-    	} else if (!Config.analyze.equals("")) {
-    		for(String child : Config.analyze.split(",")) {
+    	} else if (Config.analyze) {
+    		for(String child : Config.tagList.split(",")) {
     			HashMap<String, ArrayList<Pair<Integer, Integer>>> perTagRange = LogicBloxUtils.domRanges.get(child);
     			for(String domName : perTagRange.keySet()) {
     				ArrayList<Pair<Integer, Integer>> alist = perTagRange.get(domName);
@@ -502,7 +504,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     }
     
     public void saveSubTagRelation() {
-    	if (Config.analyze.equals("")) return;
+    	if (!Config.analyze) return;
     	
         String relName = LogicBloxUtils.SUB_TAGS;
         File factsFile = new File(workDir, relName + ".csv");
@@ -525,7 +527,7 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     	final String DELIM = this.delim;
     	PrintWriter out = createPrintWriter(factsFile);
 
-    	for(String child : Config.analyze.split(",")) {
+    	for(String child : Config.tagList.split(",")) {
     		StringBuilder sb = new StringBuilder();
     		sb.append(sz).append(DELIM);
     		sb.append(tagASet.indexOf(child));
@@ -552,6 +554,112 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     private void saveSubTagImport(String relName, File importFile, File factsFile) {
     	String[] domNames = new String[2];   
     	domNames[0] = LogicBloxUtils.TAGS;
+    	domNames[1] = LogicBloxUtils.TAGS;
+    	saveRelationImport1(relName, domNames, importFile, factsFile);
+    }
+     
+    public void saveTagToPgmRelation() {
+        String relName = LogicBloxUtils.TAG_TO_PGM;
+        File factsFile = new File(workDir, relName + ".csv");
+        saveTagToPgmData(relName, factsFile);
+        
+        File typeFile = new File(workDir, relName + ".type");
+        saveTagToPgmType(relName, typeFile);
+        
+        File importFile = new File(workDir, relName + ".import");
+        saveTagToPgmImport(relName, importFile, factsFile);
+        
+        if (!LogicBloxUtils.domsExist())
+        	LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);
+    }
+    
+    private void saveTagToPgmData(String relName, File factsFile) {
+    	ArraySet<String> tagASet = LogicBloxUtils.getTagASet();
+    	int sz = tagASet.size();
+    	final String DELIM = this.delim;
+    	PrintWriter out = createPrintWriter(factsFile);
+
+    	StringBuilder sb = new StringBuilder();
+		sb.append(sz).append(DELIM);
+		if (Config.populate)
+			sb.append(Config.workDirName);
+		else if (Config.analyze)
+			sb.append(Config.tagList);
+		out.println(sb.toString());
+    	out.flush();
+    	Utils.close(out);
+    	if (out.checkError()) {
+    		throw new PetabloxException("An error occurred writing relation " +
+    				relName + " data to " + factsFile.getAbsolutePath());
+    	}
+    }
+    
+    private void saveTagToPgmType(String relName, File typeFile) {  
+        PrintWriter out = createPrintWriter(typeFile, true);
+        out.println(relName + "(d0,d1) -> " + LogicBloxUtils.TAGS + "(d0)," + "string(d1).");
+        Utils.close(out);
+        if (out.checkError()) {
+            throw new PetabloxException("An error occurred writing relation type for " +
+                relName + " to " + typeFile.getAbsolutePath());
+        }
+    }
+ 
+    private void saveTagToPgmImport(String relName, File importFile, File factsFile) {
+    	String[] domNames = new String[2];   
+    	domNames[0] = LogicBloxUtils.TAGS;
+    	domNames[1] = "string";
+    	saveRelationImport1(relName, domNames, importFile, factsFile);
+    }
+     
+    public void saveDomToTagRelation(Dom<?> dom, int sz) {
+        String relName = dom.getName() + LogicBloxUtils.DOM_TO_TAG_SUFFIX;
+        File factsFile = new File(workDir, relName + ".csv");
+        saveDomToTagData(dom, relName, factsFile, sz);
+        
+        File typeFile = new File(workDir, relName + ".type");
+        saveDomToTagType(relName, dom.getName(), typeFile);
+        
+        File importFile = new File(workDir, relName + ".import");
+        saveDomToTagImport(relName, dom.getName(), importFile, factsFile);
+        
+        if (!(Config.populate && LogicBloxUtils.domsExist() && LogicBloxUtils.domContains(dom.getName())))
+        	LogicBloxUtils.addBlock(typeFile);
+        LogicBloxUtils.execFile(importFile);
+    }
+    
+    private void saveDomToTagData(Dom<?>dom, String relName, File factsFile, int sz) {
+    	ArraySet<String> tagASet = LogicBloxUtils.getTagASet();
+    	int tagSetSz = tagASet.size();
+    	final String DELIM = this.delim;
+    	PrintWriter out = createPrintWriter(factsFile);
+
+		for (int i = 0, size = dom.size(); i < size; ++i) {
+		    out.print(i + sz);
+		    out.print(DELIM);
+		    out.println(tagSetSz);
+		}
+    	out.flush();
+    	Utils.close(out);
+    	if (out.checkError()) {
+    		throw new PetabloxException("An error occurred writing relation " +
+    				relName + " data to " + factsFile.getAbsolutePath());
+    	}
+    }
+    
+    private void saveDomToTagType(String relName, String domName, File typeFile) {  
+        PrintWriter out = createPrintWriter(typeFile, true);
+        out.println(relName + "(d0,d1) -> " + domName + "(d0)," + LogicBloxUtils.TAGS + "(d1).");
+        Utils.close(out);
+        if (out.checkError()) {
+            throw new PetabloxException("An error occurred writing relation type for " +
+                relName + " to " + typeFile.getAbsolutePath());
+        }
+    }
+ 
+    private void saveDomToTagImport(String relName, String domName, File importFile, File factsFile) {
+    	String[] domNames = new String[2];   
+    	domNames[0] = domName;
     	domNames[1] = LogicBloxUtils.TAGS;
     	saveRelationImport1(relName, domNames, importFile, factsFile);
     }

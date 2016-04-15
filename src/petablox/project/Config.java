@@ -165,18 +165,23 @@ public class Config {
     public final static String logicbloxWorkDirName = System.getProperty("petablox.logicblox.work.dir", outRel2Abs("logicblox"));
 
     // properties for multi-program support
-    public final static boolean populate = Utils.buildBoolProperty("petablox.multipgm.populate", false);
-    public static String analyze = System.getProperty("petablox.multipgm.analyze", "");
-    public static String multiTag = System.getProperty("petablox.multipgm.tag", "");
+    public final static String mode = System.getProperty("petablox.multipgm.mode", "none" );
+    public static String tagList = System.getProperty("petablox.multipgm.taglist", "");
+    public static String multiTag = System.getProperty("petablox.multipgm.tagname", "");
     public final static boolean crossPgmAnalysis = Utils.buildBoolProperty("petablox.multipgm.crosspgm.analysis", true);
     
     public static boolean multiPgmMode = false;
+    public static boolean populate = false;
+    public static boolean analyze = false;
     
     static {
         Utils.mkdirs(outDirName);
         Utils.mkdirs(bddbddbWorkDirName);
         Utils.mkdirs(logicbloxWorkDirName);
-        if (populate || !analyze.equals("")) multiPgmMode = true;
+        check(mode, new String[] { "none", "populate", "analyze" }, "petablox.multipgm.mode");
+        if (mode.equals("populate")) populate = true;
+        else if (mode.equals("analyze")) analyze = true;
+        if (populate || analyze) multiPgmMode = true;
     }
 
     // commonly-used constants
@@ -279,9 +284,9 @@ public class Config {
         System.out.println("petablox.bddbddb.max.heap: " + bddbddbMaxHeap);
         System.out.println("petablox.datalog.engine: " + datalogEngine);
         System.out.println("petablox.logicblox.work.dir: " + logicbloxWorkDirName);
-        System.out.println("petablox.multipgm.populate: " + populate);
-        System.out.println("petablox.multipgm.analyze: " + analyze);   
-        System.out.println("petablox.multipgm.tag: " + multiTag);
+        System.out.println("petablox.multipgm.mode: " + mode);
+        System.out.println("petablox.multipgm.taglist: " + tagList);   
+        System.out.println("petablox.multipgm.tagname: " + multiTag);
         System.out.println("petablox.multipgm.crosspgm.analysis: " + crossPgmAnalysis);
     }
 

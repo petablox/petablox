@@ -210,8 +210,6 @@ public class ClassicProject extends Project {
             } else {
                 assert (task != null);
                 nameToTaskMap.put(name, task);
-                if (Config.populate && Utils.isSubclass(type, ProgramRel.class))
-                	name = Config.multiTag + name;
                 task.setName(name);
                 
             }
@@ -225,9 +223,6 @@ public class ClassicProject extends Project {
         return hasNoErrors;
     }
 
-    // MULTIPGM: Here, there is a reliance on the following fact:
-    // If a task is producing just one target, then the name of the task and the name of the target is the same.
-    // The above fact is true for doms in the multipgm mode but not true for relations. That needs to be handled.
     private boolean buildNameToTrgtMap(Map<String, Class> nameToTrgtTypeMap) {
         boolean hasNoErrors = true;
         for (Map.Entry<String, Class> entry : nameToTrgtTypeMap.entrySet()) {
@@ -236,16 +231,7 @@ public class ClassicProject extends Project {
             if (trgt != null) {
                 nameToTrgtMap.put(name, trgt);
                 continue;
-            } else if (trgt == null && Config.populate) {
-            	int ndx = name.indexOf(Config.multiTag);
-            	if (ndx == 0) {
-            		trgt = nameToTaskMap.get(name.substring(Config.multiTag.length()));
-            		if (trgt != null) {
-	            		nameToTrgtMap.put(name, trgt);
-	                    continue;
-            		}
-            	}
-            }
+            } 
             Class type = entry.getValue();
             Exception ex = null;
             try {
@@ -430,9 +416,9 @@ public class ClassicProject extends Project {
         }
         timer.resume();
         if (!(Config.populate && task == lastTask && Config.crossPgmAnalysis)) {
-        	if (Config.analyze.equals(""))
+        	if (!Config.analyze)
         		task.run();
-        	else if (!Config.analyze.equals("") && task == lastTask)
+        	else if (Config.analyze && task == lastTask)
         		task.run();
         } else
         	System.out.println("Skipping task: " + task.getName() + " because it is the \"populate\" phase of Multiple Program Support.");

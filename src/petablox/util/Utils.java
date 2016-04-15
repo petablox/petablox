@@ -663,9 +663,26 @@ public final class Utils {
 			if (out.checkError()) {
 			    throw new PetabloxException("Error writing " + ndxFile.getAbsolutePath());
 			}
-	    	autoGenMultiTag = tagPrefix + ndx;
+			String suffix = convertToStr(ndx);
+	    	autoGenMultiTag = tagPrefix + suffix;
     	}
     	return autoGenMultiTag;
+    }
+    
+    public static String convertToStr (int num) {
+    	char[] arr = new char[64];
+    	int quotient, remainder;
+    	int ndx = 0;
+    	while (num >= 26) {
+    		remainder = num % 26;
+    		quotient = num / 26;
+    		arr[ndx++] = (char)('a' + remainder);
+    		num = quotient;
+    	}
+    	arr[ndx++] = (char)('a' + num);
+    	StringBuilder sb = new StringBuilder();
+    	for (int i = 0; i < ndx; i++) sb.append(arr[ndx - i - 1]);
+    	return sb.toString();
     }
     
     public static void clearWorkingArea() {

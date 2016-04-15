@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+
 import petablox.bddbddb.RelSign;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
@@ -66,6 +67,10 @@ public class PetabloxAnnotParser {
         name = chord.name();
 
         nameToTypeMap = new HashMap<String, Class>();
+        if (Config.populate &&
+            (Utils.isSubclass(type, ProgramRel.class) || Utils.isSubclass(type, ProgramDom.class))
+           )
+        	name = Config.multiTag + name;
         nameToTypeMap.put(name, type);
 
         nameToSignMap = new HashMap<String, RelSign>();
@@ -134,7 +139,12 @@ public class PetabloxAnnotParser {
         } else {
             for (int i = 0; i < namesOfTypes.length; i++) {
                 String name2 = namesOfTypes[i];
-                if (name2.equals(name) || name2.equals(".")) {
+                if (name2.equals(".")) {
+                    error(NAMES_OF_TYPES_FORBIDDEN);
+                    continue;
+                }
+                if (Config.populate) name2 = Config.multiTag + name2;
+                if (name2.equals(name)) {
                     error(NAMES_OF_TYPES_FORBIDDEN);
                     continue;
                 }
@@ -153,7 +163,12 @@ public class PetabloxAnnotParser {
         } else {
             for (int i = 0; i < namesOfSigns.length; i++) {
                 String name2 = namesOfSigns[i];
-                if (name2.equals(name) || name2.equals(".")) {
+                if (name2.equals(".")) {
+                    error(NAMES_OF_SIGNS_FORBIDDEN);
+                    continue;
+                }
+                if (Config.populate) name2 = Config.multiTag + name2;
+                if (name2.equals(name)) {
                     error(NAMES_OF_SIGNS_FORBIDDEN);
                     continue;
                 }
@@ -180,18 +195,21 @@ public class PetabloxAnnotParser {
     private String processName(String s) {
         int i = s.indexOf('!');
         String name2;
-        if (i == -1)
+        if (i == -1) {
             name2 = s;
-        else {
+            if (Config.populate) name2 = Config.multiTag + name2;
+        } else {
             name2 = s.substring(0, i);
+            if (Config.populate) name2 = Config.multiTag + name2;
             String t = s.substring(i + 1);
             if (t.startsWith("sign=")) {
                 RelSign relSign2 = parseRelSign(t.substring(5));
                 nameToSignMap.put(name2, relSign2);
             }
-        }
+        }  
         return name2;
     }
+    
     private RelSign parseRelSign(String sign) {
         int i = sign.indexOf(':');
         String domOrder;
@@ -200,15 +218,25 @@ public class PetabloxAnnotParser {
             sign = sign.substring(0, i);
         } else
             domOrder = null;
-         String[] domNamesAry = sign.split(",");
-        if (domNamesAry.length == 1)
+        String[] domNamesAry = sign.split(",");
+        String[] modDomNamesAry = new String[domNamesAry.length];
+        for (int j = 0; j < domNamesAry.length; j++) {
+        	if (Config.populate)
+        		modDomNamesAry[j] = Config.multiTag + domNamesAry[j];
+        	else
+        		modDomNamesAry[j] = domNamesAry[j];
+        }
+        if (modDomNamesAry.length == 1)
             domOrder = domNamesAry[0];
+        RelSign newRs;
         try {
-            return new RelSign(domNamesAry, domOrder);
+        	String modOrder = RelSign.fixMultiPgmVarOrder(domOrder);
+            newRs = new RelSign(modDomNamesAry, modOrder);
         } catch (RuntimeException ex) {
             error(ex.getMessage());
-            return null;
+            newRs = null;
         }
+        return newRs;
     }
     /**
      * Provides the name specified by this Petablox annotation of the
