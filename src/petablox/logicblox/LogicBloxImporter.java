@@ -79,8 +79,9 @@ public class LogicBloxImporter extends LogicBloxIOBase {
                 int i = 0;
                 for (Dom<?> d : relDoms) {
                 	if (Config.populate) {
-        	        	if (domNdxMap.containsKey(d.getName()))
-        	        		domSz[i] = domNdxMap.get(d.getName());
+                		String nm = d.getName().substring(Config.multiTag.length());
+        	        	if (domNdxMap.containsKey(nm))
+        	        		domSz[i] = domNdxMap.get(nm);
         	        	else
         	        		domSz[i] = 0;
                 	} else

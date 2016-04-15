@@ -56,9 +56,10 @@ public class LogicBloxExporter extends LogicBloxIOBase {
     public void saveDomain(Dom<?> dom) {
     	int sz = 0;
     	if (Config.populate) {
-	    	if (domNdxMap.containsKey(dom.getName()))  
-	    		sz = domNdxMap.get(dom.getName());
-	    	newDomNdxMap.put(dom.getName(), sz + dom.size());
+    		String nm = dom.getName().substring(Config.multiTag.length());
+	    	if (domNdxMap.containsKey(nm))  
+	    		sz = domNdxMap.get(nm);
+	    	newDomNdxMap.put(nm, sz + dom.size());
     	}
     	
         String domName = dom.getName();
@@ -227,8 +228,9 @@ public class LogicBloxExporter extends LogicBloxIOBase {
         int i = 0;
         for (Dom<?> d : relDoms) {
         	if (Config.populate) {
-	        	if (domNdxMap.containsKey(d.getName()))
-	        		domSz[i++] = domNdxMap.get(d.getName());
+        		String nm = d.getName().substring(Config.multiTag.length());
+	        	if (domNdxMap.containsKey(nm))
+	        		domSz[i++] = domNdxMap.get(nm);
 	        	else
 	        		domSz[i++] = 0;
         	} else
@@ -453,10 +455,11 @@ public class LogicBloxExporter extends LogicBloxIOBase {
 	    	for(String domName : newDomNdxMap.keySet()) {
 	    		StringBuilder sb = new StringBuilder();
 	    		sb.append(tagSetSz).append(DELIM);
-	    		if (newDomASet.contains(domName))
-	    			sb.append(newDomASet.indexOf(domName)+domSetSz).append(DELIM);
+	    		String nm = Config.multiTag + domName;
+	    		if (newDomASet.contains(nm))
+	    			sb.append(newDomASet.indexOf(nm)+domSetSz).append(DELIM);
 	    		else
-	    			sb.append(domASet.indexOf(domName)).append(DELIM);
+	    			sb.append(domASet.indexOf(nm)).append(DELIM);
 	    		int startRange = 0;
 	    		if (domNdxMap.containsKey(domName)) startRange = domNdxMap.get(domName);
 	    		sb.append(startRange).append(DELIM);
