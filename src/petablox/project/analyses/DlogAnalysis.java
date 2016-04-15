@@ -278,8 +278,17 @@ public class DlogAnalysis extends JavaAnalysis {
 					continue;
 				}else if(first && analyze){
 					first = false;
-					for(String domTagged : newDomNdxMap.keySet()){
-						String dom = domTagged.substring(Config.multiTag.length());
+					HashMap<String,Integer> domsMap = null;
+					if(Config.populate)
+						domsMap = newDomNdxMap;
+					else
+						domsMap = domNdxMap;
+					for(String domTagged : domsMap.keySet()){
+						String dom = null;
+						if(Config.populate)
+							dom = domTagged.substring(Config.multiTag.length());
+						else
+							dom = domTagged;
 						String newDom = tags.get(0)+dom;
 						
 						StringBuilder type = new StringBuilder(newDom).append("(x), ")
@@ -297,8 +306,8 @@ public class DlogAnalysis extends JavaAnalysis {
 					}
 					// Generate union constraints
 					for(String name : consumedRels.keySet()){
-						name = name.substring(Config.multiTag.length());
 						RelSign r = consumedRels.get(name);
+						name = name.substring(Config.multiTag.length());
 						List<String> cons = buildUnionCons(name, r, tags);
 						for(String c : cons){
 							pw.println(c);
@@ -387,6 +396,7 @@ public class DlogAnalysis extends JavaAnalysis {
 			pw.close();
 		}catch(Exception e){
 			System.out.println("Exception "+e);
+			e.printStackTrace();
 			throw new PetabloxException("Exception in generating multi program dlog");
 		}
 	}
