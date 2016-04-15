@@ -312,7 +312,7 @@ public class DlogAnalysis extends JavaAnalysis {
 					String[] relParsed = rel.split("\\(");
 					String relName = tags.get(0)+relParsed[0];
 					String[] domsParsed = parsed[1].split(",");
-					String lineBuild = relName+"("+relParsed[1]+"->";
+					String lineBuild = relName+"("+relParsed[1]+"-> ";
 					for(int i=0;i<domsParsed.length;i++){
 						String domDecl = domsParsed[i];
 						domDecl = domDecl.trim();
@@ -345,20 +345,26 @@ public class DlogAnalysis extends JavaAnalysis {
 						if(temp.contains("=") || temp.contains("<") || temp.contains(">")){
 							int _indx = temp.indexOf('_');
 							String domName = temp.substring(0, _indx);
-							/*int eqIndx = temp.indexOf('=');
-							String offsetStr = temp.substring(eqIndx+1);
-							offsetStr = offsetStr.trim();
-							int offset = Integer.parseInt(offsetStr);
-							if(domNdxMap.containsKey(domName)){
-								offset = offset+domNdxMap.get(domName);
+							if(Config.populate){
+								int eqIndx = temp.indexOf('=');
+								String offsetStr = temp.substring(eqIndx+1);
+								offsetStr = offsetStr.trim();
+								int offset = Integer.parseInt(offsetStr);
+								if(domNdxMap.containsKey(domName)){
+									offset = offset+domNdxMap.get(domName);
+								}
+								String l = temp.substring(0,eqIndx);
+								sb.append(" ");
+								if(ignoredDoms.contains(domName))
+									sb.append(l+" = "+offset);
+								else
+									sb.append(tags.get(0)+l+" = "+offset);
+							}else{
+								if(ignoredDoms.contains(domName))
+									sb.append(" "+temp);
+								else
+									sb.append(" "+tags.get(0)+temp);
 							}
-							String l = temp.substring(0,eqIndx);
-							sb.append(" ");
-							sb.append(l+" = "+offset);*/
-							if(ignoredDoms.contains(domName))
-								sb.append(" "+temp);
-							else
-								sb.append(" "+tags.get(0)+temp);
 						}else{
 							relParsed = temp.split("\\(");
 							relName = relParsed[0];
