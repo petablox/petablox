@@ -27,7 +27,9 @@ import petablox.util.tuple.object.Pair;
  * @author Jake Cobb <tt>&lt;jake.cobb@gatech.edu&gt;</tt>
  */
 public class LogicBloxImporter extends LogicBloxIOBase {
-    private static final Pattern rowOfIntsPattern = Pattern.compile("^\\d+(\\s+\\d+)*$");
+	private static final String INVALID_MULTIPGM_MISSING1 = "ERROR: Multiple program support: Missing information (Doms_string). Likely not a valid multipgm workspace.";
+	private static final String INVALID_MULTIPGM_MISSING2 = "ERROR: Multiple program support: Missing information (domRanges). Likely not a valid multipgm workspace.";
+	private static final Pattern rowOfIntsPattern = Pattern.compile("^\\d+(\\s+\\d+)*$");
     
     // lb query prints these around the results
     private static final Pattern headerOrFooter = 
@@ -133,12 +135,13 @@ public class LogicBloxImporter extends LogicBloxIOBase {
     }
     
     public static void loadDomain(String domName, ArraySet<String> domSet) {
-    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithFailOnError(
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithWarnOnError(
 	            Config.logicbloxCommand,
 	            "print",
 	            Config.logicbloxWorkspace,
 	            domName + "_string"
 	        );
+    	if (result.getExitCode() != 0) Messages.fatal(INVALID_MULTIPGM_MISSING1);
 		String op = result.getOutput();
 		String[] lines = op.split("\n");
 		String[] elems = new String[lines.length];
@@ -153,12 +156,13 @@ public class LogicBloxImporter extends LogicBloxIOBase {
     public static void loadDomRangeRelation() {
     	ArraySet<String> tagASet = LogicBloxUtils.getTagASet();
     	ArraySet<String> domASet = LogicBloxUtils.getDomASet();
-    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithFailOnError(
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithWarnOnError(
 	            Config.logicbloxCommand,
 	            "print",
 	            Config.logicbloxWorkspace,
 	            LogicBloxUtils.DOM_RANGES
 	        );
+    	if (result.getExitCode() != 0) Messages.fatal(INVALID_MULTIPGM_MISSING2);
 		String op = result.getOutput();
 		String[] lines = op.split("\n");
 		for(String l : lines) {
