@@ -191,8 +191,9 @@ public class DlogAnalysis extends JavaAnalysis {
 							String offsetStr = temp.substring(eqIndx+1);
 							offsetStr = offsetStr.trim();
 							int offset = Integer.parseInt(offsetStr);
-							if(domNdxMap.containsKey(domName)){
-								offset = offset+domNdxMap.get(domName);
+							String nm = domName.substring(Config.multiTag.length());
+							if(domNdxMap.containsKey(nm)){
+								offset = offset+domNdxMap.get(nm);
 							}
 							String l = temp.substring(0,eqIndx);
 							sb.append(" ");

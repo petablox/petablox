@@ -76,6 +76,10 @@ public abstract class LogicBloxIOBase {
         return engineType == DatalogEngineType.LOGICBLOX3 ? "uint[64]" : "int";
     }
 
+    protected String getStringType() {
+        return "string";
+    }
+    
     protected boolean isLB3() { return engineType == DatalogEngineType.LOGICBLOX3; }
 
     public String getWorkspace() {

@@ -163,6 +163,8 @@ public class LogicBloxUtils {
 				Messages.log("MULTIPGM: Auto-generated tag for relation names: " + Config.multiTag);
 	    	}
     	}
+    	LogicBloxExporter lbe = new LogicBloxExporter();
+    	lbe.saveTagsDomain();
     }
     
     public static void validateMultiPgmOptions() {
@@ -205,7 +207,6 @@ public class LogicBloxUtils {
 	    	writeDomIndexFile();
 	    	LogicBloxExporter lbe = new LogicBloxExporter();
 	    	lbe.saveDomsDomain();
-	    	lbe.saveTagsDomain();
 	    	lbe.saveDomRangeRelation();
 	    	lbe.saveSubTagRelation();
 	    	lbe.saveTagToPgmRelation();
