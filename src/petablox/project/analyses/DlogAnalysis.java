@@ -289,6 +289,8 @@ public class DlogAnalysis extends JavaAnalysis {
 							dom = domTagged.substring(Config.multiTag.length());
 						else
 							dom = domTagged;
+						if(ignoredDoms.contains(dom))
+							continue;
 						String newDom = tags.get(0)+dom;
 						
 						StringBuilder type = new StringBuilder(newDom).append("(x), ")
@@ -308,7 +310,7 @@ public class DlogAnalysis extends JavaAnalysis {
 					for(String name : consumedRels.keySet()){
 						RelSign r = consumedRels.get(name);
 						name = name.substring(Config.multiTag.length());
-						List<String> cons = buildUnionCons(name, r, tags);
+						List<String> cons = buildUnionCons(name, r, tags,ignoredDoms);
 						for(String c : cons){
 							pw.println(c);
 						}
@@ -351,28 +353,46 @@ public class DlogAnalysis extends JavaAnalysis {
 							continue;
 						String temp = token;
 						temp = temp.trim();
-						if(temp.contains("=") || temp.contains("<") || temp.contains(">")){
+						if(temp.contains("=")){
 							int _indx = temp.indexOf('_');
+							if(_indx == -1){
+								sb.append(" "+temp);
+								continue;
+							}
 							String domName = temp.substring(0, _indx);
+							int eqIndx = temp.indexOf('=');
+							String l = temp.substring(0,eqIndx);
+							String offsetStr = temp.substring(eqIndx+1);
+							offsetStr = offsetStr.trim();
 							if(Config.populate){
-								int eqIndx = temp.indexOf('=');
-								String offsetStr = temp.substring(eqIndx+1);
-								offsetStr = offsetStr.trim();
-								int offset = Integer.parseInt(offsetStr);
-								if(domNdxMap.containsKey(domName)){
-									offset = offset+domNdxMap.get(domName);
+								if(offsetStr.indexOf('_')==-1){
+									int offset = Integer.parseInt(offsetStr);
+									if(domNdxMap.containsKey(domName)){
+										offset = offset+domNdxMap.get(domName);
+									}
+									sb.append(" ");
+									if(ignoredDoms.contains(domName))
+										sb.append(l+" = "+offset);
+									else
+										sb.append(tags.get(0)+l+" = "+offset);
+								}else{
+									if(ignoredDoms.contains(domName))
+										sb.append(l+" = "+offsetStr);
+									else
+										sb.append(tags.get(0)+l+" = "+tags.get(0)+offsetStr);
 								}
-								String l = temp.substring(0,eqIndx);
-								sb.append(" ");
-								if(ignoredDoms.contains(domName))
-									sb.append(l+" = "+offset);
-								else
-									sb.append(tags.get(0)+l+" = "+offset);
 							}else{
-								if(ignoredDoms.contains(domName))
-									sb.append(" "+temp);
-								else
-									sb.append(" "+tags.get(0)+temp);
+								if(offsetStr.indexOf('_')==-1){
+									if(ignoredDoms.contains(domName))
+										sb.append(" "+temp);
+									else
+										sb.append(" "+tags.get(0)+temp);
+								}else{
+									if(ignoredDoms.contains(domName))
+										sb.append(" "+temp);
+									else
+										sb.append(" "+tags.get(0)+l+" = "+tags.get(0)+offsetStr);
+								}
 							}
 						}else{
 							relParsed = temp.split("\\(");
@@ -400,7 +420,7 @@ public class DlogAnalysis extends JavaAnalysis {
 			throw new PetabloxException("Exception in generating multi program dlog");
 		}
 	}
-	private List<String> buildUnionCons(String relName,RelSign sign,List<String> tags){
+	private List<String> buildUnionCons(String relName,RelSign sign,List<String> tags,Set<String> ignoredDoms){
 		// %1$s - output tag
 		// %2$s - input tag
 		
@@ -437,16 +457,23 @@ public class DlogAnalysis extends JavaAnalysis {
 			domVars.put(dom, indx);
 			relDefLsb.append(outFormat+domVar);
 			
-			
-			relDefRsb.append(outFormat+dom);
+			if(ignoredDoms.contains(dom))
+				relDefRsb.append(dom);
+			else
+				relDefRsb.append(outFormat+dom);
 			relDefRsb.append('(');
 			relDefRsb.append(domVar);
 			relDefRsb.append(')');
 			
-			relRuleRsbCons.append(outFormat+dom).append("("+outFormat+domVar+"), ");
-			relRuleRsbCons.append(inFormat+dom).append("("+inFormat+domVar+"), ");
-			relRuleRsbCons.append(outFormat+dom).append("_index["+outFormat+domVar+"] = "+inFormat+dom+"_index["+inFormat+domVar+"]");
-			
+			if(ignoredDoms.contains(dom)){
+				relRuleRsbCons.append(dom).append("("+outFormat+domVar+"), ");
+				relRuleRsbCons.append(dom).append("("+inFormat+domVar+"), ");
+				relRuleRsbCons.append(dom).append("_index["+outFormat+domVar+"] = "+dom+"_index["+inFormat+domVar+"]");
+			}else{
+				relRuleRsbCons.append(outFormat+dom).append("("+outFormat+domVar+"), ");
+				relRuleRsbCons.append(inFormat+dom).append("("+inFormat+domVar+"), ");
+				relRuleRsbCons.append(outFormat+dom).append("_index["+outFormat+domVar+"] = "+inFormat+dom+"_index["+inFormat+domVar+"]");
+			}
 			relRuleRsbUnion.append(inFormat+domVar);
 			
 			if(i!=(doms.length-1)){
