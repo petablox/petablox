@@ -274,7 +274,8 @@ public class DlogAnalysis extends JavaAnalysis {
 				String line = br.readLine();
 				//System.out.println(line);
 				if(line.startsWith("//") || line.equals("")){
-					pw.println(line);
+					if(!line.contains(":name:"))
+						pw.println(line);
 					continue;
 				}else if(first && analyze){
 					first = false;
@@ -283,6 +284,7 @@ public class DlogAnalysis extends JavaAnalysis {
 						domsMap = newDomNdxMap;
 					else
 						domsMap = domNdxMap;
+					int testIdx = 1;
 					for(String domTagged : domsMap.keySet()){
 						String dom = null;
 						if(Config.populate)
@@ -301,8 +303,15 @@ public class DlogAnalysis extends JavaAnalysis {
 					     for(int i=1;i<tags.size();i++){
 					    	 String othDom = tags.get(i)+dom;
 					    	 StringBuilder unionDomSB = new StringBuilder();
-					    	 unionDomSB.append("+"+newDom+"(x), +"+newDom+"_index[x] = id, +"+newDom+"_string[x] = s <-");
-					    	 unionDomSB.append("+"+othDom+"(y), "+othDom+"_index[y] = id, "+othDom+"_string[y] = s.");
+					    	 String testRel = tags.get(0)+"test"+testIdx;
+					    	 testIdx++;
+					    	 unionDomSB.append(testRel).append("(id,s) -> int(id), string(s). \n");
+					    	 unionDomSB.append(testRel).append("(id,s) <- ");
+					    	 unionDomSB.append(othDom+"(y), "+othDom+"_index[y] = id, "+othDom+"_string[y] = s.\n");
+					    	 //unionDomSB.append("+"+newDom+"(x), +"+newDom+"_index[x] = id, +"+newDom+"_string[x] = s <-");
+					    	 unionDomSB.append("+"+newDom+"(x), +"+newDom+"_index[x] = id, +"+newDom+"_string[x] = s <- ");
+					    	 unionDomSB.append("+"+testRel).append("(id,s).");
+					    	 
 					    	 pw.println(unionDomSB.toString());
 					     }
 					}

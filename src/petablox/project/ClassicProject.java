@@ -411,8 +411,10 @@ public class ClassicProject extends Project {
                     continue;
                 }
             }
-            ITask task2 = getTaskProducingTrgt(trgt);
-            runTask(task2);
+            if(!trgt.toString().contains("Tag")){
+            	ITask task2 = getTaskProducingTrgt(trgt);
+            	runTask(task2);
+            }
         }
         timer.resume();
         if (!(Config.populate && task == lastTask && Config.crossPgmAnalysis)) {
