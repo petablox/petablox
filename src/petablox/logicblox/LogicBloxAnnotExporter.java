@@ -84,17 +84,31 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
     }
      
     public void saveAnnotRelations() {
-    	saveTrioAnnotRelation(Config.multiTag + FIELD_ANNOT, fieldAnnot);
-    	saveQuadAnnotRelation(Config.multiTag + M_PARAM_ANNOT, methParamAnnot);
-    	saveTrioAnnotRelation(Config.multiTag + M_RET_ANNOT, methRetAnnot);
-    	saveTrioAnnotRelation(Config.multiTag + PGM_PT_ANNOT, pgmPtAnnot);
+    	HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
+    	int sz;
+    	if (domNdxMap.containsKey("F"))  
+    		sz = domNdxMap.get("F");
+    	else
+    		sz = 0;
+    	saveTrioAnnotRelation(Config.multiTag + FIELD_ANNOT, fieldAnnot, sz);
+    	if (domNdxMap.containsKey("M"))  
+    		sz = domNdxMap.get("M");
+    	else
+    		sz = 0;
+    	saveQuadAnnotRelation(Config.multiTag + M_PARAM_ANNOT, methParamAnnot, sz);
+    	saveTrioAnnotRelation(Config.multiTag + M_RET_ANNOT, methRetAnnot, sz);
+    	if (domNdxMap.containsKey("P"))  
+    		sz = domNdxMap.get("P");
+    	else
+    		sz = 0;
+    	saveTrioAnnotRelation(Config.multiTag + PGM_PT_ANNOT, pgmPtAnnot, sz);
     }
     
-    private void saveTrioAnnotRelation(String relName, Map<Integer, List<Trio<String, String, String>>> relData) {
+    private void saveTrioAnnotRelation(String relName, Map<Integer, List<Trio<String, String, String>>> relData, int sz) {
     	if (!Config.populate) return;
     	
         File factsFile = new File(workDir, relName + ".csv");
-        saveTrioAnnotRelData(relName, factsFile, relData);
+        saveTrioAnnotRelData(relName, factsFile, relData, sz);
         
         File typeFile = new File(workDir, relName + ".type");
         saveTrioAnnotRelType(relName, typeFile);
@@ -107,7 +121,7 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
         LogicBloxUtils.execFile(importFile);
     }
     
-    private void saveTrioAnnotRelData(String relName, File factsFile, Map<Integer, List<Trio<String, String, String>>> relData) {
+    private void saveTrioAnnotRelData(String relName, File factsFile, Map<Integer, List<Trio<String, String, String>>> relData, int sz) {
     	final String DELIM = this.delim;
     	PrintWriter out = createPrintWriter(factsFile);
 
@@ -115,7 +129,7 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
     		List<Trio<String, String, String>> tl = relData.get(ndx);
     		for (Trio<String, String, String> t : tl) {
 	    		StringBuilder sb = new StringBuilder();
-	    		sb.append(ndx).append(DELIM);
+	    		sb.append(ndx + sz).append(DELIM);
 	    		sb.append(annotationName.indexOf(t.val0)).append(DELIM);
 	    		sb.append(t.val1).append(DELIM);
 	    		sb.append(t.val2);
@@ -144,11 +158,11 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
     	saveRelationImport1(relName, domNames, importFile, factsFile);
     }
     
-    private void saveQuadAnnotRelation(String relName, Map<Integer, List<Quad<String, Integer, String, String>>> relData) {
+    private void saveQuadAnnotRelation(String relName, Map<Integer, List<Quad<String, Integer, String, String>>> relData, int sz) {
     	if (!Config.populate) return;
     	
         File factsFile = new File(workDir, relName + ".csv");
-        saveQuadAnnotRelData(relName, factsFile, relData);
+        saveQuadAnnotRelData(relName, factsFile, relData, sz);
         
         File typeFile = new File(workDir, relName + ".type");
         saveQuadAnnotRelType(relName, typeFile);
@@ -161,7 +175,7 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
         LogicBloxUtils.execFile(importFile);
     }
     
-    private void saveQuadAnnotRelData(String relName, File factsFile, Map<Integer, List<Quad<String, Integer, String, String>>> relData) {
+    private void saveQuadAnnotRelData(String relName, File factsFile, Map<Integer, List<Quad<String, Integer, String, String>>> relData, int sz) {
     	final String DELIM = this.delim;
     	PrintWriter out = createPrintWriter(factsFile);
 
@@ -169,7 +183,7 @@ public class LogicBloxAnnotExporter extends LogicBloxIOBase {
     		List<Quad<String, Integer, String, String>> tl = relData.get(ndx);
     		for (Quad<String, Integer, String, String> t : tl) {
 	    		StringBuilder sb = new StringBuilder();
-	    		sb.append(ndx).append(DELIM);
+	    		sb.append(ndx + sz).append(DELIM);
 	    		sb.append(annotationName.indexOf(t.val0)).append(DELIM);
 	    		sb.append(t.val1).append(DELIM);
 	    		sb.append(t.val2).append(DELIM);
