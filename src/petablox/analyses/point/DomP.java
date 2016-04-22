@@ -1,21 +1,29 @@
 package petablox.analyses.point;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import soot.SootMethod;
 import soot.toolkits.graph.Block;
 import soot.Unit;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
 import petablox.analyses.method.DomM;
+import petablox.logicblox.LogicBloxAnnotExporter;
 import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
+import petablox.util.tuple.object.Pair;
+import petablox.util.tuple.object.Trio;
 
 
 /**
@@ -56,7 +64,8 @@ public class DomP extends ProgramDom<Unit> {
             	Iterator<Unit> uit = bb.iterator();
             	while(uit.hasNext()){
             		Unit u = uit.next();
-            		add(u);
+            		int indx = getOrAdd(u);
+            		parseAnnotations(u, indx);
             		unitToMethodMap.put(u, m);
             	}  
             }
@@ -78,4 +87,30 @@ public class DomP extends ProgramDom<Unit> {
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " + "Mid=\"M" + mIdx + "\"";
     	//return "";
     }
+    
+    public void parseAnnotations(Unit u, int indx){
+    	Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
+    	Map<Integer, List<Trio<String, String, String>>> pgmPtAnnot = LogicBloxAnnotExporter.pgmPtAnnot;
+    	if(pgmPtAnnot.containsKey(indx))
+    		return;
+    	List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
+    	for(Tag t : u.getTags()){
+    		if(t instanceof VisibilityAnnotationTag){
+    			Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
+    			for(String annotName : parsed.keySet()){
+    				annotationName.add(annotName);
+    				List<Pair<String,String>> keyValues = parsed.get(annotName);
+    				for(Pair<String,String> p : keyValues){
+    					annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
+    				}
+    			}
+    		}else if(t instanceof LineNumberTag){
+    			LineNumberTag lnt = (LineNumberTag)t;
+    			annotationName.add("LineNumberTag");
+    			annots.add(new Trio<String,String,String>("LineNumberTag","LineNumber",Integer.toString(lnt.getLineNumber())) );
+    		}
+    	}
+    	pgmPtAnnot.put(indx, annots);
+    }
+    
 }

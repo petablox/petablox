@@ -238,9 +238,11 @@ public final class ProcessExecutor {
                 String l;
                 while ((l = r.readLine()) != null)
                     os.println(l);
+                os.flush();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            
         }
     }
 

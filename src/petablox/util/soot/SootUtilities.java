@@ -28,7 +28,11 @@ import soot.jimple.internal.JInterfaceInvokeExpr;
 import soot.jimple.internal.JInvokeStmt;
 import soot.jimple.internal.JVirtualInvokeExpr;
 import soot.shimple.PhiExpr;
+import soot.tagkit.AnnotationElem;
+import soot.tagkit.AnnotationStringElem;
+import soot.tagkit.AnnotationTag;
 import soot.tagkit.BytecodeOffsetTag;
+import soot.tagkit.VisibilityAnnotationTag;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
 import soot.jimple.internal.JNewMultiArrayExpr;
@@ -542,4 +546,25 @@ public class SootUtilities {
 		return null;
 	}
 	
+	public static Map<String,List<Pair<String,String>>> parseVisibilityAnnotationTag(VisibilityAnnotationTag v){
+    	Map<String,List<Pair<String,String>>> result = new HashMap<String,List<Pair<String,String>>>();
+    	List<AnnotationTag> aTags = v.getAnnotations();
+		for(AnnotationTag a : aTags){
+			String annotationName = a.getType();
+			List<Pair<String,String>> elems = null;
+			if(!result.containsKey(annotationName)){
+				elems = new ArrayList<Pair<String,String>>();
+				result.put(annotationName, elems);
+			}else
+				elems = result.get(annotationName);
+			for(AnnotationElem ae : a.getElems()){
+				if(ae.getKind() == 's'){
+					AnnotationStringElem ase = (AnnotationStringElem)ae;
+					Pair<String,String> keyValue = new Pair<String,String>(ase.getName(),ase.getValue());
+					elems.add(keyValue);
+				}
+			}
+		}
+		return result;
+	}
 }

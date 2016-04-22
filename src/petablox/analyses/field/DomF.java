@@ -3,13 +3,26 @@ package petablox.analyses.field;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootField;
+import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import petablox.logicblox.LogicBloxAnnotExporter;
 import petablox.program.visitors.IFieldVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.Utils;
+import petablox.util.soot.SootUtilities;
+import petablox.util.tuple.object.Pair;
+import petablox.util.tuple.object.Trio;
 
 /**
  * Domain of fields.
@@ -34,7 +47,8 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
 
     @Override
     public void visit(SootField f) {
-        getOrAdd(f);
+        int indx = getOrAdd(f);
+        parseAnnotations(f, indx);
     }
 
     @Override
@@ -64,5 +78,26 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
         return "sign=\"" + sign +
             "\" file=\"" + file +
             "\" line=\"" + line + "\"";
+    }
+    
+    public void parseAnnotations(SootField f, int indx){
+    	Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
+    	Map<Integer, List<Trio<String, String, String>>> fieldAnnot = LogicBloxAnnotExporter.fieldAnnot;
+    	if(fieldAnnot.containsKey(indx))
+    		return;
+    	List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
+    	for(Tag t : f.getTags()){
+    		if(t instanceof VisibilityAnnotationTag){
+    			Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
+    			for(String annotName : parsed.keySet()){
+    				annotationName.add(annotName);
+    				List<Pair<String,String>> keyValues = parsed.get(annotName);
+    				for(Pair<String,String> p : keyValues){
+    					annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
+    				}
+    			}
+    		}
+    	}
+    	fieldAnnot.put(indx, annots);
     }
 }
