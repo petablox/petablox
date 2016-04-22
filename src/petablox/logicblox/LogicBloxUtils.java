@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import petablox.project.PetabloxException;
@@ -35,19 +36,14 @@ public class LogicBloxUtils {
     private static boolean domsPres = false;
     private static HashMap<String,Integer> domNdxMap = null;
     private static HashMap<String,Integer> newDomNdxMap = null;
-    private static ArraySet<String> domASet = null;
-    private static ArraySet<String> tagASet = null;  
-    
-    public static String DOMS = "Doms";
-	public static String TAGS = "Tags";
-	public static String DOM_RANGES = "domRanges";
-	public static String DOM_TO_TAG_SUFFIX = "ToTag";
-	public static String TAG_TO_PGM = "TagToPgm";
-	public static String SUB_TAGS = "subTags";
+    private static ArraySet<String> domASet = new ArraySet<String>();
+    private static ArraySet<String> tagASet = new ArraySet<String>();  
+    private static ArraySet<String> annotASet = new ArraySet<String>();
 	
 	public static HashMap<String, HashMap<String, ArrayList<Pair<Integer, Integer>>>> domRanges =
 			      new HashMap<String, HashMap<String, ArrayList<Pair<Integer, Integer>>>>();
 	public static HashMap<String, String> subTags = new HashMap<String, String>();
+	public static HashSet<String> annotRelsPres = new HashSet<String>();
     
     static {
     	assert alphabet.length == 64 : "Alphabet is not 64 characters long.";
@@ -79,6 +75,18 @@ public class LogicBloxUtils {
     
     public static boolean tagContains(String s) {
     	return tagASet.contains(s);
+    }
+    
+    public static ArraySet<String> getAnnotASet() {
+    	return annotASet;
+    }
+    
+    public static boolean addToAnnotASet(String s) {
+    	return annotASet.add(s);
+    }
+    
+    public static boolean annotContains(String s) {
+    	return annotASet.contains(s);
     }
     
     public static void readDomIndexFile() {
@@ -182,8 +190,6 @@ public class LogicBloxUtils {
     public static boolean existsWorkspace (String ws) {
         domsPres = false;
         domNdxMap = new HashMap<String,Integer>();
-        domASet = new ArraySet<String>();
-		tagASet = new ArraySet<String>();
     	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithFailOnError(
 	            Config.logicbloxCommand,
 	            "workspaces"
@@ -191,10 +197,7 @@ public class LogicBloxUtils {
 		if (result.getOutput().indexOf(ws + "\n") >= 0) {
 			domsPres = true;
 			readDomIndexFile();  
-			LogicBloxImporter.loadDomain(DOMS, domASet);
-			LogicBloxImporter.loadDomain(TAGS, tagASet);
-			LogicBloxImporter.loadSubTagRelation();
-			LogicBloxImporter.loadDomRangeRelation();
+			LogicBloxImporter.loadDomainsAndRelations(domASet, tagASet, annotASet);
 		} 
 		return domsPres;
     }
@@ -211,6 +214,9 @@ public class LogicBloxUtils {
 	    	lbe.saveDomRangeRelation();
 	    	lbe.saveSubTagRelation();
 	    	lbe.saveTagToPgmRelation();
+	    	LogicBloxAnnotExporter lbae = new LogicBloxAnnotExporter();
+	    	lbae.saveAnnotationNameDomain();
+	    	lbae.saveAnnotRelations();
     	}
     }
     

@@ -160,7 +160,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
 	            Config.logicbloxCommand,
 	            "print",
 	            Config.logicbloxWorkspace,
-	            LogicBloxUtils.DOM_RANGES
+	            DOM_RANGES
 	        );
     	if (result.getExitCode() != 0) Messages.fatal(INVALID_MULTIPGM_MISSING2);
 		String op = result.getOutput();
@@ -192,7 +192,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
 	            Config.logicbloxCommand,
 	            "print",
 	            Config.logicbloxWorkspace,
-	            LogicBloxUtils.SUB_TAGS
+	            SUB_TAGS
 	        );
     	if (result.getExitCode() != 0) return;
 		String op = result.getOutput();
@@ -203,5 +203,28 @@ public class LogicBloxImporter extends LogicBloxIOBase {
 			String childTag = tagASet.get(Integer.parseInt(parts.get(3)));
 			LogicBloxUtils.subTags.put(tagName, childTag);		
 		}
+    }
+    
+    private static void checkAnnotRel(String relName) {
+    	ProcessExecutor.Result result = OutDirUtils.executeCaptureWithWarnOnError(
+	            Config.logicbloxCommand, "print", Config.logicbloxWorkspace, relName);
+    	if (result.getExitCode() == 0)
+    		LogicBloxUtils.annotRelsPres.add(relName);
+    }
+    
+    public static void checkAnnotRelations() {
+    	checkAnnotRel(FIELD_ANNOT);
+    	checkAnnotRel(M_PARAM_ANNOT);
+    	checkAnnotRel(M_RET_ANNOT);
+    	checkAnnotRel(PGM_PT_ANNOT);
+    }
+    
+    public static void loadDomainsAndRelations(ArraySet<String>domASet, ArraySet<String>tagASet, ArraySet<String>annotASet) {
+    	loadDomain(DOMS, domASet);
+		loadDomain(TAGS, tagASet);
+		loadDomain(ANNOT_NAME, annotASet);
+		loadSubTagRelation();
+		loadDomRangeRelation();
+		//checkAnnotRelations();
     }
 }
