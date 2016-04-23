@@ -263,6 +263,9 @@ public class DlogAnalysis extends JavaAnalysis {
 		}
 		HashSet<String> ignoredDoms = new HashSet<String>();
 		ignoredDoms.add("Tags");
+		ignoredDoms.add("string");
+		ignoredDoms.add("int");
+		ignoredDoms.add("AnnotationName");
 		HashMap<String,Integer> domNdxMap = LogicBloxUtils.getDomNdxMap();
 		HashMap<String,Integer> newDomNdxMap = LogicBloxExporter.getNewDomNdxMap();
 		Map<String,RelSign> consumedRels = metadata.getConsumedRels();
@@ -314,6 +317,7 @@ public class DlogAnalysis extends JavaAnalysis {
 					    	 
 					    	 pw.println(unionDomSB.toString());
 					     }
+					     pw.println();
 					}
 					// Generate union constraints
 					for(String name : consumedRels.keySet()){
@@ -322,6 +326,7 @@ public class DlogAnalysis extends JavaAnalysis {
 						List<String> cons = buildUnionCons(name, r, tags,ignoredDoms);
 						for(String c : cons){
 							pw.println(c);
+							pw.println();
 						}
 					}
 				}
@@ -440,6 +445,7 @@ public class DlogAnalysis extends JavaAnalysis {
 		StringBuilder relDefRsb = new StringBuilder();
 		StringBuilder relRuleRsbCons = new StringBuilder();
 		StringBuilder relRuleRsbUnion = new StringBuilder();
+		boolean annotRel = relName.contains("Annot");
 		relDefLsb.append(outFormat);
 		relDefLsb.append(relName);
 		relDefLsb.append('(');
@@ -468,20 +474,35 @@ public class DlogAnalysis extends JavaAnalysis {
 			
 			if(ignoredDoms.contains(dom))
 				relDefRsb.append(dom);
-			else
-				relDefRsb.append(outFormat+dom);
+			else{
+				if(!annotRel)
+					relDefRsb.append(outFormat+dom);
+				else
+					relDefRsb.append("int");
+			}
 			relDefRsb.append('(');
-			relDefRsb.append(domVar);
+			relDefRsb.append(outFormat+domVar);
 			relDefRsb.append(')');
 			
 			if(ignoredDoms.contains(dom)){
 				relRuleRsbCons.append(dom).append("("+outFormat+domVar+"), ");
 				relRuleRsbCons.append(dom).append("("+inFormat+domVar+"), ");
-				relRuleRsbCons.append(dom).append("_index["+outFormat+domVar+"] = "+dom+"_index["+inFormat+domVar+"]");
+				if(!(dom.equals("string")|| dom.equals("int")))
+					relRuleRsbCons.append(dom).append("_index["+outFormat+domVar+"] = "+dom+"_index["+inFormat+domVar+"]");
+				else
+					relRuleRsbCons.append(outFormat+domVar+" = "+inFormat+domVar);
 			}else{
-				relRuleRsbCons.append(outFormat+dom).append("("+outFormat+domVar+"), ");
-				relRuleRsbCons.append(inFormat+dom).append("("+inFormat+domVar+"), ");
-				relRuleRsbCons.append(outFormat+dom).append("_index["+outFormat+domVar+"] = "+inFormat+dom+"_index["+inFormat+domVar+"]");
+				if(!annotRel){
+					relRuleRsbCons.append(outFormat+dom).append("("+outFormat+domVar+"), ");
+					relRuleRsbCons.append(inFormat+dom).append("("+inFormat+domVar+"), ");
+				}
+				if(!(dom.equals("string")|| dom.equals("int"))){
+					if(!annotRel)
+						relRuleRsbCons.append(outFormat+dom).append("_index["+outFormat+domVar+"] = "+inFormat+dom+"_index["+inFormat+domVar+"]");
+					else
+						relRuleRsbCons.append(outFormat+domVar+" = "+inFormat+domVar);
+				}else
+					relRuleRsbCons.append(outFormat+domVar+" = "+inFormat+domVar);
 			}
 			relRuleRsbUnion.append(inFormat+domVar);
 			

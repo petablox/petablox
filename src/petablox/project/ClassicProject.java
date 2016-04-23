@@ -411,7 +411,8 @@ public class ClassicProject extends Project {
                     continue;
                 }
             }
-            if(!trgt.toString().contains("Tag")){
+            if(!(trgt.toString().contains("Tag")|| trgt.toString().contains("Annot") 
+            		|| trgt.toString().contains("string") || trgt.toString().contains("int"))){
             	ITask task2 = getTaskProducingTrgt(trgt);
             	runTask(task2);
             }
