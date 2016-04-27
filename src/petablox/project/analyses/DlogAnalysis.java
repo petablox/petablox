@@ -371,6 +371,9 @@ public class DlogAnalysis extends JavaAnalysis {
 							int _indx = temp.indexOf('_');
 							if(_indx == -1){
 								sb.append(" "+temp);
+								if(i!=(tokens.size()-1)){
+									sb.append(",");
+								}
 								continue;
 							}
 							String domName = temp.substring(0, _indx);
