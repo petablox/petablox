@@ -168,6 +168,7 @@ public class Config {
     public final static String mode = System.getProperty("petablox.multipgm.mode", "none" );
     public static String tagList = System.getProperty("petablox.multipgm.taglist", "");
     public static String multiTag = System.getProperty("petablox.multipgm.tagname", "");
+    public static boolean generateOnly = Utils.buildBoolProperty("petablox.multipgm.generateOnly", false);
     public final static boolean crossPgmAnalysis = Utils.buildBoolProperty("petablox.multipgm.crosspgm.analysis", false);
     
     public static boolean multiPgmMode = false;

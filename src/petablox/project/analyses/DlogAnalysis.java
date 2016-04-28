@@ -571,19 +571,21 @@ public class DlogAnalysis extends JavaAnalysis {
      */
     public void run() {
     	multiPrgmDlogGen();
-        switch (datalogEngine) {
-        case BDDBDDB:
-            Solver.run(metadata.getFileName());
-            break;
-        case LOGICBLOX3:
-        case LOGICBLOX4:
-            if (Config.verbose >= 1)
-                Messages.log("Adding block from: %s", metadata.getFileName());
-            LogicBloxUtils.addBlock(new File(metadata.getFileName()));
-            break;
-        default:
-            throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
-        }
+    	if(!Config.multiPgmMode || (Config.multiPgmMode && !Config.generateOnly)){
+    		switch (datalogEngine) {
+    		case BDDBDDB:
+    			Solver.run(metadata.getFileName());
+    			break;
+    		case LOGICBLOX3:
+    		case LOGICBLOX4:
+    			if (Config.verbose >= 1)
+    				Messages.log("Adding block from: %s", metadata.getFileName());
+    			LogicBloxUtils.addBlock(new File(metadata.getFileName()));
+    			break;
+    		default:
+    			throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
+    		}
+    	}
     }
 
     public void run(Object ctrl, IStepCollection sc) {
