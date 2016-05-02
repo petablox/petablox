@@ -251,9 +251,13 @@ public class DlogAnalysis extends JavaAnalysis {
 	private void multiPrgmDlogGenLogic(String origFile, String newFile){
 		// List of tags to be used in the dlog
 		// 0th tag is always the tag for the output
-		List<String> tags = new ArrayList<String>();
-		tags.add(Config.multiTag);
 		boolean analyze = Config.analyze;
+		List<String> tags = new ArrayList<String>();
+		if(analyze && Config.tempOutRels)
+			tags.add("_"+Config.multiTag);
+		else
+			tags.add(Config.multiTag);
+		
 		if(analyze){
 			//Analyze mode, add the tags to the list
 			String[] list = Config.tagList.split(",");
