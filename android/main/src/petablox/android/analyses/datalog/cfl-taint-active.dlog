@@ -1,0 +1,204 @@
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-taint-active-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "U.dom"
+.include "F.dom"
+.include "I.dom"
+.include "Lbl.dom"
+
+.bddvarorder Z0xZ1_M0_Lbl0xLbl1_C0xC1xC2_V0xV1_U0xU1_F0_I0
+
+###################
+# INPUT: TAINT RELATIONS
+###################
+
+PtFull(c:C,v:V,o:C)    input
+FptFull(o1:C,f:F,o2:C) input
+
+Store(v:V,f:F,u:V) input           # v.f = u
+
+LoadPrimCtxt(c:C,v:U,u:V,f:F) input
+LoadStatPrimCtxt(c:C,v:U,f:F) input
+StorePrimCtxt(c:C,v:V,f:F,u:U) input
+StoreStatPrimCtxt(c:C,f:F,v:U) input
+
+AssignPrimCtxt(c:C,v:U,u:U) input
+AssignPrimCCtxt(c:C,v:U,d:C,u:U) input
+
+# Src label
+Src2Label(cl:Lbl) input
+
+# Sink label
+Sink2Label(cl:Lbl) input
+
+# Label label
+Label2RefT(c:C,cl:Lbl,v:V) input
+Label2PrimT(c:C,cl:Lbl,v:U) input
+
+# Sink full label (out labels)
+SinkF2RefF(c:C,cl:Lbl,v:V) input
+SinkF2PrimF(c:C,cl:Lbl,v:U) input
+
+# Transfer
+Ref2RefTFull(c:C,v:V,u:V) input
+Ref2PrimTFull(c:C,v:V,u:U) input
+Prim2RefTFull(c:C,v:U,u:V) input
+Prim2PrimTFull(c:C,v:U,u:U) input
+
+# Flow (!)
+Ref2RefF(c:C,v:V,u:V) input
+Ref2PrimF(c:C,v:V,u:U) input
+Prim2RefF(c:C,v:U,u:V) input
+Prim2PrimF(c:C,v:U,u:U) input
+
+Obj2RefT(c:C,o:C,v:V) input
+Obj2PrimT(c:C,o:C,v:U) input
+
+Label2ObjT(cl:Lbl,o:C) input
+
+# Sink_full-obj flow
+SinkF2Obj(cl:Lbl,o:C) input
+
+# Sink_full-prim flow
+SinkF2Prim(c:C,cl:Lbl,v:U) input
+
+# Src-sink flow
+Src2Sink(src:Lbl,sink:Lbl) input
+
+# Label-obj flow
+Label2Obj(cl:Lbl,o:C) input
+Label2ObjX(cl:Lbl,o2:C) input
+
+# Label-prim flow
+Label2Prim(c:C,cl:Lbl,v:U) input
+Label2PrimFld(cl:Lbl,o:C,f:F) input
+Label2PrimFldStat(cl:Lbl,f:F) input
+
+###################
+# INPUT: PARTIAL PT RELATIONS
+###################
+
+PtPartial(c:C,v:V,o:C)    input
+FptPartial(o1:C,f:F,o2:C) input
+
+###################
+# OUTPUT
+###################
+
+ActiveObjTaint(cl:Lbl,o:C) output
+ActivePrimTaint(cl:Lbl,c:C,v:U) output
+ActiveRefTaint(cl:Lbl,c:C,v:V) output
+ActivePrimFldStatTaint(cl:Lbl,f:F) output
+
+###################
+# Src2Sink
+###################
+
+#Src2Sink(src,sink) :- Src2Label(src), Label2Obj(src,o), SinkF2Obj(sink,o). # SinkF2Obj is backwards
+ActiveObjTaint(cl,o) :- Src2Label(cl), Label2Obj(cl,o), SinkF2Obj(_,o).
+ActiveObjTaint(cl2,o) :- Src2Label(cl1), Label2Obj(cl1,o), SinkF2Obj(cl2,o).
+#Src2Sink(src,sink) :- Src2Label(src), Label2Prim(c,src,v), SinkF2Prim(c,sink,v). # SinkF2Prim is backwards
+ActivePrimTaint(cl,c,v) :- Src2Label(cl), Label2Prim(c,cl,v), SinkF2Prim(c,_,v).
+ActivePrimTaint(cl2,c,v) :- Src2Label(cl1), Label2Prim(c,cl1,v), SinkF2Prim(c,cl2,v).
+#Src2Sink(src,sink) :- Src2Label(src), Label2PrimFld(src,o,_), SinkF2Obj(sink,o). # SinkF2Obj is backwards
+ActiveObjTaint(cl,o) :- Src2Label(cl), Label2PrimFld(cl,o,_), SinkF2Obj(_,o).
+ActiveObjTaint(cl2,o) :- Src2Label(cl1), Label2PrimFld(cl1,o,_), SinkF2Obj(cl2,o).
+
+###################
+# Label2Obj, Label2ObjX
+###################
+
+#Label2ObjX(cl,o2) :- Label2Obj(cl,o1), Obj2RefT(c,o1,v), PtFull(c,v,o2).
+ActiveObjTaint(cl,o1) :- ActiveObjTaint(cl,o2), PtFull(c,v,o2), Obj2RefT(c,o1,v), Label2Obj(cl,o1).
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o2), PtFull(c,v,o2), Obj2RefT(c,o1,v), Label2Obj(cl,o1).
+#Label2ObjX(cl,o)  :- Label2Prim(c,cl,v), Prim2RefTFull(c,v,u), PtFull(c,u,o).
+ActiveRefTaint(cl,c,u) :- ActiveObjTaint(cl,o), PtFull(c,u,o), Prim2RefTFull(c,v,u), Label2Prim(c,cl,v).
+ActivePrimTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,u,o), Prim2RefTFull(c,v,u), Label2Prim(c,cl,v).
+#Label2ObjX(cl,o2) :- Label2PrimFld(cl,o1,0), Obj2RefT(c,o1,v), PtFull(c,v,o2).
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o2), PtFull(c,v,o2), Obj2RefT(c,o1,v), Label2PrimFld(cl,o1,0).
+ActiveObjTaint(cl,o1) :- ActiveObjTaint(cl,o2), PtFull(c,v,o2), Obj2RefT(c,o1,v), Label2PrimFld(cl,o1,0).
+#Label2ObjX(cl,o2) :- Label2ObjX(cl,o1), FptFull(o1,0,o2).
+ActiveObjTaint(cl,o1) :- ActiveObjTaint(cl,o2), FptFull(o1,0,o2), Label2ObjX(cl,o1).
+
+###################
+# Label2Prim, Label2PrimFld
+###################
+
+#Label2Prim(c,cl,u) :- Label2Prim(c,cl,v), AssignPrimCtxt(c,u,v). # AssignPrim is flipped
+ActivePrimTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), AssignPrimCtxt(c,u,v), Label2Prim(c,cl,v).
+#Label2Prim(d,cl,u) :- Label2Prim(c,cl,v), AssignPrimCCtxt(d,u,c,v). # AssignPrimCtxt is flipped
+ActivePrimTaint(cl,c,v) :- ActivePrimTaint(cl,d,u), AssignPrimCCtxt(d,u,c,v), Label2Prim(c,cl,v).
+
+#Label2Prim(c,cl,v) :- Label2Obj(cl,o), Obj2PrimT(c,o,v).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,v), Obj2PrimT(c,o,v), Label2Obj(cl,o).
+#Label2Prim(c,cl,u) :- Label2Prim(c,cl,v), Prim2PrimTFull(c,v,u).
+ActivePrimTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), Prim2PrimTFull(c,v,u), Label2Prim(c,cl,v).
+
+#Label2Prim(c,cl,u) :- Label2ObjT(cl,o), PtFull(c,v,o), LoadPrimCtxt(c,u,v,_). # pt is backwards, LoadPrimCtxt is flipped
+ActiveRefTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,_), PtFull(c,v,o), Label2ObjT(cl,o).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,_), PtFull(c,v,o), Label2ObjT(cl,o).
+#Label2Prim(c,cl,u) :- Label2ObjX(cl,o), PtFull(c,v,o), LoadPrimCtxt(c,u,v,0). # pt is backwards, LoadPrimCtxt is flipped
+ActiveRefTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,0), PtFull(c,v,o), Label2ObjX(cl,o).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,0), PtFull(c,v,o), Label2ObjX(cl,o).
+#Label2Prim(c,cl,v) :- Label2PrimFld(cl,o,0), Obj2PrimT(c,o,v).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,v), Obj2PrimT(c,o,v), Label2PrimFld(cl,o,0).
+
+#Label2Prim(c,cl,u) :- Label2PrimFld(cl,o,f), PtFull(c,v,o), LoadPrimCtxt(c,u,v,f). # pt is backwards, LoadPrim is flipped
+ActiveRefTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,f), PtFull(c,v,o), Label2PrimFld(cl,o,f).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,u), LoadPrimCtxt(c,u,v,f), PtFull(c,v,o), Label2PrimFld(cl,o,f).
+#Label2Prim(c,cl,u) :- Label2PrimFldStat(cl,f), LoadStatPrimCtxt(c,u,f). # LoadStatPrimCtxt is flipped
+ActivePrimFldStatTaint(cl,f) :- ActivePrimTaint(cl,c,u), LoadStatPrimCtxt(c,u,f), Label2PrimFldStat(cl,f).
+
+#Label2PrimFld(cl,o,f)   :- Label2Prim(c,cl,v), StorePrimCtxt(c,u,f,v), PtFull(c,u,o). # StorePrimCtxt is flipped
+ActiveRefTaint(cl,c,u) :- ActiveObjTaint(cl,o), PtFull(c,u,o), StorePrimCtxt(c,u,_,v), Label2Prim(c,cl,v).
+ActivePrimTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,u,o), StorePrimCtxt(c,u,_,v), Label2Prim(c,cl,v).
+#Label2PrimFldStat(cl,f) :- Label2Prim(c,cl,v), StoreStatPrimCtxt(c,f,v). # StoreStatPrimCtxt is flipped
+ActivePrimTaint(cl,c,v) :- ActivePrimFldStatTaint(cl,f), StoreStatPrimCtxt(c,f,v), Label2Prim(c,cl,v).
+
+###################
+# SinkF
+###################
+
+#SinkF2Obj(cl,o)  :- SinkF2RefF(c,cl,v), PtFull(c,v,o).
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,v,o), SinkF2RefF(c,cl,v).
+#SinkF2Obj(cl,o2) :- Sink2Label(cl), Label2Obj(cl,o1), PtFull(c,v,o1), Ref2RefF(c,u,v), PtFull(c,u,o2). # first pt, Ref2RefF are backwards
+ActiveRefTaint(cl,c,u) :- ActiveObjTaint(cl,o2), PtFull(c,u,o2), Ref2RefF(c,u,v), PtFull(c,v,o1), Label2Obj(cl,o1), Sink2Label(cl).
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o2), PtFull(c,u,o2), Ref2RefF(c,u,v), PtFull(c,v,o1), Label2Obj(cl,o1), Sink2Label(cl).
+ActiveObjTaint(cl,o1) :- ActiveObjTaint(cl,o2), PtFull(c,u,o2), Ref2RefF(c,u,v), PtFull(c,v,o1), Label2Obj(cl,o1), Sink2Label(cl).
+
+#SinkF2Obj(cl,o)  :- Sink2Label(cl), Label2Prim(c,cl,v), Ref2PrimF(c,u,v), PtFull(c,u,o). # Ref2PrimF is backwards
+ActiveRefTaint(cl,c,u) :- ActiveObjTaint(cl,o), PtFull(c,u,o), Ref2PrimF(c,u,v), Label2Prim(c,cl,v), Sink2Label(cl).
+ActivePrimTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,u,o), Ref2PrimF(c,u,v), Label2Prim(c,cl,v), Sink2Label(cl).
+#SinkF2Obj(cl,o2) :- SinkF2Obj(cl,o1), FptFull(o1,_,o2).
+ActiveObjTaint(cl,o1) :- ActiveObjTaint(cl,o2), FptFull(o1,_,o2), SinkF2Obj(cl,o1).
+
+#SinkF2Prim(c,cl,u) :- Sink2Label(cl), Label2Obj(cl,o), PtFull(c,v,o), Prim2RefF(c,u,v). # pt, Prim2RefF are backwards
+ActiveRefTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), Prim2RefF(c,u,v), PtFull(c,v,o), Label2Obj(cl,o), Sink2Label(cl).
+ActiveObjTaint(cl,o) :- ActivePrimTaint(cl,c,u), Prim2RefF(c,u,v), PtFull(c,v,o), Label2Obj(cl,o), Sink2Label(cl).
+#SinkF2Prim(c,cl,u) :- Sink2Label(cl), Label2Prim(c,cl,v), Prim2PrimF(c,u,v). # Prim2PrimF is backwards
+ActivePrimTaint(cl,c,v) :- ActivePrimTaint(cl,c,u), Prim2PrimF(c,u,v), Label2Prim(c,cl,v), Sink2Label(cl).
+
+###################
+# Object annotations
+###################
+
+#Obj2RefT(c,o,u)   :- PtFull(c,v,o), Ref2RefTFull(c,v,u). # pt is backwards
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,v,o), Ref2RefTFull(c,v,u), ActiveRefTaint(cl,c,u).
+#Obj2PrimT(c,o,u)  :- PtFull(c,v,o), Ref2PrimTFull(c,v,u). # pt is backwards
+ActiveRefTaint(cl,c,v) :- ActiveObjTaint(cl,o), PtFull(c,v,o), Ref2PrimTFull(c,v,u), ActivePrimTaint(cl,c,u).
+#Obj2RefT(c,o1,v)  :- FptFull(o2,0,o1), Obj2RefT(c,o2,v). # fpt is backwards
+ActiveObjTaint(cl,o2) :- ActiveObjTaint(cl,o1), FptFull(o2,0,o1), Obj2RefT(c,o2,v), ActiveRefTaint(cl,c,v).
+#Obj2PrimT(c,o1,v) :- FptFull(o2,0,o1), Obj2PrimT(c,o2,v). # fpt is backwards
+ActiveObjTaint(cl,o2) :- ActiveObjTaint(cl,o1), FptFull(o2,0,o1), Obj2PrimT(c,o2,v), ActivePrimTaint(cl,c,v).
+
+#Label2ObjT(cl,o)  :- Label2RefT(c,cl,v), PtFull(c,v,o).
+ActiveRefTaint(cl,c,v) :- Label2RefT(c,cl,v), PtFull(c,v,o), ActiveObjTaint(cl,o).
+#Label2ObjT(cl,o2) :- Label2ObjT(cl,o1), PtFull(o1,_,o2).
+ActiveObjTaint(cl,o1) :- Label2ObjT(cl,o1), PtFull(o1,_,o2), ActiveObjTaint(cl,o2).

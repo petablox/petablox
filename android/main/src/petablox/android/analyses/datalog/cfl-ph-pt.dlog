@@ -1,0 +1,96 @@
+##################
+# Points-to analysis with phantom objects for stub returns
+##################
+
+# name=cfl-ph-pt-dlog
+
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder M0_C0xC1xC2_V0xV1_H0xF0_I0
+
+# TODO: handle type filters for phantom pts relation
+
+## INPUT RELATIONS =====================================================
+
+Assign(v:V,u:V)     input   # v = u
+Alloc(v:V,h:H)      input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)   input   # y = x.f
+Store(u:V,f:F,v:V)  input   # u.f = v
+LoadStat(y:V,f:F)   input   # y = f
+StoreStat(f:F,v:V)  input   # f = v
+param(u:V,v:V,i:I)  input   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+typeFilter(v:V,o:C) input   # type wise, v can point-to o
+
+MV(m:M,v:V) input         # v is a variable in method m
+CM(c:C,m:M) input         # c is a context of method m
+CH(o:C,h:H) input         # context’ified abstract location o corresponds to new stmt h
+CI(c:C,i:I) input         # stmt i is the top element in the k-limited callstack c
+CC(c:C,d:C) input         # there exists i s.t. c++[i] = d
+
+# Phantom inputs
+phAlloc(v:V,c:C) input # v is the return of some stub method
+
+## INTERMEDIATE RELATIONS =====================================================
+
+# Points-to analysis facts
+fptStat(f:F,o:C)
+
+# Phantom facts
+fphptStat(f:F,w:V,cw:C)
+
+## OUTPUT RELATIONS ===========================================================
+
+pt(c:C,v:V,o:C)    output # (c,v) points-to o
+fpt(o1:C,f:F,o2:C) output
+
+# Phantom flows
+phpt(c:C,v:V,w:V,cw:C) output
+
+# phantom -> phantom
+fphptph(w1:V,cw1:C,f:F,w2:V,cw2:C) output
+fptph(o1:C,f:F,w2:V,cw2:C) output
+fphpt(w1:V,cw1:C,f:F,o2:C) output
+
+## RULES ======================================================================
+
+# Points-to information
+
+pt(c,v,o) :- Alloc(v,h), MV(m,v), CM(c,m), CC(c,o), CH(o,h).
+pt(c,v,o) :- pt(c,u,o), Assign(v,u), typeFilter(v,o).
+pt(d,u,o) :- pt(c,v,o), param(u,v,i), typeFilter(u,o), CC(c,d), CI(d,i).
+pt(c,u,o) :- pt(d,v,o), return(u,v,i), CI(d,i), CC(c,d), typeFilter(u,o).
+
+fpt(o1,f,o2) :- pt(c,v,o2), Store(u,f,v), pt(c,u,o1).
+pt(c,y,o2) :- pt(c,x,o1), Load(y,x,f), fpt(o1,f,o2).
+
+fptStat(f,o) :- pt(_,v,o), StoreStat(f,v).
+pt(c,y,o) :- LoadStat(y,f), fptStat(f,o), MV(m,y), CM(c,m).
+
+# Phantom flows
+
+phpt(c,v,u,cu) :- phAlloc(v,c), u = v, cu = c.
+#phpt(c,v,w,cw) :- phpt(c,u,w,cw), Assign(v,u), phTypeFilter(v,w).
+phpt(c,v,w,cw) :- phpt(c,u,w,cw), Assign(v,u).
+#phpt(d,u,w,cw) :- phpt(c,v,w,cw), param(u,v,i), typeFilter(u,w), CC(c,d), CI(d,i).
+phpt(d,u,w,cw) :- phpt(c,v,w,cw), param(u,v,i), CC(c,d), CI(d,i).
+#phpt(c,u,w,cw) :- phpt(d,v,w,cw), return(u,v,i), CI(d,i), CC(c,d), phTypeFilter(u,w).
+phpt(c,u,w,cw) :- phpt(d,v,w,cw), return(u,v,i), CI(d,i), CC(c,d).
+
+fphptph(w1,cw1,f,w2,cw2) :- phpt(c,v,w2,cw2), Store(u,f,v), phpt(c,u,w1,cw1).
+phpt(c,y,w2,cw2) :- phpt(c,x,w1,cw1), Load(y,x,f), fphptph(w1,cw1,f,w2,cw2).
+
+fptph(o1,f,w2,cw2) :- phpt(c,v,w2,cw2), Store(u,f,v), pt(c,u,o1).
+phpt(c,y,w2,cw2) :- pt(c,x,o1), Load(y,x,f), fptph(o1,f,w2,cw2).
+
+fphpt(w1,cw1,f,o2) :- pt(c,v,o2), Store(u,f,v), phpt(c,u,w1,cw1).
+pt(c,y,o2) :- phpt(c,x,w1,cw1), Load(y,x,f), fphpt(w1,cw1,f,o2).
+
+# static flow
+fphptStat(f,w,cw)  :- phpt(_,v,w,cw), StoreStat(f,v).
+phpt(c,y,w,cw) :- LoadStat(y,f), fphptStat(f,w,cw), MV(m,y), CM(c,m).

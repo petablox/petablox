@@ -1,0 +1,116 @@
+##################
+# CFL Stub Annotations
+##################
+
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-stub-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "U.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder Z0xZ1_M0_C0xC1_V0xV1_U0xU1_F0_I0
+
+###################
+# INPUT: ANNOTATION INFORMATION
+###################
+
+MmethArg(m:M,z:Z,v:V)     input
+MmethRet(m:M,z:Z,v:V1)     input
+MmethPrimArg(m:M,z:Z,u:U) input
+MmethPrimRet(m:M,z:Z,u:U) input
+
+CM(c:C,m:M) input # c is a context of method m
+Stub(m:M) input
+
+###################
+# INPUT: ANNOTATIONS
+###################
+
+Ref2RefT(c:C,v:V,u:V) input
+Ref2PrimT(c:C,v:V,u:U) input
+Prim2RefT(c:C,v:U,u:V) input
+Prim2PrimT(c:C,v:U,u:U) input
+
+###################
+# OUTPUT: STUB ANNOTATIONS
+###################
+
+# stub annotations
+Ref2RefArgTStub(c:C,v:V,u:V,m:M,z1:Z,z2:Z) output
+Ref2RefRetTStub(c:C,v:V,u:V,m:M,z:Z) output
+
+Prim2RefArgTStub(c:C,v:U,u:V,m:M,z1:Z,z2:Z) output
+Prim2RefRetTStub(c:C,v:U,u:V,m:M,z:Z) output
+
+Ref2PrimTStub(c:C,v:V,u:U,m:M,z:Z) output
+
+Prim2PrimTStub(c:C,v:U,u:U,m:M,z:Z) output
+
+###################
+# OUTPUT: FULL ANNOTATIONS
+###################
+
+Ref2RefTFull(c:C,v:V,u:V) output
+Ref2PrimTFull(c:C,v:V,u:U) output
+Prim2RefTFull(c:C,v:U,u:V) output
+Prim2PrimTFull(c:C,v:U,u:U) output
+
+##################
+# RULES: STUB ANNOTATIONS
+##################
+
+# stub annotations
+Ref2RefArgTStub(c,v,u,m,z1,z2) :- Stub(m), MmethArg(m,z1,v), MmethArg(m,z2,u), z1 != z2, CM(c,m).
+Ref2RefRetTStub(c,v,u,m,z) :- Stub(m), MmethArg(m,z,v), MmethRet(m,_,u), CM(c,m).
+
+Prim2RefArgTStub(c,v,u,m,z1,z2) :- Stub(m), MmethPrimArg(m,z1,v), MmethArg(m,z2,u), CM(c,m).
+Prim2RefRetTStub(c,v,u,m,z) :- Stub(m), MmethPrimArg(m,z,v), MmethRet(m,_,u), CM(c,m).
+
+Ref2PrimTStub(c,v,u,m,z) :- Stub(m), MmethArg(m,z,v), MmethPrimRet(m,_,u), CM(c,m).
+
+Prim2PrimTStub(c,v,u,m,z) :- Stub(m), MmethPrimArg(m,z,v), MmethPrimRet(m,_,u), CM(c,m).
+
+##################
+# RULES: FULL ANNOTATIONS
+##################
+
+Ref2RefTFull(c,v,u) :- Ref2RefT(c,v,u).
+Prim2RefTFull(c,v,u) :- Prim2RefT(c,v,u).
+Ref2PrimTFull(c,v,u) :- Ref2PrimT(c,v,u).
+Prim2PrimTFull(c,v,u) :- Prim2PrimT(c,v,u).
+
+##################
+# RULES: FULL STUB ANNOTATIONS
+##################
+
+Ref2RefTFull(c,v,u) :- Ref2RefArgTStub(c,v,u,_,_,_).
+Ref2RefTFull(c,v,u) :- Ref2RefRetTStub(c,v,u,_,_).
+
+Prim2RefTFull(c,v,u) :- Prim2RefArgTStub(c,v,u,_,_,_).
+Prim2RefTFull(c,v,u) :- Prim2RefRetTStub(c,v,u,_,_).
+
+Ref2PrimTFull(c,v,u) :- Ref2PrimTStub(c,v,u,_,_).
+
+Prim2PrimTFull(c,v,u) :- Prim2PrimTStub(c,v,u,_,_).
+
+##################
+# RULES: TAINTED STUB INPUTS
+##################
+
+#Ref2RefTFullT(v:V,w:V) output
+#Prim2RefTFullT(v:U,w:V) output
+#Ref2PrimTFullT(v:V,w:U) output
+#Prim2PrimTFullT(v:U,w:U) output
+
+#Ref2RefTFullT(v,u) :- Ref2RefTFull(_,v,u).
+#Prim2RefTFullT(v,u) :- Prim2RefTFull(_,v,u).
+#Ref2PrimTFullT(v,u) :- Ref2PrimTFull(_,v,u).
+#Prim2PrimTFullT(v,u) :- Prim2PrimTFull(_,v,u).

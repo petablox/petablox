@@ -1,0 +1,2 @@
+mv original_stamp_stubs.txt stamp_stubs.txt
+jar uf ../../../apache-tomcat-6.0.35/webapps/ROOT/android/stamp.android.jar stamp_stubs.txt
