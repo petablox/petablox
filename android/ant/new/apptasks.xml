@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-App">
+  <tstamp>
+    <format property="currenttime" pattern="yyyy.MM.dd_HH.mm.ss_z"/>
+  </tstamp>
+
+  <property name="apilevel" value="20"/>
+  <property name="app" location="${petablox.work.dir}"/>                     //PRT why . is app?
+
+
+  <property name="app.loc" location="${app}"/>
+  <propertyregex property="app.loc.1" input="${app.loc}" regexp="/" replace="_" global="true" />
+
+  <target name="analyze">
+	<if>
+	  <isset property="stamp.out.dir"/>
+	  <then/>
+	  <else>
+		<property name="stamp.out.dir" value="${petablox.out.dir}/stamp"/>
+		<delete dir="${stamp.out.dir}"/>
+		<mkdir dir="${stamp.out.dir}"/>
+	  </else>
+	</if>
+
+    <property name="driver.dir" location="${stamp.out.dir}/stamp-driver"/>
+
+	<if>
+	  <!-- NOTE: same heuristic used in index.jsp! -->
+	  <matches string="${app}" pattern="^.*\.apk$"/>
+      <then>
+		<!-- APK input -->
+		<property name="stamp.input.type" value="apk"/>
+		<property name="apk" value="${app.loc}"/>
+
+		<unjar src="${stamp.out.dir}/temp/bin/api-${apilevel}/stamp.android.jar"               
+			   dest="${stamp.out.dir}">
+		  <patternset>
+			<include name="stamp_annotations.txt"/>
+		  </patternset>
+		</unjar>
+
+		<antcall target="-analyze-apk"/>
+		<!-- Prepare instructions for the web frontend. -->
+		<echo file="${stamp.out.dir}/stamp.properties">rootPath=${stamp.dir}
+appPath=${app.dir}
+outPath=${stamp.out.dir}                                  
+srcPath=${petablox.main.dir}
+		</echo>
+
+		<!-- Launch browser if appropriate. -->
+		<if>
+		  <equals arg1="${stamp.show.results}" arg2="true"/>
+		  <then>
+			<open-browser url="stamp/html/index.jsp?propertyfile=${stamp.out.dir}/stamp.properties"/>
+		  </then>
+		</if>
+	  </then>
+
+	  <else>
+		<!-- Souce input -->
+		<property name="stamp.input.type" value="src"/>
+		<antcall target="-analyze-src"/>
+
+		<!-- Launch browser if appropriate. -->
+		<if>
+		  <or>
+			<not><isset property="stamp.show.results"/></not>
+			<equals arg1="${stamp.show.results}" arg2="true" casesensitive="false"/>
+		  </or>
+		  <then>
+			<open-browser url="stamp/html/index.jsp?propertyfile=${stamp.out.dir}/stamp.properties"/>
+		  </then>
+		</if>		
+	  </else>
+	</if>	  
+  </target>
+
+  <target name="-analyze-src"
+		  depends="build">
+	<!--property name="app.dir" location="${app}"/-->                  
+    <!-- Calculate app paths. -->
+    <taskdef name="StampSetup"
+			 classname="petablox.android.StampBuildTask"
+			 classpath="${petablox.main.dir}/petablox.jar"/>                 
+    <StampSetup absoluteAppPath="${app.loc}"
+				stampOutDir="${stamp.out.dir}"
+				annotJar="${stamp.dir}/bin/stamp.annotations.jar"
+				appDirPropName="app.dir"
+				srcPathPropName="stamp.src.path"
+				genPathPropName="stamp.gen.path"
+				classesPathPropName="stamp.classes.path"
+				libJarsPathPropName="stamp.lib.jars"
+				apkPathPropName="stamp.apk.path"/>
+    <echo>stamp.src.path=${stamp.src.path}</echo>
+    <echo>stamp.gen.path=${stamp.gen.path}</echo>
+    <echo>stamp.classes.path=${stamp.classes.path}</echo>
+    <echo>stamp.lib.jars=${stamp.lib.jars}</echo>
+	<echo>stamp.apk.path=${stamp.apk.path}</echo>
+
+	<property name="app.jar" value="${stamp.apk.path}"/>
+
+    <!-- Preprocess. -->               //PRT may want to check stamp.src.path  
+    <java classname="petablox.android.srcmap.Preprocess"
+	  maxmemory="${stamp.maxheap}"
+	  dir="${app.dir}"
+	  fork="true"
+	  failonerror="true">
+      <jvmarg value="-ea"/>
+      <classpath>
+        <pathelement location="${petablox.main.dir}/petablox.jar"/>
+      </classpath>
+      <arg file="${stamp.src.path}"/>                                      
+    </java>
+
+    <!-- Construct source map. -->
+    <!-- Read annotations from source code and store them in stamp_annotations.txt .-->
+	<echo>app.dir=${app.dir}</echo>
+    <java classname="petablox.android.srcmap.Main"
+	  maxmemory="${stamp.maxheap}"
+	  dir="${stamp.out.dir}"
+	  fork="true"
+	  failonerror="true">
+      <jvmarg value="-ea"/>
+      <classpath>
+        <pathelement location="${petablox.main.dir}/petablox.jar"/>
+        <fileset dir="$${stamp.out.dir}/temp/lib/">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+      <arg value="${stamp.src.path}:${stamp.gen.path}"/>
+      <arg value="${stamp.lib.jars}:${stamp.out.dir}/temp/bin/api-${apilevel}/stamp.android.jar"/>
+      <arg value="${stamp.out.dir}/srcmap"/>
+      <arg value="${stamp.out.dir}/temp/models/api-${apilevel}"/>
+    </java>
+	
+	<property name="apk" value="${stamp.apk.path}"/>
+	<antcall target="-analyze-apk"/>
+ 
+	<!-- Prepare instructions for the web frontend. -->
+<!-- 	 PRT web porting later
+<echo file="${stamp.out.dir}/stamp.properties">rootPath=${stamp.dir}
+appPath=${app.dir}
+outPath=${stamp.out.dir}
+srcPath=${stamp.src.path}:${stamp.gen.path}:${driver.dir}
+libPath=${stamp.lib.jars}
+stamp.droidrecord.logfile.template=${stamp.droidrecord.logfile.template}
+stamp.droidrecord.logfile.bin=${stamp.droidrecord.logfile.bin}
+apiLevel=api-${apilevel}
+	</echo> -->
+
+  </target>
+
+  <target name="summary">
+	<open-browser url="stamp/html/summary.html?dbpath=${stamp.dir}/stamp_output/app-reports.sqlite&amp;format=${stamp.dir}/assets/summary.format"/>
+  </target>
+
+</project>

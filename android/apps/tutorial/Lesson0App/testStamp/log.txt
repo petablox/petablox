@@ -1,0 +1,189 @@
+Buildfile: /Users/raviteja/Development/temp/petabloxFrontEnd/android/ant/stamp.xml
+
+analyze:
+     [echo]  PRT is testing: cipa-0cfa-dlog,inject-annot,base-java,annot-java,contexts-java,context-label-java,pre-dlog,typefilter-dlog,pt-dlog,taint-lim-dlog,jimpleprinter,post-dlog,post-java,dynfeatures-java 
+   [delete] Deleting directory /Users/raviteja/Development/temp/petabloxFrontEnd/android/stamp_output/_Users_raviteja_Development_temp_petabloxFrontEnd_android_apps_tutorial_Lesson0App
+    [mkdir] Created dir: /Users/raviteja/Development/temp/petabloxFrontEnd/android/stamp_output/_Users_raviteja_Development_temp_petabloxFrontEnd_android_apps_tutorial_Lesson0App
+
+-setup-droidrecord-env:
+     [echo] VM: Java HotSpot(TM) 64-Bit Server VM
+     [echo] Java version: 1.7.0_79
+     [echo] Class format version: 51.0
+
+-android-project-update:
+     [exec] Updated project.properties
+     [exec] Updated local.properties
+     [exec] Updated file /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/proguard-project.txt
+     [exec] Updated project.properties
+     [exec] Updated local.properties
+     [exec] Updated file /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/proguard-project.txt
+
+-check-droidrecord-present:
+
+-safe-build-droidrecord:
+
+-build-comps:
+     [echo]  PRT  xjc testttt 
+      [xjc] files are up to date
+
+jar:
+
+-check-everythinguptodate:
+     [echo] everythinguptodate ${everythinguptodate}
+
+-deploy-webapp:
+
+build:
+
+-analyze-src:
+[StampSetup] Updated project.properties
+[StampSetup] Updated local.properties
+[StampSetup] Updated file ./proguard-project.txt
+[StampSetup] It seems that there are sub-projects. If you want to update them
+[StampSetup] please use the --subprojects parameter.
+[StampSetup] Copying 1 file to /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/libs
+Trying to override old definition of task if
+
+-set-mode-check:
+
+-set-debug-files:
+
+-check-env:
+[StampSetup] Android SDK Tools Revision 24.4.1
+[StampSetup] Installed at /Users/raviteja/Development/android-sdk-macosx
+
+-setup:
+     [echo] Project Name: Malware
+[StampSetup] Project Type: Application
+
+-set-debug-mode:
+
+-debug-obfuscation-check:
+
+-pre-build:
+
+-build-setup:
+[StampSetup] Using latest Build Tools: 20.0.0
+     [echo] Resolving Build Target for Malware...
+[StampSetup] Project Target:   Google APIs
+[StampSetup] Vendor:           Google Inc.
+[StampSetup] Platform Version: 4.0.3
+[StampSetup] API level:        15
+     [echo] ----------
+     [echo] Creating output directories if needed...
+     [echo] ----------
+     [echo] Resolving Dependencies for Malware...
+[StampSetup] Library dependencies:
+[StampSetup] No Libraries
+[StampSetup] 
+[StampSetup] ------------------
+[StampSetup] API<=15: Adding annotations.jar to the classpath.
+     [echo] ----------
+     [echo] Building Libraries with 'debug'...
+   [subant] No sub-builds to iterate on
+
+-code-gen:
+[StampSetup] No changes in the AndroidManifest files.
+     [echo] Handling aidl files...
+[StampSetup] No AIDL files to compile.
+     [echo] ----------
+     [echo] Handling RenderScript files...
+     [echo] ----------
+     [echo] Handling Resources...
+[StampSetup] No changed resources. R.java and Manifest.java untouched.
+     [echo] ----------
+     [echo] Handling BuildConfig class...
+[StampSetup] No need to generate new BuildConfig.
+
+-pre-compile:
+
+-compile:
+    [javac] Compiling 1 source file to /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/classes
+
+-post-compile:
+
+-obfuscate:
+
+-dex:
+[StampSetup] input: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/classes
+[StampSetup] input: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/libs/stamp.annotations.jar
+[StampSetup] input: /Users/raviteja/Development/android-sdk-macosx/tools/support/annotations.jar
+[StampSetup] Pre-Dexing /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/libs/stamp.annotations.jar -> stamp.annotations-6e97b681fede960cdbf434ff86223aba.jar
+[StampSetup] Using Pre-Dexed annotations-c81d5b803871ed74c0bcd69ebe6ad0b1.jar <- /Users/raviteja/Development/android-sdk-macosx/tools/support/annotations.jar
+[StampSetup] Found modified input file
+[StampSetup] Converting compiled files and external libraries into /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/classes.dex...
+       [dx] Merged dex A (10 defs/5.4KiB) with dex B (2 defs/1.2KiB). Result is 12 defs/6.9KiB. Took 0.0s
+       [dx] Merged dex A (12 defs/6.9KiB) with dex B (2 defs/1.1KiB). Result is 14 defs/8.8KiB. Took 0.0s
+
+-crunch:
+   [crunch] Crunching PNG Files in source dir: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/res
+   [crunch] To destination dir: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/res
+   [crunch] Crunched 0 PNG files to update cache
+
+-package-resources:
+[StampSetup] No changed resources or assets. Malware.ap_ remains untouched
+
+-package:
+[StampSetup] Found modified input file
+[StampSetup] Creating Malware-debug-unaligned.apk and signing it with a debug key...
+
+-post-package:
+
+-do-debug:
+[StampSetup] Running zip align on final apk...
+     [echo] Debug Package: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/Malware-debug.apk
+[propertyfile] Updating property file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/build.prop
+[propertyfile] Updating property file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/build.prop
+[propertyfile] Updating property file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/build.prop
+[propertyfile] Updating property file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/build.prop
+
+-post-build:
+
+debug:
+     [echo] stamp.src.path=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/src
+     [echo] stamp.gen.path=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/gen
+     [echo] stamp.classes.path=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/classes
+     [echo] stamp.lib.jars=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/libs/stamp.annotations.jar
+     [echo] stamp.apk.path=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/bin/Malware-debug.apk
+     [echo] app.dir=/Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App
+     [java] srcpath: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/src
+     [java] srcpath: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/gen
+     [java] classpath: /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/libs/stamp.annotations.jar
+     [java] classpath: /Users/raviteja/Development/temp/petabloxFrontEnd/android/bin/api-20/stamp.android.jar
+     [java] generating srcmap file for /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/src/stamp/stanford/malware/Malware.java
+     [java] generating srcmap file for /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/gen/stamp/stanford/malware/BuildConfig.java
+     [java] generating srcmap file for /Users/raviteja/Development/temp/petabloxFrontEnd/android/apps/tutorial/Lesson0App/gen/stamp/stanford/malware/R.java
+
+-analyze-apk:
+     [java] I: Copying raw classes.dex file...
+     [java] I: Loading resource table...
+     [java] I: Loaded.
+     [java] I: Decoding AndroidManifest.xml with resources...
+     [java] I: Loading resource table from file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/1.apk
+     [java] I: Loaded.
+     [java] I: Regular manifest package...
+     [java] I: Decoding file-resources...
+     [java] I: Decoding values */* XMLs...
+     [java] I: Done.
+     [java] I: Copying assets and libs...
+     [echo]  apktool done 
+     [java] Warning: java.lang.ref.Finalizer is a phantom class!
+     [java] Component: stamp.stanford.malware.Malware
+     [echo] Using default value "chord" for property stamp.backend (backend to use for analyzing the app [chord,solvergen])
+     [echo] Using default value "false" for property missing.models (whether or not to run the missing models analysis)
+     [echo] Using default value "true" for property stamp.print.allclasses (whether to dump out all processed jimple files)
+     [echo] Using default value "86400000" for property stamp.timeout (time out)
+     [echo] Using default value "true" for property stamp.all.reports (whether to generate all reports or just final flows)
+
+-prepare-backend-chord:
+     [echo] HERE:inject-annot,base-java,annot-java,contexts-java,context-label-java,pre-dlog,typefilter-dlog,pt-dlog,taint-lim-dlog,jimpleprinter,post-dlog,post-java,dynfeatures-java
+     [java] Redirecting stdout to file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/stamp_output/_Users_raviteja_Development_temp_petabloxFrontEnd_android_apps_tutorial_Lesson0App/petablox_output/log.txt
+     [java] Redirecting stderr to file: /Users/raviteja/Development/temp/petabloxFrontEnd/android/stamp_output/_Users_raviteja_Development_temp_petabloxFrontEnd_android_apps_tutorial_Lesson0App/petablox_output/log.txt
+
+BUILD FAILED
+/Users/raviteja/Development/temp/petabloxFrontEnd/android/ant/apptasks.xml:66: The following error occurred while executing this line:
+/Users/raviteja/Development/temp/petabloxFrontEnd/android/ant/apptasks.xml:141: The following error occurred while executing this line:
+/Users/raviteja/Development/temp/petabloxFrontEnd/android/ant/apptasks_dex.xml:103: Java returned: 1
+
+Total time: 15 seconds
+Apk analyzed.

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="fuelux">
+    
+    <head>
+        <link href="../fuelux/css/fuelux.min.css" rel="stylesheet" />
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 20px;
+            }
+            .source-view {
+                height:80vh;
+                overflow:auto;
+                resize:auto;
+            }
+            .right-view {
+                overflow:auto;
+            }
+            .fuelux .nav-tabs > li > a {
+                padding-top: 0px;
+                padding-bottom: 5px;
+                line-height: 10px;
+            }
+            .bar {
+                height: 8px;
+            }
+            table.appslist td.status {
+                text-align: right;
+            }
+            [class^="icon-"], [class*=" icon-"] {
+                background: none;
+            }
+            background:none;
+        </style>
+        <link href="../fuelux/css/fuelux-responsive.min.css" rel="stylesheet" />
+        <link href="../fileupload/jquery.fileupload-ui.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/bootstrap-switch.css">
+    </head>
+    
+    <body>
+        <!-- navigation bar -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav pull-left">
+                        <li>
+                            <a class="brand" href="#">STAMP&alpha;-APK</a>
+                        </li>
+                    </ul>
+                    <ul class="nav pull-left">
+                        <li>
+                            <span class="btn">
+                                <span>Risk View (sorted/summarized grid)</span>
+                            </span>
+                            <span class="btn" onclick="location.href='grid.html'">
+                                <span>App View (the grid)</span>
+                            </span>
+                            <span class="btn" onclick="location.href='policy.html'">
+                                <span>Policy View</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <!-- <ul class="nav"> -->
+                    <!-- <\!-- Help -\-> -->
+                    <!-- <li class="dropdown"> -->
+                    <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <b class="caret"></b></a> -->
+                    <!-- <ul class="dropdown-menu"> -->
+                    <!-- <\!-- <li><a href="/doc/stamp.html" target="_blank">Docs</a></li> -\-> -->
+                    <!-- <li><a href="http://www.youtube.com/user/STAMPStanford" target="_blank">Video Tutorials</a></li> -->
+                    <!-- </ul> -->
+                    <!-- </li> -->
+                    <!-- </ul> -->
+                </div>
+            </div>
+        </div>
+        <!-- content -->
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <!--Sidebar content-->
+                <div class="span3">
+                    <h3>Policy List
+                        <button class="btn btn-inverse" type="button" style="margin-left: 10px;" id="addNewPolicyBtn">Add Policy</button>
+                    </h3>
+                    <table id="appslist" class="table table-striped appslist">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Main content -->
+                <div class="span6" id="reportdiv">
+                    <form>
+                        <legend>Policy Creator</legend>
+                        <div class="row-fluid" id="centerpane">
+                            <div class="row-fluid">
+                                <div class="span7 lightblue">
+                                    <label>Policy Name</label>
+                                    <input id="policy-name-textbox" type="text" class="span12" placeholder="New Policy">
+                                </div>
+                                <!--/span-->
+                                <div class="span2 lightblue">
+                                    <label>Policy Type</label>
+                                    <div id="label-switch" class="make-switch" data-on="black" data-on-label="black" data-off-label="white">
+                                        <input type="checkbox" checked>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="span3 lightblue">
+                                    <label class="muted" id="policy_save_status">
+                                        <i>Policy Not Saved</i>
+                                    </label>
+                                    <button class="btn btn-inverse" type="button" id="save_policy_btn">Save Policy</button>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <!--/row-->
+                            <div class="well">
+                                <legend style="font-size: 12pt;">Rule Creator</legend>
+                                <fieldset>
+                                    <div class="row-fluid">
+                                        <div class="span6 bgcolor">
+                                            <label>Source</label>
+                                            <div class="select btn-group" id="srcSelect" style="width: 100%">
+                                                <button type="button" data-toggle="dropdown" class="btn dropdown-toggle" style="width: inherit">
+                                                    <span class="dropdown-label"></span>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul id="src-drop-down" class="dropdown-menu" style="max-height: 200px; overflow-y: scroll;">
+                                                    <li>
+                                                        <a href="#">*</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="span6 bgcolor">
+                                            <label>Param</label>
+                                            <input type="text" class="span12" placeholder="Param Regex" id="src_param">
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/row-->
+                                    <div class="row-fluid">
+                                        <div class="span6 bgcolor">
+                                            <label>Sink</label>
+                                            <div class="select btn-group" id="sinkSelect" style="width: 100%">
+                                                <button type="button" data-toggle="dropdown" class="btn dropdown-toggle" style="width: inherit">
+                                                    <span class="dropdown-label"></span>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul id="sink-drop-down" class="dropdown-menu" style="max-height: 200px; overflow-y: scroll;">
+                                                    <li>
+                                                        <a href="#">*</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="span6 bgcolor">
+                                            <label>Param</label>
+                                            <input type="text" class="span12" placeholder="Param Regex" id="sink_param">
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/row-->
+                                    <button class="btn btn-inverse pull-right" type="button" id="add_policy_btn">Add Rule</button>
+                                </fieldset>
+                            </div>
+                            <!--/well-->
+                        </div>
+                        <!--/row-->
+                    </form>
+                    <legend>Policy Rules</legend>
+                    <table class="table table-condensed table-hover" id="src-sink-table">
+                        <th>Active</th>
+                        <th>Remove</th>
+                        <th>Source</th>
+                        <th>Source Param</th>
+                        <th>Sink</th>
+                        <th>Sink Param</th>
+                    </table>
+                    <table class="table table-condensed table-hover" id="incident-summary"></table>
+                    <table class="table table-condensed table-hover" id="privacy-rpt"></table>
+                    <table class="table table-condensed table-hover" id="conf-rpt"></table>
+                    <table class="table table-condensed table-hover" id="lowrisk-rpt"></table>
+                    <div class="span3 right-view" id="rightbar">
+                        <!-- <table class="table table-condensed table-hover" id="warnings"><th colspan="2">Flow Details</th> -->
+                        <!-- <tr><td>Category:</td><td>Privacy</td></tr> -->
+                        <!-- <tr><td>Flow:</td><td>content://sms <i class="icon-arrow-right"></i> HttpPOST</td></tr> -->
+                        <!-- <tr><td>Modifiers:</td><td><span class="label label-success">Hashed</span></td></tr> -->
+                        <!-- <tr><td>Source Component:</td><td>App</td></tr>  -->
+                        <!-- <tr><td>Source Params:</td><td>None</td></tr> -->
+                        <!-- <tr><td>Sink Component:</td><td>Ad library</td></tr> -->
+                        <!-- <tr><td>Sink Params:</td><td>33.44.55.66</td></tr> -->
+                        <!-- <tr><td>Misc:</td><td><i class="icon-question-sign"></i> &nbsp <i class="icon-search"></i></td></tr> -->
+                        <!-- </table> -->
+                    </div>
+                    <div class="modal hide fade" id="errormsgs-modal">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Only files with .apk extensions can be uploaded. The following files were ignored:</h3>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="unstyled" id="errormsgs"></ul>
+                        </div>
+                    </div>
+                </div>
+                <script src="../jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+                <script src="../fuelux/loader.js" type="text/javascript"></script>
+                <script src="../scripts/bootstrap-switch.js"></script>
+                <script src="../jquery-ui/jquery.ui.widget.js"></script>
+                <script src="../fileupload/jquery.iframe-transport.js"></script>
+                <script src="../fileupload/jquery.fileupload.js"></script>
+                <script src="../scripts/processMsg.js"></script>
+                <script src="../scripts/policy.js"></script>
+            </div>
+        </div>
+    </body>
+
+</html>

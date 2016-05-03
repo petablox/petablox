@@ -1,0 +1,15 @@
+# Sample code corresponding to the sample facts in test/input/*.dat
+
+main(x):
+  y = x
+  y = foo(x) // 1
+  z = bar(y) // 2
+
+foo(a):
+  b = bar(a) // 3
+  c = b
+  ret c
+
+bar(e):
+  f = e
+  ret f

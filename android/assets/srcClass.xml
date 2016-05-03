@@ -1,0 +1,62 @@
+<root>
+  <src desc="Accounts" class="PII" id="1" priority="high">$accounts</src>
+  <src desc="Accounts" class="PII" id="2" priority="high">$accounts.name</src>
+  <src desc="Audio" class="PII" id="3" priority="high">$audio</src>
+  <src desc="Browser" class="PII" id="4" priority="high">$browser</src>
+  <src desc="Browser" class="PII" id="5" priority="high">$browser.bookmarks</src>
+  <src desc="Call Log" class="PII" id="6" priority="high">$calllog</src>
+  <src desc="Calendar" class="PII" id="7" priority="high">$calendar</src>
+  <src desc="Photos" class="PII" id="8" priority="high">$camera.picture</src>
+  <src desc="Contacts" class="PII" id="9" priority="high">$contacts</src>
+  <src desc="Calendar" class="PII" id="10" priority="high">$content://com.android.calendar/calendars</src>
+  <src desc="Calendar" class="PII" id="11" priority="high">$content://com.android.calendar/events</src>
+  <src desc="Contacts" class="PII" id="12" priority="high">$content://com.android.contacts/contacts/</src>
+  <src desc="Contacts" class="PII" id="13" priority="high">$content://com.android.contacts/data</src>
+  <src desc="Contacts" class="PII" id="14" priority="high">$content://com.android.contacts/data/phones</src>
+  <src desc="Calendar" class="PII" id="15" priority="high">$content://calendar/events</src>
+  <src desc="Calendar" class="PII" id="16" priority="high">$content://calendar/calendars</src>
+  <src desc="Contacts" class="PII" id="17" priority="high">$content://contacts/people</src>
+  <src desc="SMS/MMS Messages" class="PII" id="18" priority="high">$content://mms</src>
+  <src desc="SMS/MMS Messages" class="PII" id="19" priority="high">$content://mms/part</src>
+  <src desc="SMS/MMS Messages" class="PII" id="20" priority="high">$content://sms</src>
+  <src desc="SMS/MMS Messages" class="PII" id="21" priority="high">$content://sms/sent</src>
+  <src desc="SMS/MMS Messages" class="PII" id="22" priority="high">$content://sms/inbox</src>
+  <src desc="SMS/MMS Messages" class="PII" id="60" priority="high">$sms</src>
+  <src desc="Call Log" class="PII" id="23" priority="high">$content://call_log/calls</src>
+  <src desc="Call Log" class="PII" id="24" priority="high">$incomingcallnumber</src>
+  <src desc="Photos and Media" class="PII" id="25" priority="high">$media</src>
+  <src desc="Carrier Data" class="Phone Info" id="26">$content://telephony/carriers</src>
+  <src desc="Wireless Network Info" class="Phone Info" id="27">$content://telephony/carriers/preferapn</src>
+  <src desc="Cellular Network ID" class="Phone Info" id="28">$cdma_network_id</src>
+  <src desc="Cellular System ID" class="Phone Info" id="29">$cmda_system_id</src>
+  <src desc="Phone Number" class="Phone Info" id="30" priority="high">$getline1number</src>
+  <src desc="Country Data" class="Phone Info" id="31">$getnetworkcountryiso</src>
+  <src desc="Device Identifier" class="Phone Info" id="32" priority="high">$getsimserialnumber</src>
+  <src desc="Device Identifier" class="Phone Info" id="33">$getsubscriberid</src>
+  <src desc="Phone Number" class="Phone Info" id="34">$getvoicemailnumber</src>
+  <src desc="Cellular Network Info" class="Phone Info" id="35">$networkoperator</src>
+  <src desc="Cellular Network Info" class="Phone Info" id="36">$networkoperatorname</src>
+  <src desc="Location Data" class="Phone Info" id="37">$simcountryiso</src>
+  <src desc="Cellular Network Data" class="Phone Info" id="38">$simoperatorname</src>  
+  <src desc="Device Identifier" class="Phone Info" id="39" priority="high">$getdeviceid</src>
+  <src desc="Location" class="Location" id="40">$cdma_location</src>
+  <src desc="Location" class="Location" id="41" priority="high">$getlongitude</src>
+  <src desc="Location" class="Location" id="42" priority="high">$location</src>
+  <src desc="Location" class="Location" id="43" priority="high">$getlatitude</src>
+  <src desc="Location" class="Location" id="44" priority="high">$fine_location</src>
+  <src desc="Application Data" class="System Data" id="45" priority="med">$process.inputstream</src>
+  <src desc="System Properties" class="System Data" id="46" priority="med">$systemproperties.get</src>
+  <src desc="Software Versions" class="System Data" id="47" priority="low">$getdevicesoftwareversion</src>
+  <src desc="Application Data" class="System Data" id="48" priority="high">$fileinputstream</src>
+  <src desc="Error Data" class="System Data" id="49" priority="med">$process.errorstream</src>
+  <src desc="SDCARD Data" class="SDCARD Data" id="50" priority="high">$externalstorage</src>
+  <src desc="Application Data" class="System Data" id="51" priority="low">$context.getstring</src>
+  <src desc="Wireless Network Info" class="System Data" id="52" priority="low">$wifimanager.getdhcpinfo</src>
+  <src desc="Application Data" class="System Data" id="53" priority="low">$process.exitvalue</src>
+  <src desc="Application Data" class="System Data" id="54" priority="high">$datainputstream</src>
+  <src desc="Device Storage" class="System Data" id="55" priority="high">$filesystem</src>
+  <src desc="Device Storage" class="System Data" id="56" priority="high">$file</src>
+  <src desc="Application Message Data" class="Internal" id="57" priority="low">$getextras</src>
+  <src desc="Device and Application Data" class="Internal" id="58" priority="low">$content_provider</src>
+  <src desc="Installed Packages" class="Installed Packages" id="59" priority="med">$installedpackages</src>
+</root>

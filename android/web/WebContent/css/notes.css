@@ -1,0 +1,16 @@
+/* Author: Patrick Mutchler */
+/* Styles for the note taking system */
+
+#notes_header{
+}
+
+#notes_body{
+}
+
+.notes_hide{
+	display: none;
+}
+
+.notes_show{
+	display: inline-block;
+}
