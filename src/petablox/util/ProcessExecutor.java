@@ -236,8 +236,7 @@ public final class ProcessExecutor {
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(is));
                 String l;
-                while (r.ready()){
-                	l = r.readLine();
+                while ((l = r.readLine())!=null){
                 	os.println(l);
                 }
                 os.flush();
