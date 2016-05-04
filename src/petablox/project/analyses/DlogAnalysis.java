@@ -386,7 +386,7 @@ public class DlogAnalysis extends JavaAnalysis {
 							String offsetStr = temp.substring(eqIndx+1);
 							offsetStr = offsetStr.trim();
 							if(Config.populate){
-								if(offsetStr.indexOf('_')==-1){
+								if(!offsetStr.contains("_index[") && !offsetStr.contains("_string[")){
 									int offset = Integer.parseInt(offsetStr);
 									if(domNdxMap.containsKey(domName)){
 										offset = offset+domNdxMap.get(domName);
@@ -394,25 +394,41 @@ public class DlogAnalysis extends JavaAnalysis {
 									sb.append(" ");
 									if(ignoredDoms.contains(domName))
 										sb.append(l+" = "+offset);
-									else
-										sb.append(tags.get(0)+l+" = "+offset);
+									else{
+										if(domNdxMap.containsKey(domName))
+											sb.append(tags.get(0)+l+" = "+offset);
+										else
+											sb.append(l+" = "+offset);
+									}
 								}else{
 									if(ignoredDoms.contains(domName))
 										sb.append(l+" = "+offsetStr);
-									else
-										sb.append(tags.get(0)+l+" = "+tags.get(0)+offsetStr);
+									else{
+										if(domNdxMap.containsKey(domName))
+											sb.append(tags.get(0)+l+" = "+tags.get(0)+offsetStr);
+										else
+											sb.append(l+" = "+tags.get(0)+offsetStr);
+									}
 								}
 							}else{
-								if(offsetStr.indexOf('_')==-1){
+								if(!offsetStr.contains("_index[") && !offsetStr.contains("_string[")){
 									if(ignoredDoms.contains(domName))
 										sb.append(" "+temp);
-									else
-										sb.append(" "+tags.get(0)+temp);
+									else{
+										if(domNdxMap.containsKey(domName))
+											sb.append(" "+tags.get(0)+temp);
+										else
+											sb.append(" "+temp);
+									}		
 								}else{
 									if(ignoredDoms.contains(domName))
 										sb.append(" "+temp);
-									else
-										sb.append(" "+tags.get(0)+l+" = "+tags.get(0)+offsetStr);
+									else{
+										if(domNdxMap.containsKey(domName))
+											sb.append(" "+tags.get(0)+l+" = "+tags.get(0)+offsetStr);
+										else
+											sb.append(" "+l+" = "+tags.get(0)+offsetStr);
+									}
 								}
 							}
 						}else{
