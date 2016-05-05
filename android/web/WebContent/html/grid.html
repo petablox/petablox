@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="fuelux">
+    
+    <head>
+        <!--TODOnon-hrefthis-->
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href="../fuelux/css/fuelux.min.css" rel="stylesheet" />
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 20px;
+            }
+            .source-view {
+                height:80vh;
+                overflow:auto;
+                resize:auto;
+            }
+            .right-view {
+                overflow:auto;
+            }
+            .fuelux .nav-tabs > li > a {
+                padding-top: 0px;
+                padding-bottom: 5px;
+                line-height: 10px;
+            }
+            .bar {
+                height: 8px;
+            }
+            table.appslist td.status {
+                text-align: right;
+            }
+            [class^="icon-"], [class*=" icon-"] {
+                background: none;
+            }
+            .square3 {
+                font-family: inherit;
+                font-weight: bold;
+                line-height: 60px;
+                font-size: 40px;
+                text-rendering: optimizelegibility;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #FF3333;
+                border-color: white;
+                border: 5px;
+                color: inherit;
+            }
+            .square2 {
+                font-family: inherit;
+                font-weight: bold;
+                line-height: 60px;
+                font-size: 40px;
+                color: inherit;
+                text-rendering: optimizelegibility;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #FF6666;
+                border-color: white;
+                border: 5px;
+            }
+            .square1 {
+                font-family: inherit;
+                font-weight: bold;
+                line-height: 60px;
+                font-size: 40px;
+                color: inherit;
+                text-rendering: optimizelegibility;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #FFCCCC;
+                border-color: white;
+                border: 5px;
+            }
+            .square {
+                font-family: inherit;
+                font-weight: bold;
+                line-height: 60px;
+                font-size: 40px;
+                color: inherit;
+                text-rendering: optimizelegibility;
+                text-align: center;
+                border-color: white;
+                border:10px;
+            }
+            background:none;
+        </style>
+        <link href="../fuelux/css/fuelux-responsive.min.css" rel="stylesheet" />
+        <link href="../fileupload/jquery.fileupload-ui.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/bootstrap-switch.css">
+    </head>
+    
+    <body>
+        <!-- navigation bar -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav pull-left">
+                        <li>
+                            <a class="brand" href="#">STAMP&alpha;-APK</a>
+                        </li>
+                    </ul>
+                    <ul class="nav pull-left">
+                        <li>
+                            <span class="btn">
+                                <span>Risk View (sorted/summarized grid)</span>
+                            </span>
+                            <span class="btn" onclick="location.href='grid.html'">
+                                <span>App View (the grid)</span>
+                            </span>
+                            <span class="btn" onclick="location.href='policy.html'">
+                                <span>Policy View</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <!--/container-->
+            </div>
+            <!--/navbar-inner-->
+        </div>
+        <!--/navbar-->
+        <!--content-->
+        <!-- Row Highlight Javascript -->
+        <div class="container">
+            <div class="row">
+                <div class="span4"></div>
+                <div class="span4">
+                    <table class="table table-bordered" id="app_table" cellpadding="10" style="border-top: 0;">
+                        <tr>
+                            <th></th>
+                            <th>APT Policy 1</th>
+                            <th>DLP Policy 1</th>
+                            <th>APT Policy 2</th>
+                            <th>Default Policy</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 50px; width: 50px;">
+                                    <i class="icon-dropbox icon-4x" style="margin-top: 20px"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                            <td>
+                                <div class="square1">1</div>
+                            </td>
+                            <td>
+                                <div class="square1">1</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 50px; width: 50px;">
+                                    <i class="icon-flickr icon-4x" style="margin-top: 20px"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="square1">1</div>
+                            </td>
+                            <td>
+                                <div class="square2">2</div>
+                            </td>
+                            <td>
+                                <div class="square3">3</div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 50px; width: 50px;">
+                                    <i class="icon-google-plus icon-4x" style="margin-top: 20px"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                            <td>
+                                <div class="square2">2</div>
+                            </td>
+                            <td>
+                                <div class="square1">1</div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 50px; width: 50px;">
+                                    <i class="icon-youtube icon-4x" style="margin-top: 20px"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                            <td>
+                                <div class="square2">2</div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                            <td>
+                                <div class="square">0</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="span4"></div>
+            </div>
+        </div>
+    </body>
+    <script src="../jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+    <script>
+        $('tr :first-child').css('border-left', '0');
+    </script>
+
+</html>

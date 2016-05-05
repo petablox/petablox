@@ -1,0 +1,172 @@
+##################
+# Partial FLows Analysis
+##################
+
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-partial-pt-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder Z0xZ1_M0_C0xC1xC2_V0xV1_H0xF0_I0
+
+###################
+# INPUT: POINTER
+###################
+
+pt(c:C,v:V,o:C)    input
+fpt(o1:C,f:F,o2:C) input
+
+###################
+# INPUT: PARTIAL FLOWS
+###################
+
+Assign(v:V,u:V) input              # v = u
+param(u:V,v:V,i:I)  input   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+Store(v:V,f:F,u:V) input           # v.f = u
+Load(v:V,u:V,f:F) input            # v = u.f
+CI(c:C,i:I) input # stmt i is the top element in the k-limited callstack c
+CC(c:C,d:C) input # there exists i s.t. c++[i] = d
+
+MV(m:M,v:V) input # v is a ref type variable in m
+CM(c:C,m:M) input # c is a context of method m
+
+###################
+# INPUT: PHANTOM OBJECTS
+###################
+
+Varg(v:V) input
+Vret(v:V) input
+
+###################
+# INTERMEDIATE: PARTIAL FLOWS
+###################
+
+PreFlowsToA(c:C,o:C,v:V) output
+PreFlowsToR(c:C,o:C,v:V) output
+PostFlowsToA(c:C,v:V,d:C,u:V) output
+PostFlowsToR(c:C,v:V,d:C,u:V) output
+
+###################
+# OUTPUT: AGGREGATION
+###################
+
+PreFlowsTo(c:C,o:C,v:V) output
+PostFlowsTo(c:C,v:V,d:C,u:V) output
+MidFlowsTo(c:C,v:V,d:C,u:V) output
+
+###################
+# OUTPUT: FULL FLOWS
+###################
+
+Ref2RefArgTStub(c:C,v:V,u:V,m:M,z1:Z,z2:Z) input
+Ref2RefRetTStub(c:C,v:V,u:V,m:M,z:Z) input
+typeFilter(v:V,o:C) input   # type wise, v can point-to o
+
+PreFlowsToFull(c:C,o:C,v:V) output
+Transfer(v:V,u:V) output
+TransferCtxt(c:C,v:V,u:V) output
+
+PtPartial(c:C,v:V,o:C) output
+FptPartial(o1:C,f:F,o2:C) output
+
+PtFull(c:C,v:V,o:C) output
+FptFull(o1:C,f:F,o2:C) output
+
+###################
+# RULES: PARTIAL FLOWS
+###################
+
+# 1) o -> v_c
+PreFlowsToA(c,o,v)  :- pt(c,v,o), Varg(v).
+# 2) o -> v_c -> u_c -> w_d
+PreFlowsToA(d,o,w)  :- pt(c,v,o), Store(u,_,v), PostFlowsToA(d,w,c,u).
+PreFlowsToR(d,o,w)  :- pt(c,v,o), Store(u,_,v), PostFlowsToR(d,w,c,u).
+# 3) o1 -> v_c -> u_c -> o2 -> w_c
+PreFlowsToA(c,o1,w) :- pt(c,v,o1), Store(u,_,v), pt(c,u,o2), PreFlowsToA(c,o2,w).
+PreFlowsToR(c,o1,w) :- pt(c,v,o1), Store(u,_,v), pt(c,u,o2), PreFlowsToR(c,o2,w).
+
+# 1) v_c -> v_c
+PostFlowsToR(c,v,d,u) :- u=v, d=c, Vret(v).
+# 2a) v_c -> u_d -> w_d
+PostFlowsToA(c,v,d,w) :- PostFlowsToA(c,v,d,u), Assign(w,u).
+PostFlowsToR(c,v,d,w) :- PostFlowsToR(c,v,d,u), Assign(w,u).
+# 2b) v_c -> u_d -> w_b
+PostFlowsToA(c,v,b,w) :- PostFlowsToA(c,v,d,u), param(w,u,i), CC(d,b), CI(b,i).
+PostFlowsToA(c,v,b,w) :- PostFlowsToA(c,v,d,u), return(w,u,i), CC(b,d), CI(d,i).
+PostFlowsToR(c,v,b,w) :- PostFlowsToR(c,v,d,u), param(w,u,i), CC(d,b), CI(b,i).
+PostFlowsToR(c,v,b,w) :- PostFlowsToR(c,v,d,u), return(w,u,i), CC(b,d), CI(d,i).
+# 3) v_c -> u_d -> w_d -> o -> x_b -> y_b
+PostFlowsToA(c,v,b,y) :- PostFlowsToA(c,v,d,u), Store(w,f,u), pt(d,w,o), pt(b,x,o), Load(y,x,f).
+PostFlowsToR(c,v,b,y) :- PostFlowsToR(c,v,d,u), Store(w,f,u), pt(d,w,o), pt(b,x,o), Load(y,x,f).
+# 4) v_c -> o -> u_d -> w_d
+PostFlowsToA(c,v,d,w) :- PreFlowsToA(c,o,v), pt(d,u,o), Load(w,u,_).
+PostFlowsToR(c,v,d,w) :- PreFlowsToR(c,o,v), pt(d,u,o), Load(w,u,_).
+# 5) v_c -> u_d -> w_d
+PostFlowsToA(c,v,d,w) :- PostFlowsToA(c,v,d,u), Load(w,u,_).
+PostFlowsToR(c,v,d,w) :- PostFlowsToR(c,v,d,u), Load(w,u,_).
+
+###################
+# RULES: AGGREGATION
+###################
+
+PreFlowsTo(c,o,v) :- PreFlowsToA(c,o,v).
+PreFlowsTo(c,o,v) :- PreFlowsToR(c,o,v).
+
+PostFlowsTo(c,v,d,u) :- PostFlowsToA(c,v,d,u).
+PostFlowsTo(c,v,d,u) :- PostFlowsToR(c,v,d,u).
+
+# 1) v_c -> u_d
+MidFlowsTo(c,v,d,u) :- Varg(u), PostFlowsTo(c,v,d,u).
+MidFlowsTo(c,v,d,u) :- Vret(u), PostFlowsTo(c,v,d,u).
+# 2) v_c -> u_d -> w_d -> x_b
+MidFlowsTo(c,v,b,x) :- PostFlowsTo(c,v,d,u), Store(w,_,u), PostFlowsTo(b,x,d,w).
+# 3) v_c -> u_d -> w_d -> o -> x_b
+MidFlowsTo(c,v,b,x) :- PreFlowsTo(b,o,x), pt(d,w,o), Store(w,_,u), PostFlowsTo(c,v,d,u).
+# 4) v_c -> o -> u_d
+MidFlowsTo(c,v,d,u) :- PreFlowsTo(c,o,v), PreFlowsTo(d,o,u).
+
+###################
+# RULES: PARTIAL FLOWS
+###################
+
+# helper
+Transfer(v,u) :- Varg(v), v = u, Varg(u).
+Transfer(v,u) :- Varg(v), v = u, Vret(u).
+Transfer(v,u) :- Vret(v), v = u, Varg(u).
+Transfer(v,u) :- Vret(v), v = u, Vret(u).
+Transfer(v,u) :- Ref2RefArgTStub(_,v,u,_,_,_).
+Transfer(v,u) :- Ref2RefRetTStub(_,v,u,_,_).
+Transfer(u,v) :- Ref2RefRetTStub(_,v,u,_,_).
+
+TransferCtxt(c,v,u) :- Transfer(v,u), MV(m,v), CM(c,m).
+
+# partial flows
+
+PreFlowsToFull(c,o,v) :- PreFlowsTo(c,o,v).
+PreFlowsToFull(d,o,w) :- Transfer(v,u), PreFlowsToFull(c,o,v), MidFlowsTo(c,u,d,w).
+
+PtPartial(d,w,o) :-  Transfer(v,u), PreFlowsToFull(c,o,v), PostFlowsTo(c,u,d,w), typeFilter(w,o).
+
+FptPartial(o1,f,o2) :- pt(c,v,o2), Store(u,f,v), PtPartial(c,u,o1).
+FptPartial(o1,f,o2) :- pt(c,u,o1), Store(u,f,v), PtPartial(c,v,o2).
+FptPartial(o1,f,o2) :- PtPartial(c,v,o2), Store(u,f,v), PtPartial(c,u,o1).
+
+###################
+# RULES: FULL FLOWS
+###################
+
+PtFull(c,v,o) :- pt(c,v,o).
+FptFull(o1,f,o2) :- fpt(o1,f,o2).
+
+PtFull(c,v,o) :- PtPartial(c,v,o).
+FptFull(o1,f,o2) :- FptFull(o1,f,o2).

@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-DroidRecord">
+
+    <property environment="env"/>
+    
+    <property name="stamp.droidrecord.cmd.readlog" value="${stamp.dir}/droidrecord/droidrecord-readlog" />
+    <property name="stamp.dynamic.device.arg" value="" />
+    <property name="stamp.droidrecord.auto.avdname" value="stampdevice" />
+    <property name="stamp.android.buildtools.dir" value="/opt/android-sdk-linux/build-tools/19.0.0/" />
+  
+    <target name="-android-project-update">
+      <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then/>
+        <else>
+            <exec executable="android"
+                spawn="false"
+                failonerror="true">
+                <arg line="update project --path ${app.loc} --subprojects --target ${stamp.androidtarget}"/>
+              </exec>
+        </else>
+      </if>
+    </target>
+
+    <target name="-setup-droidrecord-env">
+		<echo>VM: ${java.vm.name}</echo>
+		<echo>Java version: ${java.version}</echo>
+		<echo>Class format version: ${java.class.version}</echo>
+      <!-- Fixme: Code copied from analyze, there should be a better way to 
+                    run droidrecord that supports both source and APKs. -->
+      <if>
+        <isset property="stamp.droidrecord.logdir"/>
+        <then/>
+        <else>
+         <if>
+          <isset property="stamp.out.dir"/>
+          <then/>
+          <else>
+    		<property name="stamp.out.dir" value="${stamp.dir}/stamp_output/${app.loc.1}"/>
+    		<delete dir="${stamp.out.dir}"/>
+    		<mkdir dir="${stamp.out.dir}"/>
+            <property name="droidrecord.out.dir" location="${stamp.out.dir}/droidrecord"/>
+            <mkdir dir="${droidrecord.out.dir}"/>
+    	  </else>
+    	 </if>
+    	 <if>
+    	  <matches string="${app}" pattern="^.*\.apk$"/>
+          <then>
+    		<property name="stamp.input.type" value="apk"/>
+    		<property name="stamp.droidrecord.logdir" value="${droidrecord.out.dir}/.droidrecord_log"/>
+            <mkdir dir="${stamp.droidrecord.logdir}"/>
+            <property name="stamp.droidrecord.out.apk" value="${droidrecord.out.dir}/final.apk"/>
+          </then>
+    	  <else>
+    		<property name="stamp.input.type" value="src"/>
+            <property name="stamp.droidrecord.logdir" value="${app.loc}/.droidrecord_log"/>
+    	  </else>
+         </if>  
+        </else>
+      </if>
+      <!-- End Fixme -->
+      <property name="stamp.droidrecord.logfile.text" value="${stamp.droidrecord.logdir}/droidrecord.log"/>
+      <property name="stamp.droidrecord.logfile.bin" value="${stamp.droidrecord.logdir}/droidrecord.log.bin"/>
+      <property name="stamp.droidrecord.logfile.template" value="${stamp.droidrecord.logdir}/droidrecord.log.template"/>
+      
+      <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then/>
+        <else>
+            <antcall target="-android-project-update"/>
+        </else>
+      </if>
+    </target>
+
+  <target name="-check-droidrecord-present"
+        depends="-setup-droidrecord-env">
+    <available file="${stamp.dir}/droidrecord/build.xml" property="stamp.droidrecord.present" />
+  </target>
+
+  <target name="-safe-clean-droidrecord"
+        depends="-check-droidrecord-present"
+        if="${stamp.droidrecord.present}">
+    <ant antfile="${stamp.dir}/droidrecord/build.xml" target="clean"
+	 inheritAll="false" useNativeBasedir="true"/>
+  </target>
+
+  <target name="-safe-build-droidrecord"
+        depends="-check-droidrecord-present"
+        if="${stamp.droidrecord.present}">
+    <ant antfile="${stamp.dir}/droidrecord/build.xml"
+	 inheritAll="false" useNativeBasedir="true"/>
+    <copy file="${stamp.dir}/droidrecord/jars/droidrecord_reader.jar" toFile="${stamp.dir}/lib/droidrecord_reader.jar"/>
+    <copy file="${stamp.dir}/droidrecord/jars/droidrecord_reader.jar" toFile="${stamp.dir}/web/lib/droidrecord_reader.jar"/>
+  </target>
+
+  <target name="dynanalyze"
+          depends="-check-droidrecord-present,-setup-droidrecord-env">
+    <fail unless="${stamp.droidrecord.present}">
+        DroidRecord component not found: Please install droidrecord.
+        DroidRecord can be installed from the STAMP git repository by doing:
+        git submodule init
+        git submodule update
+    </fail>
+    <if>
+      <available file="${stamp.droidrecord.logfile.text}"/>
+      <then>
+        <antcall target="-log-available-dynanalyze"/>
+      </then>
+      <else>
+        <input message="Missing DroidRecord trace information. Do you want to run the instrumented app now to generate a droidrecord.log file?"
+               validargs="y,n"
+               addproperty="stamp.droidrecord.dorun"/>
+        <if>
+          <equals arg1="${stamp.droidrecord.dorun}" arg2="n" />
+          <then>
+            <fail message="Dynamic analysis information is only available if a trace has been generated for the app and saved to [app_dir]/sdcard/droidrecord.log." />
+          </then>
+        </if>
+        <antcall target="droidrecord-run" />
+        <antcall target="-log-available-dynanalyze" />
+      </else>
+    </if>
+  </target>
+
+  <target name="auto-dynanalyze"
+          depends="-check-droidrecord-present,-setup-droidrecord-env">
+    <fail unless="${stamp.droidrecord.present}">
+        DroidRecord component not found: Please install droidrecord.
+        DroidRecord can be installed from the STAMP git repository by doing:
+        git submodule init
+        git submodule update
+    </fail>
+    <if>
+      <available file="${stamp.droidrecord.logfile.text}"/>
+      <then>
+        <antcall target="-log-available-dynanalyze"/>
+      </then>
+      <else>
+        <antcall target="auto-droidrecord-run" />
+        <antcall target="-log-available-dynanalyze" />
+      </else>
+    </if>
+  </target>
+
+  <target name="-log-available-dynanalyze"
+        depends="analyze,
+                -safe-build-droidrecord,
+                -run-droidrecord-dyn-callback-analysis,
+                -run-droidrecord-dyn-api-calls-analysis" >
+    <echo>
+     If your browser fails to open automatically in a few seconds, please go to: 
+     http://${stamp.server.host}:8080/stamp/html/index.jsp?propertyfile=${stamp.out.dir}/stamp.properties
+    </echo>
+  </target>
+  
+  <target name="-run-droidrecord-dyn-callback-analysis"
+        if="${stamp.droidrecord.present}">
+    <exec executable="python"
+	  spawn="false"
+	  failonerror="true">
+      <arg value="${stamp.dir}/droidrecord/analysis/callbacks.py"/>
+      <arg value="-r"/>
+      <arg line="-s ${stamp.out.dir}/results/PotentialCallbacks.xml"/>
+      <arg line="-o ${stamp.out.dir}/results/PotentialCallbacksDynamic.xml"/>
+      <arg value="${stamp.droidrecord.logfile.text}"/>
+    </exec>
+    <echo file="${stamp.out.dir}/reports.txt" append="true">Possibly-missing Callback Methods (Dynamic Information) ${stamp.out.dir}/results/PotentialCallbacksDynamic.xml
+    </echo>
+  </target>
+  
+  <target name="-run-droidrecord-dyn-api-calls-analysis"
+        if="${stamp.droidrecord.present}">
+    <exec executable="python"
+	  spawn="false"
+	  failonerror="true">
+      <arg value="${stamp.dir}/droidrecord/analysis/apicalls.py"/>
+      <arg line="-o ${stamp.out.dir}/results/ApiCallInformationDynamic.xml"/>
+      <arg value="${stamp.droidrecord.logfile.text}"/>
+    </exec>
+    <echo file="${stamp.out.dir}/reports.txt" append="true">Arguments to API Calls (Dynamic Information) ${stamp.out.dir}/results/ApiCallInformationDynamic.xml
+    </echo>
+  </target>
+
+  <property name="stamp.droidrecord.script.prepareapp"
+	    value="${stamp.dir}/droidrecord/extra/utils/scripts/prepare_app.py" />
+
+  <target name="-droidrecord-instrument-apk" depends="-safe-build-droidrecord,-setup-droidrecord-env"
+          if="${stamp.droidrecord.present}">
+        
+        <path id="droidrecord.libraryjars.ref">
+            <pathelement location="${stamp.dir}/droidrecord/jars/droidrecord_lib.jar"/>
+            <pathelement location="${stamp.dir}/bin/api-${apilevel}/stamp.android.jar"/>
+        </path>
+        <pathconvert property="droidrecord.libraryjars" refid="droidrecord.libraryjars.ref">
+			<firstmatchmapper>
+				<regexpmapper from='^([^ ]*)( .*)$$' to='"\1\2"'/>
+				<identitymapper/>
+			</firstmatchmapper>
+		</pathconvert>
+		
+        <property name="droidrecord.in.apk" value="${app.loc}"/>
+		<property name="droidrecord.out.jar" value="${droidrecord.out.dir}/app.jar"/>
+		<property name="droidrecord.android.jar" value="${stamp.dir}/bin/api-${apilevel}/stamp.android.jar"/>
+		<property name="droidrecord.lib.jars" value="${droidrecord.libraryjars}"/>
+		<property name="droidrecord.policy.file" location="${stamp.dir}/droidrecord/policy/droidrecord-apps.policy"/>
+		<property name="droidrecord.out.template" value="${stamp.droidrecord.logfile.template}"/>
+		<property name="droidrecord.debug.dump_jimple" value="true"/>
+		<property name="droidrecord.debug.jimple.dir" location="${droidrecord.out.dir}/jimple"/>
+		<property name="droidrecord.enableOnMethodStart" value="true"/>
+		<ant antfile="${stamp.dir}/droidrecord/build.xml" target="instrument"/>
+		<!-- /home/lazaro/adt-bundle-linux-x86_64-20130522/sdk/platforms/android-19/android.jar -->
+		<!-- <java classname="soot.Main" fork="true" failonerror="true"
+		      dir="${user.dir}" maxmemory="6g">
+		    <jvmarg value="-Xss8m"/>
+			<syspropertyset>
+				<propertyref builtin="all"/>
+			</syspropertyset>
+			<jvmarg value="-ea"/>
+			<arg line="-full-resolver -allow-phantom-refs -validate -src-prec apk -force-android-jar /home/lazaro/adt-bundle-linux-x86_64-20130522/sdk/platforms/android-19/android.jar -p cg off -outjar -d ${droidrecord.out.dir}/app.jar -O -process-dir ${droidrecord.in.apk}" />
+			<classpath>
+				<pathelement location="/home/lazaro/shord/droidrecord/libs/soot.jar"/>
+			</classpath>
+            <assertions>
+              <enable/>
+            </assertions>
+		</java> -->
+		
+        <!-- <input message="[FIXME] You may use this opportunity to do any dirty hack on the app.jar (you are welcome...). Enter 'h' once you are done or if you don't understand why this message is here (lucky you):"
+           validargs="H,h"/> -->
+           
+        <mkdir dir="${droidrecord.out.dir}/apk"/>
+        <mkdir dir="${droidrecord.out.dir}/apk/raw"/>
+        <mkdir dir="${droidrecord.out.dir}/apk/unsigned"/>
+        
+        <exec executable="${stamp.android.buildtools.dir}/dx"
+          spawn="false"
+    	  failonerror="true">
+          <arg value="-JXmx${env.JavaHeap}"/>
+          <arg value="--dex"/>
+          <arg value="--multi-dex"/>
+          <arg value="--output=${droidrecord.out.dir}/apk/"/>
+          <arg value="${stamp.dir}/droidrecord/jars/droidrecord_lib.jar"/>
+          <arg value="${droidrecord.out.dir}/app.jar"/>
+        </exec>
+        <unzip src="${app.loc}" dest="${droidrecord.out.dir}/apk/raw"/>
+        <delete file="${droidrecord.out.dir}/apk/raw/classes.dex"/>
+        <delete dir="${droidrecord.out.dir}/apk/raw/META-INF"/>
+        <copy todir="${droidrecord.out.dir}/apk/raw/">
+        	<fileset dir="${droidrecord.out.dir}/apk" casesensitive="yes">
+			  <filename name="classes*.dex"/>
+			</fileset>
+        </copy>
+        <!--<exec executable="python" 
+          spawn="false"
+    	  failonerror="true">
+            <arg value="${stamp.dir}/droidrecord/extra/utils/scripts/prepare_manifest_only.py"/>
+            <arg value="${droidrecord.out.dir}/apk/AndroidManifest.xml"/>
+        </exec>-->
+        <zip basedir="${droidrecord.out.dir}/apk/raw" destfile="${droidrecord.out.dir}/apk/unsigned/unsigned.apk"/>
+        
+        <exec executable="jarsigner"
+          spawn="false"
+    	  failonerror="true">
+    	    <arg line="-verbose -keystore ${user.home}/.android/debug.keystore -storepass android -keypass android ${droidrecord.out.dir}/apk/unsigned/unsigned.apk androiddebugkey"/>
+        </exec>
+        <exec executable="${stamp.android.buildtools.dir}/zipalign"
+          spawn="false"
+    	  failonerror="true">
+    	    <arg line="4 ${droidrecord.out.dir}/apk/unsigned/unsigned.apk ${stamp.droidrecord.out.apk}"/>
+        </exec>
+  </target>          
+
+  <target name="droidrecord-run" depends="-safe-build-droidrecord,-setup-droidrecord-env"
+          if="${stamp.droidrecord.present}">
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+            <antcall target="-droidrecord-instrument-apk" />
+        </then>
+        <else>
+            <assert>
+                <equals arg1="${stamp.input.type}" arg2="src"/>
+            </assert>
+            <exec executable="python"
+        	  spawn="false"
+        	  failonerror="true">
+              <arg value="${stamp.droidrecord.script.prepareapp}"/>
+              <arg value="${app.loc}"/>
+            </exec>
+            <ant antfile="${app.loc}/build.droidrecord.xml" target="debug"
+        	 inheritAll="false" useNativeBasedir="true"/>
+        </else>
+    </if>
+	<exec executable="adb"
+      spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} shell mkdir /data/droidrecord"/>
+    </exec>
+    <!-- Disable SELinux enforcing; FIXME: https://bitbucket.org/lazaro_clapp/droidrecord/issue/1/ -->
+	<exec executable="adb"
+      spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} shell setenforce 0"/>
+    </exec>
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+            <exec executable="adb"
+                spawn="false"
+            	failonerror="true">
+                <arg line="${stamp.dynamic.device.arg} install -r ${stamp.droidrecord.out.apk}"/>
+            </exec>
+        </then>
+        <else>
+            <ant antfile="${app.loc}/build.droidrecord.xml" target="installd"
+        	 inheritAll="false" useNativeBasedir="true">
+                <property name="adb.device.arg" value="${stamp.dynamic.device.arg}"/>
+            </ant>
+        </else>
+    </if>
+    <input message="Use the app inside the emulator to produce a DroidRecord trace log. Enter 'd' once you are done:"
+           validargs="D,d"/>
+    <mkdir dir="${stamp.droidrecord.logdir}"/>
+    <exec executable="adb"
+      spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} pull /data/droidrecord/ ${stamp.droidrecord.logdir}"/>
+    </exec>
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+        </then>
+        <else>
+            <move file="droidrecord.log.template" toFile="${stamp.droidrecord.logfile.template}"/>
+        </else>
+    </if>
+    <exec executable="sh"
+      spawn="false"
+      failonerror="true">
+      <arg line='-c "${stamp.droidrecord.cmd.readlog} ${stamp.droidrecord.logfile.template} ${stamp.droidrecord.logfile.bin}* --lib android.support.v4 -o ${stamp.droidrecord.logfile.text}"'/>
+    </exec>
+    <exec executable="adb"
+	  spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} shell rm -R /data/droidrecord"/>
+    </exec>
+  </target>
+
+  <target name="auto-droidrecord-run" depends="-safe-build-droidrecord,-setup-droidrecord-env"
+          if="${stamp.droidrecord.present}">
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+            <antcall target="-droidrecord-instrument-apk" />
+        </then>
+        <else>
+            <assert>
+                <equals arg1="${stamp.input.type}" arg2="src"/>
+            </assert>
+            <exec executable="python"
+        	  spawn="false"
+        	  failonerror="true">
+              <arg value="${stamp.droidrecord.script.prepareapp}"/>
+              <arg value="${app.loc}"/>
+            </exec>
+            <ant antfile="${app.loc}/build.droidrecord.xml" target="debug"
+        	 inheritAll="false" useNativeBasedir="true"/>
+        </else>
+    </if>
+	<exec executable="adb" outputproperty="stamp.droidrecord.adbstate">
+	    <arg line="get-state" />
+	</exec>
+	<if>
+	    <equals arg1="${stamp.droidrecord.adbstate}" arg2="device" />
+	    <then>
+                <echo message="An Emulator is already running. Is it capturing network traffic? If not, close the emulator and re-run auto-dynanalyze" />
+            </then>
+	    <else>
+        	<exec executable="emulator"
+		  spawn="true">
+                    <arg line="-wipe-data -tcpdump ${droidrecord.out.dir}/net_capture.cap -avd ${stamp.droidrecord.auto.avdname}" /> 
+		</exec>
+		<exec executable="adb">
+		    <arg line="wait-for-device" />
+		</exec>
+		<sleep seconds="200" /> <!-- this should wait for am to respond instead, but while-loops are a pain in ant w/o parallel builds (waitfor)-->
+            </else>
+        </if>
+	<exec executable="adb"
+      spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} shell mkdir /data/droidrecord"/>
+    </exec>
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+            <exec executable="adb"
+                spawn="false"
+            	failonerror="true">
+                <arg line="${stamp.dynamic.device.arg} install -r ${stamp.droidrecord.out.apk}"/>
+            </exec>
+            <exec executable="sh" outputproperty="stamp.droidrecord.packagenames">
+                <arg value="-c" />
+                <arg value="${stamp.android.buildtools.dir}/dexdump -l xml ${app} | grep package\ name | head -n40 | sed &quot;s/&lt;package name=\&quot;/-p /&quot; |sed &quot;s/\&quot;//&quot; | tr &apos;\n&apos; &apos; &apos;" />
+            </exec>
+            <exec executable="adb"
+                spawn="false">
+		<arg line="${stamp.dynamic.device.arg} shell monkey ${stamp.droidrecord.packagenames} -v 5000" />
+	    </exec>
+        </then>
+        <else>
+            <ant antfile="${app.loc}/build.droidrecord.xml" target="installd"
+        	 inheritAll="false" useNativeBasedir="true">
+                <property name="adb.device.arg" value="${stamp.dynamic.device.arg}"/>
+            </ant>
+        </else>
+    </if>
+    <mkdir dir="${stamp.droidrecord.logdir}"/>
+    <exec executable="adb"
+      spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} pull /data/droidrecord/ ${stamp.droidrecord.logdir}"/>
+    </exec>
+    <if>
+        <equals arg1="${stamp.input.type}" arg2="apk"/>
+        <then>
+        </then>
+        <else>
+            <move file="droidrecord.log.template" toFile="${stamp.droidrecord.logfile.template}"/>
+        </else>
+    </if>
+    <exec executable="sh"
+      spawn="false"
+      failonerror="true">
+      <arg line='-c "${stamp.droidrecord.cmd.readlog} ${stamp.droidrecord.logfile.template} ${stamp.droidrecord.logfile.bin}* --lib android.support.v4 -o ${stamp.droidrecord.logfile.text}"'/>
+    </exec>
+    <exec executable="adb"
+	  spawn="false"
+	  failonerror="true">
+      <arg line="${stamp.dynamic.device.arg} shell rm -R /data/droidrecord"/>
+    </exec>
+  </target>
+
+</project>

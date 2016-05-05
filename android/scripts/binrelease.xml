@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  
+  <property name="stamp.dir" location=".."/>
+  
+  <tstamp>
+	<format property="TIME_STAMP1" pattern="MMdd-hhmm"/>
+    <format property="TIME_STAMP2" pattern="MM/dd/yyyy hh:mm aa"/>
+  </tstamp>
+  
+  <echo file="${stamp.dir}/releases/buildinfo.txt">Build Time: ${TIME_STAMP2}</echo>
+
+  <zip destfile="${stamp.dir}/releases/stamp-${TIME_STAMP1}.zip">
+	<zipfileset dir="${stamp.dir}/releases" includes="buildinfo.txt" prefix="stamp"/>
+	<zipfileset dir="${stamp.dir}" includes="stamp.config" prefix="stamp"/>
+
+	<zipfileset dir="${stamp.dir}/bin" prefix="stamp/bin">
+	  <patternset>
+		<exclude name="summary"/>
+		<exclude name="stamp"/>
+		<exclude name="stampall"/>
+	  </patternset>
+	</zipfileset>
+
+	<zipfileset dir="${stamp.dir}/bin" filemode="755" prefix="stamp/bin">
+	  <patternset>
+		<include name="summary"/>
+		<include name="stamp"/>
+		<include name="stampall"/>
+	  </patternset>
+	</zipfileset>
+
+	<zipfileset dir="${stamp.dir}/lib" prefix="stamp/lib"/>
+	<zipfileset dir="${stamp.dir}/ant" prefix="stamp/ant"/>
+	<zipfileset dir="${stamp.dir}/assets" prefix="stamp/assets"/>
+
+	<zipfileset dir="${stamp.dir}/scripts" includes="buildReportDB.py" prefix="stamp/scripts"/>
+	<zipfileset dir="${stamp.dir}/scripts" includes="loadDB.py" prefix="stamp/scripts"/>
+
+    <zipfileset dir="${stamp.dir}/tomcat" prefix="stamp/tomcat/">
+	  <patternset>
+		<exclude name="logs/*"/>
+		<exclude name="work/**/*"/>
+		<exclude name="temp/*"/>
+		<exclude name="webapps/*"/>
+		<exclude name="bin/*.sh"/>
+		<exclude name="webapps/docs/**/*"/>
+		<exclude name="webapps/examples/**/*"/>
+		<exclude name="webapps/stamp/**/*"/>
+	  </patternset>
+	</zipfileset>
+
+	<zipfileset dir="${stamp.dir}/tomcat/bin" filemode="755" includes="**/*.sh" prefix="stamp/tomcat/bin"/>
+
+
+  </zip>
+  
+</project>

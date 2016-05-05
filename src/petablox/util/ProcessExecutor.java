@@ -236,8 +236,9 @@ public final class ProcessExecutor {
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(is));
                 String l;
-                while ((l = r.readLine()) != null)
-                    os.println(l);
+                while ((l = r.readLine())!=null){
+                	os.println(l);
+                }
                 os.flush();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

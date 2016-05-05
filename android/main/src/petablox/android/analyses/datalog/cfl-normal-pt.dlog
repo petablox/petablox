@@ -1,0 +1,40 @@
+##################
+# Partial FLows Analysis
+##################
+
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-normal-pt-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder Z0xZ1_M0_C0xC1xC2_V0xV1_H0xF0_I0
+
+###################
+# INPUT: POINTER
+###################
+
+pt(c:C,v:V,o:C)    input
+fpt(o1:C,f:F,o2:C) input
+
+###################
+# OUTPUT: FULL FLOWS
+###################
+
+PtFull(c:C,v:V,o:C) output
+FptFull(o1:C,f:F,o2:C) output
+
+###################
+# RULES: FULL FLOWS
+###################
+
+PtFull(c,v,o) :- pt(c,v,o).
+FptFull(o1,f,o2) :- fpt(o1,f,o2).
