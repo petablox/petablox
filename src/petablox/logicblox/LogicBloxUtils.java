@@ -212,7 +212,7 @@ public class LogicBloxUtils {
 	    	LogicBloxExporter lbe = new LogicBloxExporter();
 	    	lbe.saveDomsDomain();
 	    	lbe.saveDomRangeRelation();
-	    	lbe.saveSubTagRelation();
+	    	//lbe.saveSubTagRelation();
 	    	lbe.saveTagToPgmRelation();
 	    	LogicBloxAnnotExporter lbae = new LogicBloxAnnotExporter();
 	    	lbae.saveAnnotationNameDomain();

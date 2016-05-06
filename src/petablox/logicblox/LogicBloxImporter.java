@@ -223,7 +223,7 @@ public class LogicBloxImporter extends LogicBloxIOBase {
     	loadDomain(DOMS, domASet);
 		loadDomain(TAGS, tagASet);
 		loadDomain(ANNOT_NAME, annotASet);
-		loadSubTagRelation();
+		//loadSubTagRelation();
 		loadDomRangeRelation();
 		//checkAnnotRelations();
     }
