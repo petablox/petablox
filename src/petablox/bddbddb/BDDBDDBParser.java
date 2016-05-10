@@ -90,7 +90,7 @@ public class BDDBDDBParser implements IDatalogParser {
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             
-            Pattern p = Pattern.compile("(\\w)+\\((\\w)+:(\\w)+(,(\\w)+:(\\w)+)*\\)((input)|(output))");
+            Pattern p = Pattern.compile("(\\w)+\\((\\w)+:(\\w)+(,(\\w)+:(\\w)+)*\\)(printtuples)*((input)|(output))(printtuples)*");
             for (state.lineNum = 1; true; state.lineNum++) {
                 String s;
                 s = in.readLine();
@@ -228,9 +228,9 @@ public class BDDBDDBParser implements IDatalogParser {
                 for (int j = 0; j < numDoms; j++)
                     domNames[j] = relMinorDomNames.get(j);
                 Map<String, RelSign> map = null;
-                if (s.equals("input"))
+                if (s.indexOf("input") >= 0)
                     map = consumedRels;
-                else if (s.equals("output"))
+                else if (s.indexOf("output") >= 0)
                     map = producedRels;
                 else
                     assert false; 
