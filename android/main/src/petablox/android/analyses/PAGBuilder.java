@@ -39,42 +39,33 @@ import soot.jimple.BinopExpr;
 import soot.jimple.NegExpr;
 import soot.jimple.NewExpr;
 import soot.jimple.spark.pag.SparkField;
-import soot.jimple.spark.pag.ArrayElement;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.tagkit.Tag;
 import soot.util.NumberedSet;
 import petablox.android.missingmodels.jimplesrcmapper.Printer;
 
-import petablox.project.analyses.JavaAnalysis;           //PRTno change
-import petablox.project.analyses.ProgramRel;			//PRT no change
-import petablox.util.IndexSet;
-import petablox.project.analyses.ProgramDom;				//PRT no change
-import petablox.project.ClassicProject;							//PRT no change
+import petablox.project.analyses.JavaAnalysis;         
+import petablox.project.analyses.ProgramRel;			
+import petablox.util.IndexSet;		
+import petablox.project.ClassicProject;					
 import petablox.analyses.alias.CICGAnalysis;
 import petablox.analyses.alias.ICICG;
 import petablox.program.Program;							
 
 import petablox.project.Petablox;
-//import petablox.analyses.Config;
-//import petablox.android.analyses.method.DomM;               //PRT
+import petablox.analyses.method.DomM;  
+import petablox.analyses.var.DomV;  
 
 import java.util.*;
 
 @Petablox(name="base-java", 
-	   produces={//"M", "Z", "I", "H", "V", 
-			   "U",
+	   produces={"U",
 				 "Alloc", "Assign", 
 				 "Load", "Store", 
 				 "LoadStat", "StoreStat", 
-				// "MmethArg", "MmethRet", 
-				/// "IinvkRet", "IinvkArg", 
-				// "VT", 
 				 "chaIM",
-				// "HT", 
-				 "HTFilter",
-				// "MI", "MH",
-				// "MV", 
+				 "HTFilter", 
 				 "MU",
 				 "AssignPrim", 
 				 "LoadPrim", "StorePrim",
@@ -82,8 +73,8 @@ import java.util.*;
 				 "MmethPrimArg", "MmethPrimRet", 
 				 "IinvkPrimRet", "IinvkPrimArg",
 	             "Stub", "Framework"}  ,
-       namesOfTypes = { "U"}, //"M", "Z", "I", "H", "V", "T", "F", "U"},
-       types = { DomU.class }, //DomM.class, DomZ.class, DomI.class, DomH.class, DomV.class, DomT.class, DomF.class, DomU.class},      
+       namesOfTypes = { "U"}, 
+       types = { DomU.class },       
   		namesOfSigns = {    "Alloc", "Assign", 
 							"Load", "Store", 
 							"LoadStat", "StoreStat", 
@@ -101,7 +92,7 @@ import java.util.*;
 							"V0,V1,F0:F0_V0xV1", "V0,F0,V1:F0_V0xV1",
 							"V0,F0:F0_V0", "F0,V0:F0_V0",
 							"I0,M0:I0_M0", 
-							"H0,T0:H0_T0",                    //PRT
+							"H0,T0:H0_T0",                   
 							"M0,U0:M0_U0",
 							"U0,U1:U0xU1",
 							"U0,V0,F0:U0_V0_F0", "V0,F0,U0:U0_V0_F0",
@@ -109,36 +100,6 @@ import java.util.*;
 							"M0,Z0,U0:M0_U0_Z0", "M0,Z0,U0:M0_U0_Z0",
 							"I0,Z0,U0:I0_U0_Z0", "I0,Z0,U0:I0_U0_Z0",
 							"M0:M0", "M0:M0" }  
-	/*   namesOfSigns = { "Alloc", "Assign", 
-						"Load", "Store", 
-						"LoadStat", "StoreStat", 
-						"MmethArg", "MmethRet", 
-						"IinvkRet", "IinvkArg", 
-						"VT", "chaIM",
-						"HT", "HTFilter",
-						"MI", "MH",
-						"MV", "MU",
-						"AssignPrim", 
-						"LoadPrim", "StorePrim",
-						"LoadStatPrim", "StoreStatPrim",
-						"MmethPrimArg", "MmethPrimRet", 
-						"IinvkPrimRet", "IinvkPrimArg",
-                        "Stub", "Framework"},
-	   signs = { "V0,H0:V0_H0", "V0,V1:V0xV1",
-				 "V0,V1,F0:F0_V0xV1", "V0,F0,V1:F0_V0xV1",
-				 "V0,F0:F0_V0", "F0,V0:F0_V0",
-				 "M0,Z0,V0:M0_V0_Z0", "M0,Z0,V1:M0_V0_Z0",
-				 "I0,Z0,V0:I0_V0_Z0", "I0,Z0,V1:I0_V0_Z0",
-				 "V0,T0:T0_V0", "I0,M0:I0_M0",
-				 "H0,T0:H0_T0", "H0,T0:H0_T1",                    //PRT
-				 "M0,I0:M0_I0", "M0,H0:M0_H0",
-				 "M0,V0:M0_V0", "M0,U0:M0_U0",
-				 "U0,U1:U0xU1",
-				 "U0,V0,F0:U0_V0_F0", "V0,F0,U0:U0_V0_F0",
-				 "U0,F0:U0_F0", "F0,U0:U0_F0",
-				 "M0,Z0,U0:M0_U0_Z0", "M0,Z0,U0:M0_U0_Z0",
-				 "I0,Z0,U0:I0_U0_Z0", "I0,Z0,U0:I0_U0_Z0",
-                 "M0:M0", "M0:M0" }  */
 	   )
 public class PAGBuilder extends JavaAnalysis
 {
@@ -149,11 +110,7 @@ public class PAGBuilder extends JavaAnalysis
 	private ProgramRel relLoadStat;//(l:V,f:F)
 	private ProgramRel relStoreStat;//(f:F,r:V)
 
-    private ProgramRel relMmethArg;//(m:M,z:Z,v:V)
-    private ProgramRel relMmethRet;//(m:M,z:Z,v:V)
-    private ProgramRel relIinvkRet;//(i:I,n:Z,v:V)
-    private ProgramRel relIinvkArg;//(i:I,n:Z,v:V)
-	
+    private ProgramRel relMmethArg;//(m:M,z:Z,v:V)	
 	private ProgramRel relAssignPrim;//(l:U,r:U)
 	private ProgramRel relLoadPrim;//(l:U,b:V,f:F)
 	private ProgramRel relStorePrim;//(b:V,f:F,r:U)
@@ -166,18 +123,13 @@ public class PAGBuilder extends JavaAnalysis
     private ProgramRel relIinvkPrimArg;//(i:I,n:Z,u:U)
 
 	private ProgramRel relVT;
-	private ProgramRel relHT;
 	private ProgramRel relHTFilter;
-	private ProgramRel relMI;
 	private ProgramRel relMH;
 	private ProgramRel relMV;
 	private ProgramRel relMU;
 
-	private ProgramDom domV;              //domV is empty
+	private DomV domV;              //TODO
 	private DomU domU;
-	private ProgramDom domH;				//has unitToString
-	private ProgramDom domZ;              //domZ is empty and removed
-	private ProgramDom domI;						//has unitToString
 
 	private int maxArgs = -1;
 	private FastHierarchy fh;
@@ -203,20 +155,10 @@ public class PAGBuilder extends JavaAnalysis
 
 		relMmethArg = (ProgramRel) ClassicProject.g().getTrgt("MmethArg");
 		relMmethArg.zero();
-		relMmethRet = (ProgramRel) ClassicProject.g().getTrgt("MmethRet");
-		relMmethRet.zero();
-		relIinvkRet = (ProgramRel) ClassicProject.g().getTrgt("IinvkRet");
-		relIinvkRet.zero();
-		relIinvkArg = (ProgramRel) ClassicProject.g().getTrgt("IinvkArg");
-		relIinvkArg.zero();
 		relVT = (ProgramRel) ClassicProject.g().getTrgt("VT");
         relVT.zero();
-		relHT = (ProgramRel) ClassicProject.g().getTrgt("HT");
-        relHT.zero();
 		relHTFilter = (ProgramRel) ClassicProject.g().getTrgt("HTFilter");
 		relHTFilter.zero();
-		relMI = (ProgramRel) ClassicProject.g().getTrgt("MI");
-        relMI.zero();
 		relMH = (ProgramRel) ClassicProject.g().getTrgt("MH");
         relMH.zero();
 		relMV = (ProgramRel) ClassicProject.g().getTrgt("MV");
@@ -255,13 +197,8 @@ public class PAGBuilder extends JavaAnalysis
 		relStoreStat.save();
 
 		relMmethArg.save();
-		relMmethRet.save();
-		relIinvkRet.save();
-		relIinvkArg.save();
 		relVT.save();
-		relHT.save();
 		relHTFilter.save();
-		relMI.save();
 		relMH.save();
 		relMV.save();
 		relMU.save();
@@ -332,27 +269,6 @@ public class PAGBuilder extends JavaAnalysis
 		if(v == null)
 			return;
 		relMmethArg.add(m, new Integer(index), v);
-	}
-
-	void MmethRet(SootMethod m, RetVarNode v)
-	{
-		if(v == null)
-			return;
-		relMmethRet.add(m, new Integer(0), v);
-	}
-	
-	void IinvkArg(Unit invkUnit, int index, LocalVarNode v)
-	{
-		if(v == null)
-			return;
-		relIinvkArg.add(invkUnit, new Integer(index), v);
-	}
-
-	void IinvkRet(Unit invkUnit, LocalVarNode v)
-	{
-		if(v == null)
-			return;
-		relIinvkRet.add(invkUnit, new Integer(0), v);
 	}
 
 	void AssignPrim(VarNode l, VarNode r)
@@ -426,16 +342,6 @@ public class PAGBuilder extends JavaAnalysis
 		relIinvkPrimRet.add(invkUnit, new Integer(0), v);
 	}
 
-    public void growZIfNeeded(int newSize) 
-	{
-        int oldSize = maxArgs;
-		if(newSize <= oldSize)
-			return;
-        for(int i = oldSize+1; i <= newSize; i++)
-            domZ.add(new Integer(i));
-        maxArgs = newSize;
-    }
-
 	class MethodPAGBuilder
 	{
 		private ThisVarNode thisVar;
@@ -454,9 +360,7 @@ public class PAGBuilder extends JavaAnalysis
 		}
 		
 		void pass1()
-		{
-			growZIfNeeded(method.getParameterCount());
-			
+		{	
 			if(!method.isStatic()) {
 				thisVar = new ThisVarNode(method);
 				domV.add(thisVar);
@@ -513,15 +417,9 @@ public class PAGBuilder extends JavaAnalysis
 			stmtToCastNode = new HashMap();
 			for(Unit unit : body.getUnits()){
 				Stmt s = (Stmt) unit;
-				if(s.containsInvokeExpr()){
-					int numArgs = s.getInvokeExpr().getArgCount();
-					growZIfNeeded(numArgs);
-					domI.add(s);
-				} else if(s instanceof AssignStmt) {
+				if(s instanceof AssignStmt) {
 					Value rightOp = ((AssignStmt) s).getRightOp();
-					if(rightOp instanceof AnyNewExpr)
-						domH.add(s);
-					else if(rightOp instanceof CastExpr){
+					if(rightOp instanceof CastExpr){
 						CastExpr castExpr = (CastExpr) rightOp;
 						Type castType = castExpr.getCastType();
 						if(castType instanceof RefLikeType){
@@ -564,8 +462,9 @@ public class PAGBuilder extends JavaAnalysis
 			if(retVar != null){
 				Type retType = method.getReturnType();
 				if(retType instanceof RefLikeType){
-					MmethRet(method, retVar);
-					relVT.add(retVar, retType);
+					try{
+						relVT.add(retVar, retType);
+					} 	catch(Exception e) {	System.out.println(retType+" not found in dom T");};
 					relMV.add(method, retVar);
 				} else if(retType instanceof PrimType){
 					MmethPrimRet(method, retVar);
@@ -612,24 +511,18 @@ public class PAGBuilder extends JavaAnalysis
 				InvokeExpr ie = s.getInvokeExpr();
 				SootMethod callee = ie.getMethod();
 				int numArgs = ie.getArgCount();
-				relMI.add(method, s);
 				s.addTag(containerTag);
 
 				//handle receiver
 				int j = 0;
-				if(ie instanceof InstanceInvokeExpr){
-					InstanceInvokeExpr iie = (InstanceInvokeExpr) ie;
-					IinvkArg(s, j, nodeFor((Immediate) iie.getBase()));
+				if(ie instanceof InstanceInvokeExpr)
 					j++;
-				}
 				
 				//handle args
 				for(int i = 0; i < numArgs; i++,j++){
 					Immediate arg = (Immediate) ie.getArg(i);
 					Type argType = callee.getParameterType(i);
-					if(argType instanceof RefLikeType)
-						IinvkArg(s, j, nodeFor(arg));
-					else if(argType instanceof PrimType)
+					if(argType instanceof PrimType)
 						IinvkPrimArg(s, j, nodeFor(arg));
 				}
 				
@@ -637,9 +530,7 @@ public class PAGBuilder extends JavaAnalysis
 				if(s instanceof AssignStmt){
 					Local lhs = (Local) ((AssignStmt) s).getLeftOp();
 					Type retType = callee.getReturnType();
-					if(retType instanceof RefLikeType)
-						IinvkRet(s, nodeFor(lhs));
-					else if(retType instanceof PrimType)
+					if(retType instanceof PrimType)
 						IinvkPrimRet(s, nodeFor(lhs));
 				}
 			} else if(s.containsFieldRef()){
@@ -684,7 +575,7 @@ public class PAGBuilder extends JavaAnalysis
 				Value leftOp = as.getLeftOp();
 				ArrayRef ar = s.getArrayRef();
 				Immediate base = (Immediate) ar.getBase();
-				SparkField field = ArrayElement.v();
+				SparkField field = null;
 				if(leftOp instanceof Local){
 					//array read
 					Local l = (Local) leftOp;
@@ -714,14 +605,11 @@ public class PAGBuilder extends JavaAnalysis
 
 				if(rightOp instanceof AnyNewExpr){
 					Alloc(nodeFor((Local) leftOp), s);
-					relHT.add(s, rightOp.getType());
 					relMH.add(method, s);
 					s.addTag(containerTag);
 					Iterator<Type> typesIt = Program.g().getTypes().iterator();
 					while(typesIt.hasNext()){
 						Type varType = typesIt.next();
-						//if(!(varType instanceof RefLikeType)
-						//	continue;
 						if(canStore(rightOp.getType(), varType))
 							relHTFilter.add(s, varType);
 					}
@@ -783,54 +671,20 @@ public class PAGBuilder extends JavaAnalysis
 			}
 		}
 	}
-/*   //PRT use relIM instead
-	void populateCallgraph()
-	{	ICICG cg = new CICGAnalysis().getCallGraph(); 
-		//CallGraph cg = Scene.v().getCallGraph();
-		ProgramRel relChaIM = (ProgramRel) ClassicProject.g().getTrgt("chaIM");
-        relChaIM.zero();
-		Iterator<Edge> edgeIt = cg.listener();
-		while(edgeIt.hasNext()){
-			Edge edge = edgeIt.next();
-			if(!edge.isExplicit())
-				continue;
-			Stmt stmt = edge.srcStmt();
-			//int stmtIdx = domI.getOrAdd(stmt);
-			SootMethod tgt = (SootMethod) edge.tgt();
-			SootMethod src = (SootMethod) edge.src();
-			if(tgt.isAbstract())
-				assert false : "tgt = "+tgt +" "+tgt.isAbstract();
-			if(tgt.isPhantom())
-				continue;
-			//System.out.println("stmt: "+stmt+" tgt: "+tgt+ "abstract: "+ tgt.isAbstract());
-			if(ignoreStubs){
-				if(stubMethods.contains(tgt) || (src != null && stubMethods.contains(src)))
-					continue;
-			}
-			relChaIM.add(stmt, tgt);
-		}
-		relChaIM.save();
-	}
-*/
-	void populateMethods()                                                   //soot.getmethods instead of pb.getmethods
+	void populateMethods()
 	{
-		ProgramDom domM = (ProgramDom) ClassicProject.g().getTrgt("M");          //PRT
-		//DomM domM = (DomM) ClassicProject.g().getTrgt("M");
 		Program program = Program.g();
 		stubMethods = new NumberedSet(Scene.v().getMethodNumberer());
 		frameworkMethods = new NumberedSet(Scene.v().getMethodNumberer());
 		IndexSet<SootMethod> methods = program.getMethods();
-		for(SootMethod m : methods){                    //PRT iterator to indexset
-			growZIfNeeded(m.getParameterCount());
+		for(SootMethod m : methods){                    
 			if(isStub(m)){
 				stubMethods.add(m);
 			}
 			if(isFramework(m)) {
 				frameworkMethods.add(m);
 			}
-			domM.add(m);
 		}
-		//domM.save();
 
 		ProgramRel relStub = (ProgramRel) ClassicProject.g().getTrgt("Stub");
         relStub.zero();
@@ -848,61 +702,19 @@ public class PAGBuilder extends JavaAnalysis
 		}
 		relFramework.save();
 	}
-	
-	void populateFields()                          //can directly replace
-	{
-		ProgramDom domF = (ProgramDom) ClassicProject.g().getTrgt("F");     //PRT removed DomF
-		Program program = Program.g();
-		domF.add(ArrayElement.v()); //first add array elem so that it gets index 0
-		for(RefLikeType r : Program.g().getClasses()){               //PRT change to refliketype
-			if(r instanceof RefType){
-				SootClass klass = ((RefType)r).getSootClass();
-				for(SootField field : klass.getFields()){
-					domF.add(field);
-				}
-			}
-		}
-		domF.save();
-	}
-	
-//	void populateTypes()
-//	{
-//		ProgramDom domT = (ProgramDom) ClassicProject.g().getTrgt("T");
-//		Program program = Program.g();													//PRT this gave same output - compared to use soot classes, and use Petablox getTypes
-//        Iterator<Type> typesIt = program.getTypes().iterator();                           //PRT getypes = getclasses + basic types in petablox
-//		while(typesIt.hasNext())
-//            domT.add(typesIt.next());
-//		domT.save();
-//	}
-		
+
 	void populateDomains(List<MethodPAGBuilder> mpagBuilders)
 	{
-		domZ = (ProgramDom) ClassicProject.g().getTrgt("Z");
-
 		populateMethods();
-		populateFields();
-		//populateTypes();
 
-		domH = (ProgramDom) ClassicProject.g().getTrgt("H");
-		domV = (ProgramDom) ClassicProject.g().getTrgt("V");
-		domI = (ProgramDom) ClassicProject.g().getTrgt("I");
+		domV = (DomV) ClassicProject.g().getTrgt("V");   //TODO
 		domU = (DomU) ClassicProject.g().getTrgt("U");
-
-		//Iterator mIt = Scene.v().getReachableMethods().listener();
-		//ProgramRel relReachableM = (ProgramRel) ClassicProject.g().getTrgt("reachableM");
-		//ClassicProject.g().runTask(relReachableM);
-		//ClassicProject.g().runTask("reachableM");
-		ProgramRel relReachableM = (ProgramRel) ClassicProject.g().getTrgt("reachableM");
-		relReachableM.load();
-//		if(!ClassicProject.g().isTrgtDone(relReachableM)){
-//            ClassicProject.g().getTaskProducingTrgt(relReachableM).run();
-//		}
 		
 		
-		
-		
-		Iterable<SootMethod> tuples = relReachableM.getAry1ValTuples();
-		for (SootMethod m : tuples){
+		DomM domM = (DomM) ClassicProject.g().getTrgt("M");   
+		int numM = domM.size();
+		for (int mIdx = 0; mIdx < numM; mIdx++) {
+			SootMethod m = domM.get(mIdx);
 			if(ignoreStubs){
 				if(stubMethods.contains(m))
 					continue;
@@ -912,10 +724,7 @@ public class PAGBuilder extends JavaAnalysis
 			mpagBuilders.add(mpagBuilder);
 		}
 
-		domH.save();
-		domZ.save();
-		//domV.save();               //PRT undo this
-		domI.save();
+		domV.save();               //TODO
 		domU.save();
 	}
 	
@@ -941,7 +750,6 @@ public class PAGBuilder extends JavaAnalysis
 			    unit = units.getSuccOf(unit);
 		    }
 		}
-
 
 		if(!(unit instanceof AssignStmt))
 			return false;
@@ -981,8 +789,6 @@ public class PAGBuilder extends JavaAnalysis
 		for(MethodPAGBuilder mpagBuilder : mpagBuilders)
 			mpagBuilder.pass2();
 		saveRels();
-
-		//populateCallgraph();   //PRT  use relIM instead
 	}
 
 	final public boolean canStore(Type objType, Type varType) 
@@ -998,69 +804,13 @@ public class PAGBuilder extends JavaAnalysis
     }
 
 	public void run()
-	{	//PRT print before start
-		//printtuples();
+	{
 		Program program = Program.g();		
-		//for(SootClass k : program.getClasses()) System.out.println("kk "+k + (k.hasSuperclass() ? k.getSuperclass() : ""));
-		//program.buildCallGraph();
-
 		fh = Scene.v().getOrMakeFastHierarchy();
 		List<MethodPAGBuilder> mpagBuilders = new ArrayList();
 		populateDomains(mpagBuilders);
 		populateRelations(mpagBuilders);
 		fh = null;
-		//PRT print before start
-		//printtuples();
-		//trial();
 	}
 	
-//	void trial(){
-//		String printDir = null;
-//		printDir = System.getProperty("petablox.printrel.dir", Config.outDirName);
-//		DomT dom = (DomT) ClassicProject.g().getTrgt("T");
-//		dom.save();
-//		
-//	    ProgramRel rel = (ProgramRel) ClassicProject.g().getTrgt("MmethArg");
-//	    System.out.println("PRT outdirname: "+printDir);
-//		rel.load(); rel.printFI(printDir); rel.close();
-//	}
-	
-	void printtuples(){
-		relAlloc.save();
-		relAssign.save();
-		relLoad.save();
-		relStore.save();
-		relLoadStat.save();
-		relStoreStat.save();
-
-	    relMmethArg.save();
-	    relMmethRet.save();
-	    relIinvkRet.save();
-	    relIinvkArg.save();
-		
-		relAssignPrim.save();
-		relLoadPrim.save();
-		relStorePrim.save();
-		relLoadStatPrim.save();
-		relStoreStatPrim.save();
-
-	    relMmethPrimArg.save();
-	    relMmethPrimRet.save();
-	    relIinvkPrimRet.save();
-	    relIinvkPrimArg.save();
-
-		relVT.save();
-		relHT.save();
-		relHTFilter.save();
-		relMI.save();
-		relMH.save();
-		relMV.save();
-		relMU.save();
-
-		domV.save();
-		domU.save();
-		domH.save();
-		domZ.save();
-		domI.save();
-	}
 }
