@@ -26,7 +26,7 @@ import petablox.android.util.DomMap;
 import petablox.util.tuple.object.Pair;
 import petablox.android.util.PropertyHelper;
 import petablox.android.util.StringHelper;
-import petablox.android.analyses.VarNode;
+import soot.Local;
 
 public class PathsAdapter {
 	private final DomMap doms = new DomMap();
@@ -246,7 +246,7 @@ public class PathsAdapter {
 			int v = vc.val0.intValue();
 			int c_v = vc.val1.intValue();
 			return new CtxtVarPoint(((DomC) doms.get("C")).get(c_v),
-									(VarNode)((DomV) doms.get("V")).get(v));
+									(Local)((DomV) doms.get("V")).get(v));
 		case 'u':
 			Pair<Integer,Integer> uc = getTwoDomIndices(rawNode);
 			int u = uc.val0.intValue();

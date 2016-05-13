@@ -12,6 +12,7 @@ import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
 import soot.*;
+import soot.jimple.Stmt;
 import soot.jimple.FieldRef;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
@@ -412,16 +413,22 @@ public class SootUtilities {
 	 */
 	public static Local[] getMethArgLocals(SootMethod m){
 		int numLocals = m.getParameterCount();
-		List<Local> regs = m.getActiveBody().getParameterLocals();
-		if(!m.isStatic()) {
-			numLocals++; // Done to consider the "this" parameter passed
-			regs.add(0,m.getActiveBody().getThisLocal());
-		}
-		Local[] locals = new Local[numLocals];
-		for(int i=0;i<regs.size();i++){
-			locals[i] = regs.get(i);
-		}
-		return locals;
+		List<Local> regs;
+		try{ 
+			regs= m.getActiveBody().getParameterLocals(); 
+			if(!m.isStatic()) {
+				numLocals++; // Done to consider the "this" parameter passed
+				regs.add(0,m.getActiveBody().getThisLocal());
+			}
+			Local[] locals = new Local[numLocals];
+			for(int i=0;i<regs.size();i++){
+				locals[i] = regs.get(i);
+			}
+			return locals;
+		} catch(RuntimeException e){ 
+			System.out.println("Method body not found for method: "+m.getSignature()); 
+		};
+		return null;
 	}
 	
 	/*
@@ -443,6 +450,27 @@ public class SootUtilities {
 		}
 		regs.addAll(temps);
 		return regs;
+	}
+	
+	/*
+	 * 	Returns the local variable returned by method m 
+	 *	Returns null if method does not have a return statement or returns a constant
+	 */
+	public static Local getReturnLocal(SootMethod m){
+		try{
+			Body body = m.retrieveActiveBody();
+			for(Unit unit : body.getUnits()){
+				Stmt s = (Stmt) unit;
+				if(s instanceof ReturnStmt){
+					Immediate retOp = (Immediate) ((ReturnStmt) s).getOp();
+					if(retOp instanceof Local)
+						return (Local)retOp;
+				}
+			}
+		}catch(RuntimeException e){ 
+			System.out.println("Method body not found for method: "+m.getSignature()); 
+			};
+		return null;
 	}
 	
 	public static int getBCI(Unit u){

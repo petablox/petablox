@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.analyses.alias.Ctxt;
-import petablox.android.analyses.VarNode;
 
 import petablox.android.util.Partition;
 
@@ -21,6 +20,7 @@ import petablox.util.tuple.object.Pair;
 
 import soot.util.BitVector;
 import soot.util.MapNumberer;
+import soot.Local;
 
 /*
  * @author Saswat Anand
@@ -132,24 +132,24 @@ public class FlowCluster
 		RelView taintedVars = rel.getView();
 		taintedVars.delete(2); //drop labels
 
-		Iterable<Pair<Ctxt,VarNode>> iter = taintedVars.getAry2ValTuples();
-		for(Pair<Ctxt,VarNode> pair : iter){
+		Iterable<Pair<Ctxt,Local>> iter = taintedVars.getAry2ValTuples();
+		for(Pair<Ctxt,Local> pair : iter){
 			varNumberer.add(pair);
 		}
 	}
 
 	private static void fillBuckets(MapNumberer taintedVarNumberer, ProgramRel rel)
 	{
-		Iterable<Trio<Ctxt,VarNode,Pair<String,Ctxt>>> iter = rel.getAry3ValTuples();
-		for(Trio<Ctxt,VarNode,Pair<String,Ctxt>> trio : iter) {
+		Iterable<Trio<Ctxt,Local,Pair<String,Ctxt>>> iter = rel.getAry3ValTuples();
+		for(Trio<Ctxt,Local,Pair<String,Ctxt>> trio : iter) {
 			Ctxt ctxt = trio.val0;
-			VarNode var = trio.val1;
+			Local var = trio.val1;
 			Pair<String,Ctxt> label = trio.val2;
 
 			List<Pair<Pair<String,Ctxt>,Pair<String,Ctxt>>> flows = labelToFlows.get(label);
 			if(flows == null)
 				continue;
-			Pair<Ctxt,VarNode> ctxtVar = new Pair(ctxt,var);
+			Pair<Ctxt,Local> ctxtVar = new Pair(ctxt,var);
 			int ctxtVarIndex = (int) taintedVarNumberer.get(ctxtVar);
 			for(Pair<Pair<String,Ctxt>,Pair<String,Ctxt>> flow : flows){
 				BitVector bucket = flowToBucket.get(flow);

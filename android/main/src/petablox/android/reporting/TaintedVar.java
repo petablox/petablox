@@ -6,15 +6,18 @@ import java.util.Map;
 import java.util.Set;
 
 import petablox.analyses.alias.Ctxt;
-import petablox.android.analyses.LocalVarNode;
-import petablox.android.analyses.VarNode;
+import petablox.analyses.var.DomV;
+//import petablox.android.analyses.LocalLocal;
+//import petablox.android.analyses.Local;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
+import soot.Local;
 import soot.SootClass;
 import soot.SootMethod;
 import petablox.android.srcmap.Expr;
 import petablox.android.srcmap.sourceinfo.RegisterMap;
 import petablox.android.srcmap.sourceinfo.SourceInfo;
+import petablox.util.soot.SootUtilities;
 import petablox.util.tuple.object.Pair;
 
 // TODO thin out unused imports
@@ -25,11 +28,11 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.analyses.alias.Ctxt;
-import petablox.android.analyses.VarNode;
 
 import petablox.android.util.Partition;
 
@@ -49,7 +52,9 @@ public class TaintedVar extends XMLReport
 	private static final Map<Pair<String,Ctxt>,List<Integer>> labelToFlowNums = new HashMap();
 	private static final double threshhold = Double.parseDouble(System.getProperty("stamp.flowcluster.threshhold", "0.9"));
 
-	private static final Map<VarNode, String> varToFlows = new HashMap();
+	private static final Map<Local, String> varToFlows = new HashMap();
+	
+	private DomV domV = (DomV) ClassicProject.g().getTrgt("V");
 	
 	public TaintedVar()
 	{
@@ -58,23 +63,23 @@ public class TaintedVar extends XMLReport
 	}
 
     public void generate() {
-		Map<String,Map<SootMethod,Set<VarNode>>> labelToTaintedVars = labelToTaintedVars();
+		Map<String,Map<SootMethod,Set<Local>>> labelToTaintedVars = labelToTaintedVars();
 		fillBuckets();
 
-		for(Map.Entry<String,Map<SootMethod,Set<VarNode>>> entry1 : labelToTaintedVars.entrySet()){
+		for(Map.Entry<String,Map<SootMethod,Set<Local>>> entry1 : labelToTaintedVars.entrySet()){
 			String label = entry1.getKey();
-			Map<SootMethod,Set<VarNode>> taintedVars = entry1.getValue();
+			Map<SootMethod,Set<Local>> taintedVars = entry1.getValue();
 			Category labelCat = makeOrGetSubCat(label);
-			for(Map.Entry<SootMethod,Set<VarNode>> entry2 : taintedVars.entrySet()){
+			for(Map.Entry<SootMethod,Set<Local>> entry2 : taintedVars.entrySet()){
 				SootMethod meth = entry2.getKey();
 				SootClass klass = meth.getDeclaringClass();
 				RegisterMap regMap = this.sourceInfo.buildRegMapFor(meth);
-				Set<VarNode> vars = entry2.getValue();
+				Set<Local> vars = entry2.getValue();
 				Category methCat = labelCat.makeOrGetPkgCat(meth);
-				for(VarNode v : vars){
-					LocalVarNode lvn = (LocalVarNode) v;
+				for(Local v : vars){
+					//Local lvn =  v;
 					//System.out.println("taintedReg: " + reg + " "+meth);
-					Set<Expr> locs = regMap.srcLocsFor(lvn.local);
+					Set<Expr> locs = regMap.srcLocsFor(v);
 					if(locs != null && locs.size() > 0){
 						for(Expr l : locs){
 							if(l.start() < 0 || l.length() < 0 || l.text() == null)
@@ -87,27 +92,28 @@ public class TaintedVar extends XMLReport
 		}
 	}
 
-	private Map<String,Map<SootMethod,Set<VarNode>>> labelToTaintedVars() {
-		Map<String,Map<SootMethod,Set<VarNode>>> labelToTaintedVars = new HashMap();
+	private Map<String,Map<SootMethod,Set<Local>>> labelToTaintedVars() {
+		Map<String,Map<SootMethod,Set<Local>>> labelToTaintedVars = new HashMap();
 
 		final ProgramRel relRef = (ProgramRel) ClassicProject.g().getTrgt("out_taintedRefVar");
 		relRef.load();
 
-		Iterable<Pair<Pair<String,Ctxt>,VarNode>> res1 = relRef.getAry2ValTuples();
-		for(Pair<Pair<String,Ctxt>,VarNode> pair : res1) {
-			if (!(pair.val1 instanceof LocalVarNode)) continue;
+		Iterable<Pair<Pair<String,Ctxt>,Local>> res1 = relRef.getAry2ValTuples();
+		for(Pair<Pair<String,Ctxt>,Local> pair : res1) {
+			Local[] methArgs = SootUtilities.getMethArgLocals(domV.getMethod(pair.val1));
+			if (!(Arrays.asList(methArgs).contains(pair.val1))) continue;
 
 			String label = pair.val0.val0;
-			VarNode var = pair.val1;
+			Local var = pair.val1;
 
-			Map<SootMethod,Set<VarNode>> taintedVars = labelToTaintedVars.get(label);
+			Map<SootMethod,Set<Local>> taintedVars = labelToTaintedVars.get(label);
 			if(taintedVars == null){
 				taintedVars = new HashMap();
 				labelToTaintedVars.put(label, taintedVars);
 			}
 			
-			SootMethod meth = ((LocalVarNode)var).meth;
-			Set<VarNode> vars = taintedVars.get(meth);
+			SootMethod meth = domV.getMethod(var);
+			Set<Local> vars = taintedVars.get(meth);
 			if(vars == null){
 				vars = new HashSet();
 				taintedVars.put(meth, vars);
@@ -119,21 +125,22 @@ public class TaintedVar extends XMLReport
 		final ProgramRel relPrim = (ProgramRel) ClassicProject.g().getTrgt("out_taintedPrimVar");
 		relPrim.load();
 
-		Iterable<Pair<Pair<String,Ctxt>,VarNode>> res2 = relPrim.getAry2ValTuples();
-		for(Pair<Pair<String,Ctxt>,VarNode> pair : res2) {
-			if (!(pair.val1 instanceof LocalVarNode)) continue;
+		Iterable<Pair<Pair<String,Ctxt>,Local>> res2 = relPrim.getAry2ValTuples();
+		for(Pair<Pair<String,Ctxt>,Local> pair : res2) {
+			Local[] methArgs = SootUtilities.getMethArgLocals(domV.getMethod(pair.val1));
+			if (!(Arrays.asList(methArgs).contains(pair.val1))) continue;
 
 			String label = pair.val0.val0;
-			VarNode var = pair.val1;
+			Local var = pair.val1;
 
-			Map<SootMethod,Set<VarNode>> taintedVars = labelToTaintedVars.get(label);
+			Map<SootMethod,Set<Local>> taintedVars = labelToTaintedVars.get(label);
 			if(taintedVars == null){
 				taintedVars = new HashMap();
 				labelToTaintedVars.put(label, taintedVars);
 			}
 			
-			SootMethod meth = ((LocalVarNode)var).meth;
-			Set<VarNode> vars = taintedVars.get(meth);
+			SootMethod meth = domV.getMethod(var);
+			Set<Local> vars = taintedVars.get(meth);
 			if(vars == null){
 				vars = new HashSet();
 				taintedVars.put(meth, vars);
@@ -211,18 +218,18 @@ public class TaintedVar extends XMLReport
 		RelView taintedVars = rel.getView();
 		taintedVars.delete(2); //drop labels
 
-		Iterable<Pair<Ctxt,VarNode>> iter = taintedVars.getAry2ValTuples();
-		for(Pair<Ctxt,VarNode> pair : iter){
+		Iterable<Pair<Ctxt,Local>> iter = taintedVars.getAry2ValTuples();
+		for(Pair<Ctxt,Local> pair : iter){
 			varNumberer.add(pair);
 		}
 	}
 
 	private static void fillBuckets(MapNumberer taintedVarNumberer, ProgramRel rel)
 	{
-		Iterable<Trio<Ctxt,VarNode,Pair<String,Ctxt>>> iter = rel.getAry3ValTuples();
-		for(Trio<Ctxt,VarNode,Pair<String,Ctxt>> trio : iter) {
+		Iterable<Trio<Ctxt,Local,Pair<String,Ctxt>>> iter = rel.getAry3ValTuples();
+		for(Trio<Ctxt,Local,Pair<String,Ctxt>> trio : iter) {
 			Ctxt ctxt = trio.val0;
-			VarNode var = trio.val1;
+			Local var = trio.val1;
 			Pair<String,Ctxt> label = trio.val2;
 
 			List<Pair<Pair<String,Ctxt>,Pair<String,Ctxt>>> flows = labelToFlows.get(label);
