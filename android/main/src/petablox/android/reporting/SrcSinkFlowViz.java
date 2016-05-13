@@ -8,21 +8,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import petablox.android.analyses.LocalVarNode;
-import petablox.android.analyses.ParamVarNode;
-import petablox.android.analyses.RetVarNode;
-import petablox.android.analyses.ThisVarNode;
-import petablox.android.analyses.VarNode;
+//import petablox.android.analyses.LocalVarNode;
+//import petablox.android.analyses.ParamVarNode;
+//import petablox.android.analyses.RetVarNode;
+//import petablox.android.analyses.ThisVarNode;
+//import petablox.android.analyses.VarNode;
 import petablox.program.Program;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramRel;
 import petablox.android.srcmap.sourceinfo.abstractinfo.AbstractSourceInfo;
-
+import soot.Local;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.VoidType;
 import soot.jimple.Stmt;
+import petablox.analyses.var.DomV;
 import petablox.android.paths.CtxtLabelPoint;
 import petablox.android.paths.CtxtPoint;
 import petablox.android.paths.CtxtVarPoint;
@@ -373,23 +374,25 @@ public class SrcSinkFlowViz extends XMLVizReport {
      * CtxtPoint of the parameter step
      */
     private SootMethod getMethod(Step s) {
-        VarNode v = ((CtxtVarPoint)s.target).var;
+        Local v = ((CtxtVarPoint)s.target).var;
         SootMethod method = null;
 
-        if (v instanceof LocalVarNode) {
-            LocalVarNode localRegister = (LocalVarNode)v;
-            method = localRegister.meth;
-        } else if (v instanceof ThisVarNode) {
-            ThisVarNode thisRegister = (ThisVarNode)v;
-            method = thisRegister.method;
-        } else if (v instanceof ParamVarNode) {
-            ParamVarNode paramRegister = (ParamVarNode)v;
-            method = paramRegister.method;
-        } else if (v instanceof RetVarNode) {
-            RetVarNode retRegister = (RetVarNode)v;
-            method = retRegister.method;
-        } 
-
+//        if (v instanceof LocalVarNode) {
+//            LocalVarNode localRegister = (LocalVarNode)v;
+//            method = localRegister.meth;
+//        } else if (v instanceof ThisVarNode) {
+//            ThisVarNode thisRegister = (ThisVarNode)v;
+//            method = thisRegister.method;
+//        } else if (v instanceof ParamVarNode) {
+//            ParamVarNode paramRegister = (ParamVarNode)v;
+//            method = paramRegister.method;
+//        } else if (v instanceof RetVarNode) {
+//            RetVarNode retRegister = (RetVarNode)v;
+//            method = retRegister.method;
+//        } 
+        
+        DomV domV = (DomV) ClassicProject.g().getTrgt("V");
+        method = domV.getMethod(v);
         return method;
     }
 

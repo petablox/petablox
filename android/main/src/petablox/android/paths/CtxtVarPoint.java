@@ -1,12 +1,12 @@
 package petablox.android.paths;
 
 import petablox.analyses.alias.Ctxt;
-import petablox.android.analyses.VarNode;
+import soot.Local;
 
 public class CtxtVarPoint extends CtxtPoint {
-	public final VarNode var;
+	public final Local var;
 
-	public CtxtVarPoint(Ctxt ctxt, VarNode var) {
+	public CtxtVarPoint(Ctxt ctxt, Local var) {
 		// TODO: Check that it's a call stack, rather than a contextified
 		// object.
 		super(ctxt);

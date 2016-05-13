@@ -8,11 +8,11 @@ import java.util.Set;
 
 import petablox.android.analyses.DomU;
 import petablox.analyses.var.DomV;
-import petablox.android.analyses.LocalVarNode;
-import petablox.android.analyses.ParamVarNode;
-import petablox.android.analyses.RetVarNode;
-import petablox.android.analyses.ThisVarNode;
-import petablox.android.analyses.VarNode;
+//import petablox.android.analyses.LocalVarNode;
+//import petablox.android.analyses.ParamVarNode;
+//import petablox.android.analyses.RetVarNode;
+//import petablox.android.analyses.ThisVarNode;
+//import petablox.android.analyses.VarNode;
 import petablox.project.ClassicProject;
 import soot.Local;
 import soot.SootMethod;
@@ -218,10 +218,10 @@ public class ConversionUtils {
 				// STEP 2b: if it is a variable, then get the variable and method information
 				
 				// get the register from the domain
-				VarNode register;
+				Local register;
 				if(tokens[0].equals("V")) {
 					DomV dom = (DomV)ClassicProject.g().getTrgt(tokens[0].toUpperCase());
-					register = (VarNode)dom.get(Integer.parseInt(tokens[1]));
+					register = dom.get(Integer.parseInt(tokens[1]));
 				} else {
 					DomU dom = (DomU)ClassicProject.g().getTrgt(tokens[0].toUpperCase());
 					register = dom.get(Integer.parseInt(tokens[1]));
@@ -229,21 +229,24 @@ public class ConversionUtils {
 	
 				// look up the method and local from the register
 				SootMethod method = null;
-				Local local = null;
-				if(register instanceof LocalVarNode) {
-					LocalVarNode localRegister = (LocalVarNode)register;
-					local = localRegister.local;
-					method = localRegister.meth;
-				} else if(register instanceof ThisVarNode) {
-					ThisVarNode thisRegister = (ThisVarNode)register;
-					method = thisRegister.method;
-				} else if(register instanceof ParamVarNode) {
-					ParamVarNode paramRegister = (ParamVarNode)register;
-					method = paramRegister.method;
-				} else if(register instanceof RetVarNode) {
-					RetVarNode retRegister = (RetVarNode)register;
-					method = retRegister.method;
-				}
+				Local local = register;
+//				if(register instanceof LocalVarNode) {
+//					LocalVarNode localRegister = (LocalVarNode)register;
+//					local = localRegister.local;
+//					method = localRegister.meth;
+//				} else if(register instanceof ThisVarNode) {
+//					ThisVarNode thisRegister = (ThisVarNode)register;
+//					method = thisRegister.method;
+//				} else if(register instanceof ParamVarNode) {
+//					ParamVarNode paramRegister = (ParamVarNode)register;
+//					method = paramRegister.method;
+//				} else if(register instanceof RetVarNode) {
+//					RetVarNode retRegister = (RetVarNode)register;
+//					method = retRegister.method;
+//				}
+				
+				DomV domV = (DomV) ClassicProject.g().getTrgt("V");
+		        method = domV.getMethod(local);
 	
 				// HTML hyper link to the method
 				String sourceFileName = method == null ? "" : sourceInfo.filePath(method.getDeclaringClass());
