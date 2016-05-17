@@ -133,55 +133,6 @@
     </sequential>
   </macrodef>
 
-  <macrodef name="open-browser">
-    <attribute name="url"/>
-	<sequential>
-	  <!-- Start Tomcat server. -->
-	  <exec executable="${stamp.tomcat.bindir}/startup.sh"
-			spawn="false"
-			failonerror="true"/>
-	  <echo>Starting Tomcat server</echo>
-	  
-	  <!-- Wait until the server is ready. -->
-	  <waitfor maxwait="3" maxwaitunit="minute" checkevery="1000">
-		<http url="http://localhost:8080"/>
-	  </waitfor>
-
-	  <catalina-deploy username="admin"
-					   password="stamp"
-					   url="${tomcat.manager}"
-					   path="/stamp"
-					   update="true"
-					   localWar="${stamp.dir}/bin/stamp.war"/>
-
-	  <if>
-		<isset property="stamp.server.host"/>
-		<then/>
-		<else>
-		  <property name="stamp.server.host" value="localhost"/>
-		</else>
-	  </if>
-	  <exec executable="${stamp.browser}"
-            spawn="true"
-            os="Linux">
-		<arg value="http://${stamp.server.host}:8080/@{url}"/>
-	  </exec>
-	  <exec executable="open"
-            spawn="yes"
-            os="Mac OS X">
-		<arg line="http://${stamp.server.host}:8080/@{url}"/>
-	  </exec>
-	  <echo>
-		If your browser fails to open automatically in a few seconds, please go to: 
-		http://${stamp.server.host}:8080/@{url}
-	  </echo>
-	  <echo file="stamp-url.txt">
-		http://${stamp.server.host}:8080/@{url}
-	  </echo>
-
-	</sequential>
-  </macrodef>
-
   <macrodef name="run-apktool">
 	<sequential>
 	  <java classname="brut.apktool.Main"

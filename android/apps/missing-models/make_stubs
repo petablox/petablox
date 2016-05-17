@@ -1,7 +1,0 @@
-rm -rf stamp_stubs.txt
-java -Xmx1024m -classpath ../../../apache-tomcat-6.0.35/webapps/ROOT/modelgen/stamp.modelgen.jar:../../../apache-tomcat-6.0.35/webapps/ROOT/lib/javaparser-1.0.8.jar stamp.modelgen.StubsListGenerator src
-mv stamp_stubs.txt stubs.txt
-jar xf ../../../apache-tomcat-6.0.35/webapps/ROOT/android/stamp.android.jar stamp_stubs.txt
-mv stamp_stubs.txt original_stamp_stubs.txt
-cat original_stamp_stubs.txt stubs.txt > stamp_stubs.txt
-jar uf ../../../apache-tomcat-6.0.35/webapps/ROOT/android/stamp.android.jar stamp_stubs.txt
