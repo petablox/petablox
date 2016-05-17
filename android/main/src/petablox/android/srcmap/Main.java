@@ -152,10 +152,8 @@ public class Main {
 			System.out.println("classpath: " + p);
 
 		String androidDir = null;
-		if(args.length > 3) 
-			androidDir = args[3];
-		openWriter(androidDir);
-
+		openWriter();
+		
 		try{
 			for(String srcRootPath : srcpathEntries)
 				processDir(srcRootPath, new File(srcRootPath));
@@ -163,7 +161,6 @@ public class Main {
 			e.printStackTrace();
 			throw new Error(e);
 		}
-
 		writer.close();
 	}	
 
@@ -181,29 +178,19 @@ public class Main {
 		}
 	}
 
-	private static void openWriter(String dirName) throws IOException {
-		if(dirName == null){
-			//processing android classes
-			//open in append mode
-			File f = new File("stamp_annotations.txt");
-			if(f.exists()){
-				BufferedReader reader = new BufferedReader(new FileReader(f));
-				String line;
-				while((line = reader.readLine()) != null){
-					oldAnnots.add(line);
-				}
-				reader.close();
-			}
-			writer = new PrintWriter(new FileWriter(f, true));
-		} else {
-			writer = new PrintWriter(new FileWriter("stamp_annotations.txt"));
-			BufferedReader reader = new BufferedReader(new FileReader(new File(dirName, "stamp_annotations.txt")));
+	private static void openWriter() throws IOException {
+		//processing android classes
+		//open in append mode
+		File f = new File("stamp_annotations.txt");
+		if(f.exists()){
+			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line;
 			while((line = reader.readLine()) != null){
-				writer.println(line);
+				oldAnnots.add(line);
 			}
 			reader.close();
 		}
+		writer = new PrintWriter(new FileWriter(f, true));
 	}
 
 	static void writeAnnot(String annot) {

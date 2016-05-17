@@ -119,7 +119,7 @@ libPath=${stamp.lib.jars}
     <!-- Construct source map. -->
     <!-- Read annotations from source code and store them in stamp_annotations.txt .-->
 	<echo>app.dir=${app.dir}</echo>
-    <java classname="petablox.android.srcmap.Main"
+ <java classname="petablox.android.srcmap.Main"
 	  maxmemory="${stamp.maxheap}"
 	  dir="${stamp.out.dir}"
 	  fork="true"
@@ -136,7 +136,7 @@ libPath=${stamp.lib.jars}
       <arg value="${stamp.out.dir}/srcmap"/>
       <arg value="${stamp.dir}/models/api-${apilevel}"/>
     </java>
-	
+
 	<property name="apk" value="${stamp.apk.path}"/>
 	<antcall target="-analyze-apk"/>
 
