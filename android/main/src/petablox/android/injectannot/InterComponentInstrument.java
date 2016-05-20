@@ -16,10 +16,7 @@ import soot.toolkits.graph.*;
 import soot.toolkits.scalar.*;
 import petablox.program.Program;
 import java.util.*;
-import edu.stanford.droidrecord.logreader.events.info.ParamInfo;
 
-import stamp.droidrecord.DroidrecordProxy;
-import stamp.droidrecord.StampCallArgumentValueAnalysis;
 import petablox.android.analyses.ReachingDefsAnalysis;
 
 /**
@@ -63,27 +60,12 @@ public class InterComponentInstrument extends AnnotationInjector.Visitor
 	//cache the temporary result from new ComponentName.
 	private Map<Value, String> arg2CompnentName = new HashMap<Value, String>();
 	
-    private StampCallArgumentValueAnalysis cavAnalysis = null;
-	
     private static HashSet<String> unknownBundleSrcMethods = new HashSet<String>();
     
     private SootMethod currentMethod;
     
     public InterComponentInstrument()
     {
-        DroidrecordProxy droidrecord = stamp.droidrecord.DroidrecordProxy.g();
-        if(droidrecord.isAvailable()) {
-            cavAnalysis = droidrecord.getCallArgumentValueAnalysis();
-            cavAnalysis.run();
-        }
-    }
-    
-    private List<ParamInfo> queryArgumentValues(SootMethod caller, Stmt stmt, 
-                                                int argNum) {
-        if(cavAnalysis != null)
-            return cavAnalysis.queryArgumentValues(caller, stmt, argNum);
-        else
-            return java.util.Collections.EMPTY_LIST;
     }
 	
     protected void visit(SootClass klass)
@@ -981,11 +963,8 @@ public class InterComponentInstrument extends AnnotationInjector.Visitor
     
     private void _tmp_reportUnknownRegisterDynInfo(Stmt stmt, Value v, int argNum) {
         reportUnknownRegister(stmt, v);
-        List<ParamInfo> dynvals = queryArgumentValues(this.currentMethod, stmt, argNum);
+        //List<ParamInfo> dynvals = queryArgumentValues(this.currentMethod, stmt, argNum);
         System.out.println("Method: " + this.currentMethod + "\tArg: #" + argNum);
-        System.out.print("Dynamic Values: [ ");
-        for(ParamInfo p : dynvals) System.out.print(p.toString() + ", ");
-        System.out.println("]");
     }
     
 }

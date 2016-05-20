@@ -46,7 +46,6 @@ import soot.tagkit.Tag;
 import soot.util.NumberedSet;
 
 import petablox.util.soot.SootUtilities;
-import petablox.android.missingmodels.jimplesrcmapper.Printer;
 import petablox.project.analyses.JavaAnalysis;         
 import petablox.project.analyses.ProgramRel;			
 import petablox.util.IndexSet;		
@@ -676,7 +675,32 @@ public class PAGBuilder extends JavaAnalysis
 	boolean isFramework(SootMethod method) {
 		if(!method.isConcrete())
 			return false;
-		return Printer.isFrameworkClass(method.getDeclaringClass());		
+		return isFrameworkClass(method.getDeclaringClass());		
+	}
+
+	private static final Set<String> packagePrefices = new HashSet<String>();
+	static {
+		packagePrefices.add("android");
+		packagePrefices.add("java");
+		packagePrefices.add("javax");
+		packagePrefices.add("org.apache");
+		packagePrefices.add("org.json");
+		packagePrefices.add("org.w3c");
+		packagePrefices.add("org.xml");
+		packagePrefices.add("org.xmlpull");
+		packagePrefices.add("edu.stanford.stamp.harness");
+		packagePrefices.add("com.android");
+		packagePrefices.add("com.google.android.maps");		
+	}
+	
+	public static boolean isFrameworkClass(SootClass cl) {
+		String packageName = cl.getPackageName();
+		for(String packagePrefix : packagePrefices) {
+			if(packageName.startsWith(packagePrefix)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	boolean isStub(SootMethod method)

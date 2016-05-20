@@ -51,10 +51,4 @@
 	</if>	  
   </target>
 
-  
-
-  <target name="summary">
-	<open-browser url="stamp/html/summary.html?dbpath=${stamp.dir}/stamp_output/app-reports.sqlite&amp;format=${stamp.dir}/assets/summary.format"/>
-  </target>
-
 </project>

@@ -20,7 +20,7 @@
 CM(c:C,m:M) input
 
 # Method invocations
-chaIM(i:I,m:M) input
+IM(i:I,m:M) input
 MmethArg(m:M,z:Z,v:V) input
 MmethPrimArg(m:M,z:Z,u:U) input
 
@@ -42,7 +42,7 @@ Stub(m:M) input
 ## OUTPUT RELATIONS ===========================================================
 
 # Call graph information
-# chaIM(i:I,m:M) will be used directly
+# IM(i:I,m:M) will be used directly
 out_reachableM(m:M) output
 
 # Taint flow information
@@ -64,13 +64,13 @@ out_reachableM(m) :- CM(_,m).
 out_taintedPrimVar(l,v) :- labelPrim(_,v,l).
 out_taintedRefVar(l,v) :- labelRef(_,v,l).
 
-out_taintSrc(l,m) :- chaIM(_,m), InLabelRet(l,m), SrcLabel(l).
-out_taintSrc(l,m) :- chaIM(_,m), InLabelArg(l,m,_), SrcLabel(l).
+out_taintSrc(l,m) :- IM(_,m), InLabelRet(l,m), SrcLabel(l).
+out_taintSrc(l,m) :- IM(_,m), InLabelArg(l,m,_), SrcLabel(l).
 
-out_taintSink(l,m) :- chaIM(_,m), InLabelArg(l,m,_), SinkLabel(l).
-out_taintSink(l,m) :- chaIM(_,m), InLabelRet(l,m), SinkLabel(l).
-out_taintSink(l,m) :- chaIM(_,m), OutLabelRet(l,m).
-out_taintSink(l,m) :- chaIM(_,m), OutLabelArg(l,m,_).
+out_taintSink(l,m) :- IM(_,m), InLabelArg(l,m,_), SinkLabel(l).
+out_taintSink(l,m) :- IM(_,m), InLabelRet(l,m), SinkLabel(l).
+out_taintSink(l,m) :- IM(_,m), OutLabelRet(l,m).
+out_taintSink(l,m) :- IM(_,m), OutLabelArg(l,m,_).
 
 out_taintedStub(m) :- out_taintedRefVar(_,v), MmethArg(m,_,v), Stub(m).
 out_taintedStub(m) :- out_taintedPrimVar(_,v), MmethPrimArg(m,_,v), Stub(m).

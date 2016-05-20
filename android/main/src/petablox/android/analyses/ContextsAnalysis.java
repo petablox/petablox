@@ -130,7 +130,7 @@ public class ContextsAnalysis extends JavaAnalysis
 
 		CH();
 		
-		CM();
+		//CM();
 	}
 
 	private void CM()
@@ -190,10 +190,8 @@ public class ContextsAnalysis extends JavaAnalysis
                 Ctxt newCtxt = domC.setCtxt(newElems);
 				relCC.add(oldCtxt, newCtxt);
 				if(invk == null){
-					System.out.println("PRT null");
-					continue;
-				}
-					
+					continue;		//PRT
+				}					
                 relCI.add(newCtxt, invk);
 			}
 		}
@@ -246,16 +244,15 @@ public class ContextsAnalysis extends JavaAnalysis
         Set<SootMethod> roots = new HashSet<SootMethod>();
         Map<SootMethod, Set<SootMethod>> methToPredsMap = new HashMap<SootMethod, Set<SootMethod>>();
 		
-		boolean ignoreStubs = PAGBuilder.ignoreStubs;
-        //DomStubs domStubs = (DomStubs) ClassicProject.g().getTrgt("Stubs");
-		NumberedSet stubs = PAGBuilder.stubMethods;
+		//boolean ignoreStubs = PAGBuilder.ignoreStubs;
+		//NumberedSet stubs = PAGBuilder.stubMethods;
 		int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
         	SootMethod meth = (SootMethod)domM.get(mIdx);
-			if(ignoreStubs && stubs.contains(meth)){
+			//if(ignoreStubs && stubs.contains(meth)){
 				//System.out.println("reachstub "+meth);
-				continue;
-			}
+		//		continue;
+			//}
 			if (meth == mainMeth || meth.getName().equals("<clinit>")){
                 roots.add(meth);
                 methToPredsMap.put(meth, emptyMethSet);

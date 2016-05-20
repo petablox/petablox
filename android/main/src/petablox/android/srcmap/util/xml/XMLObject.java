@@ -1,4 +1,4 @@
-package petablox.android.missingmodels.util.xml;
+package petablox.android.srcmap.util.xml;
 
 import java.io.Serializable;
 import java.util.ArrayList;
