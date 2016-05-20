@@ -42,10 +42,10 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
-import petablox.android.missingmodels.util.xml.XMLObject;
-import petablox.android.missingmodels.util.xml.XMLObject.XMLContainerObject;
-import petablox.android.missingmodels.util.xml.XMLObject.XMLEmptyObject;
-import petablox.android.missingmodels.util.xml.XMLObject.XMLTextObject;
+import petablox.android.srcmap.util.xml.XMLObject;
+import petablox.android.srcmap.util.xml.XMLObject.XMLContainerObject;
+import petablox.android.srcmap.util.xml.XMLObject.XMLEmptyObject;
+import petablox.android.srcmap.util.xml.XMLObject.XMLTextObject;
 
 /*
  * @author Saswat Anand

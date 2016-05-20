@@ -85,8 +85,7 @@
 				  failonerror="true">
 			  <jvmarg value="-ea"/>
 			  <classpath>
-			  	<pathelement location="${petablox.dir}/petablox.jar"/>   <!--PRT use petablox.jar instead, since it contains stamp/main/everything -->
-				<!-- <pathelement location="${stamp.dir}/bin/stamp.main.jar"/>  -->
+			  	<pathelement location="${petablox.dir}/petablox.jar"/>   
 				<pathelement location="${stamp.dir}/lib/javaparser-1.0.8.jar"/>
 			  </classpath>
 			  <arg value="gen"/>
@@ -94,7 +93,7 @@
 			  <arg value="bak"/>
 			  <sysproperty key="stamp.dir" value="${stamp.dir}"/>
 			</java>
-			
+	
 			<!-- generate the list of stubs -->
 			<!--java classname="stamp.modelgen.StubsListGenerator"
 				  maxmemory="${stamp.maxheap}"

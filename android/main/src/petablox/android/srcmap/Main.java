@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import petablox.android.missingmodels.util.xml.XMLObject.XMLContainerObject;
 
 public class Main { 
 	private static String[] classpathEntries;

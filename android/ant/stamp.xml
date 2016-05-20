@@ -18,27 +18,11 @@
     <classpath path="${stamp.dir}/lib/jaxb-xjc.jar"/>
   </taskdef>
 
-  <property name="tomcat.dir" location="${stamp.dir}/tomcat"/>
 
-  <path id="catalina-ant-classpath">
-    <fileset dir="${tomcat.dir}/lib">
-      <include name="catalina-ant.jar"/>
-      <include name="tomcat-coyote.jar"/>
-      <include name="tomcat-util.jar"/>
-    </fileset>
-    <fileset dir="${tomcat.dir}/bin">
-      <include name="tomcat-juli.jar"/>
-    </fileset>
-  </path>
-  <taskdef name="catalina-deploy" 
-		   classname="org.apache.catalina.ant.DeployTask" 
-		   classpathref="catalina-ant-classpath"/>
-  <property name="tomcat.manager" value="http://localhost:8080/manager/text"/>
 
   <!-- Set project-wide options. -->
   <property name="web.dir" location="${stamp.dir}/web"/>
 
-  <property name="stamp.tomcat.bindir" location="${tomcat.dir}/bin"/>
   <property name="stamp.paths.schema"
 	    location="${stamp.dir}/solvergen/paths.xsd"/>
   <path id="stamp.build.classpath">
@@ -58,24 +42,5 @@
   <import file="perm.xml"/>
 
   <target name="clean" depends="-clean-tool"/>
-
-  <target name="help">
-    <!-- Start Tomcat server. -->
-    <exec executable="${stamp.tomcat.bindir}/startup.sh"
-	  spawn="true"/>
-
-    <!-- Wait for the page to become responsive. -->
-    <waitfor maxwait="3" maxwaitunit="minute" checkevery="500">
-      <http url="http://localhost:8080"/>
-    </waitfor>
-
-	<!-- Launch browser. -->
-	<exec executable="${stamp.browser}" spawn="true" os="Linux">
-	  <arg value="http://localhost:8080/doc/stamp.html"/>
-    </exec>
-    <exec executable="open" spawn="true" os="Mac OS X">
-	  <arg line="http://localhost:8080/doc/stamp.html"/>
-    </exec>
-  </target>
 
 </project>
