@@ -130,7 +130,7 @@ public class ContextsAnalysis extends JavaAnalysis
 
 		CH();
 		
-		//CM();
+		CM();
 	}
 
 	private void CM()
