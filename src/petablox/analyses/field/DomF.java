@@ -48,7 +48,7 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
     @Override
     public void visit(SootField f) {
         int indx = getOrAdd(f);
-        parseAnnotations(f, indx);
+        //parseAnnotations(f, indx);
     }
 
     @Override

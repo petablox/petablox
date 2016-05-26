@@ -54,11 +54,11 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
         SootMethod mainMethod = program.getMainMethod();
         assert (mainMethod != null);
         indx = getOrAdd(mainMethod);
-        parseAnnotations(mainMethod,indx);
+        //parseAnnotations(mainMethod,indx);
         SootMethod startMethod = program.getThreadStartMethod();
         if (startMethod != null){
            indx = getOrAdd(startMethod);
-           parseAnnotations(startMethod,indx);
+           //parseAnnotations(startMethod,indx);
         }
     }
 
@@ -68,7 +68,7 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
     @Override
     public void visit(SootMethod m) {
         int indx = getOrAdd(m);
-        parseAnnotations(m, indx);
+        //parseAnnotations(m, indx);
     }
 
     @Override

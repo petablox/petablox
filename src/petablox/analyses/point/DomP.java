@@ -69,7 +69,7 @@ public class DomP extends ProgramDom<Unit> {
             	while(uit.hasNext()){
             		Unit u = uit.next();
             		int indx = getOrAdd(u);
-            		parseAnnotations(u, indx);
+            		//parseAnnotations(u, indx);
             		unitToMethodMap.put(u, m);
             	}  
             }
