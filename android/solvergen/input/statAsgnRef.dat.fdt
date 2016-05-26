@@ -1,2 +1,0 @@
-@DUMP:LoadStatCtxt(%C,%L,%F):f%F v%L_%C@
-@DUMP:StoreStatCtxt(%C,%F,%R):v%R_%C f%F@
