@@ -6,6 +6,7 @@ import soot.toolkits.graph.Block;
 import soot.Unit;
 import soot.tagkit.SourceFileTag;
 import soot.tagkit.LineNumberTag;
+import soot.jimple.internal.JExitMonitorStmt;
 import petablox.analyses.method.DomM;
 import petablox.program.visitors.IRelLockInstVisitor;
 import petablox.project.Petablox;
@@ -14,6 +15,8 @@ import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
+import petablox.util.Utils;
+import petablox.util.soot.JEntryExitNopStmt;
 
 /**
  * Domain of all lock release points, including monitorexit quads and exit basic blocks of synchronized methods.
@@ -51,6 +54,19 @@ public class DomR extends ProgramDom<Unit> implements IRelLockInstVisitor {
     @Override
     public String toUniqueString(Unit o) {
         return SootUtilities.toByteLocStr(o);
+    }
+    
+    @Override
+    public String toFIString(Unit u) {		    
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(u) + ")");
+    	if(u instanceof JEntryExitNopStmt)
+    		sb.append("SYNC METH");
+    	else if(u instanceof JExitMonitorStmt)
+    		sb.append("MONITOR EXIT");
+    	sb.append(": "+SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	return sb.toString();
     }
 
     @Override

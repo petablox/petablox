@@ -9,6 +9,12 @@ import soot.toolkits.graph.Block;
 import soot.Unit;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
+import soot.jimple.internal.JAssignStmt;
+import soot.jimple.internal.JIdentityStmt;
+import soot.jimple.internal.JInvokeStmt;
+import soot.jimple.internal.JRetStmt;
 import petablox.analyses.method.DomM;
 import petablox.project.Petablox;
 import petablox.project.ClassicProject;
@@ -16,7 +22,7 @@ import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
-
+import petablox.util.Utils;
 
 /**
  * Domain of quads.
@@ -67,6 +73,27 @@ public class DomP extends ProgramDom<Unit> {
     public String toUniqueString(Unit u) {
         String x = Integer.toString(SootUtilities.getBCI((Unit) u));                  
         return x + "!" + getMethod(u);
+    }
+    
+    @Override
+    public String toFIString(Unit u) {		 
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(u) + ")");
+    	String type;
+    	if(u instanceof JAssignStmt)
+        	type = "Assign";
+        else if(u instanceof JIdentityStmt) 
+        	type = "Identity";
+        else if(u instanceof JInvokeStmt) 
+        	type = "Invoke";
+        else if(u instanceof JRetStmt) 
+        	type = "Return";
+        else
+        	type = "Other";
+    	sb.append(type);
+    	sb.append(": " + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	return sb.toString();
     }
 
     @Override

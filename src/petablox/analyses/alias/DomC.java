@@ -7,6 +7,7 @@ import petablox.analyses.invk.DomI;
 import petablox.project.ClassicProject;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.SootUtilities;
+import petablox.util.Utils;
 
 
 /**
@@ -28,6 +29,35 @@ public class DomC extends ProgramDom<Ctxt> {
             return (Ctxt) get(cIdx);
         getOrAdd(cVal);
         return cVal;
+    }
+    
+    @Override
+    public String toFIString(Ctxt cVal) {		  
+    	if (domH == null)
+            domH = (DomH) ClassicProject.g().getTrgt("H");
+        if (domI == null)
+            domI = (DomI) ClassicProject.g().getTrgt("I");
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(cVal) + ")");	
+    	sb.append("[");
+        Unit[] elems = cVal.getElems();
+        int n = elems.length;
+        for (int i = 0; i < n; i++) {
+            Unit eVal = elems[i];
+            if (SootUtilities.isInvoke(eVal))
+            	sb.append(domI.toFIString(eVal));
+            else if(eVal instanceof JAssignStmt){
+            	JAssignStmt as =(JAssignStmt) eVal;
+            	if(SootUtilities.isNewStmt(as)||SootUtilities.isNewArrayStmt(as)||SootUtilities.isNewMultiArrayStmt(as))
+            		sb.append(domH.toFIString(eVal));
+            } else
+                assert false;
+            if (i < n - 1)
+                sb.append(",");
+        }
+        sb.append("]");
+    	return sb.toString();
     }
 
     @Override

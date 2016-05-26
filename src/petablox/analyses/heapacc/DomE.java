@@ -15,6 +15,7 @@ import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.SootUtilities;
+import petablox.util.Utils;
 
 /**
  * Domain of quads that access (read or write) an instance field, a static field, or an array element.
@@ -60,6 +61,17 @@ public class DomE extends ProgramDom<Unit> implements IHeapInstVisitor {
     @Override
     public String toUniqueString(Unit u) {
         return SootUtilities.toByteLocStr(u);
+    }
+    
+    @Override
+    public String toFIString(Unit u) {		   
+    	JAssignStmt as = (JAssignStmt)u;
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(u) + ")");
+    	String rdWr = (SootUtilities.isFieldStore(as) || SootUtilities.isStaticPut(as) || SootUtilities.isStoreInst(as))? "Wr" : "Rd";
+    	sb.append(rdWr+": " + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	return sb.toString();
     }
 
     @Override
