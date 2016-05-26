@@ -23,8 +23,6 @@
   <!-- Set project-wide options. -->
   <property name="web.dir" location="${stamp.dir}/web"/>
 
-  <property name="stamp.paths.schema"
-	    location="${stamp.dir}/solvergen/paths.xsd"/>
   <path id="stamp.build.classpath">
     <pathelement path="${stamp.dir}/main/src"/>
     <pathelement path="${stamp.dir}/main/classes"/>
