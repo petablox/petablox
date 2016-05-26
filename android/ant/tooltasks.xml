@@ -7,13 +7,6 @@
   <target name="-build-comps"
           depends="-safe-build-droidrecord" unless="release">
     <mkdir dir="${stamp.dir}/main/gen"/>
-    <echo> PRT  xjc testttt </echo>
-    <xjc schema="${stamp.dir}/solvergen/paths.xsd" package="petablox.android.paths.raw"
-	 destdir="${stamp.dir}/main/gen/" readonly="true">
-      <produces dir="${stamp.dir}/main/gen/"
-		includes="**/*.java"/>
-      <classpath refid="stamp.build.classpath"/>
-    </xjc>
     
     <ant antfile="${stamp.dir}/annotations/build.xml" target="jar"
 	 inheritAll="false" useNativeBasedir="true"/>
