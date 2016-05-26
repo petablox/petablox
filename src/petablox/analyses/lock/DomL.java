@@ -6,6 +6,7 @@ import soot.toolkits.graph.Block;
 import soot.Unit;
 import soot.tagkit.SourceFileTag;
 import soot.tagkit.LineNumberTag;
+import soot.jimple.internal.JEnterMonitorStmt;
 import petablox.analyses.method.DomM;
 import petablox.program.visitors.IAcqLockInstVisitor;
 import petablox.project.Petablox;
@@ -14,6 +15,8 @@ import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
+import petablox.util.soot.JEntryExitNopStmt;
+import petablox.util.Utils;
 
 /**
  * Domain of all lock acquire points, including monitorenter quads and entry basic blocks of synchronized methods.
@@ -52,6 +55,19 @@ public class DomL extends ProgramDom<Unit> implements IAcqLockInstVisitor {
     @Override
     public String toUniqueString(Unit u) {
         return SootUtilities.toByteLocStr(u);                             
+    }
+    
+    @Override
+    public String toFIString(Unit u) {		    
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(u) + ")");
+    	if(u instanceof JEntryExitNopStmt)
+    		sb.append("SYNC METH");
+    	else if(u instanceof JEnterMonitorStmt)
+    		sb.append("MONITOR ENTER");
+    	sb.append(":"+SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	return sb.toString();
     }
 
     @Override
