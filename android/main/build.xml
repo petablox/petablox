@@ -10,7 +10,6 @@
     <javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
            destdir="${petablox.dir}/classes">                       <!-- PRT add compiled classes to petablox/classes instead of stamp.main/classes -->
       <src path="src"/>
-      <src path="gen"/>
       <classpath>
         <fileset dir="${stamp.dir}/lib">
           <include name="**/*.jar"/>
