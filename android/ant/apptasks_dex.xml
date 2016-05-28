@@ -78,22 +78,6 @@
 
     <echo message="HERE:${stamp.analyses}"/>
 
-    <!-- Conditionally set-up DroidRecord properties -->
-    <if>
-      <isset property="stamp.droidrecord.logfile.template"/>
-      <then/>
-      <else>
-        <property name="stamp.droidrecord.logfile.template" value=""/>
-      </else>
-    </if>
-    <if>
-      <isset property="stamp.droidrecord.logfile.bin"/>
-      <then/>
-      <else>
-        <property name="stamp.droidrecord.logfile.bin" value=""/>
-      </else>
-    </if>
-
     <!-- Run petablox. -->
     <java classname="petablox.project.Main" 
 		  maxmemory="${stamp.maxheap}"

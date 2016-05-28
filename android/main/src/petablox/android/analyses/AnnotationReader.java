@@ -19,6 +19,7 @@ import petablox.project.analyses.JavaAnalysis;
 import petablox.project.ClassicProject;
 import petablox.program.Program;
 import petablox.analyses.method.DomM;
+import petablox.util.tuple.object.Pair;
 
 import petablox.project.Petablox;
 
@@ -26,7 +27,7 @@ import petablox.project.Petablox;
  * @author Saswat Anand
 **/
 @Petablox(name = "annot-java",
-	   consumes = { "M", "Z" },
+	   consumes = { "M", "Z", "overrideM" },
 	   produces = { "Lbl",
 					"ArgArgTransfer", "ArgRetTransfer", 
 					"ArgArgFlow",
@@ -182,7 +183,16 @@ public class AnnotationReader extends JavaAnalysis
 	private void addFlow(SootMethod meth, String from, String to) //throws NumberFormatException
 	{
 		//System.out.println("+++ " + meth + " " + from + " " + to);
-		List<SootMethod> meths = SootUtils.overridingMethodsFor(meth);
+//  	List<SootMethod> meths = SootUtils.overridingMethodsFor(meth);
+    	List<SootMethod> meths = new ArrayList<SootMethod>();
+    	ProgramRel relOverrideM = (ProgramRel) ClassicProject.g().getTrgt("overrideM");
+    	relOverrideM.load();
+    	for (Pair<Object, Object> t : relOverrideM.getAry2ValTuples()) {
+            	SootMethod m0 = (SootMethod) t.val0;
+            	if (m0.equals(meth)) meths.add((SootMethod) t.val1);
+    	}
+    	relOverrideM.close();
+
 		char from0 = from.charAt(0);
 		if(from0 == '$' || from0 == '!') {
 			if(to.equals("-1")){
