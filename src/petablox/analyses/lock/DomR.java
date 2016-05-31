@@ -72,8 +72,8 @@ public class DomR extends ProgramDom<Unit> implements IRelLockInstVisitor {
     @Override
     public String toXMLAttrsString(Unit o) {
         SootMethod m = SootUtilities.getMethod(o);
-        String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
-        int line = ((LineNumberTag)o.getTag("LineNumberTag")).getLineNumber();
+        String file = SootUtilities.getSourceFile(m.getDeclaringClass());
+        int line = SootUtilities.getLineNumber(o);
         int mIdx = domM.indexOf(m);
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " + "Mid=\"M" + mIdx + "\"";
     }

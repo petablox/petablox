@@ -73,8 +73,8 @@ public class DomL extends ProgramDom<Unit> implements IAcqLockInstVisitor {
     @Override
     public String toXMLAttrsString(Unit u) {
         SootMethod m = SootUtilities.getMethod(u);    
-        String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
-        int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+        String file = SootUtilities.getSourceFile(m.getDeclaringClass());
+        int line = SootUtilities.getLineNumber(u);
         int mIdx = domM.indexOf(m);
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " + "Mid=\"M" + mIdx + "\"";
     }

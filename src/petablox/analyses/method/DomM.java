@@ -8,6 +8,7 @@ import petablox.program.visitors.IMethodVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.Utils;
+import petablox.util.soot.SootUtilities;
 
 /**
  * Domain of methods.
@@ -68,10 +69,10 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
         else
             sign += methName;
         String desc = m.getBytecodeParms().toString();
-        String args = desc.substring(1, desc.indexOf(')'));
+        String args = desc.indexOf(')') >= 0 ? desc.substring(1, desc.indexOf(')')) : "";
         sign += "(" + Program.typesToStr(args) + ")";
-        String file = ((SourceFileTag)c.getTags().get(0)).getSourceFile();
-        int line = m.getNumber(); 
+        String file = SootUtilities.getSourceFile(m.getDeclaringClass());
+        int line = m.hasActiveBody() ? SootUtilities.getLineNumber(m.getActiveBody().getUnits().getFirst()) : -1; 
         return "sign=\"" + sign + "\" file=\"" + file + "\" line=\"" + line + "\"";
     }
 }

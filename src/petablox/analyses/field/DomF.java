@@ -10,6 +10,7 @@ import petablox.program.visitors.IFieldVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.Utils;
+import petablox.util.soot.SootUtilities;
 
 /**
  * Domain of fields.
@@ -58,7 +59,7 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
         } else {
             SootClass c = f.getDeclaringClass();
             sign = c.getName() + "." + f.getName();
-            file = ((SourceFileTag)c.getTags().get(0)).getSourceFile();
+            file = SootUtilities.getSourceFile(c);
             line = 0; // TODO
         }
         return "sign=\"" + sign +

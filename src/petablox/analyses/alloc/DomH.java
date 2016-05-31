@@ -161,9 +161,9 @@ public class DomH extends ProgramDom<Object> {
             Unit u = (Unit) o;
             Type t = getType(u);
             String type = (t != null) ? t.toString() : "null";
-            SootMethod m = SootUtilities.getMethod(u);                            
-            String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
-            int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+            SootMethod m = SootUtilities.getMethod(u); 
+            String file = SootUtilities.getSourceFile(m.getDeclaringClass());
+            int line = SootUtilities.getLineNumber(u);
             int mIdx = domM.indexOf(m);
             return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
             "Mid=\"M" + mIdx + "\"" + " type=\"" + type + "\"";

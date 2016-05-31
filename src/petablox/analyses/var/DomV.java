@@ -83,11 +83,11 @@ public class DomV extends ProgramDom<Local> implements IMethodVisitor {
     public String toXMLAttrsString(Local v) {
         SootMethod m = getMethod(v);
         int mIdx = domM.indexOf(m);
-        String file =((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
+        String file =SootUtilities.getSourceFile(m.getDeclaringClass());
         List<Integer> lineArr = SootUtilities.getLineNumber(m,v);
         String line = "";
         if (lineArr == null) {
-            line = String.valueOf(SootUtilities.getLineNumber(m,0));
+            line = m.hasActiveBody() ? String.valueOf(SootUtilities.getLineNumber(m.getActiveBody().getUnits().getFirst())) : "-1";
         } else {
             for (int vline : lineArr) {
                 if (!line.equals("")) line += ",";

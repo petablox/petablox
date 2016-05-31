@@ -12,6 +12,7 @@ import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.IndexSet;
 import petablox.util.Utils;
+import petablox.util.soot.SootUtilities;
 
 /**
  * Domain of classes.
@@ -48,7 +49,7 @@ public class DomT extends ProgramDom<Type> {
         String file;
         if (t instanceof RefType) {
             SootClass c = ((RefType)t).getSootClass();
-            file = ((SourceFileTag)c.getTags().get(0)).getSourceFile();                      
+            file = SootUtilities.getSourceFile(c);
         } else
             file = "";
         int line = 0;  // TODO

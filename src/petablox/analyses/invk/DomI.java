@@ -73,12 +73,15 @@ public class DomI extends ProgramDom<Unit> implements IInvokeInstVisitor {
     @Override
     public String toXMLAttrsString(Unit u) {
         SootMethod m = SootUtilities.getMethod(u);
-        JAssignStmt as = (JAssignStmt)u;
-        String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();              
-        int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+        String file = SootUtilities.getSourceFile(m.getDeclaringClass());
+        int line = SootUtilities.getLineNumber(u);
         int mIdx = domM.indexOf(m);
-        return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
-            "Mid=\"M" + mIdx + "\"" +
-            " rdwr=\"" + ((SootUtilities.isFieldStore(as) || SootUtilities.isStaticPut(as) || SootUtilities.isStoreInst(as)) ? "Wr" : "Rd") + "\"";
+        String rdWr = "Rd";
+        if(u instanceof JAssignStmt){
+        	JAssignStmt as = (JAssignStmt)u;
+        	if(SootUtilities.isFieldStore(as) || SootUtilities.isStaticPut(as) || SootUtilities.isStoreInst(as))
+        		rdWr = "Wr";
+        }
+        return "file=\"" + file + "\" " + "line=\"" + line + "\" " + "Mid=\"M" + mIdx + "\"" + " rdwr=\"" + rdWr + "\"";
     }
 }

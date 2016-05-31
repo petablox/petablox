@@ -34,6 +34,8 @@ import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
 import soot.jimple.internal.JNewMultiArrayExpr;
 import soot.jimple.internal.JSpecialInvokeExpr;
+import soot.tagkit.SourceFileTag;
+import soot.tagkit.LineNumberTag;
 import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
@@ -481,6 +483,24 @@ public class SootUtilities {
 			if (Config.verbose >= 2)
 				System.out.println("WARN: SootUtilities cannot get BCI"+u);
 		}
+		return -1;
+	}
+	
+	/*
+	 * Returns source file of class c if it exists; returns empty string otherwise
+	 */
+	public static String getSourceFile(SootClass c){
+		if(c.hasTag("SourceFileTag"))
+			return ((SourceFileTag)c.getTag("SourceFileTag")).getSourceFile();
+		return "";
+	}
+	
+	/*
+	 * Returns line number of unit u if it exists; returns empty string otherwise
+	 */
+	public static int getLineNumber(Unit u){
+		if(u.hasTag("LineNumberTag"))
+			return ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
 		return -1;
 	}
 	
