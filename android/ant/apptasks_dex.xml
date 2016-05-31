@@ -78,22 +78,6 @@
 
     <echo message="HERE:${stamp.analyses}"/>
 
-    <!-- Conditionally set-up DroidRecord properties -->
-    <if>
-      <isset property="stamp.droidrecord.logfile.template"/>
-      <then/>
-      <else>
-        <property name="stamp.droidrecord.logfile.template" value=""/>
-      </else>
-    </if>
-    <if>
-      <isset property="stamp.droidrecord.logfile.bin"/>
-      <then/>
-      <else>
-        <property name="stamp.droidrecord.logfile.bin" value=""/>
-      </else>
-    </if>
-
     <!-- Run petablox. -->
     <java classname="petablox.project.Main" 
 		  maxmemory="${stamp.maxheap}"
@@ -138,7 +122,6 @@
 		  <pathelement location="${stamp.dir}/lib/commons-lang3-3.1.jar"/>
       <pathelement location="${petablox.dir}/petablox.jar"/>     
       <pathelement location="${stamp.dir}/lib/soot.jar"/>        <!-- PRT remove this -->
-		  <pathelement location="${stamp.dir}/lib/stamp.chord.jar"/> 
       <pathelement location="${stamp.dir}/lib/automaton.jar"/>
     	<pathelement location="${stamp.dir}/lib/droidrecord_reader.jar"/>
     </classpath>

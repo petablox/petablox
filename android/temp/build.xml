@@ -182,14 +182,6 @@
   	</taskdef>
 
 	<target name="compile-android1">
-	    <mkdir dir="android/main/gen/stamp/paths/raw"/>
-	    <xjc schema="android/solvergen/paths.xsd" package="petablox.android.paths.raw"
-		 destdir="android/main/gen" readonly="true">
-	      <produces dir="android/main/gen/stamp/paths/raw"
-			includes="**/*.java"/>
-	      <classpath refid="stamp.build.classpath"/>
-	    </xjc>
-	    
 	    <ant antfile="android/annotations/build.xml" target="jar"
 		 inheritAll="false" useNativeBasedir="true"/>
 	    <ant antfile="android/main/build.xml" target="jar"

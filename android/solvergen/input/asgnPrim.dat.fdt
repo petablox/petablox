@@ -1,5 +1,0 @@
-@DUMP:AssignPrimCtxt(%C,%L,%R):u%R_%C u%L_%C@
-@DUMP:AssignArgPrimCtxt(%CL,%L,%CR,%R):u%R_%CR u%L_%CL@
-@DUMP:AssignRetPrimCtxt(%CL,%L,%CR,%R):u%R_%CR u%L_%CL@
-@DUMP:LoadStatPrimCtxt(%C,%L,%F):f%F u%L_%C@
-@DUMP:StoreStatPrimCtxt(%C,%F,%R):u%R_%C f%F@

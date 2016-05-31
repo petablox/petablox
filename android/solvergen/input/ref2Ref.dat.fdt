@@ -1,2 +1,0 @@
-@DUMP:ArgArgTransferCtxt(%C,%V1,%V2):v%V1_%C v%V2_%C@
-@DUMP:ArgRetTransferCtxt(%C,%V1,%V2):v%V1_%C v%V2_%C@
