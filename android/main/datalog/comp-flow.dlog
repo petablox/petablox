@@ -1,0 +1,52 @@
+#################################
+# Clustering flow into components
+#################################
+# name=comp-flow-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "C.dom"
+.include "CL.dom"
+.include "L.dom"
+.include "Z.dom"
+.include "V.dom"
+.include "COMP.dom"
+
+.bddvarorder L0_M0xM1_I0_C0xC1_CL0_CL1_Z0_V0_COMP0_COMP1
+
+MI(m:M,i:I)          input         # stmt i belongs to method m.
+MC(m:M,c:COMP)       input         # m is a method declared in a
+
+flow(src:CL,sink:CL) input
+CCL(c:C,cl:CL)       input 
+LCL(l:L,cl:CL)       input
+CICM(d:C,i:I,c:C,m:M)         input  # i in cotext d calls method m in context c.
+InLabelRet(l:L,m:M)           input
+InLabelArg(l:L,m:M,z:Z)       input
+OutLabelRet(l:L,m:M)          input
+OutLabelArg(l:L,m:M,z:Z)      input
+reachableCM(c:C,m:M)          input
+IinvkArg(i:I,n:Z,v:V)         input
+MmethArg(m:M,z:Z,v:V)         input
+pt(c:C,v:V,o:C)    input # (c,v) points-to o
+
+CallerComp(m:M,c:C,o:COMP)                        output  # m is a method declared in c
+FlowComp(comp1:COMP, src:CL, comp2:COMP, sink:CL) output
+
+###################
+#    RULES
+###################
+#
+ML(m:M,l:L)
+MCL(m:M,c:C,cl:CL)
+
+CallerComp(m,k,c) :- MC(m,c), reachableCM(k,m).
+CallerComp(m2,k2,c) :- CallerComp(m1,k1,c), MI(m1,i), CICM(k1,i,k2,m2).
+
+ML(m,l) :- InLabelRet(l,m).
+ML(m,l) :- InLabelArg(l,m,_).
+ML(m,l) :- OutLabelRet(l,m).
+ML(m,l) :- OutLabelArg(l,m,_).
+
+MCL(m,c,cl) :- LCL(l,cl), ML(m,l), CICM(_,_,c,m), CCL(c,cl).
+FlowComp(comp1, src, comp2, sink) :- flow(src,sink), MCL(m1,c,src), CallerComp(m1,c,comp1), MCL(m2,d, sink), CallerComp(m2,d,comp2).

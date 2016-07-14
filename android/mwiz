@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#TODO: handle symlinks in a platform-independent way
+STAMP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+java -Xmx1024m -classpath "$STAMP_DIR"/bin/stamp.modelwiz.jar:"$STAMP_DIR"/lib/javaparser-1.0.8.jar stamp.modelwiz.Main "$STAMP_DIR"/models/api-16/gen "$STAMP_DIR"/models/src "$@"

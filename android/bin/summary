@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#TODO: handle symlinks in a platform-independent way
+STAMP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}")"/.. && pwd )"
+BASE_DIR="$( pwd )"
+
+ant -f "$STAMP_DIR/ant/stamp.xml" -Dbasedir="$BASE_DIR" summary
+

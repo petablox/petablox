@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#TODO: handle symlinks in a platform-independent way
+STAMP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$( pwd )"
+
+if [ "$#" -eq 0 ]; then
+	ant -f "$STAMP_DIR/ant/stamp.xml" -Dbasedir="$BASE_DIR"
+elif [ "$#" -eq 1 ]; then
+	ant -f "$STAMP_DIR/ant/stamp.xml" -Dbasedir="$BASE_DIR" "$1"
+else
+	TARGET="$1"
+	APP_DIR="$2"
+	shift
+	shift
+	ant -f "$STAMP_DIR/ant/stamp.xml" -Dbasedir="$BASE_DIR" "$TARGET" -Dapp="$APP_DIR" "$@"
+fi

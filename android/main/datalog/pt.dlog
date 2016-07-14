@@ -1,0 +1,67 @@
+##################
+# Points-to analysis
+##################
+
+# name=pt-dlog
+
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder M0_C0xC1xC2_V0xV1_I0xF0
+
+#.bddvarorder M0_C0xC1xC2_V0xV1_I0xH0xF0 #best so far
+
+#.bddvarorder M0_H0xF0_I0_C0xC1xC2_V0xV1 infinite
+#.bddvarorder V0xV1_C0xC1xC2_I0_M0_H0xF0 6:34
+#.bddvarorder C0xC1xC2_V0xV1_I0_M0_H0xF0 5:38
+#.bddvarorder I0_C0xC1xC2_V0xV1_M0_H0xF0 infinite
+#.bddvarorder M0_C0xC1xC2_V0xV1_I0_H0xF0 5:28
+
+Assign(v:V,u:V)     input   # v = u
+#Alloc(v:V,h:H)      input   # v is the lhs in the new stmt h
+#GlobalAlloc(v:V,h:H) input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)   input   # y = x.f
+Store(u:V,f:F,v:V)  input   # u.f = v
+LoadStat(y:V,f:F)   input   # y = f
+StoreStat(f:F,v:V)  input   # f = v
+param(u:V,v:V,i:I)  input   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+typeFilter(v:V,o:C) input   # type wise, v can point-to o
+
+MV(m:M,v:V) input         # v is a variable in method m
+CM(c:C,m:M) input         # c is a context of method m
+#CH(o:C,h:H) input         # context’ified abstract location o corresponds to new stmt h
+CI(c:C,i:I) input         # stmt i is the top element in the k-limited callstack c
+CC(c:C,d:C) input         # there exists i s.t. c++[i] = d
+
+ptAlloc(c:C,v:V,o:C) input
+
+pt1(c:C,v:V,o:C)
+pt(c:C,v:V,o:C)    output # (c,v) points-to o
+fpt(o1:C,f:F,o2:C) output
+
+fptStat(f:F,o:C)
+
+###################
+#    RULES
+###################
+
+#pt(c,v,o) :- GlobalAlloc(v,h), MV(m,v), CM(c,m), CH(o,h). 
+#pt(c,v,o) :- Alloc(v,h), MV(m,v), CM(c,m), CC(c,o), CH(o,h).
+
+pt(c,v,o) :- ptAlloc(c,v,o).
+pt(c,v,o) :- pt(c,u,o), Assign(v,u), typeFilter(v,o). #pri=3
+pt(c,v,o) :- pt1(c,v,o).
+
+pt1(d,u,o) :- pt(c,v,o), param(u,v,i), typeFilter(u,o), CC(c,d), CI(d,i). #pri=1
+pt1(c,u,o) :- pt(d,v,o), return(u,v,i), typeFilter(u,o), CI(d,i), CC(c,d). #pri=1
+
+fpt(o1,f,o2) :- pt(c,v,o2), Store(u,f,v), pt(c,u,o1). #pri=1
+pt1(c,y,o2) :- pt(c,x,o1), Load(y,x,f), fpt(o1,f,o2).  #pri=1
+
+fptStat(f,o) :- pt(_,v,o), StoreStat(f,v). #pri=1
+pt1(c,y,o) :- LoadStat(y,f), fptStat(f,o), MV(m,y), CM(c,m). #pri=1

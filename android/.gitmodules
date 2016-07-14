@@ -1,0 +1,3 @@
+[submodule "droidrecord"]
+	path = droidrecord
+	url = git@bitbucket.org:lazaro_clapp/droidrecord.git

@@ -1,0 +1,49 @@
+# name=cisa-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "T.dom"
+
+.bddvarorder I0xM0_T0_V0xV1_H0_F0_H1_Z0
+
+Assign(v:V,u:V)     input   # v = u
+GlobalAlloc(v:V,h:H) input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)    input   # y = x.f
+Store(u:V,f:F,v:V)   input   # u.f = v
+LoadStat(y:V,f:F)    input   # y = f
+StoreStat(f:F,v:V)   input   # f = v
+IinvkArg(i:I,n:Z,v:V) input
+IinvkRet(i:I,n:Z,v:V) input
+MmethArg(m:M,z:Z,v:V) input
+MmethRet(m:M,z:Z,v:V) input
+
+VT(v:V,t:T) input
+HTFilter(h:H,t:T) input
+
+ci_pt(v:V,o:H)    input # (c,v) points-to o
+ci_IM(i:I,m:M)    input  # i calls method m
+
+ci_spt(v:V,h:H)    output # (c,v) points-to o
+ci_sfpt(o1:H,f:F,o2:H)
+ci_sfptStat(f:F,o:H)
+ci_typeFilter(v:V,o:H) # type wise, v can point-to o
+
+ci_typeFilter(v,h) :- VT(v,t), HTFilter(h,t).
+
+interprocAssign(u,v) :- ci_IM(i,m), IinvkArg(i,z,v), MmethArg(m,z,u).
+interprocAssign(u,v) :- ci_IM(i,m), IinvkRet(i,z,u), MmethRet(m,z,v).
+
+ci_spt(v,o) :- GlobalAlloc(v,o).
+
+ci_spt(v,o) :- ci_spt(u,o), Assign(v,u), ci_typeFilter(v,o).
+ci_spt(u,o) :- interprocAssign(u,v), ci_spt(v,o), ci_typeFilter(u,o).
+
+ci_sfpt(o1,f,o2) :- ci_spt(v,o2), Store(u,f,v), ci_pt(u,o1).
+ci_spt(y,o2) :- ci_pt(x,o1), Load(y,x,f), ci_sfpt(o1,f,o2).
+
+ci_sfptStat(f,o) :- ci_spt(v,o), StoreStat(f,v).
+ci_spt(y,o) :- LoadStat(y,f), ci_sfptStat(f,o).

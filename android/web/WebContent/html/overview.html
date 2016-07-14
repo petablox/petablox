@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" class="fuelux">
+  <head>
+	<link href="/stamp/fuelux/css/fuelux.min.css" rel="stylesheet" />
+	
+	<style type="text/css">
+	  body {
+	  padding-top: 60px;
+	  padding-bottom: 20px;
+      }
+      
+      .source-view {height:80vh; overflow:auto; resize:auto;}
+      .right-view {overflow:auto; }
+      
+      .fuelux .nav-tabs > li > a {
+      padding-top: 0px;
+      padding-bottom: 5px;
+      line-height: 10px;
+      }
+ 
+      .bar {
+      height: 8px;
+      }
+      
+      table.appslist td.status {
+      text-align: right;
+      }
+	</style>
+
+	<link href="/stamp/fuelux/css/fuelux-responsive.min.css" rel="stylesheet" />
+	<link href="../fileupload/jquery.fileupload-ui.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	
+  </head>	  
+
+  <body>
+	<!-- navigation bar -->
+	<div class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="navbar-inner">
+	    <div class="container">
+
+	      <ul class="nav pull-left">
+		<li><a class="brand" href="#">STAMP&alpha;-APK</a></li>
+	      </ul>
+
+	      <ul class="nav pull-left">
+		<li>
+		  <form id="fileupload" action="../fileUpload" method="POST" enctype="multipart/form-data">
+		    <span class="btn btn-success fileinput-button">
+		      <i class="icon-plus icon-white"></i>
+		      <span>Analyze</span>
+		      <input type="file" name="files[]" multiple>
+		    </span>
+		  </form>
+		</li>
+	      </ul>
+	      
+	      <!-- <ul class="nav"> -->
+	      <!-- 	<\!-- Help -\-> -->
+	      <!-- 	<li class="dropdown"> -->
+	      <!-- 	  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <b class="caret"></b></a> -->
+	      <!-- 	  <ul class="dropdown-menu"> -->
+	      <!-- 	    <\!-- <li><a href="/doc/stamp.html" target="_blank">Docs</a></li> -\-> -->
+	      <!-- 	    <li><a href="http://www.youtube.com/user/STAMPStanford" target="_blank">Video Tutorials</a></li> -->
+	      <!-- 	  </ul> -->
+	      <!-- 	</li> -->
+	      <!-- </ul> -->
+
+	    </div>
+ 	  </div>
+	</div> 
+
+	
+	<!-- content -->
+	<div class="container-fluid">
+	  <div class="row-fluid">
+
+	    <!--Sidebar content-->
+ 	    <div class="span3">
+	      <table id="appslist" class="table table-striped appslist">
+		<tbody>
+		</tbody>
+	      </table>
+	    </div>
+
+	    <!-- Main content -->
+	    <div class="span6" id="reportdiv">
+
+
+	      <div class="well well-transparent stacked">
+		<h1>Android App Risk Report</h1>
+		<h3>Automatically analyze Android apps for thousands of security, privacy, and compliance risks </h3>
+	      </div>
+
+
+
+	      <table class="table table-condensed table-hover" id="reportheader">
+		<tr></tr>
+	      </table>
+
+	      <table class="table table-condensed table-hover" id="incident-summary">
+	      </table>
+
+	      <table class="table table-condensed table-hover" id="privacy-rpt">
+	      </table>
+
+	      <table class="table table-condensed table-hover" id="conf-rpt">
+	      </table>
+
+	      <table class="table table-condensed table-hover" id="lowrisk-rpt">
+	      </table>
+
+
+	    </div>
+
+
+	      <div class="span3 right-view" id="rightbar">
+
+		<!-- <table class="table table-condensed table-hover" id="warnings"><th colspan="2">Flow Details</th> -->
+		<!--   <tr><td>Category:</td><td>Privacy</td></tr> -->
+	      	<!--   <tr><td>Flow:</td><td>content://sms <i class="icon-arrow-right"></i> HttpPOST</td></tr> -->
+		<!--   <tr><td>Modifiers:</td><td><span class="label label-success">Hashed</span></td></tr> -->
+		<!--   <tr><td>Source Component:</td><td>App</td></tr>  -->
+		<!--   <tr><td>Source Params:</td><td>None</td></tr> -->
+		<!--   <tr><td>Sink Component:</td><td>Ad library</td></tr> -->
+		<!--   <tr><td>Sink Params:</td><td>33.44.55.66</td></tr> -->
+		<!--   <tr><td>Misc:</td><td><i class="icon-question-sign"></i> &nbsp <i class="icon-search"></i></td></tr> -->
+		<!-- </table> -->
+
+	      </div>
+	      
+	</div>
+	
+	<div class="modal hide fade" id="errormsgs-modal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Only files with .apk extensions can be uploaded. The following files were ignored:</h3>
+		</div>
+		<div class="modal-body">
+			<ul class="unstyled" id="errormsgs">
+		  	</ul>
+		</div>
+	</div>
+	
+	<script src="/stamp/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+	<script src="/stamp/fuelux/loader.js" type="text/javascript"></script>
+	<script src="../jquery-ui/jquery.ui.widget.js"></script>
+	<script src="../fileupload/jquery.iframe-transport.js"></script>
+	<script src="../fileupload/jquery.fileupload.js"></script>
+	<script src="/stamp/scripts/processMsg.js"></script>
+
+	<script>
+		var apkIdToRow = new Object();
+		
+	  $(function () {
+		  
+        'use strict';
+
+        $('#fileupload').fileupload({
+          url: '../fileUpload',
+
+          maxFileSize: 15000000,
+          
+          add: function (e, data) {
+        	//alert('hellp');
+        	var file = data.files[0];
+        	if(file.name.match(/\.apk$/)){
+        		var row = $('<tr><td>'+file.name+'</td><td class="status"><div class="progress progess-striped" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar bar-success" style="width: 10%;"></div></div></td></tr>');
+        		apkIdToRow[file.name+file.size] = row;
+        		data.context = row.appendTo('#appslist > tbody:last');
+    			data.submit();
+        	} else {
+        		$('<li>'+file.name+'</li>').appendTo('#errormsgs');
+        		$('#errormsgs-modal').modal('show');
+        	}
+          },
+			
+          progress: function (e, data) {
+                if (data.context) {
+                    var progress = Math.floor(data.loaded / data.total * 100);
+                    data.context.find('.progress')
+                        .attr('aria-valuenow', progress)
+                        .find('.bar').css(
+                            'width',
+                            progress + '%'
+                        );
+                }
+          },
+          
+          done: function (e,data) {
+        	  data.context.find('.progress').replaceWith('<span class="label">Uploaded</span>');
+          }
+          
+        });
+	  });
+	</script>
+	
+	<script>
+	  var ws = new WebSocket("ws://localhost:8080/stamp/pushupdates");
+	  ws.onmessage = processMessage;
+	</script>
+	
+  </body>
+</html>

@@ -1,0 +1,33 @@
+# name=typefilter-dlog
+
+.include "V.dom"
+.include "C.dom"
+.include "H.dom"
+.include "T.dom"
+.include "M.dom"
+.include "Z.dom"
+.include "I.dom"
+
+.bddvarorder V0_T0_H0_C0xC1_M0_Z0_I0
+
+VT(v:V,t:T) input
+HTFilter(h:H,t:T) input
+CH(o:C,h:H) input
+MmethArg(m:M,i:Z,v:V) input
+IinvkRet(i:I,i:Z,v:V) input
+StaticTM(t:T,m:M) input
+
+typeFilter(v:V,o:C) output
+ipFilter(c:C,v:V,o:C) output
+
+staticM(m:M)
+
+typeFilter(v,o) :- VT(v,t), HTFilter(h,t), CH(o,h).
+
+staticM(m) :- StaticTM(_,m).
+
+ipFilter(_,v,o) :- typeFilter(v,o), MmethArg(_,i,v), i != 0.
+ipFilter(_,v,o) :- typeFilter(v,o), MmethArg(m,0,v), staticM(m).
+ipFilter(c,v,o) :- typeFilter(v,o), MmethArg(m,0,v), !staticM(m), c = o.
+
+ipFilter(_,v,o) :- typeFilter(v,o), IinvkRet(_,_,v).

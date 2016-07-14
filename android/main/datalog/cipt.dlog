@@ -1,0 +1,63 @@
+#Context Insensitive Points-to analysis
+#######################################
+
+# name=cipt-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+.include "Z.dom"
+.include "T.dom"
+
+.bddvarorder M0_V0xV1_H0xF0_I0_T0_Z0
+
+Assign(v:V,u:V)     input   # v = u
+Alloc(v:V,h:H)      input   # v is the lhs in the new stmt h
+GlobalAlloc(v:V,h:H) input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)   input   # y = x.f
+Store(u:V,f:F,v:V)  input   # u.f = v
+LoadStat(y:V,f:F)   input   # y = f
+StoreStat(f:F,v:V)  input   # f = v
+#param(u:V,v:V,i:I)  input   # u is the formal parameter, v is actual arg, i is invocation stmt
+#return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+#chaIM(i:I,m:M) input
+IinvkRet(i:I,n:Z,v:V) input
+IinvkArg(i:I,n:Z,v:V) input
+MmethArg(m:M,z:Z,v:V) input
+MmethRet(m:M,z:Z,v:V) input
+
+
+HTFilter(h:H,t:T) input
+VT(v:V,t:T) input
+
+ciTypeFilter(v:V,h:H) output   # type wise, v can point-to o
+
+param(u:V,v:V,i:I)   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I)   # u is the lhs at callsite, v is the return var, i is invocation stmt
+
+ipt(v:V,h:H)    output # (c,v) points-to o
+ifpt(f:F,h:H) output
+ifptStat(f:F,h:H) output
+
+###################
+#    RULES
+###################
+#move from pre.dlog
+param(u,v,i) :- chaIM(i,m), MmethArg(m,z,u), IinvkArg(i,z,v).
+return(u,v,i) :- chaIM(i,m), MmethRet(m,z,v), IinvkRet(i,z,u).
+
+
+# for context-insensitive filter.
+ciTypeFilter(v,h) :- VT(v,t), HTFilter(h,t).
+
+ipt(v,h) :- Alloc(v,h).
+ipt(v,h) :- GlobalAlloc(v,h).
+ipt(v,h) :- ipt(u,h), Assign(v,u), ciTypeFilter(v,h).
+ipt(u,h) :- ipt(v,h), param(u,v,_), ciTypeFilter(u,h). 
+ipt(u,h) :- ipt(v,h), return(u,v,_), ciTypeFilter(u,h).
+ifpt(f,h) :- ipt(v,h), Store(_,f,v).
+ipt(y,h) :- Load(y,_,f), ifpt(f,h).
+ifptStat(f,h) :- ipt(v,h), StoreStat(f,v).
+ipt(y,h) :- LoadStat(y,f), ifptStat(f,h).

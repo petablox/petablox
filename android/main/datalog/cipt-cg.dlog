@@ -1,0 +1,98 @@
+##################
+# Context-insensitive Points-to analysis with on-the-fly callgraph construction
+##################
+
+# name=cipt-cg-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+.include "S.dom"
+.include "T.dom"
+.include "Z.dom"
+
+.bddvarorder I0xM0xM1_S0_T0_V0xV1_T1_H0_F0_H1_Z0
+
+Assign(v:V,u:V)     input   # v = u
+Alloc(v:V,h:H)      input   # v is the lhs in the new stmt h
+GlobalAlloc(v:V,h:H) input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)   input   # y = x.f
+Store(u:V,f:F,v:V)  input   # u.f = v
+LoadStat(y:V,f:F)   input   # y = f
+StoreStat(f:F,v:V)  input   # f = v
+IinvkArg(i:I,n:Z,v:V) input
+IinvkRet(i:I,n:Z,v:V) input
+MmethArg(m:M,z:Z,v:V) input
+MmethRet(m:M,z:Z,v:V) input
+
+VT(v:V,t:T) input
+HTFilter(h:H,t:T) input
+MV(m:M,v:V) input         # v is a variable in method m
+HT(h:H,t:T) input         # heap h point to Type t.
+MI(m:M,i:I) input         # stmt i belongs to method m.
+
+StatIM(i:I,m:M) input     # i statically invokes m. 
+SpecIM(i:I,m:M) input     # i special invoke m. 
+VirtIM(i:I,s:S) input     # i virtually invokes m. 
+ClassT(t:T) input         # t is concrete or abstract
+StaticTM(t:T,m:M) input   # m is a static method in t.
+StaticTF(t:T,f:F) input   # f is a static field in t.
+ClinitTM(t:T,m:M) input   # m is the class initializer in m.
+Subtype(t1:T0,t2:T1) input    # t1 is a subtype of t2.
+
+SubSig(m:M,s:S) input     # s is subsignature of m.
+Dispatch(t:T,s:S,m:M) input     # t.m has subsig s.
+
+###################
+#    OUTPUT
+###################
+ci_reachableT(t:T) 
+interprocAssign(u:V,v:V) 
+ci_reachableI(i:I) 
+IHM(i:I,h:H,m:M) 
+ci_fpt(o1:H,f:F,o2:H)
+ci_fptStat(f:F,o:H)
+ci_typeFilter(v:V,o:H) # type wise, v can point-to o
+
+ci_reachableM(m:M) output
+ci_IM(i:I,m:M)   output  # i calls method m
+ci_pt(v:V,o:H)   output  # v points-to h
+
+###################
+#    RULES
+###################
+
+ci_typeFilter(v,h) :- VT(v,t), HTFilter(h,t).
+
+ci_reachableM(0).
+ci_reachableM(m) :- ClinitTM(t,m), ci_reachableT(t).
+ci_reachableM(m) :- ci_IM(_,m). 
+
+ci_reachableI(i) :- MI(m,i), ci_reachableM(m).
+
+IHM(i,h,m2) :- VirtIM(i,s), Dispatch(t,s,m2), HT(h,t).
+
+ci_IM(i,m) :- ci_reachableI(i), IinvkArg(i,0,v), ci_pt(v,o), IHM(i,o,m). 
+ci_IM(i,m) :- ci_reachableI(i), StatIM(i,m).
+ci_IM(i,m) :- ci_reachableI(i), IinvkArg(i,0,v), ci_pt(v,_), SpecIM(i,m).
+
+interprocAssign(u,v) :- ci_IM(i,m), IinvkArg(i,z,v), MmethArg(m,z,u).
+interprocAssign(u,v) :- ci_IM(i,m), IinvkRet(i,z,u), MmethRet(m,z,v).
+
+ci_pt(u,o) :- interprocAssign(u,v), ci_pt(v,o), ci_typeFilter(u,o).
+
+ci_pt(v,h) :- GlobalAlloc(v,h), MV(m,v), ci_reachableM(m).
+ci_pt(v,h) :- Alloc(v,h), MV(m,v), ci_reachableM(m).
+ci_pt(v,o) :- ci_pt(u,o), Assign(v,u), ci_typeFilter(v,o).
+ci_fpt(o1,f,o2) :- ci_pt(v,o2), Store(u,f,v), ci_pt(u,o1).
+ci_pt(y,o2) :- ci_pt(x,o1), Load(y,x,f), ci_fpt(o1,f,o2).
+ci_fptStat(f,o) :- ci_pt(v,o), StoreStat(f,v).
+ci_pt(y,o) :- LoadStat(y,f), ci_fptStat(f,o), MV(m,y), ci_reachableM(m).
+
+ci_reachableT(t) :- ci_reachableM(m), MV(m,v), Alloc(v,h), HT(h,t).
+ci_reachableT(t) :- ci_reachableM(m), StaticTM(t,m).
+ci_reachableT(t) :- ci_reachableM(m), MV(m,v), StoreStat(f,v), StaticTF(t,f).
+ci_reachableT(t) :- ci_reachableM(m), MV(m,v), LoadStat(v,f), StaticTF(t,f).
+ci_reachableT(t) :- ClassT(t), ci_reachableT(s), Subtype(s,t).

@@ -1,0 +1,92 @@
+##################
+# Partial FLows Analysis
+##################
+
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-partial-pt-dlog
+
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder M0_C0xC1xC2_V0xV1_H0xF0_I0
+
+###################
+# INPUT: POINTER
+###################
+
+pt(c:C,v:V,o:C)    input
+
+###################
+# INPUT: PARTIAL FLOWS
+###################
+
+Assign(v:V,u:V) input              # v = u
+param(u:V,v:V,i:I)  input   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+Store(v:V,f:F,u:V) input           # v.f = u
+Load(v:V,u:V,f:F) input            # v = u.f
+CI(c:C,i:I) input # stmt i is the top element in the k-limited callstack c
+CC(c:C,d:C) input # there exists i s.t. c++[i] = d
+
+###################
+# INPUT: PHANTOM OBJECTS
+###################
+
+phAlloc(v:V,c:C) input
+
+###################
+# INTERMEDIATE: PARTIAL FLOWS
+###################
+
+fPostFlowsTo(c:C,v:V,o:C,f:F)
+
+###################
+# OUTPUT: PARTIAL FLOWS
+###################
+
+PreFlowsTo(c:C,o:C,v:V) output
+PostFlowsTo(c:C,v:V,d:C,u:V) output
+MidFlowsTo(c:C,v:V,d:C,u:V) output
+
+###################
+# RULES: PARTIAL FLOWS
+###################
+
+# 1) o -> v_c
+PreFlowsTo(c,o,v)  :- pt(c,v,o), phAlloc(v,c).
+# 2) o -> v_c -> u_c -> w_d
+PreFlowsTo(d,o,w)  :- pt(c,v,o), Store(u,_,v), PostFlowsTo(d,w,c,u).
+# 3) o1 -> v_c -> u_c -> o2 -> w_c
+PreFlowsTo(c,o1,w) :- pt(c,v,o1), Store(u,_,v), pt(c,u,o2), PreFlowsTo(c,o2,w).
+
+# 1) v_c -> v_c
+PostFlowsTo(c,v,d,u) :- u=v, d=c, phAlloc(v,c).
+# 2a) v_c -> u_d -> w_d
+PostFlowsTo(c,v,d,w) :- PostFlowsTo(c,v,d,u), Assign(w,u).
+# 2b) v_c -> u_d -> w_b
+PostFlowsTo(c,v,b,w) :- PostFlowsTo(c,v,d,u), param(w,u,i), CC(d,b), CI(b,i).
+PostFlowsTo(c,v,b,w) :- PostFlowsTo(c,v,d,u), return(w,u,i), CC(b,d), CI(d,i).
+# 3) v_c -> u_d -> w_d -> o -> x_b -> y_b
+fPostFlowsTo(c,v,o,f) :- PostFlowsTo(c,v,d,u), Store(w,f,u), pt(d,w,o).
+PostFlowsTo(c,v,b,y) :- fPostFlowsTo(c,v,o,f), pt(b,x,o), Load(y,x,f).
+# 4) v_c -> o -> u_d -> w_d
+PostFlowsTo(c,v,d,w) :- PreFlowsTo(c,o,v), pt(d,u,o), Load(w,u,_).
+# 5) v_c -> u_d -> w_d
+PostFlowsTo(c,v,d,w) :- PostFlowsTo(c,v,d,u), Load(w,u,_).
+
+# 1) v_c -> u_d
+MidFlowsTo(c,v,d,u) :- PostFlowsTo(c,v,d,u), phAlloc(u,d).
+# 2) v_c -> u_d -> w_d -> x_b
+MidFlowsTo(c,v,b,x) :- PostFlowsTo(c,v,d,u), Store(w,_,u), PostFlowsTo(b,x,d,w).
+# 3) v_c -> u_d -> w_d -> o -> x_b
+MidFlowsTo(c,v,b,x) :- PostFlowsTo(c,v,d,u), Store(w,_,u), pt(d,w,o), PreFlowsTo(b,o,x).
+# 4) v_c -> o -> u_d
+MidFlowsTo(c,v,d,u) :- PreFlowsTo(c,o,v), PreFlowsTo(d,o,u).
+

@@ -1,0 +1,135 @@
+# name=taint-lim-dd-pre-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "U.dom"
+#.include "F.dom"
+.include "I.dom"
+.include "L.dom"
+.include "H.dom"
+#.include "S.dom"
+#.include "T.dom"
+
+#.bddvarorder L0_Z0xZ1_M0_S0_T0_C0xC1_V0xV1_U0xU1_H0_F0_I0
+
+.bddvarorder L0_Z0xZ1_U0xU1_V0xV1_M0_H0xI0_C0xC1
+
+# INPUT RELATIONS =======================
+#ci_pt(v:V,h:H) input
+ci_IM(i:I,m:M) input
+
+Alloc(v:V,h:H) input
+CH(c:C,h:H) input
+MV(m:M,v:V) input
+
+CM(c:C,m:M) input
+MI(m:M,i:I) input
+#HT(h:H,t:T) input         # heap h point to Type t.
+CC(c:C,d:C) input         # there exists i s.t. c++[i] = d
+CI(c:C,i:I) input         # stmt i is on the top of c.
+
+InLabelRet(l:L,m:M)           input
+InLabelArg(l:L,m:M,z:Z)       input
+OutLabelRet(l:L,m:M)          input
+OutLabelArg(l:L,m:M,z:Z)      input
+ArgRetTransfer(m:M,z:Z)       input
+ArgArgTransfer(m:M,z0:Z,z1:Z) input
+ArgArgFlow(m:M,z0:Z,z1:Z)     input
+
+MmethArg(m:M,z:Z,v:V)     input
+MmethRet(m:M,z:Z,v:V)     input
+MmethPrimArg(m:M,z:Z,u:U) input
+MmethPrimRet(m:M,z:Z,u:U) input
+
+#IinvkArg(i:I,n:Z,v:V) input
+#StatIM(i:I,m:M) input     # i statically invokes m. 
+#SpecIM(i:I,m:M) input     # i special invoke m. 
+#VirtIM(i:I,m:M) input     # i virtually invokes m. 
+
+CtxtInsMeth(m:M) input
+#SubSig(m:M,s:S) input     # s is subsignature of m.
+#Dispatch(t:T,s:S,m:M) input     # t.m has subsig s.
+# =======================================
+
+# OUTPUT RELATIONS =======================
+varInLabel(v:V,l:L)       output
+varInLabelPrim(v:U,l:L)   output
+varOutLabel(v:V,l:L)      output
+varOutLabelPrim(v:U,l:L)  output
+
+varIn(v:V) output
+varOut(v:V) output
+
+transferRefRef(u:V,v:V)   output
+transferPrimRef(u:U,v:V)  output
+transferRefPrim(u:V,v:U)  output
+transferPrimPrim(u:U,v:U) output
+
+flowRefRef(u:V,v:V)   output
+flowPrimRef(u:U,v:V)  output
+flowRefPrim(u:V,v:U)  output
+flowPrimPrim(u:U,v:U) output
+
+reachableCM(c:C,m:M)  output
+CICM(c:C,i:I,d:C,m:M) output
+
+ptAlloc(c:C,v:V,o:C) output
+
+# =======================================
+
+# INTERMEDIATE RELATIONS =======================
+CICMtmp(d:C,i:I,c:C,m:M) 
+#IHM(i:I,h:H,m:M) 
+reachableCI(c:C,i:I)
+# =======================================
+
+
+# RULES =======================================================================
+
+# translation of annotation facts
+varInLabel(v,l)     :- InLabelRet(l,m), MmethRet(m,_,v).
+varInLabel(v,l)     :- InLabelArg(l,m,z), MmethArg(m,z,v).
+varInLabelPrim(v,l) :- InLabelRet(l,m), MmethPrimRet(m,_,v).
+varInLabelPrim(v,l) :- InLabelArg(l,m,z), MmethPrimArg(m,z,v).
+
+varOutLabel(v,l)     :- OutLabelRet(l,m), MmethRet(m,_,v).
+varOutLabel(v,l)     :- OutLabelArg(l,m,z), MmethArg(m,z,v).
+varOutLabelPrim(v,l) :- OutLabelRet(l,m), MmethPrimRet(m,_,v).
+varOutLabelPrim(v,l) :- OutLabelArg(l,m,z), MmethPrimArg(m,z,v).
+
+varIn(v)  :- varInLabel(v,_).
+varOut(v) :- varOutLabel(v,_).
+
+transferRefRef(u,v)   :- ArgArgTransfer(m,z0,z1), MmethArg(m,z0,u), MmethArg(m,z1,v).
+transferRefPrim(u,v)  :- ArgArgTransfer(m,z0,z1), MmethArg(m,z0,u), MmethPrimArg(m,z1,v).
+transferPrimRef(u,v)  :- ArgArgTransfer(m,z0,z1), MmethPrimArg(m,z0,u), MmethArg(m,z1,v).
+transferPrimPrim(u,v) :- ArgArgTransfer(m,z0,z1), MmethPrimArg(m,z0,u), MmethPrimArg(m,z1,v).
+
+transferRefRef(u,v)   :- ArgRetTransfer(m,z), MmethArg(m,z,u), MmethRet(m,_,v).
+transferRefPrim(u,v)  :- ArgRetTransfer(m,z), MmethArg(m,z,u), MmethPrimRet(m,_,v).
+transferPrimRef(u,v)  :- ArgRetTransfer(m,z), MmethPrimArg(m,z,u), MmethRet(m,_,v).
+transferPrimPrim(u,v) :- ArgRetTransfer(m,z), MmethPrimArg(m,z,u), MmethPrimRet(m,_,v).
+
+flowRefRef(u,v)   :- ArgArgFlow(m,z0,z1), MmethArg(m,z0,u), MmethArg(m,z1,v).
+flowRefPrim(u,v)  :- ArgArgFlow(m,z0,z1), MmethArg(m,z0,u), MmethPrimArg(m,z1,v).
+flowPrimRef(u,v)  :- ArgArgFlow(m,z0,z1), MmethPrimArg(m,z0,u), MmethArg(m,z1,v).
+flowPrimPrim(u,v) :- ArgArgFlow(m,z0,z1), MmethPrimArg(m,z0,u), MmethPrimArg(m,z1,v).
+
+#--------------------------------------------------------------------------------------
+
+reachableCM(c,m) :- CM(c,m).
+reachableCI(c,i) :- MI(m,i), CM(c,m).
+#IHM(i,h,m2) :- IinvkArg(i,0,v), ci_pt(v,h), HT(h,t), VirtIM(i,m1), SubSig(m1,s), Dispatch(t,s,m2).
+
+#CICMtmp(c,i,o,m) :- reachableCI(c,i), IHM(i,h,m), CH(o,h).
+#CICMtmp(c,i,d,m) :- reachableCI(c,i), StatIM(i,m), CC(c,d), CI(d,i).
+#CICMtmp(c,i,o,m) :- reachableCI(c,i), SpecIM(i,m), IinvkArg(i,0,v), ci_pt(v,h), CH(o,h).
+
+CICMtmp(c,i,d,m) :- reachableCI(c,i), CC(c,d), CI(d,i), ci_IM(i,m).
+
+CICM(c,i,d,m) :- CICMtmp(c,i,d,m), !CtxtInsMeth(m).
+CICM(c,i,0,m) :- CICMtmp(c,i,_,m), CtxtInsMeth(m).
+
+ptAlloc(c,v,o) :- Alloc(v,h), MV(m,v), CM(c,m), CC(c,o), CH(o,h).

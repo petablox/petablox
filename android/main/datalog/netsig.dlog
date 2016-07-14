@@ -1,0 +1,29 @@
+
+# name=netsig-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "H.dom"
+.include "I.dom"
+.include "Z.dom"
+#.include "C.dom"
+
+.bddvarorder Z0_I0_M0_V0_H0
+#.bddvarorder Z0_I0_M0_C0xC1_V0_H0
+
+HttpMeth(m:M,z:Z) input
+IinvkArg(i:I,n:Z,v:V) input
+
+ci_IM(i:I,m:M)    input  # i calls method m
+ci_spt(v:V,h:H)  input 
+
+#CICM(d:C,i:I,c:C,m:M) input
+#spt(c:C,v:V,o:C)  input 
+#CH(o:C,h:H) input
+
+httpParam(i:I,z:Z,h:H) output
+
+httpParam(i,z,h) :- HttpMeth(m,z), ci_IM(i,m), IinvkArg(i,z,v), ci_spt(v,h).
+
+
+#httpParam(i,z,h) :- HttpMeth(m,z), CICM(c,i,_,m), IinvkArg(i,z,v), spt(c,v,o), CH(o,h).

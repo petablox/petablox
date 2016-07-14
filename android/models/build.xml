@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="android" default="jar">
+
+    <property name="stamp.dir" location=".."/>
+    <property name="jarname" value="stamp.android.jar"/>
+
+	<property file="${stamp.dir}/local.config"/>
+
+	<!-- stamp.maxheap can be changed in ${stamp.dir}/local.config -->
+	<property name="stamp.maxheap" value="2048m"/>
+
+	<target name="jar">
+	  <!--build-models apilevel="15" version="4.0.3_r1.1"/-->
+	  <!--build-models apilevel="16" version="4.1.1_r1"/-->
+	  <build-models apilevel="20" version="4.4_r1"/>
+	</target>
+	
+	<target name="clean">
+	  <!--clean-models apilevel="15"/-->
+	  <clean-models apilevel="20"/>
+	</target>
+
+	<macrodef name="clean-models">
+	  <attribute name="apilevel"/>
+	  <sequential>
+		<delete dir="api-@{apilevel}"/>
+		<delete dir="${stamp.dir}/bin/api-@{apilevel}"/>
+	  </sequential>
+    </macrodef>	  
+	  
+	<macrodef name="build-models">
+	  <attribute name="apilevel"/>
+	  <attribute name="version"/>
+	  <sequential>
+		<condition property="patchuptodate-@{apilevel}">
+	      <and>
+			<uptodate>
+			  <srcfiles dir="." includes="src/**/*.java"/>
+			  <mapper type="regexp" from="^src/(.*)\.java$$" to="api-@{apilevel}/gen/\1.java"/>
+			</uptodate>
+			<!--uptodate srcfile="fake_stubs.txt" targetfile="fake_stubs_old.txt"/-->
+	      </and>
+		</condition>
+	    <condition property="dir.exists">
+	      <available file="api-@{apilevel}/gen" type="dir"/>
+	    </condition>
+		
+		<if>
+		  <not><isset property="patchuptodate-@{apilevel}"/></not>
+		  <then>
+			<!-- models have changed since recent build. so rebuild.
+		         We don't have to unzip the .tgz file every time we modify model. -->
+			<if>
+				<not><isset property="dir.exists"/></not>
+				<then>
+					<clean-models apilevel="api-@{apilevel}"/>
+			
+					<!-- this is where (e.g., api-16) we will store all artifacts-->
+					<mkdir dir="api-@{apilevel}"/>
+
+					<untar src="android-@{version}-stubs.tgz"
+						   dest="api-@{apilevel}/gen"
+						   compression="gzip"/>
+				    <untar src="googleapis-stubs.tgz"
+						   dest="api-@{apilevel}/gen"
+						   compression="gzip"/>
+				    <!-- Extract the unchanged files to bak folder -->
+				    <untar src="android-@{version}-stubs.tgz" 
+						   dest="api-@{apilevel}/bak"
+							   compression="gzip"/>
+					<untar src="googleapis-stubs.tgz"
+						   dest="api-@{apilevel}/bak"
+						   compression="gzip"/>
+				</then>
+			</if>
+
+			<!-- TODO: following two steps should be done in one pass for efficiency-->
+			<!--copy file="fake_stubs.txt" tofile="fake_stubs_old.txt"/-->
+			<java classname="stamp.modelgen.Main"
+				  maxmemory="${stamp.maxheap}"
+				  fork="true"
+				  dir="api-@{apilevel}"
+				  failonerror="true">
+			  <jvmarg value="-ea"/>
+			  <classpath>
+				<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+				<pathelement location="${stamp.dir}/lib/javaparser-1.0.8.jar"/>
+			  </classpath>
+			  <arg value="gen"/>
+			  <arg value="../src"/>
+			  <arg value="bak"/>
+			</java>
+			
+			<!-- generate the list of stubs -->
+			<!--java classname="stamp.modelgen.StubsListGenerator"
+				  maxmemory="${stamp.maxheap}"
+				  fork="true"
+				  dir="api-@{apilevel}"
+				  failonerror="true">
+			  <jvmarg value="-ea"/>
+			  <classpath>
+				<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+				<fileset dir="${stamp.dir}/lib">
+				<include name="javaparser-1.0.8.jar"/>
+				</fileset>
+			  </classpath>
+			  <arg value="gen"/>
+			</java-->
+			
+			<!-- source map -->
+			<!-- read annotations -->
+			<java classname="stamp.srcmap.Main"
+				  maxmemory="${stamp.maxheap}"
+				  fork="true"
+				  dir="api-@{apilevel}"
+				  failonerror="true">
+			  <jvmarg value="-ea"/>
+			  <classpath>
+				<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+				<fileset dir="${stamp.dir}/lib">
+				  <include name="**/*.jar"/>
+				</fileset>
+			  </classpath>
+			  <arg value="gen"/>
+			  <arg value="${stamp.dir}/bin/stamp.annotations.jar"/>
+			  <arg value="srcmap"/>
+			</java>
+			
+			<!-- compile the generated models -->
+			<mkdir dir="api-@{apilevel}/classes"/>
+			<javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+				 srcdir="api-@{apilevel}/gen" destdir="api-@{apilevel}/classes">
+			  <classpath>
+				<pathelement path="${stamp.dir}/bin/stamp.annotations.jar"/>
+			  </classpath>
+			</javac>
+			
+			<!--mkdir name="${stamp.dir}/bin/api-@{apilevel}/"/-->
+			<jar jarfile="${stamp.dir}/bin/api-@{apilevel}/${jarname}">
+			  <fileset dir="api-@{apilevel}/classes">
+				<include name="**/*.class"/>
+				<exclude name="android/view/StampLayoutInflater.class"/>
+			  </fileset>
+			  <fileset dir="api-@{apilevel}">
+				<include name="stamp_stubs.txt"/>
+				<include name="stamp_annotations.txt"/>
+			  </fileset>
+			</jar>
+		  </then>
+		</if>
+	  </sequential>
+	</macrodef>
+</project>        
+

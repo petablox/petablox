@@ -1,0 +1,67 @@
+#################################
+# Compute ICCG
+#################################
+# name=iccg-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "C.dom"
+.include "V.dom"
+.include "H.dom"
+.include "F.dom"
+.include "COMP.dom"
+.include "SC.dom"
+.include "Z.dom"
+
+.bddvarorder M0xM1_Z0_I0_V0_C0xC1xC2_H0_F0_COMP0_COMP1_SC0
+
+SCH(sc:SC,h:H) input
+ICCMeth(m:M,z:Z) input
+
+IntentTgtField(f:F) input
+ActionField(f:F) input
+DataTypeField(f:F) input
+
+CSC(c:COMP,sc:SC) input
+TgtAction(t:COMP,s:SC) input
+TgtDataType(t:COMP,s:SC) input
+
+MC(m:M,c:COMP)       input         # m is a method declared in a
+CH(o:C,h:H) input 
+MI(m:M,i:I) input 
+IinvkArg(i:I,n:Z,v:V) input
+pt(c:C,v:V,o:C)    input  # in context c, v points to o.
+fpt(o1:C,f:F,o2:C) input
+CICM(d:C,i:I,c:C,m:M)   input  # i in cotext d calls method m in context c.
+CallerComp(m:M,c:C,o:COMP)   output  # m is a method declared in c
+reachableCM(c:C,m:M)          input
+
+# debug
+Tgt(m:M)
+SrcTgt(m1:M,m2:M) output
+
+
+ICCG(s:COMP,t:COMP)  output
+
+Launch(c:COMP,o:C) output
+ObjSC(o:C,sc:SC) output
+
+###################
+#    RULES
+###################
+
+CallerComp(m,k,c) :- MC(m,c), reachableCM(k,m).
+CallerComp(m2,k2,c) :- CallerComp(m1,k1,c), MI(m1,i), CICM(k1,i,k2,m2).
+
+Tgt(m) :- ICCMeth(m1,_), CICM(_,i,_,m1), MI(m,i).
+SrcTgt(m1,m2) :- MC(m1,_), Tgt(m2).
+
+Launch(s,o) :- ICCMeth(m1,z), CICM(k,i,_,m1), IinvkArg(i,z,v), MI(m2,i), CallerComp(m2,k,s), pt(k,v,o).
+ObjSC(o,sc) :- CH(o,h), SCH(sc,h).
+
+#explicit intent
+ICCG(s,t) :- Launch(s,o1), IntentTgtField(f), fpt(o1,f,o2), ObjSC(o2,sc), CSC(t,sc).
+
+#implicit intent
+ICCG(s,t) :- Launch(s,o1), ActionField(f), fpt(o1,f,o2), ObjSC(o2,sc), TgtAction(t,sc).
+ICCG(s,t) :- Launch(s,o1), DataTypeField(f), fpt(o1,f,o2), ObjSC(o2,sc), TgtDataType(t,sc).

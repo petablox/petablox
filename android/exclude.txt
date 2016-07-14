@@ -1,0 +1,11 @@
+twitter4j\..*
+com\.google\.android\.apps\..*
+com\.google\.ads\..*
+com\.google\.analytics\..*
+com\.google\.android\.gms\..*
+com\.google\.tagmanager\..*
+com\.mercuryintermedia\..*
+com\.nineoldandroids\..*
+com\.pushio\..*
+com\.sony\.nfx\.largescreen\..*
+com\.facebook\..*

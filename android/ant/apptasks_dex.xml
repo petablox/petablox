@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-Apk">
+
+  <target name="-prepare-backend-chord">
+    <!-- Register backend-specific analyses. -->
+    <property name="stamp.analyses.main"
+	      value="typefilter-dlog,pt-dlog,taint-lim-dlog"/>
+    <!-- Register backend-specific system properties (none required for this
+         backend). -->
+    <propertyset id="stamp.analyses.main.sysprops"/>
+  </target>
+
+
+  <target name="-analyze-apk">
+	<!-- Run android-apktool to decompile the manifest and resource xml files -->
+	<if>
+	 <equals arg1="${stamp.apk.toolchain}" arg2="unapk" />
+	 <then>
+	   <run-unapk/>
+	 </then>
+	 <else>
+	   <run-apktool/>
+	 </else>
+	</if>
+
+    <!-- Read required properties. -->
+    <prop-default property="stamp.backend" default="chord"
+		  description="backend to use for analyzing the app [chord,solvergen]"/>
+    <require-prop property="stamp.analyses.pre"
+		  description="Chord analyses that will set up the initial facts for later stages"/>
+    <require-prop property="stamp.analyses.post"
+		  description="Chord analyses that will prepare the output relations"/>
+    <prop-default property="stamp.printrels" default=""
+		  description="relations to print out after the analysis finishes"/>
+    <prop-default property="stamp.print.allclasses" default="true"
+		  description="whether to dump out all processed jimple files"/>
+	<prop-default property="stamp.timeout" default="86400000"
+	      description="time out"/>
+	<prop-default property="stamp.max.harness.size" default="1000000"
+	      description="maximum number of components invoked by a harness"/>
+
+
+	<condition property="stamp.all.reports.default" else="false">
+	  <equals arg1="${stamp.input.type}" arg2="src"/>
+	</condition>
+    <prop-default property="stamp.all.reports" default="${stamp.all.reports.default}"
+	      description="whether to generate all reports or just final flows"/>
+
+    <!-- Prepare the selected analysis backend. -->
+    <runtarget target="-prepare-backend-${stamp.backend}"/>
+    <require-prop property="stamp.analyses.main"
+		  description="backend-specific analyses to run -- should be declared in -prepare-backend-[backend]"/>
+    <require-ref refid="stamp.analyses.main.sysprops"
+		 description="backend-specific system properties to pass to Chord -- should be declared in -prepare-backend-[backend]"/>
+
+    <!-- Configure remaining Chord settings. -->
+    <property name="stamp.analyses"
+	      value="${stamp.analyses.pre},${stamp.analyses.main},${stamp.analyses.post}"/>
+
+    <!-- Conditionally set-up DroidRecord properties -->
+    <if>
+      <isset property="stamp.droidrecord.logfile.template"/>
+      <then/>
+      <else>
+        <property name="stamp.droidrecord.logfile.template" value=""/>
+      </else>
+    </if>
+    <if>
+      <isset property="stamp.droidrecord.logfile.bin"/>
+      <then/>
+      <else>
+        <property name="stamp.droidrecord.logfile.bin" value=""/>
+      </else>
+    </if>
+
+    <!-- Generate harness. -->
+    <java classname="stamp.harnessgen.Main"
+	  maxmemory="${stamp.maxheap}"
+	  fork="true"
+	  failonerror="true">
+      <jvmarg value="-ea"/>
+      <classpath>
+		<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+		<!--pathelement location="${stamp.dir}/lib/AXMLPrinter2.jar"/-->
+		<!--pathelement location="${stamp.dir}/lib/apktool-cli-1.5.3-SNAPSHOT.jar"/-->
+		<pathelement location="${stamp.dir}/lib/soot.jar"/>
+        <pathelement location="${stamp.dir}/lib/gson-2.3.1.jar"/>
+      </classpath>
+      <sysproperty key="stamp.out.dir" value="${stamp.out.dir}"/>
+      <sysproperty key="stamp.driver.dir" value="${driver.dir}"/>
+	  <sysproperty key="stamp.apk.path" value="${apk}"/>
+	  <sysproperty key="stamp.apktool.out.dir" value="${stamp.out.dir}/apktool-out"/>
+	  <sysproperty key="stamp.max.harness.size" value="${stamp.max.harness.size}"/>
+	  <sysproperty key="stamp.android.jar" value="${stamp.dir}/bin/api-${apilevel}/stamp.android.jar"/>
+	  <sysproperty key="stamp.harnesslist.file" value="${stamp.out.dir}/harness.txt"/>
+	  <sysproperty key="stamp.widgets.file" value="${stamp.out.dir}/widgets.txt"/>
+    </java>
+
+    <!-- Run Chord. -->
+    <java classname="stamp.Main" 
+		  dir="${stamp.out.dir}"
+		  maxmemory="${stamp.maxheap}"
+		  fork="true" 
+		  failonerror="true">
+      <jvmarg value="-ea"/>
+      <!--sysproperty key="chord.work.dir" file="${stamp.out.dir}"/-->
+      <!--sysproperty key="chord.main.class" value="edu.stanford.stamp.harness.Main"/-->
+      <sysproperty key="stamp.driver.dir" value="${driver.dir}"/>
+	  <sysproperty key="stamp.scope.excludefile" value="${stamp.dir}/exclude.txt"/>
+	  <sysproperty key="stamp.widgets.file" value="${stamp.out.dir}/widgets.txt"/>
+	  <sysproperty key="stamp.harnesslist.file" value="${stamp.out.dir}/harness.txt"/>
+      <sysproperty key="chord.class.path" value="${apk}:${driver.dir}"/>
+      <sysproperty key="chord.java.analysis.path" value="${stamp.dir}/bin/stamp.main.jar:${stamp.dir}/scanner/stamp.scanner.jar"/>
+      <sysproperty key="chord.dlog.analysis.path" value="${stamp.dir}/bin/stamp.main.jar"/>
+      <sysproperty key="chord.run.analyses" value="${stamp.analyses}"/>
+      <sysproperty key="chord.verbose" value="${chord.verbose}"/>
+      <sysproperty key="chord.print.rels" value="${stamp.printrels}"/>
+      <sysproperty key="chord.bddbddb.max.heap" value="${chord.bddbddb.max.heap}"/>
+	  <sysproperty key="stamp.out.file" value="${stamp.out.dir}/log.txt"/>
+	  <sysproperty key="stamp.err.file" value="${stamp.out.dir}/log.txt"/>
+      <sysproperty key="stamp.dir" value="${stamp.dir}"/>
+      <sysproperty key="stamp.out.dir" value="${stamp.out.dir}"/>
+	  <sysproperty key="stamp.input.type" value="${stamp.input.type}"/>
+	  <sysproperty key="stamp.android.jar" value="${stamp.dir}/bin/api-${apilevel}/stamp.android.jar"/>
+	  <sysproperty key="stamp.framework.dir" value="${stamp.dir}/models/api-${apilevel}"/>
+	  <sysproperty key="stamp.icdf" value="${stamp.icdf}"/>
+      <sysproperty key="stamp.droidrecord.logfile.template" value="${stamp.droidrecord.logfile.template}"/>
+      <sysproperty key="stamp.droidrecord.logfile.bin" value="${stamp.droidrecord.logfile.bin}"/>
+	  <sysproperty key="stamp.print.allclasses" value="${stamp.print.allclasses}"/>
+	  <sysproperty key="stamp.timeout" value="${stamp.timeout}"/>
+	  <sysproperty key="stamp.apk.path" value="${apk}"/>
+	  <sysproperty key="stamp.apktool.out.dir" value="${stamp.out.dir}/apktool-out"/>
+	  <sysproperty key="stamp.apposcopy" value="${stamp.apposcopy}"/>
+	  <sysproperty key="stamp.report.dir" value="${stamp.report.dir}"/>
+      <syspropertyset refid="stamp.analyses.main.sysprops"/>
+      <classpath>
+		<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+		<pathelement location="${stamp.dir}/lib/soot.jar"/>
+		<!--pathelement location="/local/mysoot/soot-github/lib/soot-develop.jar"/-->
+
+		<pathelement location="${stamp.dir}/lib/bddbddb.jar"/>
+		<pathelement location="${stamp.dir}/lib/javabdd-1.0b2.jar"/>
+		<pathelement location="${stamp.dir}/lib/trove-3.0.2.jar"/>
+		<pathelement location="${stamp.dir}/lib/scannotation-1.0.2.jar"/>
+		<pathelement location="${stamp.dir}/lib/javassist.jar"/>
+		<pathelement location="${stamp.dir}/lib/jwutil.jar"/>
+		<pathelement location="${stamp.dir}/lib/jdom.jar"/>
+
+		<pathelement location="${stamp.dir}/lib/commons-lang3-3.1.jar"/>
+        <pathelement location="${stamp.dir}/lib/gson-2.3.1.jar"/>
+    	<pathelement location="${stamp.dir}/lib/droidrecord_reader.jar"/>
+      </classpath>
+    </java>
+
+	<!-- run the postprocessing python script-->
+	<!--exec executable="python" failonerror="true">
+	  <arg value="${stamp.dir}/scripts/buildReportDB.py"/>
+	  <arg value="-c"/>
+	  <arg value="${stamp.dir}/assets/srcClass.xml"/>
+	  <arg value="-k"/>
+	  <arg value="${stamp.dir}/assets/sinkClass.xml"/>
+	  <arg value="-r"/>
+	  <arg value="${stamp.out.dir}/results"/>
+	  <arg value="-o"/>
+	  <arg value="${stamp.dir}/stamp_output"/>
+	</exec>
+
+	<java classname="stamp.reporting.DBWriter" fork="true" failonerror="true">
+	  <jvmarg value="-ea"/>
+	  <arg value="${apk}"/>
+	  <arg value="${stamp.out.dir}/../app-reports.sqlite"/>
+	  <arg value="${stamp.out.dir}/results"/>
+	  <arg value="${stamp.dir}/assets/srcClass.xml"/>
+	  <arg value="${stamp.dir}/assets/sinkClass.xml"/>
+      <classpath>
+		<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+		<pathelement location="${stamp.dir}/lib/commons-lang3-3.1.jar"/>
+		<pathelement location="${stamp.dir}/lib/sqlite-jdbc-3.7.2.jar"/>
+	  </classpath>
+	</java-->
+  </target>
+
+</project>

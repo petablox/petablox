@@ -1,0 +1,181 @@
+# Taint analysis, with support for nested taint
+# - nested tainting: all fields
+# - nested escaping: all fields
+# - nested passthrough entry: only array elements
+# - nested passthrough exit: only array elements
+# - TODO: conditional escaping trigger entry: no nesting support
+# - nested conditional escaping: all fields
+
+# CONFIGURATION ===============================================================
+
+# name=taint-lim-dd-pt-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "F.dom"
+.include "I.dom"
+.include "H.dom"
+
+.bddvarorder M0_C0xC1xC2_V0xV1_H0xF0_I0
+
+# INPUT RELATIONS =============================================================
+
+Assign(v:V,u:V)      input   # v = u
+Alloc(v:V,h:H)       input   # v is the lhs in the new stmt h
+GlobalAlloc(v:V,h:H) input   # v is the lhs in the new stmt h
+Load(y:V,x:V,f:F)    input   # y = x.f
+Store(u:V,f:F,v:V)   input   # u.f = v
+LoadStat(y:V,f:F)    input   # y = f
+StoreStat(f:F,v:V)   input   # f = v
+param(u:V,v:V,i:I)   input   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I) input   # u is the lhs at callsite, v is the return var, i is invocation stmt
+
+typeFilter(v:V,o:C) input   # type wise, v can point-to o
+
+MV(m:M,v:V) input # v is a ref type variable in m
+CM(c:C,m:M) input # c is a context of method m
+CC(c:C,d:C) input # there exists i s.t. c++[i] = d
+CI(c:C,i:I) input # stmt i is on the top of c.
+CH(c:C,h:H) input
+#CICM(d:C,i:I,c:C,m:M)   input
+ci_pt(v:V,h:H) input
+
+varIn(v:V) input
+varOut(v:V) input
+transferRefRef(u:V,v:V)   input
+flowRefRef(u:V,v:V)       input
+
+# OUTPUT RELATIONS ============================================================
+
+pt(c:C,v:V,o:C)    output
+fpt(o1:C,f:F,o2:C) output
+
+# INTERMEDIATE RELATIONS ======================================================
+
+taintedSrc(o:C) output
+escaped(o:C) output
+tainted(o:C) output
+xferOut(c:C,v:V) output
+
+queryRefCtxt(c:C,v:V) output
+queryRef(v:V) output
+queryObj(o:C) output
+queryFpt(o:C,f:F) output
+queryFptAll(o:C)  output
+queryFptBase(f:F,o:C) output
+
+interprocAssign(c:C,v:V,d:C,u:V)
+
+# RULES =======================================================================
+
+# *********************************
+# *** Rules to generate queries ***
+# *********************************
+
+# source annotations
+queryRef(v) :- varIn(v).
+taintedSrc(o) :- varIn(v), pt(_,v,o).
+
+# recursive tainting at source
+queryFptAll(o) :- taintedSrc(o).
+taintedSrc(o2) :- taintedSrc(o1), fpt(o1,_,o2).
+
+# sink annotations
+queryRef(v) :- varOut(v).
+escaped(o) :- varOut(v), pt(_,v,o).
+# parametric/conditional sinks
+escaped(o1) :- flowRefRef(u,v), pt(c,u,o1), tainted(o1), pt(c,v,o2), tainted(o2).
+# recursive escaping into sink
+queryFptAll(o) :- escaped(o).
+escaped(o2) :- escaped(o1), fpt(o1,_,o2).
+
+tainted(o) :- taintedSrc(o).
+queryFptBase(f,o) :- tainted(o), f=0.
+queryObj(o1) :- fpt(o1,0,o2), tainted(o2).
+
+# transfer annotations
+xferOut(c,v) :- tainted(o), pt(c,u,o), transferRefRef(u,v).
+xferOut(c,v) :- tainted(o2), fpt(o1,0,o2), pt(c,u,o1), transferRefRef(u,v).
+
+queryRefCtxt(c,v)  :- xferOut(c,v).
+tainted(o)    :- xferOut(c,v), pt(c,v,o).
+queryFpt(o,f) :- xferOut(c,v), pt(c,v,o), f=0.
+tainted(o2)   :- xferOut(c,v), pt(c,v,o1), fpt(o1,0,o2).
+
+queryObj(o) :- tainted(o).
+
+
+# *******************************
+# *** Rules to answer queries ***
+# *******************************
+
+queryRefCtxt(c,u) :- queryRefCtxt(c,v), Assign(v,u).
+pt(c,v,o) :- queryRefCtxt(c,v), Assign(v,u), pt(c,u,o), typeFilter(v,o).
+
+#interprocAssign(d,v,c,u) :- queryRefCtxt(d,v), param(v,u,i), CICM(c,i,d,m), MV(m,v).
+#interprocAssign(d,v,c,u) :- queryRefCtxt(d,v), return(v,u,i), CICM(d,i,c,m), MV(m,u).
+
+interprocAssign(d,v,c,u) :- queryRefCtxt(d,v), param(v,u,i), CC(c,d), CI(d,i).
+interprocAssign(d,v,c,u) :- queryRefCtxt(d,v), return(v,u,i), CC(d,c), CI(c,i).
+
+queryRefCtxt(c,u) :- interprocAssign(_,_,c,u).
+pt(d,v,o) :- interprocAssign(d,v,c,u), pt(c,u,o), typeFilter(v,o).
+#queryRefCtxt(c,u) :- queryRefCtxt(d,v), MV(m,v), param(v,u,i), CICM(c,i,d,m).
+#queryRefCtxt(c,u) :- queryRefCtxt(d,v), return(v,u,i), MV(m,u), CICM(d,i,c,m).
+
+#pt(d,v,o) :- queryRefCtxt(d,v), MV(m,v), param(v,u,i), CICM(c,i,d,m), pt(c,u,o).
+#pt(d,v,o) :- queryRefCtxt(d,v), MV(m,u), return(v,u,i), CICM(d,i,c,m), pt(c,u,o).
+
+pt(c,v,o) :- queryRefCtxt(c,v), Alloc(v,h), CC(c,o), CH(o,h).
+pt(c,v,o) :- queryRefCtxt(c,v), GlobalAlloc(v,h), CH(o,h).
+
+queryRefCtxt(c,u) :- queryRefCtxt(c,v), Load(v,u,_).
+queryFpt(o,f)     :- queryRefCtxt(c,v), Load(v,u,f), pt(c,u,o).
+queryRef(w)       :- queryFpt(o,f), CH(o,h), Store(w,f,_), ci_pt(w,h).
+queryRefCtxt(c,x) :- queryFpt(o,f), Store(w,f,x), pt(c,w,o).
+fpt(o1,f,o2)      :- queryFpt(o1,f), pt(c,w,o1), Store(w,f,x), pt(c,x,o2).
+pt(c,v,o2)        :- queryRefCtxt(c,v), Load(v,u,f), pt(c,u,o1), fpt(o1,f,o2).
+
+# rules for handling static load/store
+queryRef(u) :- queryRefCtxt(_,v), LoadStat(v,f), StoreStat(f,u).
+pt(c,v,o)   :- queryRefCtxt(c,v), LoadStat(v,f), StoreStat(f,u), pt(_,u,o).
+
+queryRefCtxt(c,w) :- queryRef(w), MV(m,w), CM(c,m).
+
+# rules for handling queryFptAll and queryFptBase queries
+queryRef(w)   :- queryFptAll(o), CH(o,h), ci_pt(w,h), Store(w,_,_).
+queryFpt(o,f) :- queryFptAll(o), pt(_,w,o), Store(w,f,_).
+#queryRefCtxt(c,x) :- queryFptAll(o), pt(c,w,o), Store(w,_,x).
+#fpt(o1,f,o2)      :- queryFptAll(o1), pt(c,w,o1), Store(w,f,x), pt(c,x,o2).
+
+queryRef(x)       :- queryFptBase(f,o), CH(o,h), Store(_,f,x), ci_pt(x,h).
+queryRefCtxt(c,w) :- queryFptBase(f,o), pt(c,x,o), Store(w,f,x).
+fpt(o1,f,o2)      :- queryFptBase(f,o2), Store(w,f,x), pt(c,x,o2), pt(c,w,o1).
+
+# rules for handling queryObj queries.
+pt(c,v,o) :- queryObj(o), pt(c,u,o), Assign(v,u), typeFilter(v,o).
+#pt(d,v,o) :- queryObj(o), pt(c,u,o), param(v,u,i), typeFilter(v,o), CICM(c,i,d,m), MV(m,v).
+#pt(d,v,o) :- queryObj(o), pt(c,u,o), return(v,u,i), typeFilter(v,o), CICM(d,i,c,m), MV(m,u).
+
+pt(d,v,o) :- queryObj(o), pt(c,u,o), param(v,u,i), typeFilter(v,o), CC(c,d), CI(d,i).
+pt(d,v,o) :- queryObj(o), pt(c,u,o), return(v,u,i), typeFilter(v,o), CC(d,c), CI(c,i).
+
+
+queryRefCtxt(c,w) :- queryObj(o), pt(c,x,o), Store(w,_,x).
+fpt(o1,f,o2)      :- queryObj(o2), pt(c,x,o2), Store(w,f,x), pt(c,w,o1).
+queryRef(u)       :- queryObj(o2), fpt(o1,f,o2), CH(o1,h), Load(_,u,f), ci_pt(u,h).
+pt(c,w,o2)        :- queryObj(o2), fpt(o1,f,o2), pt(c,u,o1), Load(w,u,f).
+
+# rules for handling static load/store
+pt(c,v,o)  :- StoreStat(f,u), pt(_,u,o), queryObj(o), LoadStat(v,f), MV(m,v), CM(c,m).
+#====================================================================================
+#i() love() rainbow() loop()"I love super heros"
+
+
+#foo() input  
+
+#output
+
+#i like input car split fight 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-Permission">
+  
+  <target name="permission">
+	<if>
+	  <isset property="stamp.out.dir"/>
+	  <then/>
+	  <else>
+		<property name="stamp.out.dir" value="${stamp.dir}/stamp_output/${app.loc.1}"/>
+		<delete dir="${stamp.out.dir}"/>
+		<mkdir dir="${stamp.out.dir}"/>
+	  </else>
+	</if>
+
+	<if>
+	  <!-- NOTE: same heuristic used in index.jsp! -->
+	  <matches string="${app}" pattern="^.*\.apk$"/>
+      <then>
+		<!-- APK input -->
+		<property name="apk" value="${app.loc}"/>
+	  </then>	  
+	  <else>
+		<property name="apk" value="${stamp.apk.path}"/>
+	  </else>
+	</if>
+
+	<if>
+	 <equals arg1="${stamp.apk.toolchain}" arg2="unapk" />
+	 <then>
+	   <run-unapk/>
+	 </then>
+	 <else>
+	   <run-apktool/>
+	 </else>
+	</if>	
+
+	<java classname="stamp.reporting.Permissions" fork="true" failonerror="true">
+	  <jvmarg value="-ea"/>
+	  <arg value="${apk}"/>
+	  <arg value="${stamp.out.dir}/../app-reports.db"/>
+	  <arg value="${stamp.out.dir}/apktool-out"/>
+      <classpath>
+		<pathelement location="${stamp.dir}/bin/stamp.main.jar"/>
+		<pathelement location="${stamp.dir}/lib/sqlite-jdbc-3.7.2.jar"/>
+	  </classpath>
+	</java>
+  </target>
+  
+</project>

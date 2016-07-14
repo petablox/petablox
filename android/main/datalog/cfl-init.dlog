@@ -1,0 +1,118 @@
+##################
+# CFL Initialization
+##################
+
+###################
+# CONFIGURATION
+###################
+
+# name=cfl-init-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "C.dom"
+.include "V.dom"
+.include "U.dom"
+.include "F.dom"
+.include "I.dom"
+
+.bddvarorder Z0_M0_C0xC1_V0xV1_U0xU1_F0_I0
+
+###################
+# INPUT: TAINT HELPER
+###################
+
+MU(m:M,u:U) input # u is a prim type variable in m
+MV(m:M,v:V) input # v is a ref type variable in m
+CM(c:C,m:M) input # c is a context of method m
+CI(c:C,i:I) input # stmt i is the top element in the k-limited callstack c
+CC(c:C,d:C) input # there exists i s.t. c++[i] = d
+
+AssignPrim(v:U,u:U)     input # v = u
+LoadPrim(y:U,x:V,f:F)   input # y = x.f
+StorePrim(u:V,f:F,v:U)  input # u.f = v
+LoadStatPrim(y:U,f:F)   input # y = f
+StoreStatPrim(f:F,v:U)  input # f = v
+
+paramPrim(u:U,v:U,i:I)  input # u: formal param, v: actual arg, i: invocation stmt
+returnPrim(u:U,v:U,i:I) input # u: lhs at callsite, v: return var, i: invocation stmt
+
+fpt(o1:C,f:F,o2:C) input
+
+###################
+# INPUT: PARTIAL FLOWS HELPER
+###################
+
+#Store(v:V,f:F,u:V)  input   # v.f = u
+
+###################
+# INPUT: PHANTOM ALLOCATIONS
+###################
+
+MmethArg(m:M,z:Z,v:V)     input
+MmethRet(m:M,z:Z,v:V)     input
+
+# stub information
+Stub(m:M) input
+
+###################
+# OUTPUT: PHANTOM ALLOCATIONS
+###################
+
+# phantom allocations
+phAlloc(v:V,c:C)  output
+
+###################
+# OUTPUT: TAINT HELPER
+###################
+
+LoadPrimCtxt(c:C,v:U,u:V,f:F) output
+LoadStatPrimCtxt(c:C,v:U,f:F) output
+StorePrimCtxt(c:C,v:V,f:F,u:U) output
+StoreStatPrimCtxt(c:C,f:F,v:U) output
+
+AssignPrimCtxt(c:C,v:U,u:U) output
+AssignPrimArgCCtxt(c:C,v:U,d:C,u:U) output
+AssignPrimRetCCtxt(c:C,v:U,d:C,u:U) output
+AssignPrimCCtxt(c:C,v:U,d:C,u:U) output
+
+fptArr(o1:C,o2:C) output
+LoadPrimCtxtArr(c:C,v:U,u:V) output
+StorePrimCtxtArr(c:C,v:V,u:U) output
+#StoreArrCtxt(c:C,v:V,u:V) output        # v.f = u
+
+###################
+# OUTPUT: PARTIAL FLOW HELPER
+###################
+
+AssignArgCCtxt(c:C,v:V,d:C,u:V) output  # v = u
+AssignRetCCtxt(c:C,v:V,d:C,u:V) output  # v = u
+AssignCCtxt(c:C,v:V,d:C,u:V) output     # v = u
+
+###################
+# RULES: TAINT HELPER
+###################
+
+LoadPrimCtxt(c,v,u,f)      :- LoadPrim(v,u,f), MV(m,u), CM(c,m).
+LoadStatPrimCtxt(c,v,f)    :- LoadStatPrim(v,f), MU(m,v), CM(c,m).
+StorePrimCtxt(c,v,f,u)     :- StorePrim(v,f,u), MV(m,v), CM(c,m).
+StoreStatPrimCtxt(c,f,v)   :- StoreStatPrim(f,v), MU(m,v), CM(c,m).
+
+AssignPrimCtxt(c,v,u)       :- AssignPrim(v,u), MU(m,v), CM(c,m).
+AssignPrimArgCCtxt(c,v,d,u) :- paramPrim(v,u,i), CC(d,c), CI(c,i).
+AssignPrimRetCCtxt(c,v,d,u) :- returnPrim(v,u,i), CC(c,d), CI(d,i).
+AssignPrimCCtxt(c,v,d,u)    :- AssignPrimArgCCtxt(c,v,d,u).
+AssignPrimCCtxt(c,v,d,u)    :- AssignPrimRetCCtxt(c,v,d,u).
+
+fptArr(o1,o2)           :- fpt(o1,0,o2).
+LoadPrimCtxtArr(c,v,u)  :- LoadPrimCtxt(c,v,u,0).
+StorePrimCtxtArr(c,v,u) :- StorePrimCtxt(c,v,0,u).
+#StoreArrCtxt(c,v,u)     :- Store(v,0,u), MV(m,v), CM(c,m).
+
+##################
+# RULES: PHANTOM ALLOCATIONS
+##################
+
+# phantom allocations
+phAlloc(v,c) :- Stub(m), MmethArg(m,_,v), CM(c,m).
+phAlloc(v,c) :- Stub(m), CM(c,m), MmethRet(m,_,v).

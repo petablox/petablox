@@ -1,0 +1,47 @@
+###################
+# Pre analysis
+###################
+
+# name=pre-dlog
+
+.include "Z.dom"
+.include "M.dom"
+.include "V.dom"
+.include "U.dom"
+.include "I.dom"
+.include "L.dom"
+.include "CL.dom"
+
+.bddvarorder L0_Z0_I0xM0_CL0_V0xV1_U0xU1
+
+ci_IM(i:I,m:M) input
+IinvkRet(i:I,n:Z,v:V) input
+IinvkArg(i:I,n:Z,v:V) input
+IinvkPrimRet(i:I,n:Z,v:U) input
+IinvkPrimArg(i:I,n:Z,v:U) input
+MmethArg(m:M,z:Z,v:V) input
+MmethRet(m:M,z:Z,v:V) input
+MmethPrimArg(m:M,z:Z,v:U) input
+MmethPrimRet(m:M,z:Z,v:U) input
+
+SrcLabel(l:L)  input
+SinkLabel(l:L) input
+LCL(l:L,cl:CL) input
+
+param(u:V,v:V,i:I) output   # u is the formal parameter, v is actual arg, i is invocation stmt
+return(u:V,v:V,i:I)  output   # u is the lhs at callsite, v is the return var, i is invocation stmt
+paramPrim(u:U,v:U,i:I) output   # u is the formal parameter, v is actual arg, i is invocation stmt
+returnPrim(u:U,v:U,i:I)  output   # u is the lhs at callsite, v is the return var, i is invocation stmt
+
+srcCtxtLabel(l:CL) output
+sinkCtxtLabel(l:CL) output
+
+param(u,v,i) :- ci_IM(i,m), MmethArg(m,z,u), IinvkArg(i,z,v).
+return(u,v,i) :- ci_IM(i,m), MmethRet(m,z,v), IinvkRet(i,z,u).
+
+paramPrim(u,v,i) :- ci_IM(i,m), MmethPrimArg(m,z,u), IinvkPrimArg(i,z,v).
+returnPrim(u,v,i) :- ci_IM(i,m), MmethPrimRet(m,z,v), IinvkPrimRet(i,z,u).
+
+srcCtxtLabel(cl) :- LCL(l,cl), SrcLabel(l).
+sinkCtxtLabel(cl) :- LCL(l,cl), SinkLabel(l).
+
