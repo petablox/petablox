@@ -29,7 +29,7 @@ public class RelSyncLM extends ProgramRel {
 		
 	    for (int lIdx = 0; lIdx < numL; lIdx++) {
 	        Unit i = domL.get(lIdx);
-	        if (relEntryP.contains(lIdx)) {
+	        if (relEntryP.contains(i)) {
 	            SootMethod m = SootUtilities.getMethod(i);
 	            int mIdx = domM.indexOf(m);
 	            assert (mIdx >= 0);
