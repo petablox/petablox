@@ -1,0 +1,16 @@
+# baseline
+
+Baseline is a repository filed with small examples of bugs that should
+be caught by a analysis tool. 
+
+## How to run.
+
+The library is self-contained and should therefor be easy to run.
+
+    java -cp baseline.jar edu.ucla.pls.baseline.<CASE>
+
+## Deadlocks
+
+The following examples contains deadlocks
+
+- Transfer
