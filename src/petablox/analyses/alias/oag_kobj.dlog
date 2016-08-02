@@ -1,0 +1,38 @@
+# Object allocation graph for the precise kobj pointer analysis
+
+# name=oag_kobj
+
+.include "H.dom"
+.include "C.dom"
+.bddvarorder H0xH1_C0xC1
+
+###
+# Relations
+###
+
+CH(c1:C0,h2:H0) input
+CC(c1:C0,c2:C1) input
+
+OAG(h1:H0,h2:H1) output 
+reachablePath(h1:H0,h2:H1) output
+diverge(h1:H0,h2:H1) output 
+converge(h:H0) output 
+
+###
+#Constraints
+###
+
+#OAG
+OAG(0,h) :- CC(0,c), CH(c,h).
+OAG(h1,h2) :- CH(c1,h1), CC(c1,c2), CH(c2,h2).
+
+#reach
+reachablePath(h1,h2) :- h1=h2, OAG(h1,_). 
+reachablePath(h1,h2) :- h1=h2, OAG(_,h2). 
+reachablePath(h1,h3) :- OAG(h1,h2), reachablePath(h2,h3).
+
+#divergence
+diverge(h1,h4) :- OAG(h1,h2), OAG(h1,h3), h2!=h3, reachablePath(h2,h4), reachablePath(h3,h4).
+
+#convergence
+converge(h) :- OAG(h1,h), OAG(h2,h), h1!=h2. 
