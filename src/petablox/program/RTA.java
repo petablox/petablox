@@ -626,7 +626,8 @@ public class RTA implements ScopeBuilder {
         String cName = c.getName();
         if (cName.equals("java.lang.Class")) { 
             if (dynamicResolvedClsForNameSites != null &&
-            		n.getSubSignature().equals("java.lang.Class forName(java.lang.String)")) {
+                    (n.getSubSignature().equals("java.lang.Class forName(java.lang.String)") ||
+                n.getSubSignature().equals("java.lang.Class forName(java.lang.String,boolean,java.lang.ClassLoader)") )) {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -640,7 +641,8 @@ public class RTA implements ScopeBuilder {
             }
         } else if (cName.equals("java.lang.reflect.Array")) {
             if (dynamicResolvedAryNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,int)")) {
+                    (n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,int)") ||
+                n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,int[])")) ) {
                 for (Pair<String, List<String>> p : dynamicResolvedAryNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
