@@ -1,10 +1,6 @@
 package petablox.util.soot;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import java.util.HashMap;
+import java.util.*;
 
 import soot.Body;
 import soot.SootMethod;
@@ -25,10 +21,14 @@ public class ECFG extends ExceptionalBlockGraph implements ICFG {
 	private void addEntryAndExit(SootMethod m) {	
 		List<Block> heads = getHeads();
 		List<Block> tails = getTails();
-        if(heads.size() == 0 || tails.size() == 0) {
+        if(heads.size() == 0 ) {
             System.out.println ("ERROR: while adding entry and exit nodes to cfg of method: " + m);
             return;
-        }
+        }else if(tails.size() == 0){
+			computeTails();
+			tails = this.getTails();
+			assert(tails.size()!=0);
+		}
         
         if(!((heads.size() == 1) && (heads.get(0) instanceof EDummyBlock) &&
              (tails.size() == 1) && (tails.get(0) instanceof EDummyBlock))) {
@@ -60,6 +60,35 @@ public class ECFG extends ExceptionalBlockGraph implements ICFG {
 	        mTails.add(tail);
 	        blocks1.add(tail);
         }
+	}
+
+	private void computeTails(){
+		List<Block> dfsStack = new ArrayList<Block>();
+		Set<Block> visited = new HashSet<Block>();
+		List<Block> heads = this.getHeads();
+		List<Block> tails = new ArrayList<Block>();
+		for(Block h : heads){
+			if(visited.contains(h))
+				continue;
+			visited.add(h);
+			dfsStack.add(0,h);
+			while(!dfsStack.isEmpty()){
+				Block b = dfsStack.remove(0);
+				List<Block> succs = b.getSuccs();
+				boolean endOfChain = true;
+				for(Block s : succs){
+					if(visited.contains(s))
+						continue;
+					visited.add(s);
+					dfsStack.add(0,s);
+					endOfChain = false;
+				}
+				if(endOfChain){
+					tails.add(b);
+				}
+			}
+		}
+		this.mTails = tails;
 	}
 	
 	public List<Block> reversePostOrder(){

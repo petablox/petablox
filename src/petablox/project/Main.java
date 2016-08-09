@@ -1,9 +1,10 @@
 package petablox.project;
 
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.Exception;
-import java.io.FileNotFoundException;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import petablox.program.Program;
 import petablox.util.Timer;
@@ -49,9 +50,10 @@ public class Main {
                 errStream = new PrintStream(errFile);
             System.setErr(errStream);
         }
-        run();
+        extractNestedJARs();
+		run();
         try{
-        	File tempFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"temp");
+        	File tempFile = new File(Config.outDirName+ File.separator +"temp");
         	if(tempFile.exists()){
         		for (File f : tempFile.listFiles())
         			f.delete();
@@ -65,7 +67,7 @@ public class Main {
             errStream.close();
     }
     private static void run() {
-        Timer timer = new Timer("chord");
+        Timer timer = new Timer("petablox");
         timer.init();
         String initTime = timer.getInitTimeStr();
         if (Config.verbose >= 0)
@@ -101,5 +103,41 @@ public class Main {
             System.out.println("Petablox run completed at: " + doneTime);
             System.out.println("Total time: " + timer.getInclusiveTimeStr());
         }
+    }
+    private static String basename(String fname) {
+    	String[] parts = fname.split(File.separator);
+    	return parts[parts.length - 1];
+    }
+
+    private static void extractNestedJARs(){
+        String tempDir = Config.outDirName+ File.separator +"temp";
+        Utils.mkdirs(tempDir);
+        String classpath = Config.userClassPathName;
+        String[] classPathElems = classpath.split(File.pathSeparator);
+        for(String elem : classPathElems){
+            if(elem.endsWith(".jar")){
+               try{
+                   JarFile jf = new JarFile(elem);
+                   Enumeration<JarEntry> entries = jf.entries();
+                   while(entries.hasMoreElements()){
+                       JarEntry je = entries.nextElement();
+                       if(je.getName().endsWith(".jar")) {
+                           InputStream is = jf.getInputStream(je);
+                           String fileName = basename(je.getName());
+                           File newLoc = new File(tempDir + File.separator + fileName);
+                           FileOutputStream fos = new java.io.FileOutputStream(newLoc);
+                           while (is.available() > 0)
+                               fos.write(is.read());
+                           fos.close();
+                           is.close();
+                           classpath += File.pathSeparator + newLoc.getAbsolutePath();
+                       }
+                   }
+               }catch(Exception e){
+                   continue;
+               }
+            }
+        }
+        Config.userClassPathName = classpath;
     }
 }

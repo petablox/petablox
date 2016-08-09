@@ -250,7 +250,7 @@ public class Boot {
     private static Properties getPetabloxSysProps() {
         Properties p = new Properties();
         for (Map.Entry e : System.getProperties().entrySet()) {
-            if (e.getKey().toString().startsWith("chord"))
+            if (e.getKey().toString().startsWith("petablox"))
                 p.setProperty(e.getKey().toString(), e.getValue().toString());
         }
         return p;
