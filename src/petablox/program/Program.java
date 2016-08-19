@@ -103,7 +103,7 @@ public class Program {
 			SSAUtilities.doSSA(true, true);
     	
     	//List<String> excluded = new ArrayList<String>();
-    	Options.v().set_coffi(true);
+    	//Options.v().set_coffi(true);
     	//Options.v().set_exclude(excluded);
     	Options.v().set_include_all(true);
     	Options.v().set_keep_line_number(true);

@@ -10,7 +10,7 @@ Both of the above steps are described below:
 Build from Source
 -----------------
 To build Petablox, you will need to meet the following minimum requirements:
- * Java Development Kit (JDK) >= 1.6
+ * Java Development Kit (JDK) >= 1.8
  * Apache Ant
 
 To compile Petablox:
