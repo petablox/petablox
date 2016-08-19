@@ -35,6 +35,7 @@
 // :inputs: statIM(I,M)
 // :inputs: specIM(I,M)
 // :inputs: virtIM(I,M)
+// :inputs: MentPt(M)
 
 // :inputs: MobjValAsgnInst(M,V,H)
 // :inputs: MobjVarAsgnInst(M,V,V)
@@ -119,9 +120,8 @@ VHfilter(v,h) <- V(v), H_index[h] = 0.
 
 IHM(i,h,m2) <- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
 
-// # base cases: each root method and each class initializer is reachable
-//reachableM(0).
-reachableM(m0) <- M_index[m0] = 0.
+// # base cases: each root method and each class initializer is reachable 
+reachableM(m) <- MentPt(m).
 reachableM(m) <- reachableT(t), clinitTM(t,m).
 // # inductive case
 reachableM(m) <- IM(_,m).

@@ -21,6 +21,7 @@ import petablox.project.Config;
 import petablox.project.Messages;
 import petablox.util.IndexSet;
 import petablox.util.Timer;
+import petablox.util.Utils;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
 import petablox.util.soot.StubMethodSupport;
@@ -75,6 +76,12 @@ public class RTA implements ScopeBuilder {
 
     //constructors invoked implicitly via reflection
     private LinkedHashSet<SootMethod> reflectiveCtors;
+    
+    //set of classes containing methods that are likely entry points
+    private HashSet<SootClass> entryClasses;
+    
+    //set of methods that are likely entry points
+    private HashSet<SootMethod> entryMethods;
 
     /////////////////////////
 
@@ -149,6 +156,18 @@ public class RTA implements ScopeBuilder {
         return reflect;
     }
 
+    @Override
+    public HashSet<SootMethod> getEntryMethods() {
+        if (methods == null) build();
+        return entryMethods;
+    }
+    
+    @Override
+    public HashSet<SootClass> getEntryClasses() {
+        if (methods == null) build();
+        return entryClasses;
+    }
+    
     protected void build() {
         classes = new IndexSet<RefLikeType>();
         classesVisitedForClinit = new HashSet<SootClass>();
@@ -190,30 +209,20 @@ public class RTA implements ScopeBuilder {
         	throw new RuntimeException();
         }
         javaLangObject = Scene.v().getSootClass("java.lang.Object");
-        String mainClassName = Config.mainClassName;
-        if (mainClassName == null)
-            Messages.fatal(MAIN_CLASS_NOT_DEFINED);
-        Scene.v().addBasicClass(mainClassName, SootClass.BODIES);
+         
+        entryClasses = new HashSet<SootClass>(); 
+        entryMethods = new HashSet<SootMethod>();
+        prepEntrypoints(); 
         Scene.v().loadBasicClasses();
-        if(!Scene.v().containsClass(mainClassName)){
-        	Messages.fatal(MAIN_METHOD_NOT_FOUND, mainClassName);
-        }
-        SootClass mainClass = Scene.v().getSootClass(mainClassName);
-        mainClass.setApplicationClass();
-        prepareClass(mainClass.getType());
-        SootMethod mainMethod = mainClass.getMethod("void main(java.lang.String[])");
-        if (mainMethod == null)
-            Messages.fatal(MAIN_METHOD_NOT_FOUND, mainClassName);
-        
-        prepAdditionalEntrypoints(); //called for subclasses
         
         for (int i = 0; repeat; i++) {
             if (Config.verbose >= 1) System.out.println("Iteration: " + i);
             repeat = false;
             classesVisitedForClinit.clear();
             methods.clear();
-            visitClinits(mainClass);
-            visitMethod(mainMethod);
+            
+            for (SootClass cl: entryClasses) visitClinits(cl);
+            for (SootMethod m: entryMethods) visitMethod(m);
 
             visitAdditionalEntrypoints(); //called for subclasses
             
@@ -251,13 +260,80 @@ public class RTA implements ScopeBuilder {
     }
 
     /**
-     * Invoked by RTA before starting iterations. A hook so subclasses can
-     * add additional things to visit.
+     * Invoked by RTA before starting iterations. 
      * 
      * Note that this is invoked AFTER the hosted JVM is set up.
      */
-    protected void prepAdditionalEntrypoints() {
-        
+    protected void prepEntrypoints () {
+    	String entryMethodsFile = System.getProperty("petablox.entrypoints.file", "");
+    	if (!entryMethodsFile.equals("")) {
+			HashSet<String> addedClasses = new HashSet<String>();
+			List<String> l = Utils.readFileToList(entryMethodsFile);
+			methods = new IndexSet<SootMethod>(l.size());
+		    
+			for (String s : l) {
+		    	if (s.startsWith("#"))
+		    		continue;
+		    	String cName;
+		    	int colonIdx  = s.indexOf(':');
+		    	if (colonIdx == 0) {
+		    		System.out.println("FATAL: Bad format (line starting with a colon) in file " + entryMethodsFile);
+		        	throw new RuntimeException();
+		    	} 
+		    	if (colonIdx > 0) 
+		            cName = s.substring(1, colonIdx); // exclude the initial '<' character
+		        else
+		        	cName = s.trim();
+		    	
+		    	SootClass cl;
+		        if (!Config.isExcludedFromScope(cName)) {
+		        	if (!addedClasses.contains(cName)) {
+		        		Scene.v().addBasicClass(cName, SootClass.BODIES);
+		        		addedClasses.add(cName);
+		        		cl = Scene.v().getSootClass(cName);
+		        		entryClasses.add(cl);
+		           	 	cl.setApplicationClass();
+		                prepareClass(cl.getType());
+		        	} else {
+		        		cl = Scene.v().getSootClass(cName);
+		        	}
+		        	if (colonIdx > 0) {
+			            String msig = s.substring(colonIdx + 2, s.length() - 1); // get subsignature and exclude end char '>'
+			            SootMethod m = cl.getMethod(msig);
+			            entryMethods.add(m);
+		        	} else {
+		        		//two cases: cl is an interface/abstract class or cl is a concrete class.
+		                if (cl.isInterface() || cl.isAbstract()) {
+		                	System.err.println("EntryPoints: Not supported: Cannot find entry points that are concrete implementations of " + cl.getName());
+		                } else { //class is concrete
+		                	 Iterator<SootMethod> it = cl.methodIterator();
+		                     while (it.hasNext()) {
+		                     	SootMethod m = it.next();
+		                         if (m.isPublic() && !m.isNative())
+		                             entryMethods.add(m);
+		                     }
+		                }
+		        	}
+		        }
+		    }
+    	} else {
+    		 String mainClassName = Config.mainClassName;
+    	        if (mainClassName == null)
+    	            Messages.fatal(MAIN_CLASS_NOT_DEFINED);
+    	        Scene.v().addBasicClass(mainClassName, SootClass.BODIES);
+    	        if(!Scene.v().containsClass(mainClassName)){
+    	        	Messages.fatal(MAIN_METHOD_NOT_FOUND, mainClassName);
+    	        }
+    	        SootClass mainClass = Scene.v().getSootClass(mainClassName);
+    	        mainClass.setApplicationClass();
+    	        prepareClass(mainClass.getType());
+    	        SootMethod mainMethod = mainClass.getMethod("void main(java.lang.String[])");
+    	        if (mainMethod == null)
+    	            Messages.fatal(MAIN_METHOD_NOT_FOUND, mainClassName);
+    	        entryClasses.add(mainClass);
+    	        entryMethods.add(mainMethod);
+    	}
+        return;
     }
 
     /**
@@ -265,7 +341,7 @@ public class RTA implements ScopeBuilder {
      * add additional things to visit.
      */
     protected void visitAdditionalEntrypoints() {
-        
+    	
     }
 
     private boolean isExcluded(SootMethod m) {
@@ -274,6 +350,8 @@ public class RTA implements ScopeBuilder {
     		return true;
     	return false;
     }
+    
+    
     /**
      * Called whenever RTA sees a method.
      * Adds to worklist if it hasn't previously been seen on this iteration.

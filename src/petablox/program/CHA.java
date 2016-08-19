@@ -231,4 +231,16 @@ public class CHA implements ScopeBuilder {
     public Reflect getReflect() {
         return new Reflect();
     }
+
+	@Override
+	public HashSet<SootMethod> getEntryMethods() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashSet<SootClass> getEntryClasses() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
