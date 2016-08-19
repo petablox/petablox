@@ -49,14 +49,16 @@ public class LogicBloxExporter extends LogicBloxIOBase {
      * @throws PetabloxException if an error occurs
      */
     public void saveDomain(Dom<?> dom) {
-    	int sz = 0;
-    	if (Config.populate) {
-    		String nm = dom.getName().substring(Config.multiTag.length());
-	    	if (domNdxMap.containsKey(nm))  
-	    		sz = domNdxMap.get(nm);
-	    	newDomNdxMap.put(nm, sz + dom.size());
-    	}
-    	
+        int sz = 0;
+        if (Config.populate) {
+          String nm = dom.getName().substring(Config.multiTag.length());
+          if (domNdxMap.containsKey(nm))  
+            sz = domNdxMap.get(nm);
+          else
+            domNdxMap.put(nm,0);
+          newDomNdxMap.put(nm, sz + dom.size());
+        }
+
         String domName = dom.getName();
         File factsFile = new File(workDir, domName + ".csv");
         saveDomainData(dom, factsFile, sz);
