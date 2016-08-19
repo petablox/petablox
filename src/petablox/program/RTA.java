@@ -607,21 +607,26 @@ public class RTA implements ScopeBuilder {
     }
     
     private SootMethod getMethodItr(SootClass c,String subsign){
-        SootMethod ret = null;
-        while(true){
-            try{
-                ret= c.getMethod(subsign);
-                break;
-            }catch(Exception e){
-                if(!c.hasSuperclass()){
-                    System.out.println("WARN: RTA: Method "+subsign+" not found");
-                    break;
-                }else{
-                    c = c.getSuperclass();
-                }
-            }
+      ArrayList<SootClass> queue = new ArrayList<SootClass>();
+      SootMethod ret = null;
+      queue.add(c);
+      while(!queue.isEmpty()){
+        SootClass tos = queue.remove(0);
+        try{
+          ret= tos.getMethod(subsign);
+          break;
+        }catch(Exception e){
+          for(SootClass inter : tos.getInterfaces()){
+            queue.add(inter); 
+          }
+          if(tos.hasSuperclass()){
+            queue.add(tos.getSuperclass());
+          }
         }
-        return ret;
+      }
+      if(ret == null)
+        System.out.println("WARN: RTA method not found "+subsign);
+      return ret;
     }
 
     private void processVirtualInvk(SootMethod m, Unit u) {
