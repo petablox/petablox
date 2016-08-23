@@ -64,6 +64,7 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
         	String psig = sig.substring(sig.indexOf(':') + 2, sig.length() - 1);
         	if (psig.equals("void main(java.lang.String[])")) {
         		indx = getOrAdd(m);
+        		parseAnnotations(m,indx);
         		foundMain = true;
         		break;
         	}

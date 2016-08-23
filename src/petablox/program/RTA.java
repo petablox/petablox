@@ -1,5 +1,7 @@
 package petablox.program;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -212,6 +214,8 @@ public class RTA implements ScopeBuilder {
          
         entryClasses = new HashSet<SootClass>(); 
         entryMethods = new HashSet<SootMethod>();
+        if(Config.populate)
+        	entryPointGen();
         prepEntrypoints(); 
         Scene.v().loadBasicClasses();
         
@@ -259,6 +263,31 @@ public class RTA implements ScopeBuilder {
         staticReflectResolver = null; // no longer in use; stop referencing it
     }
 
+    /**
+     * In populate phase, go over all class files and if they are public
+     * add them to the entry point file
+     */
+    protected void entryPointGen(){
+    	String petabloxClassPath = Config.userClassPathName;
+    	String[] classPathElems = petabloxClassPath.split(File.pathSeparator);
+    	try{
+    		File entryPointFile = new File(Config.workDirName + File.separator + Config.outDirName+ File.separator +"entryPoints.txt");
+    		PrintWriter pw = new PrintWriter(entryPointFile);
+    		for(String classPathElem : classPathElems){
+    			for(String cl : SourceLocator.v().getClassesUnder(classPathElem)){
+    				SootClass c = Scene.v().loadClassAndSupport(cl);
+    				if(c.isPublic()){
+    					pw.println(c);
+    				}
+    			}
+    		}
+    		pw.flush();
+    		pw.close();
+    		System.setProperty("petablox.entrypoints.file", Config.workDirName + File.separator + Config.outDirName+ File.separator +"entryPoints.txt");
+    	}catch(Exception e){
+    		System.out.println("WARN: RTA Could not generate entry points file");
+    	}
+    }
     /**
      * Invoked by RTA before starting iterations. 
      * 
