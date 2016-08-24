@@ -124,10 +124,13 @@ public class Program {
 		Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
 				                       Scene.v().defaultClassPath() + File.pathSeparator +
 		                               stdlibClPath);
-    	Scene.v().addBasicClass(Config.mainClassName);
+		if(Config.mainClassName!=null)
+			Scene.v().addBasicClass(Config.mainClassName);
     	Scene.v().loadBasicClasses();
-    	SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
-    	Scene.v().setMainClass(mainCl);
+    	if(Config.mainClassName!=null){
+    		SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
+    		Scene.v().setMainClass(mainCl);
+    	}
     	if(Config.verbose >= 1) {
     		Chain<SootClass> chc = Scene.v().getClasses();
     		System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
