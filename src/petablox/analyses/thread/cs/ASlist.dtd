@@ -1,0 +1,6 @@
+<!ELEMENT ASlist (AS)*>
+<!ELEMENT AS ANY>
+<!ATTLIST AS
+        id              ID              #REQUIRED
+        Cid             IDREF   #REQUIRED
+        Mid             IDREF   #REQUIRED>

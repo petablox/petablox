@@ -1,0 +1,37 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=reachableACM-dlog
+
+.include "M.dom"
+.include "I.dom"
+.include "AS.dom"
+.include "C.dom"
+
+.bddvarorder AS0_I0xI1xM0xM1_C0xC1xC2
+
+###
+# Relations
+###
+
+thrSenCICM(c:C0,i:I0,d:C1,m:M0) input
+threadACM(t:AS0,o:C0,m:M0) input
+MI(m:M0,i:I0) input
+threadStartI(i:I0) input
+
+reachableACM(t:AS0,c:C0,m:M0) output
+threadReachableM_cs(m:M0) output
+
+###
+# Constraints
+###
+
+reachableACM(t,c,m) :- threadACM(t,c,m).
+#reachableACM(t,d,n) :- reachableACM(t,c,m), MI(m,i), thrSenCICM(c,i,d,n), !threadStartI(i).
+reachableACM(t,d,n) :- reachableACM(t,c,m), MI(m,i), thrSenCICM(c,i,d,n).
+
+threadReachableM_cs(m) :- reachableACM(_,_,m).
+

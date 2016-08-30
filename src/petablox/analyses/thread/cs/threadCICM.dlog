@@ -1,0 +1,71 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=threadCICM-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "H.dom"
+.include "Z.dom"
+.include "I.dom"
+.include "T.dom"
+.include "C.dom"
+
+#.bddvarorder M0xM1xI0xI1_T0_V0xV1_T1_H0xH1_Z0_C0_C1_C2
+.bddvarorder M0_I0_C0_C1
+
+###
+# Relations
+###
+
+#IinvkArg(i:I0,z:Z0,v:V1) input
+#cha(m:M1,t:T1,n:M0) input
+#CVC(c:C,v:V0,c:C) input
+#HT(h:H0,t:T1) input
+#threadAllocI(i:I0) input
+threadStartI(i:I0) input
+excludeThreadStartI(i:I0) input
+#CH(c:C,h:H) input
+CICM(c:C,i:I,d:C,m:M) input
+
+#runCHA(h:H0,m:M0)
+#runCHAC(c:C,m:M0)
+#threadRunM(m:M0)
+#threadAllocCIC0(c:C,i:I0,c:C)
+#threadAllocCIC1(c:C,i:I0,c:C)
+#threadStartCIC0(c:C,i:I0,c:C)
+#threadMatch(c:C,m:M0)
+
+threadCICM(c:C,i:I0,c:C,m:M0) output
+#nonMainThreadCM(c:C0,m:M0) output
+nonMainThreadCIM(c:C0,i:I0,m:M0) output
+
+###
+# Constraints
+###
+
+threadCICM(c,i,d,m) :- CICM(c,i,d,m), threadStartI(i), !excludeThreadStartI(i).
+#nonMainThreadCM(d,m) :- threadCICM(_,_,d,m).
+nonMainThreadCIM(d,i,m) :- threadCICM(_,i,d,m).
+
+#####Set of rules to match the cs version with the ci version of datarace#####
+#runCHA(h,n) :- cha("run:()V@java.lang.Runnable",t,n), HT(h,t).
+#runCHAC(e,n) :- CH(e,h), runCHA(h,n).
+
+#threadRunM("run:()V@java.lang.Thread").
+
+#threadAllocCIC0(c,i,d) :- threadAllocI(i), IinvkArg(i,0,v), CVC(c,v,d).
+#threadAllocCIC1(c,i,d) :- threadAllocI(i), IinvkArg(i,1,v), CVC(c,v,d).
+#threadAllocCIC1(c,i,d) :- threadAllocI(i), IinvkArg(i,2,v), CVC(c,v,d).
+#threadStartCIC0(c,i,d) :- threadStartI(i), IinvkArg(i,0,v), CVC(c,v,d), !excludeThreadStartI(i).
+
+#threadStart and the corresponding threadAlloc instructions are distinct and might not even be in the same method.
+#So threadMatch should not try to match contexts with the threadStart method.
+#threadMatch(e,n) :- threadAllocCIC0(c,i,e), threadAllocCIC1(c,i,d), runCHAC(d,n).
+#threadCICM(c,i,f,m) :- threadStartCIC0(c,i,e), runCHAC(e,m), CICM(c,i,f,_), !threadRunM(m).split
+#threadCICM(c,i,f,n) :- threadStartCIC0(c,i,e), runCHAC(e,m), threadRunM(m), threadMatch(e,n), CICM(c,i,f,_).
+#threadCICM(c,i,d,n) :- threadStartCIC0(c,i,e), runCHAC(e,m), threadRunM(m), threadMatch(e,d,n). ##Possibly for k-obj, not for k-cfa since d is not a k-cfa context
+#nonMainThreadCM(c,m) :- threadCICM(_,_,c,m).

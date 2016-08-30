@@ -1,0 +1,37 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=syncCLC-dlog
+
+.include "C.dom"
+.include "M.dom"
+.include "V.dom"
+.include "L.dom"
+.include "F.dom"
+.include "T.dom"
+
+.bddvarorder L0_F0_M0_T0_V0_C0xC1_C2
+
+###
+# Relations
+###
+
+CVC(c:C0,v:V0,o:C1) input
+thisMV(m:M0,v:V0) input
+syncLM(l:L0,m:M0) input
+syncLV(l:L0,v:V0) input
+
+syncCLC(c:C0,l:L0,o:C1) output
+syncC(c:C1) output
+
+###
+# Constraints
+###
+
+syncCLC(c,l,o) :- syncLM(l,m), thisMV(m,v), CVC(c,v,o).
+syncCLC(c,l,o) :- syncLV(l,v), CVC(c,v,o).
+syncC(o) :- syncCLC(_,_,o).
+

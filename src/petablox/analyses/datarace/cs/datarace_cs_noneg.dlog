@@ -1,0 +1,69 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=datarace-cs-noneg-dlog
+
+.include "AS.dom"
+.include "F.dom"
+.include "E.dom"
+.include "H.dom"
+.include "M.dom"
+.include "L.dom"
+.include "K.dom"
+.include "C.dom"
+.include "I.dom"
+
+.bddvarorder L0_F0_E0_E1_M0_AS0xAS1_H0_K0_C0xC1xC2_I0
+
+###
+# Relations
+###
+
+unlockedRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) input
+
+###
+
+EF(e:E0,f:F0) input
+statF(f:F0) input
+statE(e:E0)
+CEC(c:C0,e:E0,o:C1) input		
+escapingRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+
+###
+
+mhe_cs(c:C0,e:E0,t1:AS0,t2:AS1) input
+parallelRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+
+###
+
+excludeSameThread(k:K0) input
+datarace(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+racePairs_cs(e1:E0,e2:E1) output
+
+###
+# Constraints
+###
+
+statE(e) :- EF(e,f), statF(f).
+
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- unlockedRaceHext(t1,c1,e1,t2,c2,e2), \
+	CEC(c1,e1,o), CEC(c2,e2,o).
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- unlockedRaceHext(t1,c1,e1,t2,c2,e2), \
+	statE(e1), statE(e2).
+
+###
+
+parallelRaceHext(t1,c1,e1,t2,c2,e2) :- escapingRaceHext(t1,c1,e1,t2,c2,e2), \
+	mhe_cs(c1,e1,t1,t2), mhe_cs(c2,e2,t2,t1).
+
+###
+
+datarace(t1,c1,e1,t2,c2,e2) :- parallelRaceHext(t1,c1,e1,t2,c2,e2), excludeSameThread(1), t1!=t2.
+datarace(t1,c1,e1,t2,c2,e2) :- parallelRaceHext(t1,c1,e1,t2,c2,e2), excludeSameThread(0).
+
+
+racePairs_cs(e1,e2) :- datarace(_,_,e1,_,_,e2).
+

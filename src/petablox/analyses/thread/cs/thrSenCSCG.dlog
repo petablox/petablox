@@ -1,0 +1,41 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=thrSenCSCG-dlog
+
+.include "I.dom"
+.include "M.dom"
+.include "C.dom"
+
+.bddvarorder I0xM0xM1xM2xC0xC1xC2
+
+###
+# Relations
+###
+
+rootCM(c:C,m:M) input
+threadCICM(c:C,i:I,c:C,m:M) input
+threadStartI(i:I) input
+CICM(c:C,i:I,d:C,m:M) input
+MI(m:M,i:I) input
+
+thrSenRootCM(c:C,m:M) output
+thrSenReachableCM(c:C,m:M) output
+thrSenCICM(c:C,i:I,c:C,m:M) output
+thrSenCMCM(c:C,m:M,c:C,n:M) output
+
+###
+# Constraints
+###
+
+thrSenRootCM(c,m) :- rootCM(c,m).
+thrSenRootCM(c,m) :- threadCICM(_,_,c,m).
+
+thrSenReachableCM(c,m) :- thrSenRootCM(c,m).
+thrSenReachableCM(d,n) :- thrSenCICM(_,_,d,n).
+
+thrSenCICM(c,i,d,n) :- thrSenReachableCM(c,m), MI(m,i), CICM(c,i,d,n), !threadStartI(i).
+thrSenCMCM(c,m,d,n) :- thrSenCICM(c,i,d,n), MI(m,i).

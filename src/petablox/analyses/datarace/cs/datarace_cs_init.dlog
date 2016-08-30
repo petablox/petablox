@@ -1,0 +1,86 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=datarace-cs-init-dlog
+
+.include "AS.dom"
+.include "F.dom"
+.include "E.dom"
+.include "H.dom"
+.include "M.dom"
+.include "L.dom"
+.include "K.dom"
+.include "C.dom"
+.include "I.dom"
+.include "V.dom"
+
+.bddvarorder L0_F0_E0_E1_M0_AS0xAS1_H0_K0_C0xC1xC2_I0_V0
+
+###
+# Relations
+###
+
+excludeInitMethods(k:K0) input
+initM(m:M0) input
+
+###
+
+writeE(e:E0) input
+ME(m:M0,e:E0) input
+EF(e:E0,f:F0) input
+reachableACM(t:AS0,c:C0,m:M0) input
+checkExcludedM(m:M0) input
+
+excludeInitM(m:M0)
+relevantTCM(t:AS0,c:C0,m:M0)
+relevantTCE(t:AS0,c:C0,e:E0)
+
+rdOrWrTCEF(t:AS0,c:C0,e:E0,f:F0)
+onlyWrTCEF(t:AS0,c:C0,e:E0,f:F0)
+
+###
+
+syncC(c:C1) input
+unlockedE_cs(t:AS0,c1:C0,e:E0,c2:C1) input
+
+###
+
+unlikelyRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1)
+startingRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1)
+unlockedRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+
+###
+# Constraints
+###
+
+##For eliminating negation from datarace-cs
+
+excludeInitM(m) :- excludeInitMethods(1), initM(m).
+
+relevantTCM(t,c,m) :- reachableACM(t,c,m), !checkExcludedM(m), !excludeInitM(m).
+
+relevantTCE(t,c,e) :- relevantTCM(t,c,m), ME(m,e).
+
+rdOrWrTCEF(t,c,e,f) :- relevantTCE(t,c,e), EF(e,f).
+onlyWrTCEF(t,c,e,f) :- relevantTCE(t,c,e), EF(e,f), writeE(e).
+
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- onlyWrTCEF(t1,c1,e1,f), rdOrWrTCEF(t2,c2,e2,f), e1 < e2.
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- rdOrWrTCEF(t1,c1,e1,f), onlyWrTCEF(t2,c2,e2,f), e1 < e2.
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- onlyWrTCEF(t1,c1,e1,f), onlyWrTCEF(t2,c2,e2,f), \
+	e1 = e2, c1 < c2.
+startingRaceHext(t1,c1,e1,t2,c2,e2) :- onlyWrTCEF(t1,c1,e1,f), onlyWrTCEF(t2,c2,e2,f), \
+	e1 = e2, c1 = c2, t1 <= t2.
+ctxtInsStartingRace(e1,e2) :- startingRaceHext(_,_,e1,_,_,e2).
+
+
+guardedE(t,c,e,o) :- syncC(o), !unlockedE_cs(t,c,e,o).
+
+unlikelyRaceHext(t1,c1,e1,t2,c2,e2) :- startingRaceHext(t1,c1,e1,t2,c2,e2), \
+	guardedE(t1,c1,e1,o), guardedE(t2,c2,e2,o).
+
+unlockedRaceHext(t1,c1,e1,t2,c2,e2) :- startingRaceHext(t1,c1,e1,t2,c2,e2), \
+	!unlikelyRaceHext(t1,c1,e1,t2,c2,e2).
+

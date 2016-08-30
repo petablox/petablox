@@ -1,0 +1,194 @@
+# Copyright (c) 2008-2010, Intel Corporation.
+# Copyright (c) 2006-2007, The Trustees of Stanford University.
+# All rights reserved.
+# Licensed under the terms of the New BSD License.
+
+# Author: Mayur Naik (mhn@cs.stanford.edu)
+# name=datarace-refiner-dlog
+
+.include "M.dom"
+.include "V.dom"
+.include "C.dom"
+.include "P.dom"
+.include "Z.dom"
+.include "F.dom"
+.include "E.dom"
+.include "T.dom"
+.include "H.dom"
+.include "AS.dom"
+.include "I.dom"
+.include "L.dom"
+.include "K.dom"
+
+.bddvarorder E0xE1_M0xP0xP1xP2_V0_C0_F0_C1_Z0_T0_H0_H1_AS0xAS1xAS2_I0_L0_K0
+
+###
+# Relations
+###
+
+#VH(v:V0,h:H0) input
+#FH(f:F,h:H) input
+#HFH(h1:H0,f:F0,h2:H1) input
+
+CVC(c1:C0,v:V0,c2:C1) input
+FC(f:F,c:C) input
+CFC(c1:C,f:F,c2:C) input
+MmethArg(m:M,z:Z,v:V) input
+MV(m:M,v:V) input
+MP(m:M,p:P) input
+EV(e:E,v:V) input
+escE(e:E) input
+
+escO(o:C) output
+escCPVO(c:C,p:P,v:V,o:C) output
+CEC(c:C0,e:E0,o:C1) output
+
+#escH_cs(o:H) output
+#escPVH_cs(p:P,v:V,h:H) output
+
+
+# MHP relations
+PP(p:P,q:P) input
+MPhead(m:M,p:P) input
+MPtail(m:M,p:P) input
+PI(p:P,i:I) input
+CICM(c1:C,i:I,c2:C,m:M) input
+threadACM(t:AS,c:C,m:M) input
+threadStartI(i:I) input
+threadCICM(c:C,i:I,c:C,m:M) input
+threadAC(t:AS,c:C) 
+threadACH(t:AS,c:C,h:P)
+
+threadPM_cs   (caller:C,p1:P,callee:C) output
+threadPH_cs   (caller:C,p1:P,callee:C,p2:P) output
+simplePM_cs(caller:C,p1:P,callee:C,m2:M) output
+simplePH_cs(caller:C,p1:P,callee:C,p2:P) output
+simplePT_cs(caller:C,p1:P,callee:C,p2:P) output
+
+PathEdge_cs(c:C,p:P,this:AS,sThat:AS,tThat:AS) output
+# defined only for ordinary calls p (not thread start calls)
+SummEdge_cs(c:C,p:P,this:AS,sThat:AS,tThat:AS) output
+
+mhp_cs(c:C,p:P,t1:AS,t2:AS) output
+
+# datarace-parallel-include:
+PE(p:P0,e:E0) input
+#mhp_cs(c:C0,p:P0,t1:AS0,t2:AS1) input
+mhe_cs(c:C0,e:E0,t1:AS0,t2:AS1) output
+
+#datarace-cs-noneg
+unlockedRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) input
+
+###
+
+EF(e:E0,f:F0) input
+statF(f:F0) input
+statE(e:E0)
+#CEC(c:C0,e:E0,o:C1) input		
+escapingRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+
+###
+
+#mhe_cs(c:C0,e:E0,t1:AS0,t2:AS1) input
+parallelRaceHext(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+
+###
+
+excludeSameThread(k:K0) input
+datarace(t1:AS0,c1:C0,e1:E0,t2:AS1,c2:C1,e2:E1) output
+racePairs_cs(e1:E0,e2:E1) output
+
+
+###
+# Constraints
+###
+
+#escH_cs(h) :- FH(_,h).
+#escH_cs(h) :- MmethArg(1,0,v), VH(v,h).
+#escH_cs(h2) :- HFH(h1,_,h2), escH_cs(h1).
+
+#escPVH_cs(p,v,h) :- VH(v,h), MV(m,v), MP(m,p), escH_cs(h). split
+
+
+escO(o) :- FC(_,o).
+escO(o) :- MmethArg(1,0,v), CVC(_,v,o).
+escO(o2) :- CFC(o1,_,o2), escO(o1).
+
+escCPVO(c,p,v,o) :- CVC(c,v,o), MV(m,v), MP(m,p), escO(o). split
+escCPVO(c,p,v,o) :- CVC(c,v,o), MV(m,v), MP(m,p), escO(o).
+
+# For FSE'15
+#CEC(c,e,o) :- CVC(c,v,o), EV(e,v), escO(o).
+
+CEC(c,e,o) :- CVC(c,v,o), EV(e,v), escO(o), escE(e).
+
+# MHP constraints:
+simplePM_cs(c,p,d,m) :- CICM(c,i,d,m), PI(p,i), !threadStartI(i).
+simplePH_cs(c,p,d,h) :- simplePM_cs(c,p,d,m), MPhead(m,h).
+simplePT_cs(c,p,d,t) :- simplePM_cs(c,p,d,m), MPtail(m,t).
+threadPM_cs(c,p,d) :- threadCICM(c,i,d,_), PI(p,i).
+threadPH_cs(c,p,d,h) :- threadCICM(c,i,d,m), PI(p,i), MPhead(m,h).
+threadAC(t,c) :- threadACM(t,c,m), m!=0.
+threadACH(t,c,h) :- threadACM(t,c,m), m!=0, MPhead(m,h).
+
+# PathEdge(c,p,this,sThat,tThat) 
+# There exists a unique method m such that:
+# 1. it is invoked in a context c and
+# 2. it contains node p
+# Above predicate denotes a path edge for [c,m]:
+# from dataflow fact (this,sThat) at head node of m
+# to   dataflow fact (this,tThat) at node p
+
+PathEdge_cs(0,0,1,0,0).
+
+# assumptions about relation PP:
+# it does not contain edges from call nodes to head nodes
+# it does not contain edges from tail nodes to call nodes
+PathEdge_cs(c,q,t,t1,t2) :- PathEdge_cs(c,p,t,t1,t2), PP(p,q).
+
+# ordinary calls
+
+PathEdge_cs(d,q,t,t1,t2) :- simplePH_cs(c,p,d,q) , PathEdge_cs(c,p,t,_ ,t2), t1=t2.
+SummEdge_cs(c,p,t,t1,t2) :- simplePT_cs(c,p,d,q) , PathEdge_cs(d,q,t,t1,t2).
+PathEdge_cs(c,r,t,t1,t3) :- SummEdge_cs(c,p,t,t2,t3), PathEdge_cs(c,p,t,t1,t2), PP(p,r).
+
+# thread fork calls
+
+PathEdge_cs(c,r,t,t1,t2) :- threadPM_cs(c,p,d), PathEdge_cs(c,p,t,t1,_), PP(p,r), threadAC(t2,d).
+#PathEdge_cs(c,r,t,t1,t3) :- threadPM_cs(c,p,d), PathEdge_cs(c,p,t,t1,_), \
+#	PP(p,r), threadAC(t2,d), PathEdge_cs(d,q,t2,0,t3), MPtail(1,q). 
+
+# Avoid split versions of rules for MLNs
+#PathEdge_cs(d,h,x,y,z) :- threadPH_cs(c,p,d,h), PathEdge_cs(c,p,y,_,_), threadAC(x,d), z=y. split
+#PathEdge_cs(d,h,x,y,z) :- threadPH_cs(c,p,d,h), PathEdge_cs(c,p,_,_,y), threadAC(x,d), z=y. split
+#PathEdge_cs(e,h1,x,y,z) :- threadPM_cs(c,p,d), PathEdge_cs(c,p,_,_,x), threadACH(x,e,h1), threadAC(y,d), z=y. split
+
+PathEdge_cs(d,h,x,y,z) :- threadPH_cs(c,p,d,h), PathEdge_cs(c,p,y,_,_), threadAC(x,d), z=y.
+PathEdge_cs(d,h,x,y,z) :- threadPH_cs(c,p,d,h), PathEdge_cs(c,p,_,_,y), threadAC(x,d), z=y.
+PathEdge_cs(e,h1,x,y,z) :- threadPM_cs(c,p,d), PathEdge_cs(c,p,_,_,x), threadACH(x,e,h1), threadAC(y,d), z=y.
+
+mhp_cs(c,p,t1,t2) :- PathEdge_cs(c,p,t1,_,t2), t1!=0, t2!=0.
+
+# datarace-parallel-include
+mhe_cs(c,e,t1,t2) :- mhp_cs(c,p,t1,t2), PE(p,e).
+
+# datarace-cs-noneg
+statE(e) :- EF(e,f), statF(f).
+
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- unlockedRaceHext(t1,c1,e1,t2,c2,e2), \
+	CEC(c1,e1,o), CEC(c2,e2,o).
+escapingRaceHext(t1,c1,e1,t2,c2,e2) :- unlockedRaceHext(t1,c1,e1,t2,c2,e2), \
+	statE(e1), statE(e2).
+
+###
+
+parallelRaceHext(t1,c1,e1,t2,c2,e2) :- escapingRaceHext(t1,c1,e1,t2,c2,e2), \
+	mhe_cs(c1,e1,t1,t2), mhe_cs(c2,e2,t2,t1).
+
+###
+
+datarace(t1,c1,e1,t2,c2,e2) :- parallelRaceHext(t1,c1,e1,t2,c2,e2), excludeSameThread(1), t1!=t2.
+datarace(t1,c1,e1,t2,c2,e2) :- parallelRaceHext(t1,c1,e1,t2,c2,e2), excludeSameThread(0).
+
+
+racePairs_cs(e1,e2) :- datarace(_,_,e1,_,_,e2).
