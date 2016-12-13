@@ -26,7 +26,6 @@ public class NichromeEngine {
     private DatalogMetadata metadata;
 
 	public NichromeEngine(DatalogEngineType engineType) {
-		System.out.println("NichromeEngine is called.");
 		if (engineType == null)
 			throw new NullPointerException("engineType is null");
 		this.datalogEngine = engineType;
