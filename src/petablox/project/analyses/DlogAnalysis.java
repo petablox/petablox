@@ -1,6 +1,6 @@
 package petablox.project.analyses;
 
-import java.io.File;
+//import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +9,22 @@ import java.util.Set;
 
 import CnCHJ.api.ItemCollection;
 
-import petablox.bddbddb.BDDBDDBParser;
+//import petablox.bddbddb.BDDBDDBParser;
 import petablox.bddbddb.RelSign;
-import petablox.bddbddb.Solver;
+//import petablox.bddbddb.Solver;
+//import petablox.logicblox.LogicBloxParser;
+//import petablox.logicblox.LogicBloxUtils;
 import petablox.core.DatalogMetadata;
-import petablox.core.IDatalogParser;
-import petablox.logicblox.LogicBloxParser;
-import petablox.logicblox.LogicBloxUtils;
-import petablox.project.PetabloxException;
+//import petablox.core.IDatalogParser;
+import petablox.nichrome.NichromeEngine;
+
+//import petablox.project.PetabloxException;
 import petablox.project.Config;
 import petablox.project.IDataCollection;
 import petablox.project.IStepCollection;
-import petablox.project.Messages;
+//import petablox.project.Messages;
 import petablox.project.ModernProject;
-import petablox.project.Config.DatalogEngineType;
+//import petablox.project.Config.DatalogEngineType;
 import petablox.util.Utils;
 
 /**
@@ -33,15 +35,20 @@ import petablox.util.Utils;
  */
 public class DlogAnalysis extends JavaAnalysis {
     
-    private DatalogEngineType datalogEngine;
+	NichromeEngine dlogEngine;
+	
+    //private DatalogEngineType datalogEngine;
+    //private IDatalogParser parser;
+
     private DatalogMetadata metadata;
     
-    private IDatalogParser parser;
     
     public DlogAnalysis() { 
-        this(Config.datalogEngine); 
+        //this(Config.datalogEngine); 
+    	dlogEngine = new NichromeEngine(Config.datalogEngine);
     }
     
+    /*
     public DlogAnalysis(DatalogEngineType engineType) {
         if( engineType == null ) throw new NullPointerException("engineType is null");
         this.datalogEngine = engineType;
@@ -56,7 +63,7 @@ public class DlogAnalysis extends JavaAnalysis {
         default:
             throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
-    }
+    }*/
     
     /**
      * Provides the name of this Datalog analysis.
@@ -77,7 +84,8 @@ public class DlogAnalysis extends JavaAnalysis {
     }
     
     public DatalogMetadata parse(String fileName) throws IOException {
-        metadata = parser.parseMetadata(new File(fileName));
+    	metadata = dlogEngine.parse(fileName);
+        //metadata = parser.parseMetadata(new File(fileName));
         return metadata;
     }
     
@@ -89,6 +97,7 @@ public class DlogAnalysis extends JavaAnalysis {
      * Executes this Datalog analysis.
      */
     public void run() {
+    	/*
         switch (datalogEngine) {
         case BDDBDDB:
             Solver.run(metadata.getFileName());
@@ -102,6 +111,9 @@ public class DlogAnalysis extends JavaAnalysis {
         default:
             throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
         }
+        */
+    	
+    	dlogEngine.run();
     }
 
     public void run(Object ctrl, IStepCollection sc) {
