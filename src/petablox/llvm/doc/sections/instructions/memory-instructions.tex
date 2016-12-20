@@ -1,0 +1,117 @@
+\subsection{Memory Access and Addressing Operations}
+The following set of relations represent instructions that read, write and allocate memory.
+
+%%% Alloca instructions
+
+\subsubsection{Allocate instruction} 
+\noindent Instruction ID:
+\texttt{alloca\_instruction(id).}
+
+\noindent Alignment:
+\texttt{alloca\_instruction\_alignment(id, align).}
+
+\noindent Size:
+\texttt{alloca\_instruction\_size(id, size).}
+
+\noindent Type:
+\texttt{alloca\_instruction\_type(id, type).}
+
+ 
+%%% Load instructions
+
+\subsubsection{Load instruction}
+Instruction ID:
+\texttt{load\_instruction(id).}
+
+\noindent Alignment:
+\texttt{load\_instruction\_alignment(id, align).}
+
+\noindent Ordering:
+\texttt{load\_instruction\_ordering(id, ord).}
+
+\noindent Volatile:
+\texttt{load\_instruction\_volatile(id).}
+
+\noindent Atomic:
+\texttt{load\_instruction\_atomic(Id) :- \\
+        \tab store\_instruction\_ordering(Id, \_).}
+
+\noindent Address:
+\texttt{load\_instruction\_address(id, addr).}
+
+%%% Store instructions 
+
+\subsubsection{Store instruction}
+Instruction ID:
+\texttt{store\_instruction(id).}
+
+\noindent Alignment:
+\texttt{store\_instruction\_alignment(id, align).}
+
+\noindent Ordering:
+\texttt{store\_instruction\_ordering(id, ord).}
+
+\noindent Volatile:
+\texttt{store\_instruction\_volatile(id).}
+
+\noindent Atomic:
+\texttt{store\_instruction\_atomic(Id) :- \\
+        \tab store\_instruction\_ordering(Id, \_).}
+
+\noindent Value:
+\texttt{store\_instruction\_value(id, value).}
+
+\noindent Address:
+\texttt{store\_instruction\_address(id, addr).}
+
+%%% Fence instructions
+
+\subsubsection{Fence instruction}
+Instruction ID:
+\texttt{fence\_instruction(id).}
+
+\noindent Ordering:
+\texttt{fence\_instruction\_ordering(id, order).}
+
+%%% CmpXchg instructions
+
+\subsubsection{Compare and exchange instruction}
+Instruction ID:
+\texttt{cmpxchg\_instruction(id).}
+
+\noindent Ordering:
+\texttt{cmpxchg\_instruction\_ordering(id, order).}
+
+\noindent Volatility:
+\texttt{cmpxchg\_instruction\_volatile(id).}
+
+\noindent Address:
+\texttt{cmpxchg\_instruction\_address(id, addr).}
+
+\noindent Comparison:
+\texttt{cmpxchg\_instruction\_cmp(id, cmp).}
+
+\noindent New value:
+\texttt{cmpxchg\_instruction\_new(id, value).}
+
+%%% AtomicRMW instructions
+
+\subsubsection{Atomic RMW instruction}
+Instruction ID:
+\texttt{atomicrmw\_instruction(id).}
+
+\noindent Ordering:
+\texttt{atomicrmw\_instruction\_ordering(id, order).}
+
+\noindent Volatility:
+\texttt{cmpxchg\_instruction\_volatile(id).}
+
+\noindent Operation:
+\texttt{atomicrmw\_instruction\_operation(id, op).}
+
+\noindent Address:
+\texttt{atomicrmw\_instruction\_address(id, addr).}
+
+\noindent Value:
+\texttt{atomicrmw\_instruction\_value(id, value).}
+

@@ -1,0 +1,115 @@
+\section{Types} % based on type.logic
+Type ID:\\
+\tab \lstinline{type(id).}
+\\
+Size:\\
+\tab \lstinline{type_size(id, size).}
+\\
+Unpadded size:\\
+\tab \lstinline{type_unpaded_size(id, size).}
+
+\subsection{Primitive Types} % based on primitive-type.logic
+Primitive type:\\
+\tab \lstinline{primitive_type(id).}
+\\
+Integer type:\\
+\tab \lstinline{intger_type(id).}
+\\
+Floating point type:\\
+\tab \lstinline{fp_type(id).}
+\\
+Void type:\\
+\tab \lstinline{void_type(id).}
+\\
+Label type:\\
+\tab \lstinline{label_type(id).}
+% TODO: Metadata type
+%\\
+%Metadata type:\\
+%\tab \lstinline{metadata_type(id).}
+% TODO: Selectors (i.e. i1, i8, i32...)
+
+\subsection{Derived Types} % based on derived-type.logic
+Derived type:\\
+\tab \lstinline{derived_type(id).}
+\\
+% Function type
+Function type:\\
+\tab \lstinline{function_type(id).}
+\\
+Function variable arguments:\\
+\tab \lstinline{function_type_varargs(id).}
+\\
+Function return type:\\
+\tab \lstinline{function_type_return(id, type).}
+\\
+Function parameter:\\
+\tab \lstinline{function_type_param(id, index, type).}
+\\
+Number of function parameters:\\
+\tab \lstinline{function_type_nparams(id, n).}
+\\
+% Pointer type
+Pointer type:\\
+\tab \lstinline{pointer_type(id).}
+\\
+Pointer component:\\
+\tab \lstinline{pointer_type_component(id, type).}
+\\
+Pointer address:\\
+\tab \lstinline{pointer_type_addr_space(id, addr).}
+\\
+Check if pointer is first class:\\
+%\tab \lstinline{pointer_type_first_class(id, type) :- pointer_type_component(id, type), type_first_class(type).}
+\tab \texttt{pointer\_type\_first\_class(id, type) :- \\
+            \tab\tab pointer\_type\_component(id, type), \\
+            \tab\tab type\_first\_class(type).}
+\\
+% TODO: rules for each type of pointer?
+% Vector type
+Vector type:\\
+\tab \lstinline{vector_type(id).}
+\\
+Vector component:\\
+\tab \lstinline{vector_type_component(id, type).}
+\\
+Vector size:\\
+\tab \lstinline{vector_type_size(id, size).}
+\\
+% TODO: rules for each type of vector?
+% Aggregate type
+Aggregate type:\\
+\tab \lstinline{aggregate_type(id).}
+\\
+% Array types
+Array type:\\
+\tab \lstinline{array_type(id).}
+\\
+Array component:\\
+\tab \lstinline{array_type_component(id, type).}
+\\
+Array size:\\
+\tab \lstinline{array_type_size(id, size).}
+\\
+% Struct type 
+Struct type:\\
+\tab \lstinline{struct_type(id).}
+\\
+Struct field:\\
+\tab \lstinline{struct_type_field(id, index, field).}
+\\
+Number of struct field:\\
+\tab \lstinline{struct_type_nfields(id, n).}
+\\
+Struct field byte offset:\\
+\tab \lstinline{struct_type_field_offset(id, index, offset).}
+\\
+Struct field bit offset:\\
+\tab \lstinline{struct_type_field_bit_offset(id, index, offset).}
+% TODO: struct debug information
+\\
+Opaque type:\\
+\tab \lstinline{opaque_type(id).}
+\\
+First class types:
+\tab \lstinline{type_first_class(id) :- type(id), !function_type(id), !void_type(id).}

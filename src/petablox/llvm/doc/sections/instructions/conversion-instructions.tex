@@ -1,0 +1,18 @@
+\subsection{Conversion Instructions}
+These relations represent type conversions in LLVM.
+The conversion operations are: \texttt{trunc, zext, sext, fptrunc, fpext, fptoui, fptosi, uitofp,
+sitofp, ptrtoint, inttoptr, bitcast} and \texttt{addrspacecast}.
+For an instruction, \texttt{name} from these operations, the relation is:\\
+
+\noindent Instruction ID:
+\texttt{name\_instruction(id).}
+
+\noindent From value:
+\texttt{name\_instruction\_from(id, value).}
+
+\noindent To type:
+\texttt{name\_instruction\_to\_type(id, type).}
+
+\noindent From type:
+\texttt{name\_instruction\_from\_type(id, type).} 
+

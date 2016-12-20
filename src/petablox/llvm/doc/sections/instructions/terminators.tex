@@ -1,0 +1,58 @@
+\subsection{Terminator instructions}
+The next set of relations represent the terminator instructions.
+These are the instructions that end basic blocks.
+They produce control flow.
+
+\subsubsection{Return instruction}
+Instruction ID:
+\texttt{ret\_instruction(id).}
+
+\noindent Terminator:
+\texttt{terminator\_instruction(id) :- ret\_instruction(id).}
+
+\noindent Return Value:
+\texttt{ret\_instruction\_value(id, value).}
+
+\noindent Void return:
+\texttt{ret\_instruction\_void(id).}
+
+% TODO: well formed rules
+%\subsubsection{Well formed function rules}
+%Well formed:
+%\texttt{function\_wellformed(Id) :- function(Id), !function\_illformed(Id).}
+
+\subsubsection{Branch instruction}
+Instruction ID:
+\texttt{br\_instruction(id).}
+
+\noindent Terminator Instruction:
+\texttt{terminator\_instruction(id).}
+
+%\subsubsection{Conditional Branch}
+\paragraph{Conditional Branch}
+~\\Conditional branch instruction ID:
+\texttt{br\_cond\_instruction(id).}
+
+\noindent Condition:
+\texttt{br\_cond\_instruction\_condition(id, cond).}
+
+\noindent True case:
+\texttt{br\_cond\_instruction\_iftrue(id, label).}
+
+\noindent False case:
+\texttt{br\_cond\_instruction\_iffalse(id, label).}
+
+%\subsubsection{Unconditional Branch}
+\paragraph{Unconditional Branch}
+~\\\noindent Unconditional branch instruction ID:
+\texttt{br\_uncond\_instruction(id).}
+
+\noindent Destination:
+\texttt{br\_cond\_instruction\_dest(id, label).}
+
+\subsubsection{Unreachable instruction}
+Instruction ID:
+\texttt{unreachable\_instruction(id).}
+
+\noindent If the instruction is unreachable, it is a terminator:\\
+\tab \texttt{terminator\_instruction(Id) :- unreachable\_instruction(Id).}

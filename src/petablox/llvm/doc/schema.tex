@@ -1,0 +1,75 @@
+%\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  
+\documentclass[letterpaper, 10 pt, conference]{article}  
+%\IEEEoverridecommandlockouts{}
+%\overrideIEEEmargins{}
+
+\usepackage{acronym}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{caption}
+\captionsetup[lstlisting]{}
+
+% Define any acronyms here
+%\acrodef{EA}[EA]{Example Acronym}
+
+% Reference commands
+\newcommand{\reflist}[1]{Listing~\ref{#1}}
+\newcommand{\reffig}[1]{Figure~\ref{#1}}
+\newcommand{\refsec}[1]{Section~\ref{#1}}
+\newcommand{\reftable}[1]{Table~\ref{#1}}
+
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+% Create style for listings
+\lstdefinestyle{example}{%
+    %basicstyle=\footnotesize,
+    basicstyle=\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    frame=single,
+    keepspaces=true,                 
+    %numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    escapeinside={@/}{/@}
+}
+
+\title{\LARGE \bf
+    Relational Schema for LLVM IR
+}
+
+\author{Leo St.\ Amour\\% <-this % stops a space
+}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+    This paper describes the relational schema for LLVM IR.
+    Credit goes to cclyzer \url{https://github.com/plast-lab/cclyzer/}.
+\end{abstract}
+
+\section{Introduction}
+This document will outline the relational schema that we will use to represent the LLVM IR in datalog.
+The rules are based upon the relational schema present in the cclyzer project.
+
+\input{sections/types}
+\input{sections/functions}
+\input{sections/instructions}
+
+\addtolength{\textheight}{-12cm}   
+%\bibliography{final_project}{}
+%\bibliographystyle{plain}
+
+
+\end{document}

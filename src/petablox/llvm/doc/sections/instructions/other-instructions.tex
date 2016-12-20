@@ -1,0 +1,70 @@
+\subsection{Other instructions}
+These instructions are ``miscellaneous'' and do not fit in another category.
+
+%%% icmp instruction
+
+\subsubsection{Integer compare instruction}
+Instruction ID:
+\texttt{icmp\_instruction(id).}
+
+\noindent Condition:
+\texttt{icmp\_instruction\_condition(id, predicate)}
+
+\noindent First operand:
+\texttt{icmp\_instruction\_first\_operand(id, operand)}
+
+\noindent Second operand:
+\texttt{icmp\_instruction\_second\_operand(id, operand)}
+
+%%% fpcmp instruction
+
+\subsubsection{Floating point compare instruction}
+Instruction ID:
+\texttt{fcmp\_instruction(id).}
+
+\noindent Condition:
+\texttt{fcmp\_instruction\_condition(id, predicate)}
+
+\noindent First operand:
+\texttt{fcmp\_instruction\_first\_operand(id, operand)}
+
+\noindent Second operand:
+\texttt{fcmp\_instruction\_second\_operand(id, operand)}
+
+%%% phi instruction
+
+\subsubsection{Phi instruction}
+
+%%% select instruction
+
+\subsubsection{Select instruction}
+
+%%% call instruction
+
+\subsubsection{Call expression}
+
+%%% va_arg instruction
+
+\subsubsection{Variable argument instruction}
+Instruction ID:
+\texttt{va\_arg\_instruction(id).}
+
+\noindent Argument list:
+% based on va\_arg\_instrction:va\_list[Insn]
+\texttt{va\_arg\_instruction\_va\_list(id, ptr).}
+
+\noindent Argument type:
+\texttt{va\_arg\_instruction\_type(id, type).}
+
+%%% landingpad instruction
+
+\subsubsection{Landing pad instruction}
+
+%%% catchpad instruction
+
+\subsubsection{Catch pad instruction}
+
+%%% cleanuppad instruction
+
+\subsubsection{Clean-up pad instruction}
+
