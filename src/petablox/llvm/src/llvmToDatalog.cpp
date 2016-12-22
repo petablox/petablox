@@ -13,7 +13,13 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include "translate/instruction/instruction.h"
+#include "translate/instruction/facts.h"
+//#include "translate/instruction/instruction.h"
+#include "translate/instruction/terminator.h"
+#include "translate/instruction/binop.h"
+#include "translate/instruction/memory.h"
+#include "translate/instruction/conversion.h"
+#include "translate/instruction/other.h"
 #include "translate/function.h"
 #include "translate/global.h"
 
@@ -26,6 +32,7 @@ namespace {
         SkeletonPass() : FunctionPass(ID) {}
 
         std::set<std::string> binops;
+        std::map<std::string, BinOp> binops_map;
 
         void populate_binops() {
             // Add binary operations to set
@@ -51,6 +58,29 @@ namespace {
             binops.insert("xor");
         }
 
+        void populate_binops_map() {
+            // Add binary operations to set
+            binops_map["add"] = add;
+            binops_map["fadd"] = fadd;
+            binops_map["sub"] = sub;
+            binops_map["fsub"] = fsub;
+            binops_map["mul"] = mul;
+            binops_map["fmul"] = fmul;
+            binops_map["udiv"] = udiv;
+            binops_map["sdiv"] = sdiv;
+            binops_map["fdiv"] = fdiv;
+            binops_map["urem"] = urem;
+            binops_map["srem"] = srem;
+            binops_map["frem"] = frem;
+
+            // Add bitwise binary operations to set
+            binops_map["shl"] = shl;
+            binops_map["lshl"] = lshl;
+            binops_map["ashr"] = ashr;
+            binops_map["and"] = and_;
+            binops_map["or"] = or_;
+            binops_map["xor"] = xor_;
+        }
 
         
 
@@ -96,7 +126,7 @@ namespace {
             const char *opcode = I.getOpcodeName();
 
             if (binops.find(opcode) != binops.end()) {
-                translateBinOp(opcode, I, id);
+                translateBinOp(binops_map[opcode], I, id);
             }
 
             /*
@@ -157,6 +187,7 @@ namespace {
             F.dump();
 
             populate_binops();
+            populate_binops_map();
 
             translateFunction(F, (unsigned long) &F);
 
