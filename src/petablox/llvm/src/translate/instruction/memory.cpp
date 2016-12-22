@@ -1,4 +1,5 @@
 #include "instruction.h"
+#include "facts.h"
 
 using namespace llvm;
 
@@ -9,15 +10,16 @@ using namespace llvm;
 void translateAlloca(unsigned long id, AllocaInst *alloca_inst) {
     // Get data for relations
     unsigned alignment = alloca_inst->getAlignment();
-    Value *size = alloca_inst->getArraySize();
+    Value *size_val = alloca_inst->getArraySize();
+    const APInt &size = dyn_cast<ConstantInt>(size_val)->getValue();
     Type *type = alloca_inst->getAllocatedType();
 
     // Generate facts
-    errs() << "alloca_instruction(" << id << ").\n";
-    errs() << "alloca_instruction_alignment(" << id << ", " << alignment << ").\n";
-    errs() << "alloca_instruction_size(" << id << ", " << *size << ").\n";
-    errs() << "alloca_instruction_type(" << id << ". " << type->getTypeID() << ").\n";
-    errs() << "\n";
+    print_fact(ALLOCA, id);
+    print_fact<unsigned>(ALLOCA_ALIGN, id, alignment);
+    print_fact<unsigned>(ALLOCA_SIZE, id, (unsigned) size.roundToDouble());
+    print_fact<unsigned long>(ALLOCA_TYPE, id, type->getTypeID());
+    print_new();
 }
 
 /*
@@ -31,14 +33,14 @@ void translateLoad(unsigned long id, LoadInst *load_inst) {
     Value *addr = load_inst->getPointerOperand();
 
     // Generate facts
-    errs() << "load_instruction(" << id << ").\n";
-    errs() << "load_instruction_alignment(" << id << ", " << alignment << ").\n";
-    errs() << "load_instruction_ordering(" << id << ", " << (int) order << ").\n";
+    print_fact(LOAD, id);
+    print_fact<unsigned>(LOAD_ALIGN, id, alignment);
+    print_fact<int>(LOAD_ORDER, id, order);
     if (load_inst->isVolatile()) {
-        errs() << "load_instruction_volatile(" << id << ").\n";
+        print_fact(LOAD_VOLATILE, id);
     }
-    errs() << "load_instruction_address(" << id << ", " << (unsigned long) addr << ").\n";
-    errs() << "\n";
+    print_fact(LOAD_ADDR, id, (unsigned long) addr);
+    print_new();
 }
 
 /*
@@ -52,21 +54,20 @@ void translateStore(unsigned long id, StoreInst *store_inst) {
     Value *value = store_inst->getValueOperand();
     Value *addr = store_inst->getPointerOperand();
 
-
     if (dyn_cast<Constant>(value)) {
         errs() << "constant(" << (unsigned long) value << ", " << *value << ").\n";
     }
 
     // Generate facts
-    errs() << "store_instruction(" << id << ").\n";
-    errs() << "store_instruction_alignment(" << id << ", " << alignment << ").\n";
-    errs() << "store_instruction_ordering(" << id << ", " << (int) order << ").\n";
+    print_fact(STORE, id);
+    print_fact<unsigned>(STORE_ALIGN, id, alignment);
+    print_fact<int>(STORE_ORDER, id, order);
     if (store_inst->isVolatile()) {
-        errs() << "store_instruction_volatile(" << id << ").\n";
+        print_fact(STORE_VOLATILE, id);
     }
-    errs() << "store_instruction_value(" << id << ", " << (unsigned long) value << ").\n";
-    errs() << "store_instruction_address(" << id << ", " << (unsigned long) addr << ").\n";
-    errs() << "\n";
+    print_fact<unsigned long>(STORE_VALUE, id, (unsigned long) value);
+    print_fact<unsigned long>(STORE_ADDR, id, (unsigned long) addr);
+    print_new();
 }
 
 /*
@@ -78,9 +79,9 @@ void translateFence(unsigned long id, FenceInst *fence_inst) {
     AtomicOrdering order = fence_inst->getOrdering();
 
     // Generate facts
-    errs() << "fence_instruction(" << id << ").\n";
-    errs() << "fence_instruction_ordering(" << id << ", " << (int) order << ").\n";
-    errs() << "\n";
+    print_fact(FENCE, id); 
+    print_fact(FENCE_ORDER, id, order);  
+    print_new();
 }
 
 /*
@@ -96,17 +97,17 @@ void translateCmpXchg(unsigned long id, AtomicCmpXchgInst *cmpxchg_inst) {
     Value *newval = cmpxchg_inst->getNewValOperand();
 
     // Generate facts
-    errs() << "cmpxchg_instruction(" << id << ").\n";
-    errs() << "cmpxchg_instruction_ordering(" << id << ", " << (int) order << ").\n";
+    print_fact(CMPXCHG, id);
+    print_fact<unsigned>(CMPXCHG_ORDER, id, order);
     if (cmpxchg_inst->isVolatile()) {
-        errs() << "cmpxchg_instruction_volatile(" << id << ").\n";
+        print_fact(CMPXCHG_VOLATILE, id);
     }
 
     // TODO: Auxiliary rules in cmpxchg-instruction.logic:
-    errs() << "cmpxchg_instruction_address(" << id << ", " << (unsigned long) addr << ").\n";
-    errs() << "cmpxchg_instruction_cmp(" << id << ", " << (unsigned long) compare << ").\n";
-    errs() << "cmpxchg_instruction_new(" << id << ", " << (unsigned long) newval << ").\n";
-    errs() << "\n";
+    print_fact<unsigned long>(CMPXCHG_ADDR, id, (unsigned long) addr);
+    print_fact<unsigned long>(CMPXCHG_CMP, id, (unsigned long) compare); 
+    print_fact<unsigned long>(CMPXCHG_NEW, id, (unsigned long) newval); 
+    print_new();
 }
 
 /*
@@ -121,15 +122,15 @@ void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst) {
     Value *val = rmw_inst->getValOperand();
 
     // Generate facts
-    errs() << "atomicrmw_instruction(" << id << ").\n";
-    errs() << "atomicrmw_instruction_ordering(" << id << ", " << (int) order << ").\n";
+    print_fact(ATOMICRMW, id);
+    print_fact<unsigned>(ATOMICRMW_ORDER, id, order); 
     if (rmw_inst->isVolatile()) {
-        errs() << "atomicrmw_instruction_volatile(" << id << ").\n";
+        print_fact(ATOMICRMW_VOLATILE, id);
     }
 
     // TODO: Map operands
-    errs() << "atomicrmw_instruction_operation(" << id << ", " << (unsigned long) op << ").\n";
-    errs() << "atomicrmw_instruction_address(" << id << ", " << (unsigned long) addr << ").\n";
-    errs() << "atomicrmw_instruction_value(" << id << ", " << (unsigned long) val << ").\n";
-    errs() << "\n";
+    print_fact<unsigned>(ATOMICRMW_OP, id, op); 
+    print_fact<unsigned long>(ATOMICRMW_ADDR, id, (unsigned long) addr); 
+    print_fact<unsigned long>(ATOMICRMW_VALUE, id, (unsigned long) val); 
+    print_new();
 }
