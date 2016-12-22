@@ -226,6 +226,20 @@ static const string ADDRSPACAECAST_FROM = "addrspacecast_instruction_from";
 static const string ADDRSPACAECAST_FROM_TYPE = "addrspacecast_instruction_from_type";
 static const string ADDRSPACAECAST_TO_TYPE = "addrspacecast_instruction_to_type";
 
+/*
+ * Other instructions
+ * (icmp, fcmp)
+ */
+static const string ICMP = "icmp_instruction";
+static const string ICMP_COND = "icmp_instruction_condition";
+static const string ICMP_FIRST = "icmp_instruction_first_operand";
+static const string ICMP_SECOND = "icmp_instruction_second_operand";
+
+static const string FCMP = "fcmp_instruction";
+static const string FCMP_COND = "fcmp_instruction_condition";
+static const string FCMP_FIRST = "fcmp_instruction_first_operand";
+static const string FCMP_SECOND = "fcmp_instruction_second_operand";
+
 template<typename T>
 void print_fact(std::string name, unsigned long id, std::vector<T> args)
 {
