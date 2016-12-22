@@ -6,6 +6,38 @@ using namespace std;
 /*
  * Constants
  */
+
+/*
+ * Terminator instructions
+ * (ret, br, switch, indirectbr, invoke,
+ * resume, catchswitch, catchret, cleanupret,
+ * unreachable)
+ */
+static const string RETURN = "ret_instruction";
+static const string RETURN_VALUE = "ret_instruction_value";
+static const string RETURN_VOID = "ret_instruction_void";
+
+static const string BRANCH = "br_instruction";
+static const string COND_BR = "br_cond_instruction";
+static const string COND_BR_CONDITION = "br_cond_instruction_condition";
+static const string COND_BR_TRUE = "br_cond_instruction_iftrue";
+static const string COND_BR_FALSE = "br_cond_instruction_iffalse";
+static const string UNCOND_BR = "br_uncond_instruction"; 
+static const string UNCOND_BR_DEST = "br_uncond_instruction_dest";
+
+static const string UNREACHABLE = "unreachable_instruction";
+
+/*
+ * Binary operations
+ * (add, fadd, sub, fsub, mul, fmul,
+ * udiv, sdiv, fdiv, urem, srem, frem,
+ * shl, lshl, ashr, and, or, xor)
+ *
+ * Create an enum to represent the binary 
+ * operations. The enum can be used to 
+ * create a mapping between the opcodes
+ * and the relation constants.
+ */
 enum BinOp {
     add, fadd, sub, fsub, mul, fmul,
     udiv, sdiv, fdiv, urem, srem, frem,
@@ -123,6 +155,76 @@ static const string ATOMICRMW_VOLATILE = "atomicrmw_instruction_volatile";
 static const string ATOMICRMW_OP = "atomicrmw_instruction_operation";
 static const string ATOMICRMW_ADDR = "atomicrmw_instruction_address";
 static const string ATOMICRMW_VALUE = "atomicrmw_instruction_value";
+
+/*
+ * Conversion instructions
+ * (trunc, zext, sext, fptrunc, fpext, fptoui, fptosi, sitofp,
+ * uitofp, sitofp, ptrtoint, inttoptr, bitcast, addrspacecast)
+ */
+static const string TRUNC = "trunc_instruction";
+static const string TRUNC_FROM = "trunc_instruction_from";
+static const string TRUNC_FROM_TYPE = "trunc_instruction_from_type";
+static const string TRUNC_TO_TYPE = "trunc_instruction_to_type";
+
+static const string ZEXT = "zext_instruction";
+static const string ZEXT_FROM = "zext_instruction_from";
+static const string ZEXT_FROM_TYPE = "zext_instruction_from_type";
+static const string ZEXT_TO_TYPE = "zext_instruction_to_type";
+
+static const string SEXT = "sext_instruction";
+static const string SEXT_FROM = "sext_instruction_from";
+static const string SEXT_FROM_TYPE = "sext_instruction_from_type";
+static const string SEXT_TO_TYPE = "sext_instruction_to_type";
+
+static const string FPTRUNC = "fptrunc_instruction";
+static const string FPTRUNC_FROM = "fptrunc_instruction_from";
+static const string FPTRUNC_FROM_TYPE = "fptrunc_instruction_from_type";
+static const string FPTRUNC_TO_TYPE = "fptrunc_instruction_to_type";
+
+static const string FPEXT = "fpext_instruction";
+static const string FPEXT_FROM = "fpext_instruction_from";
+static const string FPEXT_FROM_TYPE = "fpext_instruction_from_type";
+static const string FPEXT_TO_TYPE = "fpext_instruction_to_type";
+
+static const string FPTOUI = "fptoui_instruction";
+static const string FPTOUI_FROM = "fptoui_instruction_from";
+static const string FPTOUI_FROM_TYPE = "fptoui_instruction_from_type";
+static const string FPTOUI_TO_TYPE = "fptoui_instruction_to_type";
+
+static const string FPTOSI = "fptosi_instruction";
+static const string FPTOSI_FROM = "fptosi_instruction_from";
+static const string FPTOSI_FROM_TYPE = "fptosi_instruction_from_type";
+static const string FPTOSI_TO_TYPE = "fptosi_instruction_to_type";
+
+static const string UITOFP = "uitofp_instruction";
+static const string UITOFP_FROM = "uitofp_instruction_from";
+static const string UITOFP_FROM_TYPE = "uitofp_instruction_from_type";
+static const string UITOFP_TO_TYPE = "uitofp_instruction_to_type";
+
+static const string SITOFP = "sitofp_instruction";
+static const string SITOFP_FROM = "sitofp_instruction_from";
+static const string SITOFP_FROM_TYPE = "sitofp_instruction_from_type";
+static const string SITOFP_TO_TYPE = "sitofp_instruction_to_type";
+
+static const string PTRTOINT = "ptrtoint_instruction";
+static const string PTRTOINT_FROM = "ptrtoint_instruction_from";
+static const string PTRTOINT_FROM_TYPE = "ptrtoint_instruction_from_type";
+static const string PTRTOINT_TO_TYPE = "ptrtoint_instruction_to_type";
+
+static const string INTTOPTR = "inttoptr_instruction";
+static const string INTTOPTR_FROM = "inttoptr_instruction_from";
+static const string INTTOPTR_FROM_TYPE = "inttoptr_instruction_from_type";
+static const string INTTOPTR_TO_TYPE = "inttoptr_instruction_to_type";
+
+static const string BITCAST = "bitcast_instruction";
+static const string BITCAST_FROM = "bitcast_instruction_from";
+static const string BITCAST_FROM_TYPE = "bitcast_instruction_from_type";
+static const string BITCAST_TO_TYPE = "bitcast_instruction_to_type";
+
+static const string ADDRSPACAECAST = "addrspacecast_instruction";
+static const string ADDRSPACAECAST_FROM = "addrspacecast_instruction_from";
+static const string ADDRSPACAECAST_FROM_TYPE = "addrspacecast_instruction_from_type";
+static const string ADDRSPACAECAST_TO_TYPE = "addrspacecast_instruction_to_type";
 
 template<typename T>
 void print_fact(std::string name, unsigned long id, std::vector<T> args)
