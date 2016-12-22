@@ -1,4 +1,5 @@
 #include "instruction.h"
+#include "facts.h"
 
 using namespace llvm;
 
@@ -8,17 +9,17 @@ void translateReturn(unsigned long id, ReturnInst *ret_inst) {
      * TODO: Add rule for terminator_instruction(inst) :- ret_instruction(inst)
      * TODO: Well formed functions (see ret-instruction.logic)
      */
-    errs() << "ret_instruction(" << id << ").\n";
+    print_fact(RETURN, id);
     if (Value *ret_value = ret_inst->getReturnValue()) {
         if (dyn_cast<Constant>(ret_value)) {
             errs() << "constant(" << (unsigned long) ret_value << ", " << *ret_value << ").\n";
         }
-        errs() << "ret_instruction_value(" << id << ", " << (unsigned long) ret_value << ").\n";
+        print_fact<unsigned long>(RETURN_VALUE, id, (unsigned long) ret_value);
     }
     else {
-        errs() << "ret_instruction_void(" << id << ").\n";
+        print_fact(RETURN_VOID, id);
     }
-    errs() << "\n";
+    print_new();
 }
 
 void translateBr(unsigned long id, BranchInst *br_inst) {
@@ -27,7 +28,7 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
      * TODO: Facts for labels
      */
     // Generate facts
-    errs() << "br_instruction(" << id << ").\n";
+    print_fact(BRANCH, id);
 
     // If the branch is conditional
     if (br_inst->isConditional()) {
@@ -42,10 +43,10 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
         Instruction *true_inst = &(*true_iter);
         Instruction *false_inst = &(*false_iter);
 
-        errs() << "br_cond_instruction(" << id << ").\n";
-        errs() << "br_cond_instruction_condition(" << id << ", " << (unsigned long) condition << ").\n";
-        errs() << "br_cond_instruction_iftrue(" << id << ", " << (unsigned long) true_inst << ").\n";
-        errs() << "br_cond_instruction_iffalse(" << id << ", " << (unsigned long) false_inst << ").\n";
+        print_fact(COND_BR, id);
+        print_fact<unsigned long>(COND_BR_CONDITION, id, (unsigned long) condition);
+        print_fact<unsigned long>(COND_BR_TRUE, id, (unsigned long) true_inst);
+        print_fact<unsigned long>(COND_BR_FALSE, id, (unsigned long) false_inst);
     }
     else {
         // Get next instruction
@@ -53,13 +54,13 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
         auto next_iter = next_bb->begin();
         Instruction *next_inst = &(*next_iter);
 
-        errs() << "br_uncond_instruction(" << id << ").\n";
-        errs() << "br_uncond_instruction_dest(" << id << ", " << (unsigned long) next_inst << ").\n";
+        print_fact(UNCOND_BR, id);
+        print_fact(UNCOND_BR_DEST, id, (unsigned long) next_inst);
     }
-    errs() << "\n";
+    print_new();
 }
 
 void translateUnreachable(unsigned long id) {
-    errs() << "unreachable_instruction(" << id << ").\n";
-    errs() << "\n";
+    print_fact(UNREACHABLE, id);
+    print_new();
 }
