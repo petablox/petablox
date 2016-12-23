@@ -33,3 +33,27 @@ void translateCmp(unsigned long id, CmpInst *cmp_inst) {
     print_new();
 }
 
+void translatePhi(unsigned long id, PHINode *phi) {
+    print_fact(PHI, id); 
+    Type::TypeID type = phi->getType()->getTypeID();
+    int num = 0;
+
+    print_fact<unsigned long>(PHI_TYPE, id, (unsigned long) type);
+
+    for (auto it = phi->block_begin(); it != phi->block_end(); it++) {
+        BasicBlock *bb = *it;
+        int index = phi->getBasicBlockIndex(bb);
+        Value *val = phi->getIncomingValue(index);
+
+        if (dyn_cast<Instruction>(val)) {
+            print_fact<unsigned long>(PHI_PAIR_VAL, id, index, (unsigned long) val);
+        }
+        else {
+            print_fact(PHI_PAIR_VAL, id, index, val);
+        }
+        print_fact<unsigned long>(PHI_PAIR_LABEL, id, index, (unsigned long) bb);
+        ++num;
+    }
+    print_fact(PHI_NPAIRS, id, num);
+    print_new();
+}

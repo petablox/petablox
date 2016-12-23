@@ -228,7 +228,7 @@ static const string ADDRSPACAECAST_TO_TYPE = "addrspacecast_instruction_to_type"
 
 /*
  * Other instructions
- * (icmp, fcmp)
+ * (icmp, fcmp, phi)
  */
 static const string ICMP = "icmp_instruction";
 static const string ICMP_COND = "icmp_instruction_condition";
@@ -239,6 +239,12 @@ static const string FCMP = "fcmp_instruction";
 static const string FCMP_COND = "fcmp_instruction_condition";
 static const string FCMP_FIRST = "fcmp_instruction_first_operand";
 static const string FCMP_SECOND = "fcmp_instruction_second_operand";
+
+static const string PHI = "phi_instruction";
+static const string PHI_TYPE = "phi_instruction_type";
+static const string PHI_PAIR_VAL = "phi_instruction_pair_val";
+static const string PHI_PAIR_LABEL = "phi_instruction_pair_label";
+static const string PHI_NPAIRS = "phi_instruction_npairs";
 
 template<typename T>
 void print_fact(std::string name, unsigned long id, std::vector<T> args)
@@ -256,7 +262,18 @@ void print_fact(std::string name, unsigned long id, std::vector<T> args)
 template<typename T>
 void print_fact(std::string name, unsigned long id, T arg)
 {
-    errs() << name << "(" << id << ", " << arg << ").\n";
+    errs() << name << "(" << id << ", "; 
+    errs() << arg; 
+    errs() << ").\n";
+}
+
+template<typename T>
+void print_fact(std::string name, unsigned long id, int index, T arg)
+{
+    errs() << name << "(" << id << ", "; 
+    errs() << index << ", " ;
+    errs() << arg;
+    errs() << ").\n";
 }
 
 inline void print_fact(std::string name, unsigned long id)
@@ -267,6 +284,14 @@ inline void print_fact(std::string name, unsigned long id)
 inline void print_fact(std::string name, unsigned long id, Value *arg)
 {
     errs() << name << "(" << id << ", ";
+    errs() << *arg;
+    errs() << ").\n";
+}
+
+inline void print_fact(std::string name, unsigned long id, int index, Value *arg)
+{
+    errs() << name << "(" << id << ", ";
+    errs() << index << ", ";
     errs() << *arg;
     errs() << ").\n";
 }

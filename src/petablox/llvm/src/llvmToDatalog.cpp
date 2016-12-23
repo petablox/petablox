@@ -179,6 +179,10 @@ namespace {
                 translateCmp(id, cmp_inst);
             }
 
+            if (PHINode *phi = dyn_cast<PHINode>(&I)) {
+                translatePhi(id, phi);
+            }
+
         }
 
         // Runs analysis on all functions in the program
