@@ -183,6 +183,10 @@ namespace {
                 translatePhi(id, phi);
             }
 
+            if (SelectInst *select_inst = dyn_cast<SelectInst>(&I)) {
+                translateSelect(id, select_inst);
+            }
+
         }
 
         // Runs analysis on all functions in the program

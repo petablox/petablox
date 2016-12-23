@@ -246,6 +246,11 @@ static const string PHI_PAIR_VAL = "phi_instruction_pair_val";
 static const string PHI_PAIR_LABEL = "phi_instruction_pair_label";
 static const string PHI_NPAIRS = "phi_instruction_npairs";
 
+static const string SELECT = "select_instruction";
+static const string SELECT_COND = "select_instruction_condition";
+static const string SELECT_TRUE = "select_instruction_true";
+static const string SELECT_FALSE = "select_instruction_false";
+
 template<typename T>
 void print_fact(std::string name, unsigned long id, std::vector<T> args)
 {

@@ -57,3 +57,29 @@ void translatePhi(unsigned long id, PHINode *phi) {
     print_fact(PHI_NPAIRS, id, num);
     print_new();
 }
+
+void translateSelect(unsigned long id, SelectInst *select_inst) {
+    // Get data for relations
+    Value *cond = select_inst->getCondition();
+    Value *true_val = select_inst->getTrueValue();
+    Value *false_val = select_inst->getFalseValue();
+
+    if (dyn_cast<Constant>(cond)) {
+        errs() << "constant(" << (unsigned long) cond << ", " << *cond << ").\n";
+    }
+
+    if (dyn_cast<Constant>(true_val)) {
+        errs() << "constant(" << (unsigned long) true_val << ", " << *true_val << ").\n";
+    }
+
+    if (dyn_cast<Constant>(false_val)) {
+        errs() << "constant(" << (unsigned long) false_val << ", " << *false_val << ").\n";
+    }
+
+    // Generate facts
+    print_fact(SELECT, id);
+    print_fact<unsigned long>(SELECT_COND, id, (unsigned long) cond);
+    print_fact<unsigned long>(SELECT_TRUE, id, (unsigned long) true_val);
+    print_fact<unsigned long>(SELECT_FALSE, id, (unsigned long) false_val);
+    print_new();
+}
