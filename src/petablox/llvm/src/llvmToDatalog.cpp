@@ -187,6 +187,14 @@ namespace {
                 translateSelect(id, select_inst);
             }
 
+            if (VAArgInst *vaarg_inst = dyn_cast<VAArgInst>(&I)) {
+                translateVAArg(id, vaarg_inst);
+            }
+
+            if (LandingPadInst *lp_inst = dyn_cast<LandingPadInst>(&I)) {
+                translateLandingPad(id, lp_inst);
+            }
+
         }
 
         // Runs analysis on all functions in the program

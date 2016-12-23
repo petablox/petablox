@@ -251,6 +251,23 @@ static const string SELECT_COND = "select_instruction_condition";
 static const string SELECT_TRUE = "select_instruction_true";
 static const string SELECT_FALSE = "select_instruction_false";
 
+static const string VAARG = "va_arg_instruction";
+static const string VAARG_TYPE = "va_arg_instruction_type";
+
+static const string LP = "landingpad";
+static const string LANDINGPAD = "landingpad_instruction";
+static const string LANDINGPAD_CLEANUP = "landingpad_instruction_cleanup";
+static const string LANDINGPAD_TYPE = "landingpad_instruction_type";
+static const string LANDINGPAD_PERSONALITY = "landingpad_instruction_pers_fn";
+static const string LANDINGPAD_CLAUSE = "landingpad_instruction_clause";
+static const string LANDINGPAD_NCLAUSES = "landingpad_instruction_nclauses";
+static const string CLAUSE = "clause";
+static const string CATCH_CLAUSE = "catch_clause";
+static const string FILTER_CLAUSE = "filter_clause";
+static const string CLAUSE_BY_INDEX = "clause_by_index";
+static const string CATCH_CLAUSE_ARG = "catch_clause_arg";
+static const string FILTER_CLAUSE_ARG = "filter_clause_arg";
+
 template<typename T>
 void print_fact(std::string name, unsigned long id, std::vector<T> args)
 {
