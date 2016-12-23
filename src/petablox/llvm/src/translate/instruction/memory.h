@@ -6,3 +6,5 @@ void translateStore(unsigned long id, StoreInst *store_inst);
 void translateFence(unsigned long id, FenceInst *fence_inst);
 void translateCmpXchg(unsigned long id, AtomicCmpXchgInst *cmpxchg_inst);
 void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst);
+void translateGetElementPtr(unsigned long id, GetElementPtrInst *gep_inst);
+

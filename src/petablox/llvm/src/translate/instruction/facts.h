@@ -156,6 +156,12 @@ static const string ATOMICRMW_OP = "atomicrmw_instruction_operation";
 static const string ATOMICRMW_ADDR = "atomicrmw_instruction_address";
 static const string ATOMICRMW_VALUE = "atomicrmw_instruction_value";
 
+static const string GEP = "getelementptr_instruction";
+static const string GEP_INBOUNDS = "getelementptr_instruction_inbounds";
+static const string GEP_BASE = "getelementptr_instruction_base";
+static const string GEP_NINDICES = "getelementptr_instruction_nindices";
+static const string GEP_INDEX = "getelementptr_instruction_index";
+
 /*
  * Conversion instructions
  * (trunc, zext, sext, fptrunc, fpext, fptoui, fptosi, sitofp,

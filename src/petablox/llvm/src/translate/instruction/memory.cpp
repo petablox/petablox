@@ -134,3 +134,32 @@ void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst) {
     print_fact<unsigned long>(ATOMICRMW_VALUE, id, (unsigned long) val); 
     print_new();
 }
+
+void translateGetElemPtr(unsigned long id, GetElementPtrInst *gep_inst) {
+    Value *pointer = gep_inst->getPointerOperand();
+
+    print_fact(GEP, id);
+
+    if (gep_inst->isInBounds()) {
+        print_fact(GEP_INBOUNDS, id);
+    }
+
+    if (dyn_cast<Instruction>(pointer)) {
+        print_fact<unsigned long>(GEP_BASE, id, (unsigned long) pointer);
+    }
+    else {
+        print_fact(GEP_BASE, id, pointer);
+    }
+
+    unsigned num = gep_inst->getNumIndices();
+    print_fact<unsigned>(GEP_NINDICES, id, num);
+
+    int index = 0;
+
+    for (auto it = gep_inst->idx_begin(); it != gep_inst->idx_end(); ++it) {
+        Value *idx = *it;
+        print_fact<unsigned long>(GEP_INDEX, id, index, (unsigned long) idx);
+        ++index;
+    }
+
+}
