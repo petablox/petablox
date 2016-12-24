@@ -145,6 +145,9 @@ namespace {
                 translateInsertElement(id, ie_inst);
             }
 
+            if (ShuffleVectorInst *sv_inst = dyn_cast<ShuffleVectorInst>(&I)) {
+                translateShuffleVector(id, sv_inst);
+            }
             /*
              * Aggregate Operations:
              * extractvalue, insertvalue

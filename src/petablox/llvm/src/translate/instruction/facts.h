@@ -130,6 +130,11 @@ static const string INSERTELEMENT_BASE = "insertelement_instruction_base";
 static const string INSERTELEMENT_INDEX = "insertelement_instruction_index";
 static const string INSERTELEMENT_VALUE = "insertelement_instruction_value";
 
+static const string SHUFFLEVECTOR = "shufflevector_instruction";
+static const string SHUFFLEVECTOR_FIRST = "shufflevector_instruction_first_vector";
+static const string SHUFFLEVECTOR_SECOND = "shufflevector_instruction_second_vector";
+static const string SHUFFLEVECTOR_MASK = "shufflevector_instruction_mask";
+
 /*
  * Aggregate operations
  * (extractvalue, insertvalue)

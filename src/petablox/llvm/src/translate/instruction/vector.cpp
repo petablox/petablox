@@ -26,3 +26,17 @@ void translateInsertElement(unsigned long id, InsertElementInst *ie_inst) {
     print_fact(INSERTELEMENT_VALUE, id, (unsigned long) value);
     print_new();
 }
+
+void translateShuffleVector(unsigned long id, ShuffleVectorInst *sv_inst) {
+    print_fact(SHUFFLEVECTOR, id);
+
+    Value *first = sv_inst->getOperand(0);
+    Value *second = sv_inst->getOperand(1);
+    print_fact<unsigned long>(SHUFFLEVECTOR_FIRST, id, (unsigned long) first);
+    print_fact<unsigned long>(SHUFFLEVECTOR_SECOND, id, (unsigned long) second);
+
+    Constant *mask = sv_inst->getMask();
+    print_fact<unsigned long>(SHUFFLEVECTOR_MASK, id, (unsigned long) mask);
+
+    print_new();
+}
