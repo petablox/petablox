@@ -135,7 +135,7 @@ void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst) {
     print_new();
 }
 
-void translateGetElemPtr(unsigned long id, GetElementPtrInst *gep_inst) {
+void translateGetElementPtr(unsigned long id, GetElementPtrInst *gep_inst) {
     Value *pointer = gep_inst->getPointerOperand();
 
     print_fact(GEP, id);

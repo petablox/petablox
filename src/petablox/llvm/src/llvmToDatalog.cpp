@@ -17,6 +17,7 @@
 //#include "translate/instruction/instruction.h"
 #include "translate/instruction/terminator.h"
 #include "translate/instruction/binop.h"
+#include "translate/instruction/vector.h"
 #include "translate/instruction/aggregate.h"
 #include "translate/instruction/memory.h"
 #include "translate/instruction/conversion.h"
@@ -128,6 +129,20 @@ namespace {
 
             if (binops.find(opcode) != binops.end()) {
                 translateBinOp(binops_map[opcode], I, id);
+            }
+
+            /*
+             * Vector Operations:
+             * extractelement, insertelement, shufflevector
+             *
+             * (http://llvm.org/docs/LangRef.html#vector-operations)
+             */
+            if (ExtractElementInst *ee_inst = dyn_cast<ExtractElementInst>(&I)) {
+                translateExtractElement(id, ee_inst);
+            }
+
+            if (InsertElementInst *ie_inst = dyn_cast<InsertElementInst>(&I)) {
+                translateInsertElement(id, ie_inst);
             }
 
             /*

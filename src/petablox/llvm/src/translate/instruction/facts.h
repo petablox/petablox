@@ -118,6 +118,19 @@ static const string XOR_FIRST = "xor_instruction_first_operand";
 static const string XOR_SECOND = "xor_instruction_second_operand";
 
 /*
+ * Vector operations
+ * (extractelement, insertelement, shufflevector)
+ */
+static const string EXTRACTELEMENT = "extractelement_instruction";
+static const string EXTRACTELEMENT_BASE = "extractelement_instruction_base";
+static const string EXTRACTELEMENT_INDEX = "extractelement_instruction_index";
+
+static const string INSERTELEMENT = "insertelement_instruction";
+static const string INSERTELEMENT_BASE = "insertelement_instruction_base";
+static const string INSERTELEMENT_INDEX = "insertelement_instruction_index";
+static const string INSERTELEMENT_VALUE = "insertelement_instruction_value";
+
+/*
  * Aggregate operations
  * (extractvalue, insertvalue)
  */
