@@ -109,6 +109,10 @@ namespace {
                 translateBr(id, br_inst);
             }
 
+            if (IndirectBrInst *br_inst = dyn_cast<IndirectBrInst>(&I)) {
+                translateIndirectBr(id, br_inst);
+            }
+
             if (dyn_cast<UnreachableInst>(&I)) {
                 translateUnreachable(id);
             }

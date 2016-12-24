@@ -25,6 +25,11 @@ static const string COND_BR_FALSE = "br_cond_instruction_iffalse";
 static const string UNCOND_BR = "br_uncond_instruction"; 
 static const string UNCOND_BR_DEST = "br_uncond_instruction_dest";
 
+static const string INDIRECT_BR = "indirectbr_instruction";
+static const string INDIRECT_BR_ADDR = "indirectbr_instruction_address";
+static const string INDIRECT_BR_NLABELS = "indirectbr_instruction_nlabels";
+static const string INDIRECT_BR_LABEL = "indirectbr_instruction_label";
+
 static const string UNREACHABLE = "unreachable_instruction";
 
 /*

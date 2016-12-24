@@ -60,6 +60,22 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
     print_new();
 }
 
+void translateIndirectBr(unsigned long id, IndirectBrInst *br_inst) {
+    print_fact(INDIRECT_BR, id);
+
+    Value* addr = br_inst->getAddress();
+
+    print_fact<unsigned long>(INDIRECT_BR_ADDR, id, (unsigned long) addr);
+
+    unsigned num_dests = br_inst->getNumDestinations();
+    print_fact<unsigned>(INDIRECT_BR_NLABELS, id, (unsigned long) num_dests);
+
+    for (unsigned index = 0; index < num_dests; ++index) {
+        BasicBlock *label = br_inst->getDestination(index);
+        print_fact<unsigned long>(INDIRECT_BR_LABEL, id, index, (unsigned long) label);
+    }
+    print_new();
+}
 void translateUnreachable(unsigned long id) {
     print_fact(UNREACHABLE, id);
     print_new();
