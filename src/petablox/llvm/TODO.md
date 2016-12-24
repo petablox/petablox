@@ -89,14 +89,14 @@ into a relational representation.
 - [ ] Aggregate Operations
     - [ ] `extractvalue`
     - [ ] `insertvalue`
-- [ ] Memory access/addressing operations
+- [x] Memory access/addressing operations
     - [x] `alloca`
     - [x] `load`
     - [x] `store`
     - [x] `fence`
     - [x] `cmpxchg`
     - [x] `atomicrmw`
-    - [ ] `getelementptr`
+    - [x] `getelementptr`
 - [x] Conversion operations
     - [x] `trun`
     - [x] `zext`
@@ -114,8 +114,8 @@ into a relational representation.
 - [ ] Other operations
     - [x] `icmp`
     - [x] `fcmp`
-    - [ ] `phi`
-    - [ ] `select`
+    - [x] `phi`
+    - [x] `select`
     - [ ] `call`
     - [ ] `var_arg`
     - [ ] `landingpad`

@@ -118,6 +118,21 @@ static const string XOR_FIRST = "xor_instruction_first_operand";
 static const string XOR_SECOND = "xor_instruction_second_operand";
 
 /*
+ * Aggregate operations
+ * (extractvalue, insertvalue)
+ */
+static const string EXTRACTVALUE = "extractvalue_instruction";
+static const string EXTRACTVALUE_BASE = "extractvalue_instruction_base";
+static const string EXTRACTVALUE_NINDICES = "extractvalue_instruction_nindices";
+static const string EXTRACTVALUE_INDEX = "extractvalue_instruction_index";
+
+static const string INSERTVALUE = "insertvalue_instruction";
+static const string INSERTVALUE_BASE = "insertvalue_instruction_base";
+static const string INSERTVALUE_VALUE = "insertvalue_instruction_value";
+static const string INSERTVALUE_NINDICES = "insertvalue_instruction_nindices";
+static const string INSERTVALUE_INDEX = "insertvalue_instruction_index";
+
+/*
  * Relations for memory operations 
  * (alloca, load, store, fence, cmpxchg and atomicrmw)
  */

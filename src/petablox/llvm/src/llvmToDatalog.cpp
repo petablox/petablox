@@ -17,6 +17,7 @@
 //#include "translate/instruction/instruction.h"
 #include "translate/instruction/terminator.h"
 #include "translate/instruction/binop.h"
+#include "translate/instruction/aggregate.h"
 #include "translate/instruction/memory.h"
 #include "translate/instruction/conversion.h"
 #include "translate/instruction/other.h"
@@ -130,6 +131,20 @@ namespace {
             }
 
             /*
+             * Aggregate Operations:
+             * extractvalue, insertvalue
+             *
+             * (http://llvm.org/docs/LangRef.html#aggregate-operations)
+             */
+            if (ExtractValueInst *ev_inst = dyn_cast<ExtractValueInst>(&I)) {
+                translateExtractValue(id, ev_inst);
+            }
+
+            if (InsertValueInst *iv_inst = dyn_cast<InsertValueInst>(&I)) {
+                translateInsertValue(id, iv_inst);
+            }
+
+            /*
              * Memory Access and Addressing Operations:
              * alloca, load, store, fence, cmpxchg, atomicrmw, getelementptr
              *
@@ -159,6 +174,10 @@ namespace {
                 translateAtomicRmw(id, rmw_inst);
             }
 
+            if (GetElementPtrInst *gep_inst = dyn_cast<GetElementPtrInst>(&I)) {
+                translateGetElementPtr(id, gep_inst);
+            }
+
             /*
              * Conversion instructions:
              * trunc, zext, sext, fptrunc, fpext, fptoui, fptosi,
@@ -169,6 +188,7 @@ namespace {
             if (CastInst *conv_inst = dyn_cast<CastInst>(&I)) {
                 translateConversion(id, conv_inst);
             }
+
             /*
              * Other instructions:
              * icmp, fcmp, phi, select, call, va_arg, landingpad, catchpad, cleanuppad
