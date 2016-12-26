@@ -30,6 +30,19 @@ static const string INDIRECT_BR_ADDR = "indirectbr_instruction_address";
 static const string INDIRECT_BR_NLABELS = "indirectbr_instruction_nlabels";
 static const string INDIRECT_BR_LABEL = "indirectbr_instruction_label";
 
+static const string INVOKE = "invoke_instruction";
+static const string INVOKE_FUNCTION = "invoke_instruction_function";
+static const string INVOKE_CALLING_CONV = "invoke_instruction_calling_convention";
+static const string DIRECTINVOKE = "direct_invoke_instruction";
+static const string INDIRECTINVOKE = "indirect_invoke_instruction";
+static const string INVOKE_ARG = "invoke_instruction_arg";
+static const string INVOKE_ATTR = "invoke_instruction_fn_attribute";
+static const string INVOKE_RET_ATTR = "invoke_instruction_return_attribute";
+static const string INVOKE_PARAM_ATTR = "invoke_instruction_param_attribute";
+
+static const string RESUME = "resume_instruction";
+static const string RESUME_OPER = "resume_instruction_operand";
+
 static const string UNREACHABLE = "unreachable_instruction";
 
 /*

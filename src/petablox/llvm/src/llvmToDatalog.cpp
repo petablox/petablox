@@ -113,6 +113,14 @@ namespace {
                 translateIndirectBr(id, br_inst);
             }
 
+            if (InvokeInst *invoke_inst = dyn_cast<InvokeInst>(&I)) {
+                translateInvoke(id, invoke_inst);
+            }
+
+            if (ResumeInst *resume_inst = dyn_cast<ResumeInst>(&I)) {
+                translateResume(id, resume_inst);
+            }
+
             if (dyn_cast<UnreachableInst>(&I)) {
                 translateUnreachable(id);
             }
