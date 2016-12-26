@@ -54,13 +54,13 @@ into a relational representation.
 - [ ] Terminator instructions
     - [x] `ret`
     - [x] `br`
-    - [ ] `switch`
-    - [ ] `indirectbr`
-    - [ ] `invoke`
-    - [ ] `resume`
-    - [ ] `catchswitch`
-    - [ ] `catchret`
-    - [ ] `cleanupret`
+    - [x] `switch`
+    - [x] `indirectbr`
+    - [x] `invoke`
+    - [x] `resume`
+    - [ ] ~~`catchswitch`~~ (exception handling)
+    - [ ] ~~`catchret`~~ (exception handling)
+    - [ ] ~~`cleanupret`~` (exception handling)
     - [x] `unreachable`
 - [x] Binary operations
     - [x] `add`
@@ -82,13 +82,13 @@ into a relational representation.
     - [x] `and`
     - [x] `or`
     - [x] `xor`
-- [ ] Vector operations
-    - [ ] `extractelement`
-    - [ ] `insertelement`
-    - [ ] `shufflevector`
-- [ ] Aggregate Operations
-    - [ ] `extractvalue`
-    - [ ] `insertvalue`
+- [x] Vector operations
+    - [x] `extractelement`
+    - [x] `insertelement`
+    - [x] `shufflevector`
+- [x] Aggregate Operations
+    - [x] `extractvalue`
+    - [x] `insertvalue`
 - [x] Memory access/addressing operations
     - [x] `alloca`
     - [x] `load`
@@ -118,6 +118,6 @@ into a relational representation.
     - [x] `select`
     - [ ] `call`
     - [ ] `var_arg`
-    - [ ] `landingpad`
-    - [ ] `catchpad`
-    - [ ] `cleanuppad`
+    - [x] `landingpad`
+    - [ ] ~~`catchpad`~~ (exception handling)
+    - [ ] ~~`cleanuppad`~~ (exception handling)
