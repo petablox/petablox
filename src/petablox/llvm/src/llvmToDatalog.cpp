@@ -23,6 +23,7 @@
 #include "translate/instruction/conversion.h"
 #include "translate/instruction/other.h"
 #include "translate/function.h"
+#include "translate/operand.h"
 #include "translate/global.h"
 
 using namespace llvm;
@@ -94,6 +95,10 @@ namespace {
             errs() << "instruction(" << id << ").\n";
             // TODO: instruction flags
 
+            for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
+                Value *oper = *operands;
+                translateOperand(oper);
+            }
             /*
              * Terminator instructions:
              * ret, br, switch, indirectbr, invoke, resume, catchswitch,

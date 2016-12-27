@@ -94,10 +94,6 @@ void translateConversion(unsigned long id, CastInst *conv_inst) {
 
     // Generate facts
 
-    if (dyn_cast<Constant>(from)) {
-        errs() << prefix << "constant(" << (unsigned long) from << ", " << *from << ").\n";
-    }
-
     print_fact(INSTRUCTION, id); 
     print_fact<unsigned long>(FROM, id, (unsigned long) from);
     // TODO: do we need a rule for from_type like in cclyzer?

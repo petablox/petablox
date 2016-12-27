@@ -54,10 +54,6 @@ void translateStore(unsigned long id, StoreInst *store_inst) {
     Value *value = store_inst->getValueOperand();
     Value *addr = store_inst->getPointerOperand();
 
-    if (dyn_cast<Constant>(value)) {
-        errs() << "constant(" << (unsigned long) value << ", " << *value << ").\n";
-    }
-
     // Generate facts
     print_fact(STORE, id);
     print_fact<unsigned>(STORE_ALIGN, id, alignment);

@@ -60,7 +60,7 @@ into a relational representation.
     - [x] `resume`
     - [ ] ~~`catchswitch`~~ (exception handling)
     - [ ] ~~`catchret`~~ (exception handling)
-    - [ ] ~~`cleanupret`~` (exception handling)
+    - [ ] ~~`cleanupret`~~ (exception handling)
     - [x] `unreachable`
 - [x] Binary operations
     - [x] `add`

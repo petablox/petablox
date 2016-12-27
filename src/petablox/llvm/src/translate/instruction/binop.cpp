@@ -95,14 +95,6 @@ void translateBinOp(BinOp op, Instruction &I, unsigned long id) {
     string FIRST_OPER = first_map[op];
     string SECOND_OPER = second_map[op];
 
-    if (dyn_cast<Constant>(first)) {
-        errs() << "constant(" << (unsigned long) first << ", " << *first << ").\n";
-    }
-
-    if (dyn_cast<Constant>(second)) {
-        errs() << "constant(" << (unsigned long) second << ", " << *second << ").\n";
-    }
-
     // Generate facts
     print_fact(INSTRUCTION, id);
     print_fact<unsigned long>(FIRST_OPER, id, (unsigned long) first);

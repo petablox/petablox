@@ -11,9 +11,6 @@ void translateReturn(unsigned long id, ReturnInst *ret_inst) {
      */
     print_fact(RETURN, id);
     if (Value *ret_value = ret_inst->getReturnValue()) {
-        if (dyn_cast<Constant>(ret_value)) {
-            errs() << "constant(" << (unsigned long) ret_value << ", " << *ret_value << ").\n";
-        }
         print_fact<unsigned long>(RETURN_VALUE, id, (unsigned long) ret_value);
     }
     else {

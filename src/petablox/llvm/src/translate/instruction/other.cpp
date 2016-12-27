@@ -17,14 +17,6 @@ void translateCmp(unsigned long id, CmpInst *cmp_inst) {
     string FIRST_OPER = icmp ? ICMP_FIRST : FCMP_FIRST;
     string SECOND_OPER = icmp ? ICMP_SECOND : FCMP_SECOND;
 
-    if (dyn_cast<Constant>(first)) {
-        errs() << "constant(" << (unsigned long) first << ", " << *first << ").\n";
-    }
-
-    if (dyn_cast<Constant>(second)) {
-        errs() << "constant(" << (unsigned long) second << ", " << *second << ").\n";
-    }
-
     // Generate facts
     print_fact(INSTRUCTION, id);
     print_fact<unsigned long>(COND, id, (unsigned long) condition);
@@ -63,18 +55,6 @@ void translateSelect(unsigned long id, SelectInst *select_inst) {
     Value *cond = select_inst->getCondition();
     Value *true_val = select_inst->getTrueValue();
     Value *false_val = select_inst->getFalseValue();
-
-    if (dyn_cast<Constant>(cond)) {
-        errs() << "constant(" << (unsigned long) cond << ", " << *cond << ").\n";
-    }
-
-    if (dyn_cast<Constant>(true_val)) {
-        errs() << "constant(" << (unsigned long) true_val << ", " << *true_val << ").\n";
-    }
-
-    if (dyn_cast<Constant>(false_val)) {
-        errs() << "constant(" << (unsigned long) false_val << ", " << *false_val << ").\n";
-    }
 
     // Generate facts
     print_fact(SELECT, id);
