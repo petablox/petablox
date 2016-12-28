@@ -64,6 +64,81 @@ void translateSelect(unsigned long id, SelectInst *select_inst) {
     print_new();
 }
 
+void translateCall(unsigned long id, CallInst *call) {
+    print_fact(CALL, id);
+
+    Value *function = call->getCalledValue();
+    print_fact<unsigned long>(CALL_FUNC, id, (unsigned long) function);
+
+    if (call->getCalledFunction()) {
+        print_fact(DIRECT_CALL, id);
+    }
+    else if (call->isInlineAsm()) {
+        print_fact(ASM_CALL, id);
+    }
+    else {
+        print_fact(INDIRECT_CALL, id);
+    }
+
+    if (call->isTailCall()) {
+        print_fact(CALL_TAIL, id);
+    }
+
+    CallingConv::ID conv = call->getCallingConv();
+    print_fact<unsigned>(CALL_CONV, id, conv);
+
+    /*
+     * Attributes
+     *
+     * Generate facts about this call instruction's attributes.
+     * There are two kinds of attributes:
+     * (1) Function attributes
+     * (2) Return attributes
+     */
+    
+    // Get a list of all attributes
+    auto attributes = call->getAttributes();
+
+    // Separate out the function and return attributes
+    auto funcAttributes = attributes.getFnAttributes();
+    auto retAttributes = attributes.getRetAttributes();
+
+    // Create facts for function attributes
+    for (unsigned i = 0; i < funcAttributes.getNumSlots(); i++) {
+        for (auto attr = funcAttributes.begin(i); attr != funcAttributes.end(i); attr++) {
+            print_fact<unsigned long>(CALL_ATTR, id, (unsigned long) attr); 
+        }
+    }
+
+    // Create facts for return attributes
+    for (unsigned i = 0; i < retAttributes.getNumSlots(); i++) {
+        for (auto attr = retAttributes.begin(i); attr != retAttributes.end(i); attr++) {
+            print_fact<unsigned long>(CALL_RET_ATTR, id, (unsigned long) attr); 
+        }
+    }
+
+    int index = 0;
+
+    for (auto it = call->arg_begin(); it != call->arg_end(); ++it) {
+        print_fact<unsigned long>(CALL_ARG, id, index, (unsigned long) it);
+        
+        // Iterate through all of the attributes for this parameter.
+        auto paramAttributes = attributes.getParamAttributes(index);
+        for (unsigned i = 0; i < paramAttributes.getNumSlots(); i++) {
+            for (auto attr = paramAttributes.begin(i); attr != paramAttributes.end(i); attr++) {
+                print_fact<unsigned long>(CALL_PARAM_ATTR, id, index, (unsigned long) attr);
+            }
+        }
+
+        index++;
+    }
+
+    // TODO: signature
+
+    Type::TypeID type = call->getFunctionType()->getReturnType()->getTypeID();
+    print_fact<int>(CALL_RET, id, type);
+}
+
 void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     Type::TypeID type = va_arg->getType()->getTypeID();
 

@@ -308,6 +308,19 @@ static const string SELECT_COND = "select_instruction_condition";
 static const string SELECT_TRUE = "select_instruction_true";
 static const string SELECT_FALSE = "select_instruction_false";
 
+static const string CALL = "call_instruction";
+static const string CALL_FUNC = "call_instruction_function";
+static const string CALL_TAIL = "call_instruction_tail";
+static const string CALL_RET = "call_instruction_return_type";
+static const string CALL_ARG = "call_instruction_arg";
+static const string CALL_ATTR = "call_instruction_fn_attribute";
+static const string CALL_RET_ATTR = "call_instruction_return_attribute";
+static const string CALL_PARAM_ATTR = "call_instruction_param_attribute";
+static const string CALL_CONV = "call_instruction_calling_convention";
+static const string DIRECT_CALL = "direct_call_instruction";
+static const string ASM_CALL = "indirect_call_instruction";
+static const string INDIRECT_CALL = "asm_call_instruction";
+
 static const string VAARG = "va_arg_instruction";
 static const string VAARG_TYPE = "va_arg_instruction_type";
 

@@ -242,6 +242,10 @@ namespace {
                 translateSelect(id, select_inst);
             }
 
+            if (CallInst *call = dyn_cast<CallInst>(&I)) {
+                translateCall(id, call);
+            }
+
             if (VAArgInst *vaarg_inst = dyn_cast<VAArgInst>(&I)) {
                 translateVAArg(id, vaarg_inst);
             }

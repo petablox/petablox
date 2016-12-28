@@ -8,27 +8,28 @@
 using namespace llvm;
 
 void translateOperand(Value *operand) {
-    print_fact(OPERAND, (unsigned long) operand);
+    unsigned long id = (unsigned long) operand;
+    print_fact(OPERAND, id);
 
     Type::TypeID type = operand->getType()->getTypeID();
 
     if (Constant *constant = dyn_cast<Constant>(operand)) {
-        print_fact(CONSTANT, (unsigned long) operand);
-        print_fact(CONSTANT_TYPE, (unsigned long) type);
+        print_fact(CONSTANT, id);
+        print_fact(CONSTANT_TYPE, id, (unsigned long) type);
 
         if (ConstantInt *value = dyn_cast<ConstantInt>(constant)) {
             const APInt &val = value->getValue();
-            print_fact(CONSTANT_VAL, val);
+            print_fact(CONSTANT_VAL, id, val);
         }
 
         if (ConstantFP *value = dyn_cast<ConstantFP>(constant)) {
             const APFloat &val = value->getValueAPF();
-            print_fact(CONSTANT_VAL, val.convertToFloat());
+            print_fact(CONSTANT_VAL, id, val.convertToFloat());
         }
 
     }
     else {
-        print_fact(VARIABLE, (unsigned long) operand);
-        print_fact(VARIABLE_TYPE, (unsigned long) type);
+        print_fact(VARIABLE, id);
+        print_fact(VARIABLE_TYPE, id, (unsigned long) type);
     }
 }
