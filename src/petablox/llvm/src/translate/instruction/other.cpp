@@ -147,7 +147,7 @@ void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     // TODO: list of arguments
 }
 
-void translateLandingpad(unsigned long id, LandingPadInst *lp_inst) {
+void translateLandingPad(unsigned long id, LandingPadInst *lp_inst) {
 
     print_fact(LANDINGPAD, id);
     
