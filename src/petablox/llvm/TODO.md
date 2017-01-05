@@ -54,10 +54,10 @@ into a relational representation.
 - [ ] Terminator instructions
     - [x] `ret`
     - [x] `br`
-    - [x] `switch`
+    - [ ] `switch`
     - [x] `indirectbr`
-    - [x] `invoke`
-    - [x] `resume`
+    - [ ] ~~`invoke`~~ (exception handling)
+    - [ ] ~~`resume`~~ (exception handling)
     - [ ] ~~`catchswitch`~~ (exception handling)
     - [ ] ~~`catchret`~~ (exception handling)
     - [ ] ~~`cleanupret`~~ (exception handling)
@@ -118,6 +118,6 @@ into a relational representation.
     - [x] `select`
     - [ ] `call`
     - [ ] `var_arg`
-    - [x] `landingpad`
+    - [ ] ~~`landingpad`~~ (exception handling)
     - [ ] ~~`catchpad`~~ (exception handling)
     - [ ] ~~`cleanuppad`~~ (exception handling)
