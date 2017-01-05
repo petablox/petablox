@@ -3,6 +3,8 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
+#include "facts.h"
+#include "operand.h"
 
 using namespace llvm;
 
@@ -26,36 +28,34 @@ void translateGlobals(Function &F) {
         GlobalValue::LinkageTypes linkage = global.getLinkage();
         GlobalValue::VisibilityTypes vis = global.getVisibility();
 
-        errs() << "global_variable(" << global_id << ").\n";
-        errs() << "global_variable_type(" << global_id << ", " << global_type << ").\n";
-        errs() << "global_variable_name(" << global_id << ", " << global_name << ").\n";
-        errs() << "global_variable_align(" << global_id << ", " << alignment << ").\n";
-        errs() << "global_variable_linkage_type(" << global_id << ", " << linkage << ").\n";
-        errs() << "global_variable_visibility(" << global_id << ", " << vis << ").\n";
+        print_fact(GLOBAL_VAR, global_id);
+        print_fact<int>(GLOBAL_TYPE, global_id, global_type);
+        print_fact<std::string>(GLOBAL_NAME, global_id, global_name);
+        print_fact<unsigned>(GLOBAL_ALIGN, global_id, alignment);
+        print_fact<int>(GLOBAL_LINKAGE_TYPE, global_id, linkage);
+        print_fact<int>(GLOBAL_VIS, global_id, vis);
 
         if (global.hasInitializer()) {
             Constant *global_init = global.getInitializer();
-            errs() << "constant(" << (unsigned long) global_init << ", " << *global_init << ").\n";
-            errs() << "global_variable_initializer(" << global_id << ", " << (unsigned long) global_init << ").\n";
+            print_fact<unsigned long>(GLOBAL_INIT, global_id, (unsigned long) global_init);
+            translateOperand(global_init);
         }
 
         if (global.hasSection()) {
-            //std::string section = global.getSection().str();
             const char *section = global.getSection();
-            errs() << "global_variable_section(" << global_id << ", " << section << ").\n";
+            print_fact<const char *>(GLOBAL_SEC, global_id, section);
         }
 
         if (global.isThreadLocal()) {
             GlobalValue::ThreadLocalMode mode = global.getThreadLocalMode();
-            errs() << "global_variable_threadlocal_mode(" << global_id << ", " << mode << ").\n";
+            print_fact<int>(GLOBAL_THREAD_LOCAL, global_id, mode); 
         }
 
         if (global.isConstant()) {
-            errs() << "global_variable_constant(" << global_id << ").\n";
+            print_fact(GLOBAL_CONSTANT, global_id);
         }
 
-        errs() << "\n";
-
+        print_new();
     }
 }
 
