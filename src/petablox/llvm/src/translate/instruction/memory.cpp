@@ -10,14 +10,13 @@ using namespace llvm;
 void translateAlloca(unsigned long id, AllocaInst *alloca_inst) {
     // Get data for relations
     unsigned alignment = alloca_inst->getAlignment();
-    Value *size_val = alloca_inst->getArraySize();
-    const APInt &size = dyn_cast<ConstantInt>(size_val)->getValue();
+    Value *size = alloca_inst->getArraySize();
     Type *type = alloca_inst->getAllocatedType();
 
     // Generate facts
     print_fact(ALLOCA, id);
     print_fact<unsigned>(ALLOCA_ALIGN, id, alignment);
-    print_fact<unsigned>(ALLOCA_SIZE, id, (unsigned) size.roundToDouble());
+    print_fact<unsigned long>(ALLOCA_SIZE, id, (unsigned long) size);
     print_fact<unsigned long>(ALLOCA_TYPE, id, type->getTypeID());
     print_new();
 }
@@ -157,5 +156,6 @@ void translateGetElementPtr(unsigned long id, GetElementPtrInst *gep_inst) {
         print_fact<unsigned long>(GEP_INDEX, id, index, (unsigned long) idx);
         ++index;
     }
+    print_new();
 
 }
