@@ -54,7 +54,7 @@ namespace {
 
             // Add bitwise binary operations to set
             binops.insert("shl");
-            binops.insert("lshl");
+            binops.insert("lshr");
             binops.insert("ashr");
             binops.insert("and");
             binops.insert("or");
@@ -78,7 +78,7 @@ namespace {
 
             // Add bitwise binary operations to set
             binops_map["shl"] = shl;
-            binops_map["lshl"] = lshl;
+            binops_map["lshr"] = lshr;
             binops_map["ashr"] = ashr;
             binops_map["and"] = and_;
             binops_map["or"] = or_;

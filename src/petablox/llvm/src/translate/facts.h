@@ -1,6 +1,17 @@
 using namespace llvm;
 using namespace std;
 
+static const string GLOBAL_VAR = "global variable";
+static const string GLOBAL_TYPE = "global_variable_type";
+static const string GLOBAL_NAME = "global_variable_name";
+static const string GLOBAL_ALIGN = "global_variable_alignment";
+static const string GLOBAL_LINKAGE_TYPE = "global_variable_linkage_type";
+static const string GLOBAL_VIS = "global_variable_visibility";
+static const string GLOBAL_INIT = "global_variable_initializer";
+static const string GLOBAL_SEC = "global_variable_section";
+static const string GLOBAL_THREAD_LOCAL = "global_variable_threadlocal_mode";
+static const string GLOBAL_CONSTANT = "global_variable_constant";
+
 static const string OPERAND = "operand";
 static const string CONSTANT = "constant";
 static const string CONSTANT_TYPE = "constant_type";
@@ -42,18 +53,6 @@ inline void print_fact(std::string name, unsigned long id)
 {
     errs() << name << "(" << id << ").\n";
 }
-
-/*
-inline void print_fact_const(std::string name, const APFloat &value)
-{
-    errs() << name << "(" << value << ").\n";
-}
-
-inline void print_fact_const(std::string name, const APInt &value)
-{
-    errs() << name << "(" << value << ").\n";
-}
-*/
 
 template<typename T>
 void print_fact(std::string name, T value)
