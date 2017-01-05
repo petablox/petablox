@@ -60,7 +60,7 @@ enum BinOp {
     add, fadd, sub, fsub, mul, fmul,
     udiv, sdiv, fdiv, urem, srem, frem,
 
-    shl, lshl, ashr, and_, or_, xor_
+    shl, lshr, ashr, and_, or_, xor_
 };
 
 static const string ADD = "add_instruction";
@@ -115,9 +115,9 @@ static const string SHL = "shl_instruction";
 static const string SHL_FIRST = "shl_instruction_first_operand";
 static const string SHL_SECOND = "shl_instruction_second_operand";
 
-static const string LSHL = "lshl_instruction";
-static const string LSHL_FIRST = "lshl_instruction_first_operand";
-static const string LSHL_SECOND = "lshl_instruction_second_operand";
+static const string LSHR = "lshr_instruction";
+static const string LSHR_FIRST = "lshr_instruction_first_operand";
+static const string LSHR_SECOND = "lshr_instruction_second_operand";
 
 static const string ASHR = "ashr_instruction";
 static const string ASHR_FIRST = "ashr_instruction_first_operand";
