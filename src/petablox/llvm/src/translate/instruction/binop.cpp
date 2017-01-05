@@ -27,7 +27,7 @@ void populate_binops_map() {
 
     // Add bitwise binary operations to set
     binops_map[shl] = SHL;
-    binops_map[lshl] = LSHL;
+    binops_map[lshr] = LSHR;
     binops_map[ashr] = ASHR;
     binops_map[and_] = AND;
     binops_map[or_] = OR;
@@ -51,7 +51,7 @@ void populate_first_map() {
 
     // Add bitwise binary operations to set
     first_map[shl] = SHL_FIRST;
-    first_map[lshl] = LSHL_FIRST;
+    first_map[lshr] = LSHR_FIRST;
     first_map[ashr] = ASHR_FIRST;
     first_map[and_] = AND_FIRST;
     first_map[or_] = OR_FIRST;
@@ -75,7 +75,7 @@ void populate_second_map() {
 
     // Add bitwise binary operations to set
     second_map[shl] = SHL_SECOND;
-    second_map[lshl] = LSHL_SECOND;
+    second_map[lshr] = LSHR_SECOND;
     second_map[ashr] = ASHR_SECOND;
     second_map[and_] = AND_SECOND;
     second_map[or_] = OR_SECOND;
