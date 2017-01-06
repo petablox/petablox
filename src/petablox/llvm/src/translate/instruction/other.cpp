@@ -41,7 +41,7 @@ void translatePhi(unsigned long id, PHINode *phi) {
             print_fact<unsigned long>(PHI_PAIR_VAL, id, index, (unsigned long) val);
         }
         else {
-            print_fact(PHI_PAIR_VAL, id, index, val);
+            print_fact<unsigned long>(PHI_PAIR_VAL, id, index, (unsigned long) val);
         }
         print_fact<unsigned long>(PHI_PAIR_LABEL, id, index, (unsigned long) bb);
         ++num;
@@ -137,6 +137,7 @@ void translateCall(unsigned long id, CallInst *call) {
 
     Type::TypeID type = call->getFunctionType()->getReturnType()->getTypeID();
     print_fact<int>(CALL_RET, id, type);
+    print_new();
 }
 
 void translateVAArg(unsigned long id, VAArgInst *va_arg) {
@@ -145,6 +146,7 @@ void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     print_fact(VAARG, id);
     print_fact<unsigned>(VAARG_TYPE, id, type);
     // TODO: list of arguments
+    print_new();
 }
 
 void translateLandingPad(unsigned long id, LandingPadInst *lp_inst) {
