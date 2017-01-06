@@ -230,7 +230,7 @@ namespace {
              *
              * (http://llvm.org/docs/LangRef.html#other-operations)
              */
-            if (ICmpInst *cmp_inst = dyn_cast<ICmpInst>(&I)) {
+            if (CmpInst *cmp_inst = dyn_cast<CmpInst>(&I)) {
                 translateCmp(id, cmp_inst);
             }
 
