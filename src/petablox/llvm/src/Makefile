@@ -69,7 +69,7 @@ test_deps:
 
 ../bin/llvmToDatalog.so: llvmToDatalog.cpp $(INCLUDES) | test_deps
 	mkdir -p ../bin
-	$(CXX) $(CLANG_CFL) -shared $< $(INCLUDES) -o $@ $(CLANG_LFL)
+	$(CXX) $(CLANG_CFL) -I ./ -shared $< $(INCLUDES) -o $@ $(CLANG_LFL)
 
 .NOTPARALLEL: clean
 

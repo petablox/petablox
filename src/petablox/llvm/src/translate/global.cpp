@@ -3,7 +3,7 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
-#include "facts.h"
+#include "translate/facts.h"
 #include "operand.h"
 
 using namespace llvm;

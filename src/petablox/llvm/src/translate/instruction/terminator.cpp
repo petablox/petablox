@@ -1,79 +1,121 @@
 #include "instruction.h"
-#include "facts.h"
+#include "translate/facts.h"
 
 using namespace llvm;
 
+/*
+ * translateReturn
+ *
+ * Create the following relations:
+ * (1) declare the instruction
+ * (2) if the instruction returns a value
+ * (3) if the return value is void
+ *
+ * 'ret' instructions
+ * (http://llvm.org/docs/LangRef.html#ret-instruction)
+ */
 void translateReturn(unsigned long id, ReturnInst *ret_inst) {
-    // Generate facts
-    /*
-     * TODO: Add rule for terminator_instruction(inst) :- ret_instruction(inst)
-     * TODO: Well formed functions (see ret-instruction.logic)
-     */
+    // Declare the instruction
     print_fact(RETURN, id);
+
+    // Is there a return value?
     if (Value *ret_value = ret_inst->getReturnValue()) {
         print_fact<unsigned long>(RETURN_VALUE, id, (unsigned long) ret_value);
     }
+    // Otherwise the return is void
     else {
         print_fact(RETURN_VOID, id);
     }
+
     print_new();
 }
 
+/*
+ * translateBr
+ *
+ * Create the following relations:
+ * (1) declare the instruction
+ * (2) if the branch is conditional
+ * (3) if the branch is unconditional
+ * If conditional:
+ * (4) the condition
+ * (5) the true label
+ * (6) the false label
+ * If unconditional:
+ * (7) the destination
+ *
+ * 'br' instructions
+ * (http://llvm.org/docs/LangRef.html#br-instruction)
+ */
 void translateBr(unsigned long id, BranchInst *br_inst) {
-    /*
-     * TODO: Add terminator_instruction(inst) :- br_instruction(inst)
-     * TODO: Facts for labels
-     */
-    // Generate facts
+    // Declare the instruction
     print_fact(BRANCH, id);
 
     // If the branch is conditional
     if (br_inst->isConditional()) {
-        // Get the condition
-        Value *condition = br_inst->getCondition();
-
-        // Get next instructions based on condition
-        BasicBlock *true_bb = br_inst->getSuccessor(0);
-        BasicBlock *false_bb = br_inst->getSuccessor(1);
-        auto true_iter = true_bb->begin();
-        auto false_iter = false_bb->begin();
-        Instruction *true_inst = &(*true_iter);
-        Instruction *false_inst = &(*false_iter);
-
         print_fact(COND_BR, id);
-        print_fact<unsigned long>(COND_BR_CONDITION, id, (unsigned long) condition);
-        print_fact<unsigned long>(COND_BR_TRUE, id, (unsigned long) true_inst);
-        print_fact<unsigned long>(COND_BR_FALSE, id, (unsigned long) false_inst);
-    }
-    else {
-        // Get next instruction
-        BasicBlock *next_bb = br_inst->getSuccessor(0);
-        auto next_iter = next_bb->begin();
-        Instruction *next_inst = &(*next_iter);
 
-        print_fact(UNCOND_BR, id);
-        print_fact(UNCOND_BR_DEST, id, (unsigned long) next_inst);
+        // Condition
+        Value *condition = br_inst->getCondition();
+        print_fact(COND_BR_CONDITION, id, (unsigned long) condition);
+
+        // If true
+        BasicBlock *true_bb = br_inst->getSuccessor(0);
+        print_fact(COND_BR_TRUE, id, (unsigned long) true_bb);
+
+        // If false
+        BasicBlock *false_bb = br_inst->getSuccessor(1);
+        print_fact(COND_BR_FALSE, id, (unsigned long) false_bb);
     }
+    // If the branch is unconditional
+    else {
+        print_fact(UNCOND_BR, id);
+
+        // Destination
+        BasicBlock *next_bb = br_inst->getSuccessor(0);
+        print_fact(UNCOND_BR_DEST, id, (unsigned long) next_bb);
+    }
+
     print_new();
 }
 
+/*
+ * translateIndirectBr
+ *
+ * Create the following relations:
+ * (1) declare the instruction
+ * (2) the address of the label to jump to
+ * (3) the number of labels
+ * For each possible destination:
+ * (4) the label
+ *
+ * 'indirectbr' instructions
+ * (http://llvm.org/docs/LangRef.html#indirectbr-instruction)
+ */
 void translateIndirectBr(unsigned long id, IndirectBrInst *br_inst) {
+    // Declare the instruction
     print_fact(INDIRECT_BR, id);
 
+    // Address
     Value* addr = br_inst->getAddress();
+    print_fact(INDIRECT_BR_ADDR, id, (unsigned long) addr);
 
-    print_fact<unsigned long>(INDIRECT_BR_ADDR, id, (unsigned long) addr);
-
+    // Number of labels
     unsigned num_dests = br_inst->getNumDestinations();
-    print_fact<unsigned>(INDIRECT_BR_NLABELS, id, (unsigned long) num_dests);
+    print_fact(INDIRECT_BR_NLABELS, id, (unsigned long) num_dests);
 
+    // For each destination
     for (unsigned index = 0; index < num_dests; ++index) {
+        // Label
         BasicBlock *label = br_inst->getDestination(index);
-        print_fact<unsigned long>(INDIRECT_BR_LABEL, id, index, (unsigned long) label);
+        print_fact(INDIRECT_BR_LABEL, id, index, (unsigned long) label);
     }
+
     print_new();
 }
 
+// TODO: can we get rid of these since we are not handling exceptions?
+/*
 void translateInvoke(unsigned long id, InvokeInst *invoke_inst) {
     print_fact(INVOKE, id);
 
@@ -90,14 +132,14 @@ void translateInvoke(unsigned long id, InvokeInst *invoke_inst) {
     CallingConv::ID conv = invoke_inst->getCallingConv();
     print_fact<unsigned>(INVOKE_CALLING_CONV, id, conv);
 
-    /*
-     * Attributes
-     *
-     * Generate facts about this invoke instruction's attributes.
-     * There are two kinds of attributes:
-     * (1) Function attributes
-     * (2) Return attributes
-     */
+    
+     // Attributes
+     //
+     // Generate facts about this invoke instruction's attributes.
+     // There are two kinds of attributes:
+     // (1) Function attributes
+     // (2) Return attributes
+    
     
     // Get a list of all attributes
     auto attributes = invoke_inst->getAttributes();
@@ -147,8 +189,16 @@ void translateResume(unsigned long id, ResumeInst *resume_inst) {
     print_fact<unsigned long>(RESUME_OPER, id, (unsigned long) oper);
     print_new();
 }
+*/
 
+/*
+ * translateUnreachable
+ *
+ * Declare an unreachable instruction
+ */
 void translateUnreachable(unsigned long id) {
+    // Declare the instruction
     print_fact(UNREACHABLE, id);
+
     print_new();
 }

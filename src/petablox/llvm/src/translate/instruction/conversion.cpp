@@ -1,9 +1,14 @@
-#include "instruction.h"
-#include "facts.h"
+#include "translate/facts.h"
+#include "translate/type.h"
 
 using namespace llvm;
 using namespace std;
 
+/*
+ * Create data structures to map
+ * the instruction opcodes to the
+ * appropriate relations
+ */
 map<string, string> ops_map;
 map<string, string> from_map;
 map<string, string> from_type_map;
@@ -73,31 +78,42 @@ void populate_to_type_map() {
     to_type_map["addrspacecast"] = ADDRSPACAECAST_TO_TYPE;
 }
 
+/*
+ * translateConversion
+ *
+ * Create the following facts for a conversion instruction:
+ * (1) declare the operation
+ * (2) the "from" value
+ * (3) the "from" type
+ * (4) the "to" type
+ *
+ */
 void translateConversion(unsigned long id, CastInst *conv_inst) {
     populate_ops_map();
     populate_from_map();
     populate_from_type_map();
     populate_to_type_map();
 
-    // Get data for relations
     const char *prefix = conv_inst->getOpcodeName();
-    Value *from = conv_inst->getOperand(0);
-    Type *from_type = conv_inst->getSrcTy();
-    Type *to_type = conv_inst->getDestTy();
-    Type::TypeID from_type_id = from_type->getTypeID();
-    Type::TypeID to_type_id = to_type->getTypeID();
 
+    // Declare the operation
     string INSTRUCTION = ops_map[prefix];
-    string FROM = from_map[prefix];
-    string FROM_TYPE = from_type_map[prefix];
-    string TO_TYPE = to_type_map[prefix];
-
-    // Generate facts
-
     print_fact(INSTRUCTION, id); 
-    print_fact<unsigned long>(FROM, id, (unsigned long) from);
-    // TODO: do we need a rule for from_type like in cclyzer?
-    print_fact<unsigned>(FROM_TYPE, id, from_type_id);
-    print_fact<unsigned>(TO_TYPE, id, to_type_id);
+
+    // "from" value
+    Value *from = conv_inst->getOperand(0);
+    string FROM = from_map[prefix];
+    print_fact(FROM, id, (unsigned long) from);
+
+    // "from" type
+    string from_type = processType(conv_inst->getSrcTy());
+    string FROM_TYPE = from_type_map[prefix];
+    print_fact(FROM_TYPE, id, from_type);
+
+    // "to" type
+    string to_type = processType(conv_inst->getDestTy());
+    string TO_TYPE = to_type_map[prefix];
+    print_fact(TO_TYPE, id, to_type);
+
     print_new();
 }

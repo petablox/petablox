@@ -13,7 +13,8 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include "translate/instruction/facts.h"
+//#include "translate/instruction/facts.h"
+#include "translate/facts.h"
 //#include "translate/instruction/instruction.h"
 #include "translate/instruction/terminator.h"
 #include "translate/instruction/binop.h"

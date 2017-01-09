@@ -1,6 +1,7 @@
 #include "instruction.h"
-#include "facts.h"
+#include "translate/facts.h"
 
+using namespace std;
 using namespace llvm;
 
 void translateExtractElement(unsigned long id, ExtractElementInst *ee_inst) {

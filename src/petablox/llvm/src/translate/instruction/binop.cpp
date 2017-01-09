@@ -1,11 +1,13 @@
-#include "instruction.h"
-#include "facts.h"
-#include <stdio.h>
-#include <string.h>
+#include "translate/facts.h"
 
 using namespace llvm;
 using namespace std;
 
+/*
+ * Create data structures to map
+ * the instruction opcodes to the
+ * appropriate relations
+ */
 map<BinOp, string> binops_map;
 map<BinOp, string> first_map;
 map<BinOp, string> second_map;
@@ -82,22 +84,34 @@ void populate_second_map() {
     second_map[xor_] = XOR_SECOND;
 }
 
+/*
+ * translateBinOp
+ *
+ * Creates the following relations for a binary operator:
+ * (1) declares the type of instruction
+ * (2) the instruction's first operand
+ * (3) the instruction's second operand
+ *
+ */
 void translateBinOp(BinOp op, Instruction &I, unsigned long id) {
+    // Populate the maps
     populate_binops_map();
     populate_first_map();
     populate_second_map();
 
-    // Get data for relations
-    Value *first = I.getOperand(0);
-    Value *second = I.getOperand(1);
-
+    // Declare the instruction
     string INSTRUCTION = binops_map[op];
-    string FIRST_OPER = first_map[op];
-    string SECOND_OPER = second_map[op];
-
-    // Generate facts
     print_fact(INSTRUCTION, id);
-    print_fact<unsigned long>(FIRST_OPER, id, (unsigned long) first);
-    print_fact<unsigned long>(SECOND_OPER, id, (unsigned long) second);
+
+    // First operand
+    Value *first = I.getOperand(0);
+    string FIRST_OPER = first_map[op];
+    print_fact(FIRST_OPER, id, (unsigned long) first);
+
+    // Second operand
+    Value *second = I.getOperand(1);
+    string SECOND_OPER = second_map[op];
+    print_fact(SECOND_OPER, id, (unsigned long) second);
+
     print_new();
 }
