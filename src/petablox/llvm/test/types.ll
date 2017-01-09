@@ -1,6 +1,10 @@
 %struct.ST = type { i32, double, %struct.RT }
 %struct.RT = type { i8, [10 x [20 x i32]], i8 }
 
+define double @foo(i32, double, float) {
+    ret double 2.0;
+}
+
 define void @main() {
     %1 = alloca i1
     %2 = alloca i8
@@ -14,5 +18,6 @@ define void @main() {
     %10 = alloca ppc_fp128
     %11 = alloca x86_mmx
     %12 = alloca %struct.ST*, align 8
+    %13 = call double @foo(i32 1, double 1.0, float 1.0)
     ret void
 }

@@ -3,7 +3,10 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
+//#include "translate/facts.h"
+#include "type.h"
 
+using namespace std;
 using namespace llvm;
 
 /*
@@ -92,8 +95,9 @@ void translateFunction(Function &F, unsigned long id) {
     errs() << "function(" << id << ").\n";
 
     // Return type
-    Type::TypeID ret_type = F.getReturnType()->getTypeID();
-    errs() << "function_type(" << id << ", " << ret_type << ").\n";
+    //Type::TypeID ret_type = F.getReturnType()->getTypeID();
+    string type = processType(F.getFunctionType());
+    errs() << "function_type(" << id << ", " << type << ").\n";
 
     // Function name
     std::string name = F.getName().str();

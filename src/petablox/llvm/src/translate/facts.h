@@ -1,3 +1,6 @@
+#ifndef FACTS_H
+#define FACTS_H
+
 #include <iostream>
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/InstrTypes.h"
@@ -37,6 +40,15 @@ static const string CONSTANT_TYPE = "constant_type";
 static const string CONSTANT_VAL = "constant_value";
 static const string VARIABLE = "variable";
 static const string VARIABLE_TYPE = "variable_type";
+
+/*
+ * Types
+ */
+static const string FUNCTION_TY = "fn_type";
+static const string FUNCTION_TY_VARARGS = "fn_type_varargs";
+static const string FUNCTION_TY_RET = "fn_type_return";
+static const string FUNCTION_TY_PARAM = "fn_type_param";
+static const string FUNCTION_TY_NPARAMS = "fn_type_nparams";
 
 /*
  * Terminator instructions
@@ -419,3 +431,5 @@ inline void print_fact(std::string name, unsigned long id)
 inline void print_new() {
     errs() << "\n";
 }
+
+#endif
