@@ -110,6 +110,29 @@ inline string processPointer(Type *type) {
     }
 }
 
+inline string processVector(Type *type) {
+    if (VectorType *vec = dyn_cast<VectorType>(type)) {
+         unsigned long id = (unsigned long) vec;
+        // Declare the type
+        print_fact(VECTOR_TY, id);
+
+        // Component type
+        string comp = processType(vec->getElementType());
+        print_fact(VECTOR_TY_COMP, id, comp);
+
+        // Size
+        uint64_t size = vec->getNumElements();
+        print_fact(VECTOR_TY_SIZE, id, size);
+
+        ostringstream addr;
+        addr << id;
+        return addr.str();
+    }
+    else {
+        return ERROR;
+    }
+}
+
 inline string processArray(Type *type) {
     if (ArrayType *array = dyn_cast<ArrayType>(type)) {
         unsigned long id = (unsigned long) array;
@@ -143,6 +166,11 @@ inline string processStruct(Type *type) {
         if (struct_type->hasName()) {
             string name = struct_type->getName().str();
             print_fact(STRUCT_TY_NAME, id, name);
+        }
+
+        // Is this an opaque struct?
+        if (struct_type->isOpaque()) {
+            print_fact(OPAQUE_STRUCT, id);
         }
 
         // Number of elements
@@ -189,21 +217,24 @@ inline string processType(Type *type) {
         return X86_MMX;
     }
     
-    // Derived types (function, pointer, vector (?), 
-    // aggregate, array, struct, opaque struct)
+    // Derived types (function, pointer, vector, array, struct)
     else if (type->isFunctionTy()) {
         return processFunction(type);
     }
     else if (type->isPointerTy()) {
         return processPointer(type);
     } 
-
+    else if (type->isVectorTy()) {
+        return processVector(type);
+    }
     else if (type->isArrayTy()) {
         return processArray(type);
     }
     else if (type->isStructTy()) {
         return processStruct(type);
     }
+
+    // Otherwise, something went wrong
     else {
         return ERROR;
     }

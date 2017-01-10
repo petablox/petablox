@@ -22,6 +22,7 @@ define void @main() {
     %10 = alloca ppc_fp128
     %11 = alloca x86_mmx
     %12 = alloca %struct.ST*, align 8
-    %13 = call double @foo(i32 1, double 1.0, float 1.0)
+    %13 = alloca <4 x i32>
+    %14 = call double @foo(i32 1, double 1.0, float 1.0)
     ret void
 }
