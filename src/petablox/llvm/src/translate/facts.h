@@ -18,6 +18,34 @@ using namespace std;
  */
 
 /*
+ * Function relations
+ */
+static const string FUNCTION = "function";
+static const string FUNCTION_TYPE = "function_type";
+static const string FUNCTION_NAME = "function_name";
+static const string FUNCTION_LINK = "function_linkage_type";
+static const string FUNCTION_VIS = "function_visibility";
+static const string FUNCTION_CALL_CONV = "function_calling_convention";
+static const string FUNCTION_ALIGN = "function_alignment";
+static const string FUNCTION_GC = "function_gc";
+static const string FUNCTION_PERS = "function_pers_fn";
+static const string FUNCTION_ATTR = "function_attribute";
+static const string FUNCTION_RET_ATTR = "function_return_attribute";
+static const string FUNCTION_SEC = "function_section";
+static const string FUNCTION_PARAM = "function_param";
+static const string FUNCTION_PARAM_ATTR = "function_param_attr";
+static const string FUNCTION_NPARAMS = "function_nparams";
+
+/*
+ * Basic Blocks/Instruction control flow
+ */
+static const string BB_ENTRY = "basicblock_entry";
+static const string BB_EXIT = "basicblock_exit";
+static const string BB_PRED = "basicblock_pred";
+static const string INST_BB = "instruction_basicblock";
+static const string INST_NEXT = "instruction_next";
+
+/*
  * Global variables
  */
 static const string GLOBAL_VAR = "global variable";
@@ -423,6 +451,13 @@ void print_fact(std::string name, unsigned long id, int index, T arg)
 inline void print_fact(std::string name, unsigned long id)
 {
     errs() << name << "(" << id << ").\n";
+}
+
+/*
+ * Function that prints a comment
+ */
+inline void print_comment(string comment) {
+    errs() << "% " << comment << "\n";
 }
 
 /*

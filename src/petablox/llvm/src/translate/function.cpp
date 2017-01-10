@@ -3,7 +3,7 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
-//#include "translate/facts.h"
+#include "translate/facts.h"
 #include "type.h"
 
 using namespace std;
@@ -16,16 +16,15 @@ using namespace llvm;
  * edges between basic blocks in the function and edges between
  * successive instructions in each basic block.
  * 
+ * Create the following relations: 
+ * (1) Basic block entry
+ * (2) Basic block exit
+ * (3) Basic block predecessors
+ * (4) Which basic block an instruction belongs to
+ * (5) Instruction predecessors
+ *
  */
 void buildCFG(Function &F) {
-    /*
-     * Generate facts for the following information:
-     * (1) Basic block entry
-     * (2) Basic block exit
-     * (3) Basic block predecessors
-     * (4) Which basic block an instruction belongs to
-     * (5) Instruction predecessors
-     */
     errs() << "%% Constructing the CFG\n";
 
     // Iterate through each basic block in the function
@@ -35,32 +34,32 @@ void buildCFG(Function &F) {
 
         // Basic block entry
         Instruction *first_inst = &(*B.begin());
-        errs() << "basicblock_entry(" << bb_id << ", " << (unsigned long) first_inst << ").\n";
+        print_fact(BB_ENTRY, bb_id, (unsigned long) first_inst);
 
         // Basic block exit
         const TerminatorInst *last_inst = B.getTerminator();
-        errs() << "basicblock_exit(" << bb_id << ", " << (unsigned long) last_inst << ").\n";
+        print_fact(BB_EXIT, bb_id, (unsigned long) last_inst);
 
         // Basic block predecessor 
         for (unsigned i = 0; i < last_inst->getNumSuccessors(); i++){
-            BasicBlock *Succ = last_inst->getSuccessor(i);
-            errs() << "basicblock_pred(" << (unsigned long) Succ << ", " << bb_id<< ").\n";
+            BasicBlock *succ = last_inst->getSuccessor(i);
+            print_fact(BB_PRED, (unsigned long) succ, bb_id); 
         }
 
         // Iterate through each function in this basic block 
         Instruction *prev = NULL;
         for (Instruction &I : B) {
             // Instruction belongs to this basic block
-            errs() << "instruction_basicblock(" << (unsigned long) &I << ", " << bb_id << ").\n";
+            print_fact(INST_BB, (unsigned long) &I, bb_id);
 
             // Instruction predecessor
             if (prev) {
-                errs() << "instruction_next(" << (unsigned long) prev << ", " << (unsigned long) &I << ").\n";
+                print_fact(INST_NEXT, (unsigned long) prev, (unsigned long) &I);
                 prev = &I;
             }
         }
 
-        errs() << "\n";
+        print_new();
     }
 }
 
@@ -71,68 +70,65 @@ void buildCFG(Function &F) {
  * Extracts various relations from an LLVM function.
  * Features include name, type, parameters, etc.
  *
+ * Create the following relations:
+ * (1) Return type
+ * (2) Function name
+ * (3) Signature
+ * (4) Linkage type
+ * (5) Visibility
+ * (6) Calling convention
+ * (7) Unnamed address
+ * (8) Alignment
+ * (9) Garbage collector 
+ * (10) Personality function
+ * (11) Function attributes
+ * (12) Section
+ * (13) Parameters
+ * (14) Parameter attributes
+ *
  */
 void translateFunction(Function &F, unsigned long id) {
-    /*
-     * Generate facts to represent the following information:
-     * (1) Return type
-     * (2) Function name
-     * (3) Signature
-     * (4) Linkage type
-     * (5) Visibility
-     * (6) Calling convention
-     * (7) Unnamed address
-     * (8) Alignment
-     * (9) Garbage collector 
-     * (10) Personality function
-     * (11) Function attributes
-     * (12) Section
-     * (13) Parameters
-     * (14) Parameter attributes
-     *
-     */
 
-    errs() << "function(" << id << ").\n";
+    print_fact(FUNCTION, id);
 
     // Return type
-    //Type::TypeID ret_type = F.getReturnType()->getTypeID();
     string type = processType(F.getFunctionType());
-    errs() << "function_type(" << id << ", " << type << ").\n";
+    print_fact(FUNCTION_TYPE, id, type);
 
     // Function name
     std::string name = F.getName().str();
-    errs() << "function_name(" << id << ", " << name << ").\n";
+    print_fact(FUNCTION_NAME, id, name);
 
     // TODO: function signature
 
     // Linkage type
     GlobalValue::LinkageTypes linkage = F.getLinkage();
-    errs() << "function_linkage_type(" << id << ", " << (int) linkage << ").\n";
+    print_fact(FUNCTION_LINK, id, linkage);
 
     // Visibility
     GlobalValue::VisibilityTypes vis = F.getVisibility();
-    errs() << "function_visibility(" << id << ", " << (int) vis << ").\n";
+    print_fact(FUNCTION_VIS, id, vis);
 
     // Calling convention
     CallingConv::ID calling_conv = F.getCallingConv();
-    errs() << "function_calling_convention(" << id << ", " << (int) calling_conv << ").\n";
+    print_fact(FUNCTION_CALL_CONV, id, calling_conv);
 
     // TODO: unnamed_addr
 
     // Alignment
     unsigned align = F.getAlignment();
-    errs() << "function_alignment(" << id << ", " << align << ").\n";
+    print_fact(FUNCTION_ALIGN, id, align);
 
     // Garbage collector
     if (F.hasGC()) {
         const std::string gc = F.getGC();
-        errs() << "function_gc(" << id << ", " << gc << ").\n";
+        print_fact(FUNCTION_GC, id, gc);
     }
 
     // Personality function
     if (F.hasPersonalityFn()) {
         Constant *personality = F.getPersonalityFn();
-        errs() << "function_pers_fn(" << id << ", " << (unsigned long) personality << ").\n";
+        print_fact(FUNCTION_PERS, id, (unsigned long) personality);
     }
 
     /*
@@ -143,7 +139,7 @@ void translateFunction(Function &F, unsigned long id) {
      * (1) Function attributes
      * (2) Return attributes
      */
-    
+
     // Get a list of all attributes
     auto attributes = F.getAttributes();
 
@@ -154,14 +150,14 @@ void translateFunction(Function &F, unsigned long id) {
     // Create facts for function attributes
     for (unsigned i = 0; i < funcAttributes.getNumSlots(); i++) {
         for (auto attr = funcAttributes.begin(i); attr != funcAttributes.end(i); attr++) {
-            errs() << "function_attribute(" << id << ", " << (unsigned long) attr << ").\n";
+            print_fact(FUNCTION_ATTR, id, (unsigned long) attr);
         }
     }
 
     // Create facts for return attributes
     for (unsigned i = 0; i < retAttributes.getNumSlots(); i++) {
         for (auto attr = retAttributes.begin(i); attr != retAttributes.end(i); attr++) {
-            errs() << "function_return_attribute(" << id << ", " << (unsigned long) attr << ").\n";
+            print_fact(FUNCTION_RET_ATTR, id, (unsigned long) attr);
         }
     }
 
@@ -169,27 +165,27 @@ void translateFunction(Function &F, unsigned long id) {
     if (F.hasSection()) {
         //std::string section = F.getSection().str();
         const char *section = F.getSection();
-        errs() << "function_section(" << id << ", " << section << ").\n";
+        print_fact(FUNCTION_SEC, id, section);
     }
-    
+
     // Parameters/Parameter attributes
     int index = 0; 
 
     // Iterate through all of this function's parameters
     for (auto &param : F.args()) {
-        errs() << "function_param(" << id << ", " << index << ", " << (unsigned long) &param << ").\n";
+        print_fact(FUNCTION_PARAM, id, index, (unsigned long) &param);
 
         // Iterate through all of the attributes for this parameter.
         auto paramAttributes = attributes.getParamAttributes(index);
         for (unsigned i = 0; i < paramAttributes.getNumSlots(); i++) {
             for (auto attr = paramAttributes.begin(i); attr != paramAttributes.end(i); attr++) {
-                errs() << "function_param_attribute(" << id << ", " << index << ", " << (unsigned long) attr << ").\n";
+                print_fact(FUNCTION_PARAM_ATTR, id, index, (unsigned long) attr);
             }
         }
         index++;
     }
     // Create a fact for how many parameters this function has
-    errs() << "function_nparams(" << id << ", " << index << ").\n";
+    print_fact(FUNCTION_NPARAMS, id, index);
 
-    errs() << "\n";
+    print_new();
 }
