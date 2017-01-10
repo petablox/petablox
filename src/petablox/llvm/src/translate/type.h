@@ -87,6 +87,41 @@ inline string processFunction(Type *type) {
     }
 }
 
+inline string processStruct(Type *type) {
+    if (StructType *struct_type = dyn_cast<StructType>(type)) {
+        unsigned long id = (unsigned long) struct_type;
+        // Declare the type
+        print_fact(STRUCT_TY, id);
+
+        // Struct name
+        if (struct_type->hasName()) {
+            string name = struct_type->getName().str();
+            print_fact(STRUCT_TY_NAME, id, name);
+        }
+
+        // Number of elements
+        unsigned num_elements = struct_type->getNumElements();
+        print_fact(STRUCT_TY_NFIELDS, id, num_elements);
+
+        // For each element in the struct
+        for (unsigned index = 0; index < num_elements; index++) {
+            // Field type
+            string field = processType(struct_type->getElementType(index));
+            print_fact(STRUCT_TY_FIELD, id, index, field);
+
+            // TODO: byte and bit offset per field
+        }
+
+        ostringstream addr;
+        addr << (unsigned long) type;
+        return addr.str();
+    }
+    else {
+        return ERROR;
+    }
+
+}
+
 inline string processType(Type *type) {
     // Primitive types (integer, fp, void, label, x86mmk)
     if (type->isIntegerTy()) {
@@ -113,10 +148,10 @@ inline string processType(Type *type) {
     else if (type->isFunctionTy()) {
         return processFunction(type);
     }
+    else if (type->isStructTy()) {
+        return processStruct(type);
+    }
     else {
-        errs() << "=============================\n";
-        errs() << *type;
-        errs() << "=============================\n";
         return ERROR;
     }
 }

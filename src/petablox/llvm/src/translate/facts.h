@@ -78,6 +78,11 @@ static const string FUNCTION_TY_RET = "fn_type_return";
 static const string FUNCTION_TY_PARAM = "fn_type_param";
 static const string FUNCTION_TY_NPARAMS = "fn_type_nparams";
 
+static const string STRUCT_TY = "struct_type";
+static const string STRUCT_TY_NAME = "struct_type_name";
+static const string STRUCT_TY_NFIELDS = "struct_type_nfields";
+static const string STRUCT_TY_FIELD = "struct_type_field";
+
 /*
  * Terminator instructions
  * (ret, br, switch, indirectbr, invoke,

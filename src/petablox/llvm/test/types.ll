@@ -1,6 +1,10 @@
 %struct.ST = type { i32, double, %struct.RT }
 %struct.RT = type { i8, [10 x [20 x i32]], i8 }
 
+define void @bar(%struct.ST) {
+    ret void
+}
+
 define double @foo(i32, double, float) {
     ret double 2.0;
 }
