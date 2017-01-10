@@ -80,6 +80,50 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
 }
 
 /*
+ * translateSwitch
+ *
+ * Create the following relations:
+ * (1) declare the instruction
+ * (2) the condition
+ * (3) the default label
+ * (4) number of cases
+ * For each case:
+ * (5) the value
+ * (6) the label
+ *
+ */
+void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
+    // Declare the isntruction
+    print_fact(SWITCH, id);
+
+    // Operand
+    Value *cond = switch_inst->getCondition();
+    print_fact(SWITCH_COND, id, cond);
+
+    // Default label
+    BasicBlock *default_label = switch_inst->getDefaultDest();
+    print_fact(SWITCH_DEFAULT, id, (unsigned long) default_label);
+
+    // Number of cases
+    unsigned num_cases = switch_inst->getNumCases();
+    print_fact(SWITCH_NCASES, id, num_cases);
+
+    // For each case
+    for (unsigned index = 0; index < num_cases; index++) {
+        // Label
+        BasicBlock *label = switch_inst->getSuccessor(index);
+        print_fact(SWITCH_CASE_LABEL, id, index, label);
+
+        // Value
+        ConstantInt *val_obj = switch_inst->findCaseDest(label);
+        const uint64_t *val = val_obj->getValue().getRawData();
+        print_fact(SWITCH_CASE_VALUE, id, index, *val);
+    }
+
+    print_new();
+}
+
+/*
  * translateIndirectBr
  *
  * Create the following relations:

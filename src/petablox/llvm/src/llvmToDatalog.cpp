@@ -115,6 +115,10 @@ namespace {
                 translateBr(id, br_inst);
             }
 
+            if (SwitchInst *switch_inst = dyn_cast<SwitchInst>(&I)) {
+                translateSwitch(id, switch_inst);
+            }
+
             if (IndirectBrInst *br_inst = dyn_cast<IndirectBrInst>(&I)) {
                 translateIndirectBr(id, br_inst);
             }

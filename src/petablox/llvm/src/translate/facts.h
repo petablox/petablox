@@ -114,6 +114,13 @@ static const string COND_BR_FALSE = "br_cond_instruction_iffalse";
 static const string UNCOND_BR = "br_uncond_instruction"; 
 static const string UNCOND_BR_DEST = "br_uncond_instruction_dest";
 
+static const string SWITCH = "switch_instruction";
+static const string SWITCH_COND = "switch_instruction_condition";
+static const string SWITCH_DEFAULT = "switch_instruction_default";
+static const string SWITCH_NCASES = "switch_instruction_ncases";
+static const string SWITCH_CASE_VALUE = "switch_instruction_case_value";
+static const string SWITCH_CASE_LABEL = "switch_instruction_case_label";
+
 static const string INDIRECT_BR = "indirectbr_instruction";
 static const string INDIRECT_BR_ADDR = "indirectbr_instruction_address";
 static const string INDIRECT_BR_NLABELS = "indirectbr_instruction_nlabels";
