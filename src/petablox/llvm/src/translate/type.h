@@ -110,6 +110,29 @@ inline string processPointer(Type *type) {
     }
 }
 
+inline string processArray(Type *type) {
+    if (ArrayType *array = dyn_cast<ArrayType>(type)) {
+        unsigned long id = (unsigned long) array;
+        // Declare the type
+        print_fact(ARRAY_TY, id);
+
+        // Component type
+        string comp = processType(array->getElementType());
+        print_fact(ARRAY_TY_COMP, id, comp);
+
+        // Size
+        uint64_t size = array->getNumElements();
+        print_fact(ARRAY_TY_SIZE, id, size);
+
+        ostringstream addr;
+        addr << id;
+        return addr.str();
+    }
+    else {
+        return ERROR;
+    }
+}
+
 inline string processStruct(Type *type) {
     if (StructType *struct_type = dyn_cast<StructType>(type)) {
         unsigned long id = (unsigned long) struct_type;
@@ -175,6 +198,9 @@ inline string processType(Type *type) {
         return processPointer(type);
     } 
 
+    else if (type->isArrayTy()) {
+        return processArray(type);
+    }
     else if (type->isStructTy()) {
         return processStruct(type);
     }

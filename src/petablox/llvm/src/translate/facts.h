@@ -82,6 +82,10 @@ static const string PTR_TY = "pointer_type";
 static const string PTR_TY_COMP = "pointer_type_component";
 static const string PTR_TY_ADDR_SPACE = "pointer_type_addr_space";
 
+static const string ARRAY_TY = "array_type";
+static const string ARRAY_TY_SIZE = "array_type_size";
+static const string ARRAY_TY_COMP = "array_type_component";
+
 static const string STRUCT_TY = "struct_type";
 static const string STRUCT_TY_NAME = "struct_type_name";
 static const string STRUCT_TY_NFIELDS = "struct_type_nfields";
