@@ -78,6 +78,10 @@ static const string FUNCTION_TY_RET = "fn_type_return";
 static const string FUNCTION_TY_PARAM = "fn_type_param";
 static const string FUNCTION_TY_NPARAMS = "fn_type_nparams";
 
+static const string PTR_TY = "pointer_type";
+static const string PTR_TY_COMP = "pointer_type_component";
+static const string PTR_TY_ADDR_SPACE = "pointer_type_addr_space";
+
 static const string STRUCT_TY = "struct_type";
 static const string STRUCT_TY_NAME = "struct_type_name";
 static const string STRUCT_TY_NFIELDS = "struct_type_nfields";

@@ -87,6 +87,29 @@ inline string processFunction(Type *type) {
     }
 }
 
+inline string processPointer(Type *type) {
+    if (PointerType *ptr = dyn_cast<PointerType>(type)) {
+        // Declare the type
+        unsigned long id = (unsigned long) ptr;
+        print_fact(PTR_TY, id);
+
+        // Component type
+        string comp = processType(ptr->getElementType());
+        print_fact(PTR_TY_COMP, id, comp);
+
+        // Address space
+        unsigned addr_space = ptr->getAddressSpace();
+        print_fact(PTR_TY_ADDR_SPACE, id, addr_space);
+
+        ostringstream addr;
+        addr << (unsigned long) ptr;
+        return addr.str();
+    }
+    else {
+        return ERROR;
+    }
+}
+
 inline string processStruct(Type *type) {
     if (StructType *struct_type = dyn_cast<StructType>(type)) {
         unsigned long id = (unsigned long) struct_type;
@@ -148,6 +171,10 @@ inline string processType(Type *type) {
     else if (type->isFunctionTy()) {
         return processFunction(type);
     }
+    else if (type->isPointerTy()) {
+        return processPointer(type);
+    } 
+
     else if (type->isStructTy()) {
         return processStruct(type);
     }
