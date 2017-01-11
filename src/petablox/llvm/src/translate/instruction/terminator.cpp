@@ -98,7 +98,7 @@ void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
 
     // Operand
     Value *cond = switch_inst->getCondition();
-    print_fact(SWITCH_COND, id, cond);
+    print_fact(SWITCH_COND, id, (unsigned long) cond);
 
     // Default label
     BasicBlock *default_label = switch_inst->getDefaultDest();
@@ -109,15 +109,17 @@ void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
     print_fact(SWITCH_NCASES, id, num_cases);
 
     // For each case
-    for (unsigned index = 0; index < num_cases; index++) {
+    unsigned index = 0;
+    for (auto it = switch_inst->case_begin(); it != switch_inst->case_end(); it++) {
         // Label
         BasicBlock *label = switch_inst->getSuccessor(index);
-        print_fact(SWITCH_CASE_LABEL, id, index, label);
+        print_fact(SWITCH_CASE_LABEL, id, index, (unsigned long) label);
 
         // Value
-        ConstantInt *val_obj = switch_inst->findCaseDest(label);
-        const uint64_t *val = val_obj->getValue().getRawData();
-        print_fact(SWITCH_CASE_VALUE, id, index, *val);
+        ConstantInt *value = it.getCaseValue();
+        const APInt &val = value->getValue();
+        print_fact(SWITCH_CASE_VALUE, id, index, val);
+        index++;
     }
 
     print_new();
