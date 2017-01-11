@@ -112,7 +112,7 @@ void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
     unsigned index = 0;
     for (auto it = switch_inst->case_begin(); it != switch_inst->case_end(); it++) {
         // Label
-        BasicBlock *label = switch_inst->getSuccessor(index);
+        BasicBlock *label = switch_inst->getSuccessor(index+1);
         print_fact(SWITCH_CASE_LABEL, id, index, (unsigned long) label);
 
         // Value
