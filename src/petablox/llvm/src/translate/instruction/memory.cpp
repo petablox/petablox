@@ -205,8 +205,12 @@ void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst) {
     print_fact(ATOMICRMW_ADDR, id, (unsigned long) addr); 
 
     // Operation
+
+    // Operations map
     int op = rmw_inst->getOperation();
-    print_fact(ATOMICRMW_OP, id, op); 
+    const string opcodes[] = {"xchg", "add", "sub", "and", "nand", "or", "xor", "max", "min", "umax", "umin"};
+    string opcode = opcodes[op];
+    print_fact(ATOMICRMW_OP, id, opcode); 
 
     // Value
     Value *val = rmw_inst->getValOperand();
