@@ -26,9 +26,17 @@ void translateCmp(unsigned long id, CmpInst *cmp_inst) {
     print_fact(INSTRUCTION, id);
 
     // Condition
-    CmpInst::Predicate condition = cmp_inst->getPredicate();
+    const string conditions[] = {
+        // fcmp predicates
+        "false", "oeq", "ogt", "oge", "olt", "ole", "one", "ord", "uno", "ueq", "ugt", "uge", "ult", "ule", "une", "true",
+        // icmp predicates
+        "eq", "ne", "ugt", "uge", "ult", "ule", "sgt", "sge", "slt", "sle"};
+    int condition_id = cmp_inst->getPredicate();
+    // If the condition is greater than 15, it is an icmp, otherwise its an fcmp
+    condition_id = condition_id > 15 ? condition_id - 16 : condition_id;
     string COND = icmp ? ICMP_COND : FCMP_COND;
-    print_fact(COND, id, (unsigned long) condition);
+    string condition = conditions[condition_id];
+    print_fact(COND, id, condition);
 
     // First operand
     Value *first = cmp_inst->getOperand(0);
