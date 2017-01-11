@@ -35,7 +35,12 @@ void translateOperand(Value *operand) {
         // The constant can be either a integer
         if (ConstantInt *value = dyn_cast<ConstantInt>(constant)) {
             const APInt &val = value->getValue();
-            print_fact(CONSTANT_VAL, id, val);
+            if (1 == val.getBitWidth()) {
+                print_fact(CONSTANT_VAL, id, val.getBoolValue());
+            }
+            else {
+                print_fact(CONSTANT_VAL, id, val);
+            }
         }
 
         // or a floating point
@@ -43,6 +48,8 @@ void translateOperand(Value *operand) {
             const APFloat &val = value->getValueAPF();
             print_fact(CONSTANT_VAL, id, val.convertToFloat());
         }
+
+
 
     }
     // Otherwise, the operand is a variable
