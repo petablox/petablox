@@ -227,10 +227,12 @@ void translateCall(unsigned long id, CallInst *call) {
         index++;
     }
 
-    // TODO: signature
+    // Signature (function type)
+    FunctionType *signature = call->getFunctionType();
+    print_fact(CALL_SIG, id, (unsigned long) signature);
 
     // Return type
-    string type = processType(call->getFunctionType()->getReturnType());
+    string type = processType(signature->getReturnType());
     print_fact(CALL_RET, id, type);
 
     print_new();

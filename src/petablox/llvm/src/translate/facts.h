@@ -416,6 +416,7 @@ static const string CALL_ATTR = "call_instruction_fn_attribute";
 static const string CALL_RET_ATTR = "call_instruction_return_attribute";
 static const string CALL_PARAM_ATTR = "call_instruction_param_attribute";
 static const string CALL_CONV = "call_instruction_calling_convention";
+static const string CALL_SIG = "call_instruction_signature";
 static const string DIRECT_CALL = "direct_call_instruction";
 static const string ASM_CALL = "indirect_call_instruction";
 static const string INDIRECT_CALL = "asm_call_instruction";
