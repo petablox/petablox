@@ -8,6 +8,7 @@
 #include "translate/facts.h"
 #include "translate/operand.h"
 #include "type.h"
+#include "translate/visibility.h"
 
 using namespace std;
 using namespace llvm;
@@ -110,7 +111,7 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Visibility
     GlobalValue::VisibilityTypes vis = F.getVisibility();
-    print_fact(FUNCTION_VIS, id, vis);
+    print_fact(FUNCTION_VIS, id, processVis(vis));
 
     // Calling convention
     CallingConv::ID calling_conv = F.getCallingConv();

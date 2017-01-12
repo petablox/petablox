@@ -5,6 +5,7 @@
 #include "llvm/IR/Module.h"
 #include "translate/facts.h"
 #include "translate/type.h"
+#include "translate/visibility.h"
 #include "operand.h"
 
 using namespace std;
@@ -63,7 +64,7 @@ void translateGlobals(Function &F) {
 
         // Visibility
         GlobalValue::VisibilityTypes vis = global.getVisibility();
-        print_fact(GLOBAL_VIS, global_id, vis);
+        print_fact(GLOBAL_VIS, global_id, processVis(vis));
 
         // Initializer
         if (global.hasInitializer()) {
