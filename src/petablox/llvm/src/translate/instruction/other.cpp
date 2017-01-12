@@ -1,4 +1,5 @@
 #include "translate/attribute.h"
+#include "translate/calling_conv.h"
 #include "translate/facts.h"
 #include "translate/operand.h"
 #include "translate/type.h"
@@ -175,7 +176,7 @@ void translateCall(unsigned long id, CallInst *call) {
 
     // Calling convention
     CallingConv::ID conv = call->getCallingConv();
-    print_fact(CALL_CONV, id, conv);
+    print_fact(CALL_CONV, id, processCallConv(conv));
 
     /*
      * Attributes

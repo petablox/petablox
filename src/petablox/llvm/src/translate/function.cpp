@@ -4,6 +4,7 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "translate/attribute.h"
+#include "translate/calling_conv.h"
 #include "translate/facts.h"
 #include "translate/operand.h"
 #include "type.h"
@@ -113,7 +114,7 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Calling convention
     CallingConv::ID calling_conv = F.getCallingConv();
-    print_fact(FUNCTION_CALL_CONV, id, calling_conv);
+    print_fact(FUNCTION_CALL_CONV, id, processCallConv(calling_conv));
 
     // TODO: unnamed_addr
 
