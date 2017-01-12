@@ -155,10 +155,12 @@ void translateCmpXchg(unsigned long id, AtomicCmpXchgInst *cmpxchg_inst) {
     print_fact(CMPXCHG, id);
 
     // Ordering
-    // TODO: should success ordering or failure ordering be used?
-    AtomicOrdering order = cmpxchg_inst->getSuccessOrdering();
-    print_fact(CMPXCHG_ORDER, id, processOrder(order));
+    AtomicOrdering succ_order = cmpxchg_inst->getSuccessOrdering();
+    print_fact(CMPXCHG_SUCCESS_ORDER, id, processOrder(succ_order));
 
+    AtomicOrdering fail_order = cmpxchg_inst->getFailureOrdering();
+    print_fact(CMPXCHG_FAIL_ORDER, id, processOrder(fail_order));
+ 
     // Address
     Value *addr = cmpxchg_inst->getPointerOperand();
     print_fact(CMPXCHG_ADDR, id, (unsigned long) addr);

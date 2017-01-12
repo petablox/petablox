@@ -292,7 +292,8 @@ static const string FENCE = "fence_instruction";
 static const string FENCE_ORDER = "fence_instruction_ordering";
 
 static const string CMPXCHG = "cmpxchg_instruction";
-static const string CMPXCHG_ORDER = "cmpxchg_instruction_ordering";  
+static const string CMPXCHG_SUCCESS_ORDER = "cmpxchg_instruction_success_ordering";  
+static const string CMPXCHG_FAIL_ORDER = "cmpxchg_instruction_failure_ordering";  
 static const string CMPXCHG_VOLATILE = "cmpxchg_instruction_volatile";
 static const string CMPXCHG_ADDR = "cmpxchg_instruction_address";
 static const string CMPXCHG_CMP = "cmpxchg_instruction_cmp";
