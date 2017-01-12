@@ -1,4 +1,5 @@
 #include "translate/facts.h"
+#include "translate/ordering.h"
 #include "translate/type.h"
 
 using namespace std;
@@ -58,7 +59,7 @@ void translateLoad(unsigned long id, LoadInst *load_inst) {
 
     // Ordering
     AtomicOrdering order = load_inst->getOrdering();
-    print_fact(LOAD_ORDER, id, order);
+    print_fact(LOAD_ORDER, id, processOrder(order));
 
     // Is the instruction volatile?
     if (load_inst->isVolatile()) {
@@ -92,11 +93,11 @@ void translateStore(unsigned long id, StoreInst *store_inst) {
 
     // Alignment
     unsigned alignment = store_inst->getAlignment();
-    print_fact<unsigned>(STORE_ALIGN, id, alignment);
+    print_fact(STORE_ALIGN, id, alignment);
 
     // Ordering
     AtomicOrdering order = store_inst->getOrdering();
-    print_fact<int>(STORE_ORDER, id, order);
+    print_fact(STORE_ORDER, id, processOrder(order));
 
     // Value
     Value *value = store_inst->getValueOperand();
@@ -130,7 +131,7 @@ void translateFence(unsigned long id, FenceInst *fence_inst) {
 
     // Ordering
     AtomicOrdering order = fence_inst->getOrdering();
-    print_fact(FENCE_ORDER, id, order);  
+    print_fact(FENCE_ORDER, id, processOrder(order));  
 
     print_new();
 }
@@ -156,7 +157,7 @@ void translateCmpXchg(unsigned long id, AtomicCmpXchgInst *cmpxchg_inst) {
     // Ordering
     // TODO: should success ordering or failure ordering be used?
     AtomicOrdering order = cmpxchg_inst->getSuccessOrdering();
-    print_fact(CMPXCHG_ORDER, id, order);
+    print_fact(CMPXCHG_ORDER, id, processOrder(order));
 
     // Address
     Value *addr = cmpxchg_inst->getPointerOperand();
@@ -198,7 +199,7 @@ void translateAtomicRmw(unsigned long id, AtomicRMWInst *rmw_inst) {
 
     // Ordering
     AtomicOrdering order = rmw_inst->getOrdering();
-    print_fact(ATOMICRMW_ORDER, id, order); 
+    print_fact(ATOMICRMW_ORDER, id, processOrder(order)); 
 
     // Address
     Value *addr = rmw_inst->getPointerOperand();
@@ -259,7 +260,7 @@ void translateGetElementPtr(unsigned long id, GetElementPtrInst *gep_inst) {
     int index = 0;
     for (auto it = gep_inst->idx_begin(); it != gep_inst->idx_end(); ++it) {
         Value *idx = *it;
-        print_fact<unsigned long>(GEP_INDEX, id, index, (unsigned long) idx);
+        print_fact(GEP_INDEX, id, index, (unsigned long) idx);
         ++index;
     }
 
