@@ -3,7 +3,9 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
+#include "translate/attribute.h"
 #include "translate/facts.h"
+#include "translate/operand.h"
 #include "type.h"
 
 using namespace std;
@@ -150,20 +152,19 @@ void translateFunction(Function &F, unsigned long id) {
     // Create facts for function attributes
     for (unsigned i = 0; i < funcAttributes.getNumSlots(); i++) {
         for (auto attr = funcAttributes.begin(i); attr != funcAttributes.end(i); attr++) {
-            print_fact(FUNCTION_ATTR, id, (unsigned long) attr);
+            print_fact(FUNCTION_ATTR, id, processAttr(attr));
         }
     }
 
     // Create facts for return attributes
     for (unsigned i = 0; i < retAttributes.getNumSlots(); i++) {
         for (auto attr = retAttributes.begin(i); attr != retAttributes.end(i); attr++) {
-            print_fact(FUNCTION_RET_ATTR, id, (unsigned long) attr);
+            print_fact(FUNCTION_RET_ATTR, id, processAttr(attr));
         }
     }
 
     // Section 
     if (F.hasSection()) {
-        //std::string section = F.getSection().str();
         const char *section = F.getSection();
         print_fact(FUNCTION_SEC, id, section);
     }
@@ -173,13 +174,15 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Iterate through all of this function's parameters
     for (auto &param : F.args()) {
+        translateOperand(&param);
+
         print_fact(FUNCTION_PARAM, id, index, (unsigned long) &param);
 
         // Iterate through all of the attributes for this parameter.
-        auto paramAttributes = attributes.getParamAttributes(index);
+        auto paramAttributes = attributes.getParamAttributes(index+1);
         for (unsigned i = 0; i < paramAttributes.getNumSlots(); i++) {
             for (auto attr = paramAttributes.begin(i); attr != paramAttributes.end(i); attr++) {
-                print_fact(FUNCTION_PARAM_ATTR, id, index, (unsigned long) attr);
+                print_fact(FUNCTION_PARAM_ATTR, id, index, processAttr(attr));
             }
         }
         index++;

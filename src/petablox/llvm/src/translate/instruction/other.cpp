@@ -1,4 +1,6 @@
+#include "translate/attribute.h"
 #include "translate/facts.h"
+#include "translate/operand.h"
 #include "translate/type.h"
 
 using namespace llvm;
@@ -194,27 +196,30 @@ void translateCall(unsigned long id, CallInst *call) {
     // Create facts for function attributes
     for (unsigned i = 0; i < funcAttributes.getNumSlots(); i++) {
         for (auto attr = funcAttributes.begin(i); attr != funcAttributes.end(i); attr++) {
-            print_fact(CALL_ATTR, id, (unsigned long) attr); 
+            print_fact(CALL_ATTR, id, processAttr(attr)); 
         }
     }
 
     // Create facts for return attributes
     for (unsigned i = 0; i < retAttributes.getNumSlots(); i++) {
         for (auto attr = retAttributes.begin(i); attr != retAttributes.end(i); attr++) {
-            print_fact(CALL_RET_ATTR, id, (unsigned long) attr); 
+            print_fact(CALL_RET_ATTR, id, processAttr(attr)); 
         }
     }
 
     int index = 0;
 
     for (auto it = call->arg_begin(); it != call->arg_end(); ++it) {
-        print_fact(CALL_ARG, id, index, (unsigned long) it);
-        
+        Value *arg = it->get();
+        print_fact(CALL_ARG, id, index, (unsigned long) arg);
+        translateOperand(arg);
+
+
         // Iterate through all of the attributes for this parameter.
-        auto paramAttributes = attributes.getParamAttributes(index);
+        auto paramAttributes = attributes.getParamAttributes(index+1);
         for (unsigned i = 0; i < paramAttributes.getNumSlots(); i++) {
             for (auto attr = paramAttributes.begin(i); attr != paramAttributes.end(i); attr++) {
-                print_fact(CALL_PARAM_ATTR, id, index, (unsigned long) attr);
+                print_fact(CALL_PARAM_ATTR, id, index, processAttr(attr));
             }
         }
 
@@ -252,38 +257,3 @@ void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     // TODO: list of arguments
     print_new();
 }
-
-// TODO: can we remove this function since we are not using exception handling?
-/*
-void translateLandingPad(unsigned long id, LandingPadInst *lp_inst) {
-
-    print_fact(LANDINGPAD, id);
-    
-    if (lp_inst->isCleanup()) {
-        print_fact(LANDINGPAD_CLEANUP, id);
-    }
-    // TODO: Personality function
-
-    Type::TypeID type = lp_inst->getType()->getTypeID();
-    print_fact<unsigned>(LANDINGPAD_TYPE, id, type);
-
-    unsigned nclauses = lp_inst->getNumClauses();
-    print_fact<unsigned>(LANDINGPAD_NCLAUSES, id, nclauses);
-
-    for (unsigned int index = 0; index < nclauses; index++) {
-        Constant *clause = lp_inst->getClause(index);
-        print_fact(CLAUSE, (unsigned long) clause);
-        print_fact<unsigned long>(CLAUSE_BY_INDEX, id, index, (unsigned long) clause);
-        print_fact<unsigned long>(LANDINGPAD_CLAUSE, id, index, (unsigned long) clause);
-        if (lp_inst->isCatch(index)) {
-            print_fact(CATCH_CLAUSE, (unsigned long) clause);
-            // TODO: catch clause arg
-        }
-
-        if (lp_inst->isFilter(index)) {
-            print_fact(FILTER_CLAUSE, (unsigned long) clause);
-            // TODO: filter clause arg
-        }
-    }
-}
-*/
