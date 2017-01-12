@@ -4,6 +4,7 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "translate/facts.h"
+#include "translate/linkage.h"
 #include "translate/type.h"
 #include "translate/visibility.h"
 #include "operand.h"
@@ -60,7 +61,7 @@ void translateGlobals(Function &F) {
 
         // Linkage type
         GlobalValue::LinkageTypes linkage = global.getLinkage();
-        print_fact(GLOBAL_LINKAGE_TYPE, global_id, linkage);
+        print_fact(GLOBAL_LINKAGE_TYPE, global_id, processLinkage(linkage));
 
         // Visibility
         GlobalValue::VisibilityTypes vis = global.getVisibility();

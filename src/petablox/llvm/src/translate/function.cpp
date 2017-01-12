@@ -6,6 +6,7 @@
 #include "translate/attribute.h"
 #include "translate/calling_conv.h"
 #include "translate/facts.h"
+#include "translate/linkage.h"
 #include "translate/operand.h"
 #include "type.h"
 #include "translate/visibility.h"
@@ -107,7 +108,7 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Linkage type
     GlobalValue::LinkageTypes linkage = F.getLinkage();
-    print_fact(FUNCTION_LINK, id, linkage);
+    print_fact(FUNCTION_LINK, id, processLinkage(linkage));
 
     // Visibility
     GlobalValue::VisibilityTypes vis = F.getVisibility();
