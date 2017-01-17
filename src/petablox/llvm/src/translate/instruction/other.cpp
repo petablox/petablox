@@ -257,6 +257,9 @@ void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     string type = processType(va_arg->getType());
     print_fact(VAARG_TYPE, id, type);
 
-    // TODO: list of arguments
+    // List of arguments
+    Value *args = va_arg->getOperand(0);
+    print_fact(VAARG_LIST, id, (unsigned long) args);
+
     print_new();
 }
