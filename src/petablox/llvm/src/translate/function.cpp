@@ -37,6 +37,9 @@ void buildCFG(Function &F) {
         unsigned long bb_id = (unsigned long) &B;
         errs() << "% Basic block " << bb_id << ":\n";
 
+        // The address of each basic block is a label
+        print_fact(LABEL_TY, bb_id);
+
         // Basic block entry
         Instruction *first_inst = &(*B.begin());
         print_fact(BB_ENTRY, bb_id, (unsigned long) first_inst);
@@ -118,7 +121,9 @@ void translateFunction(Function &F, unsigned long id) {
     CallingConv::ID calling_conv = F.getCallingConv();
     print_fact(FUNCTION_CALL_CONV, id, processCallConv(calling_conv));
 
-    // TODO: unnamed_addr
+    if (F.hasUnnamedAddr()) {
+        print_fact(FUNCTION_UNNAMED_ADDR, id);
+    }
 
     // Alignment
     unsigned align = F.getAlignment();

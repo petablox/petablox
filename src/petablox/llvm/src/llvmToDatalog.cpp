@@ -94,7 +94,6 @@ namespace {
             I.dump();
 
             errs() << "instruction(" << id << ").\n";
-            // TODO: instruction flags
 
             for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
                 Value *oper = *operands;

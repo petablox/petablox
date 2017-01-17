@@ -35,6 +35,7 @@ static const string FUNCTION_SEC = "function_section";
 static const string FUNCTION_PARAM = "function_param";
 static const string FUNCTION_PARAM_ATTR = "function_param_attr";
 static const string FUNCTION_NPARAMS = "function_nparams";
+static const string FUNCTION_UNNAMED_ADDR = "function_unnamed_addr";
 
 /*
  * Basic Blocks/Instruction control flow
@@ -95,6 +96,8 @@ static const string STRUCT_TY_NAME = "struct_type_name";
 static const string STRUCT_TY_NFIELDS = "struct_type_nfields";
 static const string STRUCT_TY_FIELD = "struct_type_field";
 static const string OPAQUE_STRUCT = "opaque_struct_type";
+
+static const string LABEL_TY = "label_type";
 
 /*
  * Terminator instructions

@@ -1,4 +1,4 @@
-define void @bar() {
+define void @bar() unnamed_addr {
     ret void
 }
 
