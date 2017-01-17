@@ -14,8 +14,8 @@ using namespace llvm;
  *
  * Extracts the following relations from an operand:
  * (1) declares the id as an operand
- * (2) declares the operand as either a constant or a 
- *     variable
+ * (2) declares the operand as either a constant, a
+ *     variable or an undefined value
  * (3) declares the type of the operand
  * (4) if the operand is a constant, declares the value
  */
@@ -27,8 +27,15 @@ void translateOperand(Value *operand) {
     // Get tye type of the operand
     string type = processType(operand->getType());
 
+    // If the operand is an undefined value
+    if (dyn_cast<UndefValue>(operand)) {
+        print_fact(UNDEF, id);
+
+        print_fact(UNDEF_TYPE, id, type);
+
+    }
     // If the operand is a constant
-    if (Constant *constant = dyn_cast<Constant>(operand)) {
+    else if (Constant *constant = dyn_cast<Constant>(operand)) {
         print_fact(CONSTANT, id);
         print_fact(CONSTANT_TYPE, id, type);
 
@@ -48,8 +55,6 @@ void translateOperand(Value *operand) {
             const APFloat &val = value->getValueAPF();
             print_fact(CONSTANT_VAL, id, val.convertToFloat());
         }
-
-
 
     }
     // Otherwise, the operand is a variable

@@ -425,6 +425,9 @@ static const string VAARG = "va_arg_instruction";
 static const string VAARG_TYPE = "va_arg_instruction_type";
 static const string VAARG_LIST = "va_arg_instruction_va_list";
 
+static const string UNDEF = "undefined_value";
+static const string UNDEF_TYPE = "undefined_value_type";
+
 /*
 static const string LP = "landingpad";
 static const string LANDINGPAD = "landingpad_instruction";
