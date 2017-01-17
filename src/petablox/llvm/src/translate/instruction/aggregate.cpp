@@ -24,7 +24,6 @@ void translateExtractValue(unsigned long id, ExtractValueInst *ev_inst) {
     print_fact<unsigned>(EXTRACTVALUE_NINDICES, id, num);
 
     // Iterate through all of the indices
-    // TODO: figure this one out...
     int index = 0;
     for (auto it = ev_inst->idx_begin(); it != ev_inst->idx_end(); ++it) {
         print_fact<unsigned long>(EXTRACTVALUE_INDEX, id, index, (unsigned long) *it);
@@ -59,7 +58,6 @@ void translateInsertValue(unsigned long id, InsertValueInst *iv_inst) {
     print_fact<unsigned>(INSERTVALUE_NINDICES, id, num);
 
     // Iterate through all of the indices
-    // TODO: figure this one out too...
     int index = 0;
     for (auto it = iv_inst->idx_begin(); it != iv_inst->idx_end(); ++it) {
         print_fact<unsigned long>(INSERTVALUE_INDEX, id, index, (unsigned long) *it);

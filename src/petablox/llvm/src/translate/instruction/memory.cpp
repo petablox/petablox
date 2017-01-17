@@ -258,7 +258,6 @@ void translateGetElementPtr(unsigned long id, GetElementPtrInst *gep_inst) {
     print_fact(GEP_NINDICES, id, num);
 
     // Iterate through each index
-    // TODO: figure this out...
     int index = 0;
     for (auto it = gep_inst->idx_begin(); it != gep_inst->idx_end(); ++it) {
         Value *idx = *it;
