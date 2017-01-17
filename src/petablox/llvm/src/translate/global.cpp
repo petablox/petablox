@@ -93,6 +93,39 @@ void translateGlobals(Function &F) {
 
         print_new();
     }
+
+    auto &alias_list = module->getAliasList();
+
+    for (auto &global : alias_list) {
+        errs() << "% ";
+        global.dump();
+
+        unsigned long global_id = (unsigned long) &global;
+
+        // Declare the global
+        print_fact(ALIAS, global_id);
+
+        // Type
+        string global_type = processType(global.getValueType());
+        print_fact(ALIAS_TYPE, global_id, global_type);
+
+        // Name
+        string global_name = global.getName().str();
+        print_fact(ALIAS_NAME, global_id, global_name);
+ 
+        // Linkage type
+        GlobalValue::LinkageTypes linkage = global.getLinkage();
+        print_fact(ALIAS_LINKAGE_TYPE, global_id, processLinkage(linkage));
+
+        // Visibility
+        GlobalValue::VisibilityTypes vis = global.getVisibility();
+        print_fact(ALIAS_VIS, global_id, processVis(vis));
+
+        // Aliasee
+        Constant *aliasee = global.getAliasee();
+        print_fact(ALIAS_ALIASEE, global_id, (unsigned long) aliasee);
+
+        print_new();
+    }
 }
 
-// TODO: aliases

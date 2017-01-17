@@ -60,6 +60,13 @@ static const string GLOBAL_SEC = "global_variable_section";
 static const string GLOBAL_THREAD_LOCAL = "global_variable_threadlocal_mode";
 static const string GLOBAL_CONSTANT = "global_variable_constant";
 
+static const string ALIAS = "alias";
+static const string ALIAS_TYPE = "alias_type";
+static const string ALIAS_NAME = "alias_name";
+static const string ALIAS_LINKAGE_TYPE = "alias_linkage_type";
+static const string ALIAS_VIS = "alias_visibility";
+static const string ALIAS_ALIASEE = "alias_aliasee";
+
 /*
  * Operands, constants and variables
  */
