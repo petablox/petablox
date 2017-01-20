@@ -11,5 +11,7 @@ const string linkages[] = {
 };
 
 inline string processLinkage(GlobalValue::LinkageTypes id) {
-    return linkages[id];
+    string linkage = linkages[id];
+    print_fact("linkage", linkage);
+    return linkage;
 }

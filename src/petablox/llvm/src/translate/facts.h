@@ -495,6 +495,14 @@ inline void print_fact(std::string name, unsigned long id)
 }
 
 /*
+ * Function that prints the fact `name` with a single `value`
+ */
+inline void print_fact(std::string name, std::string value)
+{
+    errs() << name << "(" << value << ").\n";
+}
+
+/*
  * Function that prints a comment
  */
 inline void print_comment(string comment) {

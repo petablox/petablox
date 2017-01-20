@@ -198,6 +198,7 @@ inline string processStruct(Type *type) {
 
 inline string processType(Type *type) {
     // Primitive types (integer, fp, void, label, x86mmk)
+
     if (type->isIntegerTy()) {
         unsigned bits = type->getIntegerBitWidth();
         ostringstream width;
@@ -219,18 +220,23 @@ inline string processType(Type *type) {
     
     // Derived types (function, pointer, vector, array, struct)
     else if (type->isFunctionTy()) {
+        print_fact("type", (unsigned long) type);
         return processFunction(type);
     }
     else if (type->isPointerTy()) {
+        print_fact("type", (unsigned long) type);
         return processPointer(type);
     } 
     else if (type->isVectorTy()) {
+        print_fact("type", (unsigned long) type);
         return processVector(type);
     }
     else if (type->isArrayTy()) {
+        print_fact("type", (unsigned long) type);
         return processArray(type);
     }
     else if (type->isStructTy()) {
+        print_fact("type", (unsigned long) type);
         return processStruct(type);
     }
 
