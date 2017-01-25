@@ -38,7 +38,7 @@ public class Union extends JavaAnalysis {
 		int currGNdx = 0;
 		String parts[] = apps.split(",");
 		for (int i = 0; i < parts.length; i++) {
-			String app = parts[0];
+			String app = parts[i];
 			String currDir = dirPrefix + app + dirSuffix;
 			String cicgFName = currDir + "/" + CICG_FILE;
 			String nameFName = currDir + "/" + NAME_FILE;
@@ -53,6 +53,7 @@ public class Union extends JavaAnalysis {
 			
 			File cicgFile = new File(cicgFName);
 			if (cicgFile.exists()) {
+	            System.out.println("Loading file: " + cicgFName);
 				List<String> l = Utils.readFileToList(cicgFile);
 	            for (String s : l) {
 	            	String[] nodes = s.split(" ");
