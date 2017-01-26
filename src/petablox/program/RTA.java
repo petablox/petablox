@@ -17,6 +17,9 @@ import soot.jimple.NewArrayExpr;
 import soot.jimple.internal.AbstractInstanceInvokeExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.toolkits.graph.Block;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
+import soot.tagkit.AnnotationTag;
 import petablox.program.reflect.DynamicReflectResolver;
 import petablox.program.reflect.StaticReflectResolver;
 import petablox.project.Config;
@@ -216,7 +219,8 @@ public class RTA implements ScopeBuilder {
         entryMethods = new HashSet<SootMethod>();
         if(Config.populate)
         	entryPointGen();
-        prepEntrypoints(); 
+		extractJUnitTests();
+        //prepEntrypoints(); 
         Scene.v().loadBasicClasses();
         
         for (int i = 0; repeat; i++) {
@@ -288,6 +292,78 @@ public class RTA implements ScopeBuilder {
     		System.out.println("WARN: RTA Could not generate entry points file");
     	}
     }
+
+	protected List<SootMethod> extractJUnitTestsHelper(SootClass cl) {
+		//System.out.println("prepare cl " + cl + ", tag_sz=" + cl.getTags().size() + ", cl.tags" + cl.getTags());
+
+		ArrayList<SootMethod> testMethods = new ArrayList<SootMethod>();
+
+		Iterator<SootMethod> it = cl.methodIterator();
+		while (it.hasNext()) {
+			SootMethod m = it.next();
+			//System.out.println("method:" + m + ", isPublic:" + m.isPublic() +", isNative:" + m.isNative() + ", tags: " + m.getTags());
+			boolean found = false;
+			for(soot.tagkit.Tag tg : m.getTags()) {
+				if(!found && tg instanceof soot.tagkit.VisibilityAnnotationTag) {
+					VisibilityAnnotationTag vat = (VisibilityAnnotationTag) tg;
+					for( AnnotationTag at : vat.getAnnotations()) {
+						//System.out.println("type: " + at.getType());
+						if(at.getType().equals("Lorg/junit/Test;")) {
+							found = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if(found) testMethods.add(m);
+		}
+
+		return testMethods;
+	}
+
+	protected void extractJUnitTests () {
+		System.out.println("enter extractJUnitTests... ");
+		String regs = System.getProperty("petablox.junit.regressions", "1");
+		String testgroup = System.getProperty("petablox.junit.testgroup", "1");
+
+		int regs_i = Integer.valueOf(regs);
+		int testgroup_i = Integer.valueOf(testgroup);
+
+		for(int r=0; r < regs_i; ++r) {
+			String cName = "RegressionTest" + r;
+			Scene.v().addBasicClass(cName, SootClass.BODIES);
+		}
+        Scene.v().loadBasicClasses();
+
+
+		ArrayList<SootMethod> res = new ArrayList<SootMethod>();
+
+		for(int r=0; r < regs_i; ++r) {
+			String cName = "RegressionTest" + r;
+
+			if (Scene.v().containsClass(cName)) {
+				System.out.println("collect methods defined in " + cName);
+
+				SootClass cl = Scene.v().getSootClass(cName);
+				entryClasses.add(cl);
+				cl.setApplicationClass();
+				prepareClass(cl.getType());
+
+				res.addAll( extractJUnitTestsHelper(cl) );
+			}
+		}
+
+		entryMethods.addAll( res.subList(0, testgroup_i) );
+		//entryMethods.add( res.get( testgroup_i-1 ) );
+
+
+		System.out.println("The following methods will be analyzed: ");
+		for(SootMethod x : entryMethods) {
+			System.out.println(x);
+		}
+	}
+
     /**
      * Invoked by RTA before starting iterations. 
      * 
