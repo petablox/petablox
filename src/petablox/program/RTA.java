@@ -394,6 +394,7 @@ public class RTA implements ScopeBuilder {
 		        if (!Config.isExcludedFromScope(cName)) {
 		        	if (!addedClasses.contains(cName)) {
 		        		Scene.v().addBasicClass(cName, SootClass.BODIES);
+		        		Scene.v().loadBasicClasses();
 		        		addedClasses.add(cName);
 		        		cl = Scene.v().getSootClass(cName);
 		        		entryClasses.add(cl);
