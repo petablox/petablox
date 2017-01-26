@@ -21,8 +21,8 @@ public class CallGraph extends JavaAnalysis {
 	private ICICG cicg;
 	
 	public void run() {
-		cipa = ClassicProject.g().getTask("cipa-0cfa-dlog");
-		ClassicProject.g().runTask(cipa);
+		// cipa = ClassicProject.g().getTask("cipa-0cfa-dlog");
+		// ClassicProject.g().runTask(cipa);
 		CICGAnalysis cicgAnalysis = (CICGAnalysis) ClassicProject.g().getTask("cicg-java");
 		ClassicProject.g().runTask(cicgAnalysis);
 		cicg = cicgAnalysis.getCallGraph();

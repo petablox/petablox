@@ -183,6 +183,8 @@ public class Program {
         File reflectFile = new File(Config.reflectFileName);
         File typesFile = new File(Config.typesFileName);
         if (Config.reuseScope && methodsFile.exists() && reflectFile.exists() && typesFile.exists()) {
+            entryMethods = new HashSet<SootMethod>();
+            entryClasses = new HashSet<SootClass>();
         	// loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
         	loadTypesFile(typesFile);
             loadMethodsFile(methodsFile);
@@ -364,11 +366,11 @@ public class Program {
             String msig = s.substring(colonIdx + 2, methEndIdx - 1); // get method signature and exclude end char '>'
             SootClass c = Scene.v().getSootClass(cName);
             SootMethod m = getMethodItr(c, msig);
+            assert (m != null);
             if (isEntryPt) {
             	entryMethods.add(m);
             	entryClasses.add(c);
             }
-            assert (m != null);
           	SootMethod sm = null;
         	if(StubMethodSupport.methodToStub.containsKey(m) || StubMethodSupport.methodToStub.containsValue(m)){
         		sm = m;

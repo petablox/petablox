@@ -31,10 +31,13 @@ public class Union extends JavaAnalysis {
     String NAME_FILE = "name.txt";
     
 	public void run() {
-		String apps = System.getProperty("petablox.union.apps");
-		String dirPrefix = System.getProperty("petablox.union.dirprefix");
-		String dirSuffix = System.getProperty("petablox.union.dirsuffix");
+		String apps = System.getProperty("petablox.union.apps", "");
+		String dirPrefix = System.getProperty("petablox.union.dirprefix", "");
+		String dirSuffix = System.getProperty("petablox.union.dirsuffix", "");
 		
+                System.out.println("APPS: " + apps);
+                System.out.println("DIRPREFIX: " + dirPrefix);
+                System.out.println("DIRSUFFIX: " + dirSuffix);
 		int currGNdx = 0;
 		String parts[] = apps.split(",");
 		for (int i = 0; i < parts.length; i++) {
