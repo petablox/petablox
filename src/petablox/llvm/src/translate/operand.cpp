@@ -43,9 +43,11 @@ void translateOperand(Value *operand) {
         if (ConstantInt *value = dyn_cast<ConstantInt>(constant)) {
             const APInt &val = value->getValue();
             if (1 == val.getBitWidth()) {
+                print_fact("integer", val.getBoolValue());
                 print_fact(CONSTANT_VAL, id, val.getBoolValue());
             }
             else {
+                print_fact("integer", val);
                 print_fact(CONSTANT_VAL, id, val);
             }
         }

@@ -468,9 +468,9 @@ static const string FILTER_CLAUSE_ARG = "filter_clause_arg";
 template<typename T>
 void print_fact(std::string name, unsigned long id, T arg)
 {
-    errs() << name << "(" << id << ", "; 
-    errs() << arg; 
-    errs() << ").\n";
+    outs() << name << "(" << id << ", "; 
+    outs() << arg; 
+    outs() << ").\n";
 }
 
 /*
@@ -480,18 +480,23 @@ void print_fact(std::string name, unsigned long id, T arg)
 template<typename T>
 void print_fact(std::string name, unsigned long id, int index, T arg)
 {
-    errs() << name << "(" << id << ", "; 
-    errs() << index << ", " ;
-    errs() << arg;
-    errs() << ").\n";
+    outs() << name << "(" << id << ", "; 
+    outs() << index << ", " ;
+    outs() << arg;
+    outs() << ").\n";
 }
 
+template<typename T>
+void print_fact(std::string name, T arg)
+{
+    outs() << name << "(" << arg << ").\n";
+}
 /*
  * Function that prints the fact `name` with a single `id`
  */
 inline void print_fact(std::string name, unsigned long id)
 {
-    errs() << name << "(" << id << ").\n";
+    outs() << name << "(" << id << ").\n";
 }
 
 /*
@@ -499,21 +504,21 @@ inline void print_fact(std::string name, unsigned long id)
  */
 inline void print_fact(std::string name, std::string value)
 {
-    errs() << name << "(" << value << ").\n";
+    outs() << name << "(" << value << ").\n";
 }
 
 /*
  * Function that prints a comment
  */
 inline void print_comment(string comment) {
-    errs() << "% " << comment << "\n";
+    outs() << "% " << comment << "\n";
 }
 
 /*
  * Function that prints a new line
  */
 inline void print_new() {
-    errs() << "\n";
+    outs() << "\n";
 }
 
 #endif

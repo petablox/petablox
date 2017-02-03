@@ -1,4 +1,5 @@
-#include <iostream>
+#include "translate/facts.h"
+#include <sstream>
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
@@ -19,5 +20,9 @@ const string attributes[] = {
 
 inline string processAttr(const Attribute *attr) {
     Attribute::AttrKind kind = attr->getKindAsEnum();
-    return attributes[kind];
+    ostringstream val;
+    val << "A" << kind;
+    print_fact("attribute", val.str());
+    return val.str();
+    //return attributes[kind];
 }

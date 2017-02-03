@@ -30,15 +30,17 @@ using namespace llvm;
  *
  */
 void buildCFG(Function &F) {
-    errs() << "%% Constructing the CFG\n";
+    outs() << "%% Constructing the CFG\n";
 
     // Iterate through each basic block in the function
     for (auto &B : F) {
         unsigned long bb_id = (unsigned long) &B;
-        errs() << "% Basic block " << bb_id << ":\n";
+        outs() << "% Basic block " << bb_id << ":\n";
 
         // The address of each basic block is a label
+        print_fact("type", bb_id);
         print_fact(LABEL_TY, bb_id);
+        print_fact(OPERAND, bb_id);
 
         // Basic block entry
         Instruction *first_inst = &(*B.begin());
@@ -58,10 +60,14 @@ void buildCFG(Function &F) {
         Instruction *prev = NULL;
         for (Instruction &I : B) {
             // Instruction belongs to this basic block
+            print_fact(OPERAND, (unsigned long) &I);
             print_fact(INST_BB, (unsigned long) &I, bb_id);
 
             // Instruction predecessor
-            if (prev) {
+            if (!prev) {
+                prev = &I;
+            }
+            else {
                 print_fact(INST_NEXT, (unsigned long) prev, (unsigned long) &I);
                 prev = &I;
             }
@@ -127,6 +133,7 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Alignment
     unsigned align = F.getAlignment();
+    print_fact("integer", align);
     print_fact(FUNCTION_ALIGN, id, align);
 
     // Garbage collector

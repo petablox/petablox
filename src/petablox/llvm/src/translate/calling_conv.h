@@ -1,5 +1,7 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
+#include <sstream>
+#include "translate/facts.h"
 
 using namespace std;
 using namespace llvm;
@@ -7,6 +9,7 @@ using namespace CallingConv;
 
 inline string processCallConv(ID id) {
     // NOTE: This is easily extensible for other calling conventions
+    /*
     switch (id) {
         case C:
             return "ccc";
@@ -33,4 +36,9 @@ inline string processCallConv(ID id) {
         default:
             return "othercc";
     }
+    */
+    ostringstream val;
+    val << "C" << id;
+    print_fact("calling_convention", val.str());
+    return val.str();
 }

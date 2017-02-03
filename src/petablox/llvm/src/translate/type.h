@@ -31,6 +31,10 @@ inline string processInteger(Type *type) {
 }
 
 inline string processFP(Type *type) {
+    ostringstream addr;
+    addr << (unsigned long) type;
+    return addr.str();
+    /*
     if (type->isFloatTy()) {
         return FLOAT;
     }
@@ -51,7 +55,7 @@ inline string processFP(Type *type) {
     }
     else {
         return ERROR;
-    }
+    }*/
 }
 
 inline string processFunction(Type *type) {
@@ -199,11 +203,15 @@ inline string processStruct(Type *type) {
 inline string processType(Type *type) {
     // Primitive types (integer, fp, void, label, x86mmk)
 
+    print_fact("type", (unsigned long) type);
     if (type->isIntegerTy()) {
         unsigned bits = type->getIntegerBitWidth();
         ostringstream width;
         width << bits;
-        return "i" + width.str();
+        //return "i" + width.str();
+        ostringstream addr;
+        addr << (unsigned long) type;
+        return addr.str();
     }
     else if (type->isFloatingPointTy()) {
         return processFP(type);

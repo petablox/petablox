@@ -39,7 +39,7 @@ void translateGlobals(Function &F) {
     auto &global_list = module->getGlobalList();
 
     for (auto &global : global_list) {
-        errs() << "% ";
+        outs() << "% ";
         global.dump();
 
         unsigned long global_id = (unsigned long) &global;
@@ -57,6 +57,7 @@ void translateGlobals(Function &F) {
 
         // Alignment
         unsigned alignment = global.getAlignment();
+        print_fact("integer", alignment);
         print_fact(GLOBAL_ALIGN, global_id, alignment);
 
         // Linkage type
@@ -97,7 +98,7 @@ void translateGlobals(Function &F) {
     auto &alias_list = module->getAliasList();
 
     for (auto &global : alias_list) {
-        errs() << "% ";
+        outs() << "% ";
         global.dump();
 
         unsigned long global_id = (unsigned long) &global;

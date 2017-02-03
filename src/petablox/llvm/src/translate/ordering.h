@@ -1,5 +1,7 @@
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
+#include <sstream>
+#include "translate/facts.h"
 
 using namespace std;
 using namespace llvm;
@@ -9,5 +11,9 @@ const string orderings[] = {
 };
 
 inline string processOrder(AtomicOrdering id) {
-    return orderings[id];
+    ostringstream val;
+    val << "O" << id;
+    print_fact("ordering", val.str());
+    return val.str();
+    //return orderings[id];
 }

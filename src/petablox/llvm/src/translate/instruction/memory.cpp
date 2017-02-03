@@ -23,6 +23,7 @@ void translateAlloca(unsigned long id, AllocaInst *alloca_inst) {
     
     // Alignment
     unsigned alignment = alloca_inst->getAlignment();
+    print_fact("integer", alignment);
     print_fact(ALLOCA_ALIGN, id, alignment);
 
     // Size
@@ -55,6 +56,7 @@ void translateLoad(unsigned long id, LoadInst *load_inst) {
     
     // Alignment
     unsigned alignment = load_inst->getAlignment();
+    print_fact("integer", alignment);
     print_fact(LOAD_ALIGN, id, alignment);
 
     // Ordering
@@ -93,6 +95,7 @@ void translateStore(unsigned long id, StoreInst *store_inst) {
 
     // Alignment
     unsigned alignment = store_inst->getAlignment();
+    print_fact("integer", alignment);
     print_fact(STORE_ALIGN, id, alignment);
 
     // Ordering

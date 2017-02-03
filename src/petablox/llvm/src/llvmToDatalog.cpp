@@ -89,11 +89,12 @@ namespace {
         
 
         void analyzeInstruction(Instruction &I, unsigned long id) {
-            errs() << "% (" << id << ") ";
+            outs() << "% (" << id << ")\n ";
+            errs() << "% (" << id << ")\n ";
             errs() << *I.getType();
             I.dump();
 
-            errs() << "instruction(" << id << ").\n";
+            outs() << "instruction(" << id << ").\n";
 
             for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
                 Value *oper = *operands;
@@ -262,8 +263,8 @@ namespace {
 
         // Runs analysis on all functions in the program
         virtual bool runOnFunction(Function &F) {
-            errs() << "%% Analyzing function: " << F.getName().str() << "\n";
-            F.dump();
+            outs() << "%% Analyzing function: " << F.getName().str() << "\n";
+            //F.dump();
 
             populate_binops();
             populate_binops_map();
@@ -275,7 +276,7 @@ namespace {
             translateGlobals(F);
 
             // For each basic block in a function
-            errs() << "\n%% Generating relations for each instruction\n";
+            outs() << "\n%% Generating relations for each instruction\n";
             for (auto &B : F) {
                 // For each instruction in a basic block
 

@@ -1,3 +1,5 @@
+#include <sstream>
+#include <stdio.h>
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
@@ -11,7 +13,10 @@ const string linkages[] = {
 };
 
 inline string processLinkage(GlobalValue::LinkageTypes id) {
-    string linkage = linkages[id];
-    print_fact("linkage", linkage);
-    return linkage;
+    //string linkage = linkages[id];
+    //print_fact("linkage", linkage);
+    ostringstream val;
+    val << "L" << id;
+    print_fact("linkage", val.str());
+    return val.str();
 }
