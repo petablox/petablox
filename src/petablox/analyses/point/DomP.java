@@ -1,22 +1,34 @@
 package petablox.analyses.point;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import soot.SootMethod;
 import soot.toolkits.graph.Block;
 import soot.Unit;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
+import soot.jimple.internal.JAssignStmt;
+import soot.jimple.internal.JIdentityStmt;
+import soot.jimple.internal.JInvokeStmt;
+import soot.jimple.internal.JRetStmt;
 import petablox.analyses.method.DomM;
+import petablox.logicblox.LogicBloxAnnotExporter;
 import petablox.project.Petablox;
 import petablox.project.ClassicProject;
 import petablox.project.Config;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.ICFG;
 import petablox.util.soot.SootUtilities;
-
+import petablox.util.tuple.object.Pair;
+import petablox.util.tuple.object.Trio;
+import petablox.util.Utils;
 
 /**
  * Domain of quads.
@@ -49,14 +61,15 @@ public class DomP extends ProgramDom<Unit> {
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
-            if (m.isAbstract())
+            if (m == null || m.isAbstract())
                 continue;
             ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
             	Iterator<Unit> uit = bb.iterator();
             	while(uit.hasNext()){
             		Unit u = uit.next();
-            		add(u);
+            		int indx = getOrAdd(u);
+            		parseAnnotations(u, indx);
             		unitToMethodMap.put(u, m);
             	}  
             }
@@ -68,6 +81,27 @@ public class DomP extends ProgramDom<Unit> {
         String x = Integer.toString(SootUtilities.getBCI((Unit) u));                  
         return x + "!" + getMethod(u);
     }
+    
+    @Override
+    public String toFIString(Unit u) {		 
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if (printId) sb.append("(" + indexOf(u) + ")");
+    	String type;
+    	if(u instanceof JAssignStmt)
+        	type = "Assign";
+        else if(u instanceof JIdentityStmt) 
+        	type = "Identity";
+        else if(u instanceof JInvokeStmt) 
+        	type = "Invoke";
+        else if(u instanceof JRetStmt) 
+        	type = "Return";
+        else
+        	type = "Other";
+    	sb.append(type);
+    	sb.append(": " + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	return sb.toString();
+    }
 
     @Override
     public String toXMLAttrsString(Unit u) {
@@ -78,4 +112,30 @@ public class DomP extends ProgramDom<Unit> {
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " + "Mid=\"M" + mIdx + "\"";
     	//return "";
     }
+    
+    public void parseAnnotations(Unit u, int indx){
+    	Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
+    	Map<Integer, List<Trio<String, String, String>>> pgmPtAnnot = LogicBloxAnnotExporter.pgmPtAnnot;
+    	if(pgmPtAnnot.containsKey(indx))
+    		return;
+    	List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
+    	for(Tag t : u.getTags()){
+    		if(t instanceof VisibilityAnnotationTag){
+    			Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
+    			for(String annotName : parsed.keySet()){
+    				annotationName.add(annotName);
+    				List<Pair<String,String>> keyValues = parsed.get(annotName);
+    				for(Pair<String,String> p : keyValues){
+    					annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
+    				}
+    			}
+    		}else if(t instanceof LineNumberTag){
+    			LineNumberTag lnt = (LineNumberTag)t;
+    			annotationName.add("LineNumberTag");
+    			annots.add(new Trio<String,String,String>("LineNumberTag","LineNumber",Integer.toString(lnt.getLineNumber())) );
+    		}
+    	}
+    	pgmPtAnnot.put(indx, annots);
+    }
+    
 }

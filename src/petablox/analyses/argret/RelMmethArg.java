@@ -27,7 +27,7 @@ public class RelMmethArg extends ProgramRel {
         int numM = domM.size();
         for (int mIdx = 0; mIdx < numM; mIdx++) {
             SootMethod m = domM.get(mIdx);
-            if (m.isAbstract())
+            if (m == null || m.isAbstract())
                 continue;
             Local[] rf = SootUtilities.getMethArgLocals(m);
             int numArgs = rf.length;

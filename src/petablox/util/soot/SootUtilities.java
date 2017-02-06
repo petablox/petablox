@@ -12,6 +12,7 @@ import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
 import soot.*;
+import soot.jimple.Stmt;
 import soot.jimple.FieldRef;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
@@ -28,7 +29,11 @@ import soot.jimple.internal.JInterfaceInvokeExpr;
 import soot.jimple.internal.JInvokeStmt;
 import soot.jimple.internal.JVirtualInvokeExpr;
 import soot.shimple.PhiExpr;
+import soot.tagkit.AnnotationElem;
+import soot.tagkit.AnnotationStringElem;
+import soot.tagkit.AnnotationTag;
 import soot.tagkit.BytecodeOffsetTag;
+import soot.tagkit.VisibilityAnnotationTag;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
 import soot.jimple.internal.JNewMultiArrayExpr;
@@ -412,16 +417,22 @@ public class SootUtilities {
 	 */
 	public static Local[] getMethArgLocals(SootMethod m){
 		int numLocals = m.getParameterCount();
-		List<Local> regs = m.getActiveBody().getParameterLocals();
-		if(!m.isStatic()) {
-			numLocals++; // Done to consider the "this" parameter passed
-			regs.add(0,m.getActiveBody().getThisLocal());
-		}
-		Local[] locals = new Local[numLocals];
-		for(int i=0;i<regs.size();i++){
-			locals[i] = regs.get(i);
-		}
-		return locals;
+		List<Local> regs;
+		try{ 
+			regs= m.getActiveBody().getParameterLocals(); 
+			if(!m.isStatic()) {
+				numLocals++; // Done to consider the "this" parameter passed
+				regs.add(0,m.getActiveBody().getThisLocal());
+			}
+			Local[] locals = new Local[numLocals];
+			for(int i=0;i<regs.size();i++){
+				locals[i] = regs.get(i);
+			}
+			return locals;
+		} catch(RuntimeException e){ 
+			System.out.println("Method body not found for method: "+m.getSignature()); 
+		};
+		return null;
 	}
 	
 	/*
@@ -443,6 +454,27 @@ public class SootUtilities {
 		}
 		regs.addAll(temps);
 		return regs;
+	}
+	
+	/*
+	 * 	Returns the local variable returned by method m 
+	 *	Returns null if method does not have a return statement or returns a constant
+	 */
+	public static Local getReturnLocal(SootMethod m){
+		try{
+			Body body = m.retrieveActiveBody();
+			for(Unit unit : body.getUnits()){
+				Stmt s = (Stmt) unit;
+				if(s instanceof ReturnStmt){
+					Immediate retOp = (Immediate) ((ReturnStmt) s).getOp();
+					if(retOp instanceof Local)
+						return (Local)retOp;
+				}
+			}
+		}catch(RuntimeException e){ 
+			System.out.println("Method body not found for method: "+m.getSignature()); 
+			};
+		return null;
 	}
 	
 	public static int getBCI(Unit u){
@@ -542,4 +574,25 @@ public class SootUtilities {
 		return null;
 	}
 	
+	public static Map<String,List<Pair<String,String>>> parseVisibilityAnnotationTag(VisibilityAnnotationTag v){
+    	Map<String,List<Pair<String,String>>> result = new HashMap<String,List<Pair<String,String>>>();
+    	List<AnnotationTag> aTags = v.getAnnotations();
+		for(AnnotationTag a : aTags){
+			String annotationName = a.getType();
+			List<Pair<String,String>> elems = null;
+			if(!result.containsKey(annotationName)){
+				elems = new ArrayList<Pair<String,String>>();
+				result.put(annotationName, elems);
+			}else
+				elems = result.get(annotationName);
+			for(AnnotationElem ae : a.getElems()){
+				if(ae.getKind() == 's'){
+					AnnotationStringElem ase = (AnnotationStringElem)ae;
+					Pair<String,String> keyValue = new Pair<String,String>(ase.getName(),ase.getValue());
+					elems.add(keyValue);
+				}
+			}
+		}
+		return result;
+	}
 }

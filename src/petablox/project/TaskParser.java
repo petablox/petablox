@@ -27,6 +27,7 @@ import petablox.project.analyses.DlogAnalysis;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.Utils;
+import petablox.util.tuple.object.Pair;
 
 /**
  * A Petablox project comprising a set of tasks and a set of targets
@@ -65,6 +66,8 @@ public class TaskParser {
         }
     }
 
+    private ArrayList<Pair<String,PetabloxAnnotParser>> validJavaAnalysis = new ArrayList<Pair<String,PetabloxAnnotParser>>();
+    
     private final Map<String, Class<ITask>> nameToJavaTaskMap =
         new HashMap<String, Class<ITask>>();
     private final Map<String, DlogAnalysis> nameToDlogTaskMap =
@@ -110,6 +113,7 @@ public class TaskParser {
     }
 
     public boolean run() {
+    	// MULTIPGM: we depend on the order of calls below: dlog analysis map should be built before java analysis map.
         buildDlogAnalysisMap();
         buildJavaAnalysisMap();
         return hasNoErrors;
@@ -149,7 +153,10 @@ public class TaskParser {
         if (classNames == null)
             return;
         for (String className : classNames) {
-            processJavaAnalysis(className);
+            parseAnnotJavaAnalysis(className);
+        }
+        for (Pair<String,PetabloxAnnotParser> pr : validJavaAnalysis) {
+            processJavaAnalysis(pr);
         }
     }
 
@@ -168,44 +175,57 @@ public class TaskParser {
         }
     }
 
-    private void processJavaAnalysis(String className) {
-        Class<ITask> type = null;
-        try {
-            type = (Class<ITask>) Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            Messages.fatal(ex);
-        }
-        PetabloxAnnotParser info = new PetabloxAnnotParser(type);
-        boolean success = info.parse();
-        if (!success) {
-            ignoreJavaTask(className);
-            return;
-        }
+    private void parseAnnotJavaAnalysis(String className) {
+    	  Class<ITask> type = null;
+          try {
+              type = (Class<ITask>) Class.forName(className);
+          } catch (ClassNotFoundException ex) {
+              Messages.fatal(ex);
+          }
+          PetabloxAnnotParser info = new PetabloxAnnotParser(type);
+          boolean success = info.parse();
+          if (!success)
+              ignoreJavaTask(className);    
+          else {
+        	  String name = info.getName();
+        	  if (name.equals("")) {
+        		  if (Config.verbose >= 2) Messages.log(ANON_JAVA_TASK, className);
+        		  name = className;
+        	  }
+        	  DlogAnalysis dlogTask = nameToDlogTaskMap.get(name);
+              if (dlogTask != null) {
+                  redefinedJavaTask(className, name, dlogTask.getFileName());
+                  return;
+              }
+        	  Class<ITask> javaTask = nameToJavaTaskMap.get(name);
+              if (javaTask != null) {
+                  redefinedJavaTask(className, name, javaTask.getName());
+                  return;
+              }
+        	  validJavaAnalysis.add(new Pair<String,PetabloxAnnotParser>(className, info));
+        	  nameToJavaTaskMap.put(name, type);
+          }
+          return;
+    }
+   
+    private void processJavaAnalysis(Pair<String,PetabloxAnnotParser> pr) {
+    	String className = pr.val0;
+    	PetabloxAnnotParser info = pr.val1;
+    	
         String name = info.getName();
-        if (name.equals("")) {
-            if (Config.verbose >= 2) Messages.log(ANON_JAVA_TASK, className);
-            name = className;
-        }
-        DlogAnalysis dlogTask = nameToDlogTaskMap.get(name);
-        if (dlogTask != null) {
-            redefinedJavaTask(className, name, dlogTask.getFileName());
-            return;
-        }
-        Class<ITask> javaTask = nameToJavaTaskMap.get(name);
-        if (javaTask != null) {
-            redefinedJavaTask(className, name, javaTask.getName());
-            return;
-        }
+        if (name.equals("")) name = className;
+       
         Map<String, Class  > nameToTypeMap = info.getNameToTypeMap();
         Map<String, RelSign> nameToSignMap = info.getNameToSignMap();
         for (Map.Entry<String, Class> e : nameToTypeMap.entrySet()) {
             String name2 = e.getKey();
             Class type2 = e.getValue();
             RelSign sign2 = nameToSignMap.get(name2);
-            if (sign2 != null)
+            if (sign2 != null) {
                 createTrgt(name2, type2, className, sign2);
-            else
+            } else {
                 createTrgt(name2, type2, className);
+            }
         }
         for (Map.Entry<String, RelSign> e : nameToSignMap.entrySet()) {
             String name2 = e.getKey();
@@ -232,7 +252,6 @@ public class TaskParser {
                 createTrgt(s, null, className);
             }
         }
-        nameToJavaTaskMap.put(name, type);
     }
 
     private void processDlogAnalysis(File file) {

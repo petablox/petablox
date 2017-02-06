@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-Macros" default="help">
+
+  <macrodef name="require-prop">
+    <!-- Fail if a property is not defined. -->
+    <attribute name="property"/>
+    <attribute name="description"/>
+    <sequential>
+      <fail message="Property @{property} (@{description}) not defined: Use -D@{property}=..."
+	    unless="@{property}"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="require-ref">
+    <!-- Fail if a reference doesn't exist. -->
+    <attribute name="refid"/>
+    <attribute name="description"/>
+    <sequential>
+      <if>
+	<not><isreference refid="@{refid}"/></not>
+	<then><fail message="Required reference @{refid} (@{description}) is missing"/></then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="prop-default">
+    <!-- Set a property to a default value and print an informational message,
+	 unless the property is already defined. -->
+    <attribute name="property"/>
+    <attribute name="default"/>
+    <attribute name="description"/>
+    <sequential>
+      <if>
+	<not><isset property="@{property}"/></not>
+	<then>
+	  <property name="@{property}" value="@{default}"/>
+	  <echo>Using default value "@{default}" for property @{property} (@{description})</echo>
+	</then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="prop-ite">
+    <!-- Set a property to one of two values, depending on the value of a
+	 condition. -->
+    <attribute name="property"/>
+    <attribute name="condition"/>
+    <attribute name="then"/>
+    <attribute name="else"/>
+    <sequential>
+      <if>
+	<istrue value="@{condition}"/>
+	<then><property name="@{property}" value="@{then}"/></then>
+	<else><property name="@{property}" value="@{else}"/></else>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="require-file">
+    <!-- Fail if a file doesn't exist. -->
+    <attribute name="file"/>
+    <sequential>
+      <fail message="File @{file} doesn't exist">
+	<condition>
+	  <not>
+	    <resourceexists>
+	      <file file="@{file}"/>
+	    </resourceexists>
+	  </not>
+	</condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="require-ext">
+    <!-- Fail if a filename does not have the required extension. -->
+    <attribute name="file"/>
+    <attribute name="extension"/>
+    <sequential>
+      <fail message="@{file} missing required extension \.@{extension}">
+	<condition>
+	  <not>
+	    <matches string="@{file}" pattern="^.*\.@{extension}$"/>
+	  </not>
+	</condition>
+      </fail>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="replace-ext">
+    <!-- Change the extension on a filename, and optionally change its
+	 directory. -->
+    <attribute name="file"/>
+    <attribute name="destdir" default=""/>
+    <attribute name="oldext"/>
+    <attribute name="newext" default=""/>
+    <attribute name="property"/>
+    <sequential>
+      <require-ext file="@{file}" extension="@{oldext}"/>
+      <if>
+	<equals arg1="@{destdir}" arg2=""/>
+	<then><dirname property="@{property}.dir" file="@{file}"/></then>
+	<else><property name="@{property}.dir" location="@{destdir}"/></else>
+      </if>
+      <if>
+	<equals arg1="@{newext}" arg2=""/>
+	<then><property name="@{property}.suffix" value=""/></then>
+	<else><property name="@{property}.suffix" value=".@{newext}"/></else>
+      </if>
+      <basename property="@{property}.base" file="@{file}"
+		suffix="@{oldext}"/>
+      <property name="@{property}"
+		location="${@{property}.dir}/${@{property}.base}${@{property}.suffix}"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="load-strings">
+    <!-- Read all whitespace-separated strings from a file and store them in a
+	 property as a path. Can optionally declare one or more string filters
+	 as nested elements, to be applied to each string. -->
+    <attribute name="property"/>
+    <attribute name="file"/>
+    <element name="filters" optional="true" implicit="true"/>
+    <sequential>
+      <loadfile srcfile="@{file}" property="@{property}">
+	<filterchain>
+    	  <tokenfilter delimOutput="${path.separator}">
+    	    <stringtokenizer/>
+	    <filters/>
+    	  </tokenfilter>
+	</filterchain>
+      </loadfile>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="run-apktool">
+	<sequential>
+	  <java classname="brut.apktool.Main"
+			maxmemory="${stamp.maxheap}"
+			fork="true"
+			failonerror="true">
+		<jvmarg value="-ea"/>
+		<classpath>
+		  <pathelement location="${stamp.dir}/lib/apktool-cli-1.5.3-SNAPSHOT.jar"/>
+		</classpath>
+		<arg value="d"/>
+		<arg value="-f"/>
+		<arg value="--frame-path"/>
+		<arg value="${stamp.dir}"/>
+		<arg value="-s"/>
+		<arg value="${apk}"/>
+		<arg value="${stamp.out.dir}/apktool-out"/>
+	  </java>
+	</sequential>
+  </macrodef>
+
+</project>

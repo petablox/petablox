@@ -68,6 +68,8 @@ public class Program {
     private Reflect reflect;
     private IndexSet<RefLikeType> classes;
     private IndexSet<Type> types;
+    private HashSet<SootMethod> entryMethods;
+    private HashSet<SootClass> entryClasses;
     private Map<String, Type> nameToTypeMap;
     private Map<String, RefLikeType> nameToClassMap;
     private Map<String, SootMethod> signToMethodMap;
@@ -103,7 +105,7 @@ public class Program {
 			SSAUtilities.doSSA(true, true);
     	
     	//List<String> excluded = new ArrayList<String>();
-    	Options.v().set_coffi(true);
+    	//Options.v().set_coffi(true);
     	//Options.v().set_exclude(excluded);
     	Options.v().set_include_all(true);
     	Options.v().set_keep_line_number(true);
@@ -122,10 +124,13 @@ public class Program {
 		Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
 				                       Scene.v().defaultClassPath() + File.pathSeparator +
 		                               stdlibClPath);
-    	Scene.v().addBasicClass(Config.mainClassName);
+		if(Config.mainClassName!=null)
+			Scene.v().addBasicClass(Config.mainClassName);
     	Scene.v().loadBasicClasses();
-    	SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
-    	Scene.v().setMainClass(mainCl);
+    	if(Config.mainClassName!=null){
+    		SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
+    		Scene.v().setMainClass(mainCl);
+    	}
     	if(Config.verbose >= 1) {
     		Chain<SootClass> chc = Scene.v().getClasses();
     		System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
@@ -208,6 +213,8 @@ public class Program {
             methods = b.getMethods();
             scopeClasses = b.getClasses();
             reflect = b.getReflect();
+            entryClasses = b.getEntryClasses();
+            entryMethods = b.getEntryMethods();
 
             saveMethodsFile(methodsFile);
             saveReflectFile(reflectFile);
@@ -345,9 +352,22 @@ public class Program {
         for (String s : l) {
         	int colonIdx  = s.indexOf(':');
             String cName = s.substring(1, colonIdx); // exclude the initial '<' character
-            String subsig = s.substring(colonIdx + 2, s.length() - 1); // get subsignature and exclude end char '>'
+            int entryptIdx = s.indexOf("##entry");
+            boolean isEntryPt = false;
+            int methEndIdx;
+            if (entryptIdx > 0) {
+            	isEntryPt = true;
+            	methEndIdx = entryptIdx;
+            } else {
+            	methEndIdx = s.length();
+            }
+            String msig = s.substring(colonIdx + 2, methEndIdx - 1); // get method signature and exclude end char '>'
             SootClass c = Scene.v().getSootClass(cName);
-            SootMethod m = getMethodItr(c, subsig);
+            SootMethod m = getMethodItr(c, msig);
+            if (isEntryPt) {
+            	entryMethods.add(m);
+            	entryClasses.add(c);
+            }
             assert (m != null);
           	SootMethod sm = null;
         	if(StubMethodSupport.methodToStub.containsKey(m) || StubMethodSupport.methodToStub.containsValue(m)){
@@ -374,8 +394,12 @@ public class Program {
         try {
             PrintWriter out = new PrintWriter(file);
             out.println("PETABLOX_SCOPE_EXCLUDE_STR=" + Config.scopeExcludeStr);
-            for (SootMethod m : methods)
-                out.println(m.getSignature());
+            for (SootMethod m : methods) {
+            	if (entryMethods.contains(m))
+            		out.println(m.getSignature() + "##entry");
+            	else
+            		out.println(m.getSignature());
+            }
             out.close();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -646,6 +670,20 @@ public class Program {
         return c.getType();
     }
 
+    
+    public HashSet<SootMethod> getEntryMethods() {
+    	if (methods == null)
+            buildMethods();
+        return entryMethods;
+    }
+    
+    public HashSet<SootClass> getEntryClasses() {
+    	if (methods == null)
+            buildMethods();
+        return entryClasses;
+    }
+    
+    
     /**
      * Provides the quadcode representation of all types deemed reachable.
      * A type is deemed reachable if it is referenced in any loaded class.

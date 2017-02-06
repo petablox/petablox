@@ -1,6 +1,9 @@
 package petablox.program;
 
+import java.util.HashSet;
+
 import soot.RefLikeType;
+import soot.SootClass;
 import soot.SootMethod;
 import petablox.util.IndexSet;
 
@@ -23,4 +26,7 @@ public interface ScopeBuilder {
      * @return Reflection information in the input Java program that is resolved by this scope builder.
      */
     public abstract Reflect getReflect();
+    
+    public abstract HashSet<SootMethod> getEntryMethods();
+    public abstract HashSet<SootClass> getEntryClasses();
 }

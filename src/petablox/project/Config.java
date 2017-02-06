@@ -1,7 +1,6 @@
 package petablox.project;
 
 import java.io.File;
-import java.io.IOException;
 
 import petablox.logicblox.LogicBloxUtils;
 import petablox.util.Utils;
@@ -113,8 +112,8 @@ public class Config {
     // properties dictating what is reused across Petablox runs
 
     public final static boolean reuseScope = Utils.buildBoolProperty("petablox.reuse.scope", false);
-    public final static boolean reuseRels =Utils.buildBoolProperty("petablox.reuse.rels", false);
-    public final static boolean reuseTraces =Utils.buildBoolProperty("petablox.reuse.traces", false);
+    public final static boolean reuseRels = Utils.buildBoolProperty("petablox.reuse.rels", false);
+    public final static boolean reuseTraces = Utils.buildBoolProperty("petablox.reuse.traces", false);
 
     // datalog engine selection
     public static enum DatalogEngineType {
@@ -145,7 +144,7 @@ public class Config {
 
     // properties concerning BDDs
 
-    public final static boolean useBuddy =Utils.buildBoolProperty("petablox.use.buddy", false);
+    public final static boolean useBuddy = Utils.buildBoolProperty("petablox.use.buddy", false);
     public final static String bddbddbMaxHeap = System.getProperty("petablox.bddbddb.max.heap", "1024m");
     public final static String bddCodeFragmentFolder = System.getProperty("petablox.bddbddb.codeFragment.out", "");
 
@@ -165,10 +164,26 @@ public class Config {
     public final static String traceFileName = System.getProperty("petablox.trace.file", outRel2Abs("trace"));
     public final static String logicbloxWorkDirName = System.getProperty("petablox.logicblox.work.dir", outRel2Abs("logicblox"));
 
+    // properties for multi-program support
+    public final static String mode = System.getProperty("petablox.multipgm.mode", "none" );
+    public static String tagList = System.getProperty("petablox.multipgm.taglist", "");
+    public static String multiTag = System.getProperty("petablox.multipgm.tagname", "");
+    public static boolean generateOnly = Utils.buildBoolProperty("petablox.multipgm.generateOnly", false);
+    public final static boolean crossPgmAnalysis = Utils.buildBoolProperty("petablox.multipgm.crosspgm.analysis", false);
+    public final static boolean tempOutRels = Utils.buildBoolProperty("petablox.multipgm.temp.outRels", true);
+    
+    public static boolean multiPgmMode = false;
+    public static boolean populate = false;
+    public static boolean analyze = false;
+    
     static {
         Utils.mkdirs(outDirName);
         Utils.mkdirs(bddbddbWorkDirName);
         Utils.mkdirs(logicbloxWorkDirName);
+        check(mode, new String[] { "none", "populate", "analyze" }, "petablox.multipgm.mode");
+        if (mode.equals("populate")) populate = true;
+        else if (mode.equals("analyze")) analyze = true;
+        if (populate || analyze) multiPgmMode = true;
     }
 
     // commonly-used constants
@@ -271,6 +286,10 @@ public class Config {
         System.out.println("petablox.bddbddb.max.heap: " + bddbddbMaxHeap);
         System.out.println("petablox.datalog.engine: " + datalogEngine);
         System.out.println("petablox.logicblox.work.dir: " + logicbloxWorkDirName);
+        System.out.println("petablox.multipgm.mode: " + mode);
+        System.out.println("petablox.multipgm.taglist: " + tagList);   
+        System.out.println("petablox.multipgm.tagname: " + multiTag);
+        System.out.println("petablox.multipgm.crosspgm.analysis: " + crossPgmAnalysis);
     }
 
     public static String outRel2Abs(String fileName) {

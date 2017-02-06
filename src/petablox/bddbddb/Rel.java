@@ -173,7 +173,7 @@ public class Rel {
     }
     protected void initialize() {
         if (doms == null)
-            throw new RuntimeException("");
+            throw new RuntimeException("dom is null for " + name + " and sign is " + sign);
         int bddnodes = Integer.parseInt(
             System.getProperty("bddnodes", "500000"));
         int bddcache = Integer.parseInt(

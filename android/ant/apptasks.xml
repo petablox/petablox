@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="STAMP-App">
+  <tstamp>
+    <format property="currenttime" pattern="yyyy.MM.dd_HH.mm.ss_z"/>
+  </tstamp>
+
+  <property name="apilevel" value="20"/>
+  <property name="app" location="."/>
+
+  <property name="app.loc" location="${app}"/>
+  <propertyregex property="app.loc.1" input="${app.loc}" regexp="/" replace="_" global="true" />
+
+  <property name="analyses" value="${stamp.analyses}"/>
+  <property name="petablox.analyses" value="${analyses}"/>
+
+  <target name="analyze">
+	<if>
+	  <isset property="stamp.out.dir"/>
+	  <then/>
+	  <else>
+		<property name="stamp.out.dir" value="${stamp.dir}/stamp_output/${app.loc.1}"/>
+		<delete dir="${stamp.out.dir}"/>
+		<mkdir dir="${stamp.out.dir}"/>
+	  </else>
+	</if>
+
+    <property name="driver.dir" location="${stamp.out.dir}/stamp-driver"/>
+
+	<if>
+	  <!-- NOTE: same heuristic used in index.jsp! -->
+	  <matches string="${app}" pattern="^.*\.apk$"/>
+      <then>
+		<!-- APK input -->
+		<property name="stamp.input.type" value="apk"/>
+		<property name="apk" value="${app.loc}"/>
+
+		<unjar src="${stamp.dir}/bin/api-${apilevel}/stamp.android.jar"
+			   dest="${stamp.out.dir}">
+		  <patternset>
+			<include name="stamp_annotations.txt"/>
+		  </patternset>
+		</unjar>
+
+		<antcall target="-analyze-apk"/>
+	  </then>
+
+	  <else>
+		<!-- Souce input -->
+		<echo> Petablox Android analysis requires apk input! </echo>		
+	  </else>
+	</if>	  
+  </target>
+
+</project>

@@ -64,7 +64,7 @@ my %benchmarks = (
 );
 my @programs = keys %benchmarks;
 
-my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj", "0cfa");
+my @analyses = ("thresc_hybrid", "thresc_metaback", "typestate_metaback","mustalias", "mustalias-td",  "mustalias-tdbu","mustalias-bu", "provenance-instr", "provenance-kcfa", "provenance-kobj", "provenance-typestate", "refinegen-kobj", "0cfa", "cg", "union");
 
 # Lowest priority options, but still higher than $petablox_dir/petablox.properties
 my @global_options = (
@@ -78,7 +78,26 @@ my %local_options_map = (
         [
             "-Dpetablox.reflect.kind=dynamic",
             "-Dpetablox.run.analyses=cipa-0cfa-dlog",
-            "-Dpetablox.scope.kind=rta"
+            "-Dpetablox.scope.kind=rta",
+            "-Dpetablox.datalog.engine=bddbddb",
+            #"-Dpetablox.datalog.engine=logicblox4",
+            #"-Dpetablox.logicblox.workspace=LBexpt1",
+            #"-Dpetablox.logicblox.work.dir=/home/sulekha/exptDir1",
+            #"-Dpetablox.multipgm.mode=populate",
+        ],
+    "cg" =>
+        [
+            "-Dpetablox.reflect.kind=dynamic",
+            "-Dpetablox.run.analyses=cg-java",
+            "-Dpetablox.scope.kind=rta",
+            "-Dpetablox.datalog.engine=bddbddb",
+        ],
+    "union" =>
+        [
+            "-Dpetablox.reflect.kind=dynamic",
+            "-Dpetablox.run.analyses=union-java",
+            "-Dpetablox.scope.kind=rta",
+            "-Dpetablox.datalog.engine=bddbddb",
         ],
     "thresc_hybrid" =>
         [

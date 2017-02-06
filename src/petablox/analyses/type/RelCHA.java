@@ -1,5 +1,6 @@
 package petablox.analyses.type;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
@@ -34,22 +35,27 @@ import petablox.util.soot.SootUtilities;
 )
 public class RelCHA extends ProgramRel {
 	private SootMethod getMethodItr(SootClass c,String subsign){
-		SootMethod ret = null;
-		while(true){
-			try{
-				ret= c.getMethod(subsign);
-				break;
-			}catch(Exception e){
-				if(!c.hasSuperclass()){
-					System.out.println("WARN: RelCHA: Method "+subsign+" not found");
-					break;
-				}else{
-					c = c.getSuperclass();
-				}
-			}
-		}
-		return ret;
-	}
+      ArrayList<SootClass> queue = new ArrayList<SootClass>();
+      SootMethod ret = null;
+      queue.add(c);
+      while(!queue.isEmpty()){
+        SootClass tos = queue.remove(0);
+        try{
+          ret= tos.getMethod(subsign);
+          break;
+        }catch(Exception e){
+          for(SootClass inter : tos.getInterfaces()){
+            queue.add(inter); 
+          }
+          if(tos.hasSuperclass()){
+            queue.add(tos.getSuperclass());
+          }
+        }
+      }
+      if(ret == null)
+				System.out.println("WARN: RelCHA: Method "+subsign+" not found");
+      return ret;
+    }
     public void fill() {
         DomM domM = (DomM) doms[0];
         Program program = Program.g();

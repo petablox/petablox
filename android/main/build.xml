@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Shord" default="jar">
+  <property name="stamp.dir" location=".."/>
+  <property name="jarname" value="${stamp.dir}/bin/stamp.main.jar"/>
+  <property name="petablox.dir" location="../.."/>   <!-- PRT -->
+
+  <target name="compile">
+    <echo> ${petablox.dir}   ${stamp.dir}  </echo>
+    <mkdir dir="${petablox.dir}/classes"/>         
+    <javac debug="true" debuglevel="source,lines,vars" includeAntRuntime="false"
+           destdir="${petablox.dir}/classes">                       <!-- PRT add compiled classes to petablox/classes instead of stamp.main/classes -->
+      <src path="src"/>
+      <src path="gen"/>
+      <classpath>
+        <fileset dir="${stamp.dir}/lib">
+          <include name="**/*.jar"/>
+        </fileset>
+        <!--PRT temporary to compile from petablox also -->
+        <pathelement location="${petablox.dir}/petablox.jar"/>
+        <fileset dir="${petablox.dir}/android/lib">
+          <include name="**/*.jar"/>
+        </fileset>
+
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">         
+  <!-- PRT this jar is no more required as its included in pb, so removing this -->
+    <!--
+    <jar jarfile="${jarname}">
+      <fileset dir="${petablox.dir}/classes">
+        <include name="**/*.class"/>
+      </fileset>
+	  <fileset dir="datalog">
+        <include name="**/*.dlog"/>
+      </fileset>
+	  zipfileset src="lib/stamp.chord.jar">
+		<include name="**/*.class"/>
+		<exclude name="chord/analyses/**/*.class"/>
+		<exclude name="joeq/**/*.class"/>
+	  </zipfileset
+    </jar>
+    -->
+  </target>
+
+  <target name="clean">
+    <delete dir="classes"/>
+    <delete file="${jarname}"/>
+  </target>
+
+</project>

@@ -1,6 +1,8 @@
 package petablox.program;
 
+import java.util.HashSet;
 import java.util.List;
+
 import petablox.util.IndexSet;
 import soot.RefType;
 import soot.RefLikeType;
@@ -60,4 +62,16 @@ public class DynamicBuilder implements ScopeBuilder {
     public Reflect getReflect() {
         return new Reflect();
     }
+
+	@Override
+	public HashSet<SootMethod> getEntryMethods() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashSet<SootClass> getEntryClasses() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

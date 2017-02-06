@@ -65,24 +65,28 @@ public class ClassicProject extends Project {
     private final Set<ITask> doneTasks = new HashSet<ITask>();
     private final Set<Object> doneTrgts = new HashSet<Object>();
     private boolean isBuilt = false;
+    private String lastTaskName;
+    private ITask  lastTask;
 
     @Override
     public void build() {
         if (isBuilt)
             return;
-
-        TaskParser taskParser = new TaskParser();
-        if (!taskParser.run())
-            abort();
         
+        LogicBloxUtils.validateMultiPgmOptions();
         switch (Config.datalogEngine) {
         case LOGICBLOX3:
         case LOGICBLOX4:
             LogicBloxUtils.initializeWorkspace(Config.logicbloxWorkspace);
+            LogicBloxUtils.setMultiTag();           
             break;
         case BDDBDDB:
             break;
         }
+        
+        TaskParser taskParser = new TaskParser();
+        if (!taskParser.run())
+            abort();
 
         // build nameToTaskMap
         Map<String, Class<ITask>> nameToJavaTaskMap = taskParser.getNameToJavaTaskMap();
@@ -114,6 +118,8 @@ public class ClassicProject extends Project {
 
     @Override
     public void run(String[] taskNames) {
+    	int sz = taskNames.length;
+    	lastTaskName = taskNames[sz - 1];
         for (String name : taskNames)
             runTask(name);
     }
@@ -203,8 +209,9 @@ public class ClassicProject extends Project {
                 hasNoErrors = false;
             } else {
                 assert (task != null);
-                task.setName(name);
                 nameToTaskMap.put(name, task);
+                task.setName(name);
+                
             }
         }
         for (Map.Entry<String, DlogAnalysis> entry :
@@ -224,7 +231,7 @@ public class ClassicProject extends Project {
             if (trgt != null) {
                 nameToTrgtMap.put(name, trgt);
                 continue;
-            }
+            } 
             Class type = entry.getValue();
             Exception ex = null;
             try {
@@ -254,7 +261,8 @@ public class ClassicProject extends Project {
             String name = entry.getKey();
             RelSign sign = entry.getValue();
             ProgramRel rel = (ProgramRel) nameToTrgtMap.get(name);
-            assert (rel != null);
+            String msg = "rel is null in nameToTrgtMap for " + name;
+            assert (rel != null) : msg;
             String[] domNames = sign.getDomNames();
             int n = domNames.length;
             ProgramDom[] doms = new ProgramDom[n];
@@ -271,7 +279,7 @@ public class ClassicProject extends Project {
 
     // builds the following maps:
     //     trgtToConsumerTasksMap, trgtToProducerTasksMap
-    //     taskToConsumedTrgtsMap, ucedTrgtsMap
+    //     taskToConsumedTrgtsMap, taskToProduceducedTrgtsMap
     // uses the following maps:
     //     nameToTrgtMap, nameToTaskMap
     //    taskNameToProduceNamesMap, taskNameToConsumeNamesMap
@@ -284,23 +292,26 @@ public class ClassicProject extends Project {
             Set<ITask> producerTasks = new HashSet<ITask>();
             trgtToProducingTasksMap.put(trgt, producerTasks);
         }
-        for (ITask task : nameToTaskMap.values()) {
-            List<String> consumedNames = taskNameToConsumeNamesMap.get(task.getName());
+        for (String taskName : nameToTaskMap.keySet()) {
+        	ITask task = nameToTaskMap.get(taskName);
+            List<String> consumedNames = taskNameToConsumeNamesMap.get(taskName);
             List<Object> consumedTrgts = new ArrayList<Object>(consumedNames.size());
             for (String name : consumedNames) {
                 Object trgt = nameToTrgtMap.get(name);
-                assert (trgt != null);
+                String msg = "Target null for " + name + " consumed by task " + taskName;
+                assert (trgt != null) : msg;
                 consumedTrgts.add(trgt);
                 Set<ITask> consumerTasks = trgtToConsumingTasksMap.get(trgt);
                 consumerTasks.add(task);
             }
             taskToConsumedTrgtsMap.put(task, consumedTrgts);
-            List<String> producedNames = taskNameToProduceNamesMap.get(task.getName());
+            List<String> producedNames = taskNameToProduceNamesMap.get(taskName);
             List <Object> producedTrgts =
                 new ArrayList<Object>(producedNames.size());
             for (String name : producedNames) {
                 Object trgt = nameToTrgtMap.get(name);
-                assert (trgt != null);
+                String msg = "Target null for " + name + " produced by task " + taskName;
+                assert (trgt != null) : msg;
                 producedTrgts.add(trgt);
                 Set<ITask> producerTasks = trgtToProducingTasksMap.get(trgt);
                 producerTasks.add(task);
@@ -343,8 +354,11 @@ public class ClassicProject extends Project {
     public Object getTrgt(String name) {
         build();
         Object trgt = nameToTrgtMap.get(name);
+        if (trgt == null && Config.multiPgmMode) {
+        	trgt = nameToTrgtMap.get(Config.multiTag + name);
+        }
         if (trgt == null)
-            Messages.fatal(TRGT_NOT_FOUND, name);
+        	Messages.fatal(TRGT_NOT_FOUND, name);
         return trgt;
     }
 
@@ -397,11 +411,20 @@ public class ClassicProject extends Project {
                     continue;
                 }
             }
-            ITask task2 = getTaskProducingTrgt(trgt);
-            runTask(task2);
+            if(!(trgt.toString().contains("Tag")|| trgt.toString().contains("Annot") 
+            		|| trgt.toString().contains("string") || trgt.toString().contains("int"))){
+            	ITask task2 = getTaskProducingTrgt(trgt);
+            	runTask(task2);
+            }
         }
         timer.resume();
-        task.run();
+        if (!(Config.populate && task == lastTask && Config.crossPgmAnalysis)) {
+        	if (!Config.analyze)
+        		task.run();
+        	else if (Config.analyze && task == lastTask)
+        		task.run();
+        } else
+        	System.out.println("Skipping task: " + task.getName() + " because it is the \"populate\" phase of Multiple Program Support.");
         timer.done();
         if (Config.verbose >= 1) {
             System.out.println("LEAVE: " + task);
@@ -422,6 +445,7 @@ public class ClassicProject extends Project {
     
     public ITask runTask(String name) {
         ITask task = getTask(name);
+        if (name.equals(lastTaskName)) lastTask = task;
         runTask(task);
         return task;
     }

@@ -10,6 +10,7 @@ import petablox.program.visitors.IInvokeInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.SootUtilities;
+import petablox.util.Utils;
 
 /**
  * Domain of argument and return variable positions of methods and method invocation quads.
@@ -55,5 +56,14 @@ public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
         for (int i = oldSize; i < newSize; i++)
             getOrAdd(new Integer(i));
         maxArgs = newSize;
+    }
+    
+    @Override
+    public String toFIString(Integer i) {	
+    	StringBuilder sb = new StringBuilder();
+    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+    	if(printId) sb.append("(" + indexOf(i) +")");
+    	sb.append(i.toString());
+    	return sb.toString();
     }
 }
