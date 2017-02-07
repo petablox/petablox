@@ -10,6 +10,7 @@
 #include "translate/operand.h"
 #include "type.h"
 #include "translate/visibility.h"
+#include "instruction_map.h"
 
 using namespace std;
 using namespace llvm;

@@ -5,6 +5,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/IRBuilder.h"
+#include "instruction_map.h"
 
 using namespace llvm;
 using namespace std;
@@ -461,15 +462,40 @@ static const string FILTER_CLAUSE_ARG = "filter_clause_arg";
  * that are extracted from an LLVM IR instruction.
  */
 
+inline void print_fact(std::string name, unsigned long id, unsigned long arg)
+{
+    outs() << name << "("; 
+    if (instructions.find(id) != instructions.end()) {
+        outs() << instruction_ids[id];
+    }
+    else {
+        outs() << id;
+    }
+    outs() << ", "; 
+    if (instructions.find(arg) != instructions.end()) {
+        outs() << instruction_ids[arg]; 
+    }
+    else {
+        outs() << arg;
+    }
+    outs() << ").\n";
+}
 /*
  * Template function for printing the fact `name` that
  * maps `id` to a single value, `arg`
- */
+*/
 template<typename T>
 void print_fact(std::string name, unsigned long id, T arg)
 {
-    outs() << name << "(" << id << ", "; 
-    outs() << arg; 
+    outs() << name << "("; 
+    if (instructions.find(id) != instructions.end()) {
+        outs() << instruction_ids[id];
+    }
+    else {
+        outs() << id;
+    }
+    outs() << ", "; 
+    outs() << arg;
     outs() << ").\n";
 }
 
@@ -480,7 +506,14 @@ void print_fact(std::string name, unsigned long id, T arg)
 template<typename T>
 void print_fact(std::string name, unsigned long id, int index, T arg)
 {
-    outs() << name << "(" << id << ", "; 
+    outs() << name << "(";
+    if (instructions.find(id) != instructions.end()) {
+        outs() << instruction_ids[id]; 
+    }    
+    else {
+        outs() << id;
+    }
+    outs() << ", ";
     outs() << index << ", " ;
     outs() << arg;
     outs() << ").\n";
@@ -496,7 +529,12 @@ void print_fact(std::string name, T arg)
  */
 inline void print_fact(std::string name, unsigned long id)
 {
-    outs() << name << "(" << id << ").\n";
+    if (instructions.find(id) != instructions.end()) {
+        outs() << name << "(" << instruction_ids[id] << ").\n";
+    }    
+    else {
+        outs() << name << "(" << id << ").\n";
+    }
 }
 
 /*

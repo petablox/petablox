@@ -20,7 +20,7 @@ void translateReturn(unsigned long id, ReturnInst *ret_inst) {
 
     // Is there a return value?
     if (Value *ret_value = ret_inst->getReturnValue()) {
-        print_fact<unsigned long>(RETURN_VALUE, id, (unsigned long) ret_value);
+        print_fact(RETURN_VALUE, id, (unsigned long) ret_value);
     }
     // Otherwise the return is void
     else {

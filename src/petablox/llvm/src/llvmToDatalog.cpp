@@ -26,8 +26,13 @@
 #include "translate/function.h"
 #include "translate/operand.h"
 #include "translate/global.h"
+#include "instruction_map.h"
 
+using namespace std;
 using namespace llvm;
+
+set<unsigned long> instructions;
+map<unsigned long, int> instruction_ids;
 
 namespace {
     struct SkeletonPass : public FunctionPass {
@@ -35,8 +40,10 @@ namespace {
         static char ID;
         SkeletonPass() : FunctionPass(ID) {}
 
-        std::set<std::string> binops;
-        std::map<std::string, BinOp> binops_map;
+        set<string> binops;
+        map<string, BinOp> binops_map;
+
+        int instruction_id = 1;
 
         void populate_binops() {
             // Add binary operations to set
@@ -93,6 +100,7 @@ namespace {
             errs() << "% (" << id << ")\n ";
             errs() << *I.getType();
             I.dump();
+            errs() << id << " is " << instruction_ids[id] << "\n";
 
             outs() << "instruction(" << id << ").\n";
 
@@ -268,6 +276,13 @@ namespace {
 
             populate_binops();
             populate_binops_map();
+            for (auto &B : F) {
+                // For each instruction in a basic block
+                for (Instruction &I : B) {
+                    instruction_ids[(unsigned long) &I] = instruction_id++;
+                    instructions.insert((unsigned long) &I);
+                }
+            }
 
             translateFunction(F, (unsigned long) &F);
 
@@ -279,6 +294,11 @@ namespace {
             outs() << "\n%% Generating relations for each instruction\n";
             for (auto &B : F) {
                 // For each instruction in a basic block
+
+                //for (Instruction &I : B) {
+                //    instruction_ids[(unsigned long) &I] = instruction_id++;
+                //    instructions.insert((unsigned long) &I);
+                //}
 
                 for (Instruction &I : B) {
                     unsigned long inst_id = (unsigned long) &I;
