@@ -102,7 +102,7 @@ namespace {
             I.dump();
             errs() << id << " is " << instruction_ids[id] << "\n";
 
-            outs() << "instruction(" << id << ").\n";
+            outs() << "instruction(" << instruction_ids[id] << ").\n";
 
             for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
                 Value *oper = *operands;

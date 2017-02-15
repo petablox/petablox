@@ -1,5 +1,6 @@
 #include "instruction.h"
 #include "translate/facts.h"
+#include "instruction_map.h"
 
 using namespace llvm;
 
@@ -61,10 +62,12 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
 
         // If true
         BasicBlock *true_bb = br_inst->getSuccessor(0);
+        //print_fact(COND_BR_TRUE, id, basicblock_ids[(unsigned long) true_bb]);
         print_fact(COND_BR_TRUE, id, (unsigned long) true_bb);
 
         // If false
         BasicBlock *false_bb = br_inst->getSuccessor(1);
+        //print_fact(COND_BR_FALSE, id, basicblock_ids[(unsigned long) false_bb]);
         print_fact(COND_BR_FALSE, id, (unsigned long) false_bb);
     }
     // If the branch is unconditional
@@ -73,6 +76,7 @@ void translateBr(unsigned long id, BranchInst *br_inst) {
 
         // Destination
         BasicBlock *next_bb = br_inst->getSuccessor(0);
+        //print_fact(UNCOND_BR_DEST, id, basicblock_ids[(unsigned long) next_bb]);
         print_fact(UNCOND_BR_DEST, id, (unsigned long) next_bb);
     }
 
@@ -102,6 +106,7 @@ void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
 
     // Default label
     BasicBlock *default_label = switch_inst->getDefaultDest();
+    //print_fact(SWITCH_DEFAULT, id, basicblock_ids[(unsigned long) default_label]);
     print_fact(SWITCH_DEFAULT, id, (unsigned long) default_label);
 
     // Number of cases
@@ -113,6 +118,7 @@ void translateSwitch(unsigned long id, SwitchInst *switch_inst) {
     for (auto it = switch_inst->case_begin(); it != switch_inst->case_end(); it++) {
         // Label
         BasicBlock *label = switch_inst->getSuccessor(index+1);
+        //print_fact(SWITCH_CASE_LABEL, id, index, basicblock_ids[(unsigned long) label]);
         print_fact(SWITCH_CASE_LABEL, id, index, (unsigned long) label);
 
         // Value
@@ -154,6 +160,7 @@ void translateIndirectBr(unsigned long id, IndirectBrInst *br_inst) {
     for (unsigned index = 0; index < num_dests; ++index) {
         // Label
         BasicBlock *label = br_inst->getDestination(index);
+        //print_fact(INDIRECT_BR_LABEL, id, index, basicblock_ids[(unsigned long) label]);
         print_fact(INDIRECT_BR_LABEL, id, index, (unsigned long) label);
     }
 

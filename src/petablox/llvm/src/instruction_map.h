@@ -8,4 +8,7 @@ using namespace std;
 extern map<unsigned long, int> instruction_ids;
 extern set<unsigned long> instructions;
 
+extern map<unsigned long, int> basicblock_ids;
+extern set<unsigned long> basicblocks;
+
 //#endif

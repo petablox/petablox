@@ -461,23 +461,39 @@ static const string FILTER_CLAUSE_ARG = "filter_clause_arg";
  * The following functions are designed to print the facts
  * that are extracted from an LLVM IR instruction.
  */
+inline void print_id(unsigned long id) {
+    if (instructions.find(id) != instructions.end()) {
+        outs() << "I" << instruction_ids[id];
+    }
+    else if (basicblocks.find(id) != basicblocks.end()) {
+        outs() << "B" << basicblock_ids[id];
+    }
+    else {
+        outs() << id;
+    }
+}
 
 inline void print_fact(std::string name, unsigned long id, unsigned long arg)
 {
     outs() << name << "("; 
+    /*
     if (instructions.find(id) != instructions.end()) {
         outs() << instruction_ids[id];
     }
     else {
         outs() << id;
     }
+    */
+    print_id(id);
     outs() << ", "; 
+    /*
     if (instructions.find(arg) != instructions.end()) {
         outs() << instruction_ids[arg]; 
     }
     else {
         outs() << arg;
-    }
+    }*/
+    print_id(arg);
     outs() << ").\n";
 }
 /*

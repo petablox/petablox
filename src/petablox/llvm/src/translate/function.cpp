@@ -15,6 +15,9 @@
 using namespace std;
 using namespace llvm;
 
+set<unsigned long> basicblocks;
+map<unsigned long, int> basicblock_ids;
+
 /*
  * buildCFG 
  * 
@@ -33,8 +36,17 @@ using namespace llvm;
 void buildCFG(Function &F) {
     outs() << "%% Constructing the CFG\n";
 
+    int basicblock_id = 1;
+    for (auto &B : F) {
+        basicblock_ids[(unsigned long) &B] = basicblock_id++;
+        basicblocks.insert((unsigned long) &B);
+
+    }
+
     // Iterate through each basic block in the function
     for (auto &B : F) {
+        //unsigned long bb_id = (unsigned long) &B;
+        //int bb_id = basicblock_ids[(unsigned long) &B];
         unsigned long bb_id = (unsigned long) &B;
         outs() << "% Basic block " << bb_id << ":\n";
 
@@ -54,6 +66,7 @@ void buildCFG(Function &F) {
         // Basic block predecessor 
         for (unsigned i = 0; i < last_inst->getNumSuccessors(); i++){
             BasicBlock *succ = last_inst->getSuccessor(i);
+            //print_fact(BB_PRED, basicblock_ids[(unsigned long) succ], bb_id); 
             print_fact(BB_PRED, (unsigned long) succ, bb_id); 
         }
 

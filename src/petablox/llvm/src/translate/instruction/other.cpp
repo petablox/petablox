@@ -3,6 +3,7 @@
 #include "translate/facts.h"
 #include "translate/operand.h"
 #include "translate/type.h"
+#include "instruction_map.h"
 
 using namespace llvm;
 using namespace std;
@@ -83,6 +84,7 @@ void translatePhi(unsigned long id, PHINode *phi) {
         // Label 
         BasicBlock *bb = *it;
         int index = phi->getBasicBlockIndex(bb);
+        //print_fact(PHI_PAIR_LABEL, id, index, basicblock_ids[(unsigned long) bb]);
         print_fact(PHI_PAIR_LABEL, id, index, (unsigned long) bb);
 
         // Value
