@@ -33,6 +33,9 @@ using namespace llvm;
 
 set<unsigned long> instructions;
 map<unsigned long, int> instruction_ids;
+set<unsigned long> types;
+map<unsigned long, int> type_ids;
+int type_id = 1;
 
 namespace {
     struct SkeletonPass : public FunctionPass {

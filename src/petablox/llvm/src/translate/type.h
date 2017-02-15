@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "translate/facts.h"
+#include "instruction_map.h"
 
 using namespace llvm;
 using namespace std;
@@ -202,6 +203,11 @@ inline string processStruct(Type *type) {
 
 inline string processType(Type *type) {
     // Primitive types (integer, fp, void, label, x86mmk)
+
+    if (types.find((unsigned long) type) == types.end()) {
+        type_ids[(unsigned long) type] = type_id++;
+        types.insert((unsigned long) type);
+    }
 
     print_fact("type", (unsigned long) type);
     if (type->isIntegerTy()) {

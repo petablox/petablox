@@ -5,10 +5,15 @@
 #include "llvm/IR/Module.h"
 #include "translate/facts.h"
 #include "type.h"
+#include "instruction_map.h"
 
 using namespace std;
 using namespace llvm;
 
+set<unsigned long> operands;
+map<unsigned long, int> operand_ids;
+
+int operand_id = 1;
 /*
  * translateOperand
  *
@@ -22,6 +27,12 @@ using namespace llvm;
 void translateOperand(Value *operand) {
     // Declare this value as an operand
     unsigned long id = (unsigned long) operand;
+
+    if (operands.find(id) == operands.end()) {
+        operand_ids[id] = operand_id++;
+        operands.insert(id);
+    }
+
     print_fact(OPERAND, id);
 
     // Get tye type of the operand

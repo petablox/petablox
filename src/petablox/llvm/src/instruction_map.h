@@ -11,4 +11,11 @@ extern set<unsigned long> instructions;
 extern map<unsigned long, int> basicblock_ids;
 extern set<unsigned long> basicblocks;
 
+extern map<unsigned long, int> operand_ids;
+extern set<unsigned long> operands;
+
+extern map<unsigned long, int> type_ids;
+extern set<unsigned long> types;
+extern int type_id;
+
 //#endif

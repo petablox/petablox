@@ -468,6 +468,12 @@ inline void print_id(unsigned long id) {
     else if (basicblocks.find(id) != basicblocks.end()) {
         outs() << "B" << basicblock_ids[id];
     }
+    else if (operands.find(id) != operands.end()) {
+        outs() << "Oper" << operand_ids[id];
+    }
+    else if (types.find(id) != types.end()) {
+        outs() << "T" << type_ids[id];
+    }
     else {
         outs() << id;
     }
@@ -504,12 +510,15 @@ template<typename T>
 void print_fact(std::string name, unsigned long id, T arg)
 {
     outs() << name << "("; 
+    /*
     if (instructions.find(id) != instructions.end()) {
         outs() << instruction_ids[id];
     }
     else {
         outs() << id;
     }
+    */
+    print_id(id);
     outs() << ", "; 
     outs() << arg;
     outs() << ").\n";
@@ -523,12 +532,14 @@ template<typename T>
 void print_fact(std::string name, unsigned long id, int index, T arg)
 {
     outs() << name << "(";
+    /*
     if (instructions.find(id) != instructions.end()) {
         outs() << instruction_ids[id]; 
     }    
     else {
         outs() << id;
-    }
+    }*/
+    print_id(id);
     outs() << ", ";
     outs() << index << ", " ;
     outs() << arg;
@@ -545,12 +556,17 @@ void print_fact(std::string name, T arg)
  */
 inline void print_fact(std::string name, unsigned long id)
 {
+    /*
     if (instructions.find(id) != instructions.end()) {
         outs() << name << "(" << instruction_ids[id] << ").\n";
     }    
     else {
         outs() << name << "(" << id << ").\n";
     }
+    */
+    outs() << name << "(";
+    print_id(id);
+    outs() << ").\n";
 }
 
 /*
