@@ -18,4 +18,6 @@ extern map<unsigned long, int> type_ids;
 extern set<unsigned long> types;
 extern int type_id;
 
+extern map<unsigned long, int> function_ids;
+extern set<unsigned long> functions;
 //#endif

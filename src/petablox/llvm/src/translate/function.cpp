@@ -17,7 +17,9 @@ using namespace llvm;
 
 set<unsigned long> basicblocks;
 map<unsigned long, int> basicblock_ids;
-
+set<unsigned long> functions;
+map<unsigned long, int> function_ids;
+int function_id = 1;
 /*
  * buildCFG 
  * 
@@ -35,6 +37,7 @@ map<unsigned long, int> basicblock_ids;
  */
 void buildCFG(Function &F) {
     outs() << "%% Constructing the CFG\n";
+
 
     int basicblock_id = 1;
     for (auto &B : F) {
@@ -116,6 +119,10 @@ void buildCFG(Function &F) {
  *
  */
 void translateFunction(Function &F, unsigned long id) {
+    if (functions.find((unsigned long) &F) == functions.end()) {
+        function_ids[(unsigned long) &F] = function_id++;
+        functions.insert((unsigned long) &F);
+    }
 
     print_fact(FUNCTION, id);
 

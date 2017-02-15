@@ -482,6 +482,9 @@ inline void print_id(unsigned long id) {
             outs() << "T" << type_ids[id];
         }
     }
+    else if (functions.find(id) != functions.end()) {
+        outs() << "F" << function_ids[id];
+    }
     else {
         outs() << id;
     }
