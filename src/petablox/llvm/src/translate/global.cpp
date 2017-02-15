@@ -48,7 +48,8 @@ void translateGlobals(Function &F) {
         print_fact(GLOBAL_VAR, global_id);
 
         // Type
-        string global_type = processType(global.getValueType());
+        //string global_type = processType(global.getValueType());
+        unsigned long global_type = processType(global.getValueType());
         print_fact(GLOBAL_TYPE, global_id, global_type);
 
         // Name
@@ -107,7 +108,8 @@ void translateGlobals(Function &F) {
         print_fact(ALIAS, global_id);
 
         // Type
-        string global_type = processType(global.getValueType());
+        //string global_type = processType(global.getValueType());
+        unsigned long global_type = processType(global.getValueType());
         print_fact(ALIAS_TYPE, global_id, global_type);
 
         // Name

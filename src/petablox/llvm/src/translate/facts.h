@@ -472,7 +472,15 @@ inline void print_id(unsigned long id) {
         outs() << "Oper" << operand_ids[id];
     }
     else if (types.find(id) != types.end()) {
-        outs() << "T" << type_ids[id];
+        //outs() << "T" << type_ids[id];
+        Type *type = (Type *) id;
+        Type::TypeID type_id = type->getTypeID();
+        if (type_id < 11) {
+            outs() << "T" << type->getTypeID();
+        }
+        else {
+            outs() << "T" << type_ids[id];
+        }
     }
     else {
         outs() << id;
@@ -524,6 +532,22 @@ void print_fact(std::string name, unsigned long id, T arg)
     outs() << ").\n";
 }
 
+inline void print_fact(std::string name, unsigned long id, int index, unsigned long arg)
+{
+    outs() << name << "(";
+    /*
+    if (instructions.find(id) != instructions.end()) {
+        outs() << instruction_ids[id]; 
+    }    
+    else {
+        outs() << id;
+    }*/
+    print_id(id);
+    outs() << ", ";
+    outs() << index << ", " ;
+    print_id(arg);
+    outs() << ").\n";
+}
 /*
  * Template function for printing the fact `name` that
  * maps `id` to an `index` and a value `arg`

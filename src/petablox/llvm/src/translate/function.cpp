@@ -120,7 +120,8 @@ void translateFunction(Function &F, unsigned long id) {
     print_fact(FUNCTION, id);
 
     // Return type
-    string type = processType(F.getFunctionType());
+    //string type = processType(F.getFunctionType());
+    unsigned long type = processType(F.getFunctionType());
     print_fact(FUNCTION_TYPE, id, type);
 
     // Function name

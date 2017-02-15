@@ -36,7 +36,8 @@ void translateOperand(Value *operand) {
     print_fact(OPERAND, id);
 
     // Get tye type of the operand
-    string type = processType(operand->getType());
+    //string type = processType(operand->getType());
+    unsigned long type = processType(operand->getType());
 
     // If the operand is an undefined value
     if (dyn_cast<UndefValue>(operand)) {

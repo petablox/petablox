@@ -74,7 +74,8 @@ void translatePhi(unsigned long id, PHINode *phi) {
     print_fact(PHI, id); 
 
     // Type
-    string type = processType(phi->getType());
+    //string type = processType(phi->getType());
+    unsigned long type = processType(phi->getType());
     print_fact(PHI_TYPE, id, type);
 
     int num = 0;
@@ -234,7 +235,8 @@ void translateCall(unsigned long id, CallInst *call) {
     print_fact(CALL_SIG, id, (unsigned long) signature);
 
     // Return type
-    string type = processType(signature->getReturnType());
+    //string type = processType(signature->getReturnType());
+    unsigned long type = processType(signature->getReturnType());
     print_fact(CALL_RET, id, type);
 
     print_new();
@@ -256,7 +258,8 @@ void translateVAArg(unsigned long id, VAArgInst *va_arg) {
     print_fact(VAARG, id);
 
     // Type
-    string type = processType(va_arg->getType());
+    //string type = processType(va_arg->getType());
+    unsigned long type = processType(va_arg->getType());
     print_fact(VAARG_TYPE, id, type);
 
     // List of arguments

@@ -106,12 +106,14 @@ void translateConversion(unsigned long id, CastInst *conv_inst) {
     print_fact(FROM, id, (unsigned long) from);
 
     // "from" type
-    string from_type = processType(conv_inst->getSrcTy());
+    //string from_type = processType(conv_inst->getSrcTy());
+    unsigned long from_type = processType(conv_inst->getSrcTy());
     string FROM_TYPE = from_type_map[prefix];
     print_fact(FROM_TYPE, id, from_type);
 
     // "to" type
-    string to_type = processType(conv_inst->getDestTy());
+    //string to_type = processType(conv_inst->getDestTy());
+    unsigned long to_type = processType(conv_inst->getDestTy());
     string TO_TYPE = to_type_map[prefix];
     print_fact(TO_TYPE, id, to_type);
 

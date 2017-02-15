@@ -20,15 +20,18 @@ const string VOID = "void";
 const string LABEL = "label";
 const string X86_MMX = "x86_mmx";
 
-const string ERROR = "Invalid type";
+//const string ERROR = "Invalid type";
+const unsigned long ERROR = -1;
 
-string processType(Type *type);
 
-inline string processInteger(Type *type) {
+unsigned long processType(Type *type);
+
+inline unsigned long processInteger(Type *type) {
+    unsigned long id = (unsigned long) type;
     unsigned bits = type->getIntegerBitWidth();
-    ostringstream width;
-    width << bits;
-    return "i" + width.str();
+    print_fact("integer_type", id);
+    print_fact("integer_type_width", id, bits);
+    return id; 
 }
 
 inline string processFP(Type *type) {
@@ -59,7 +62,7 @@ inline string processFP(Type *type) {
     }*/
 }
 
-inline string processFunction(Type *type) {
+inline unsigned long processFunction(Type *type) {
     if (FunctionType *func = dyn_cast<FunctionType>(type)) {
         // Declare the type
         print_fact(FUNCTION_TY, (unsigned long) func);
@@ -70,7 +73,7 @@ inline string processFunction(Type *type) {
         }
 
         // Return type
-        string ret_type = processType(func->getReturnType());
+        unsigned long ret_type = processType(func->getReturnType());
         print_fact(FUNCTION_TY_RET, (unsigned long) func, ret_type);
 
         // Number of parameters
@@ -79,27 +82,28 @@ inline string processFunction(Type *type) {
 
         // Declare param types
         for(unsigned i = 0; i < num_params; i++) {
-            string param = processType(func->getParamType(i));
+            unsigned long param = processType(func->getParamType(i));
             print_fact(FUNCTION_TY_PARAM, (unsigned long) func, i, param);
         }
 
         ostringstream addr;
         addr << (unsigned long) func;
-        return addr.str();
+        //return addr.str();
+        return (unsigned long) func;
     }
     else {
         return ERROR;
     }
 }
 
-inline string processPointer(Type *type) {
+inline unsigned long processPointer(Type *type) {
     if (PointerType *ptr = dyn_cast<PointerType>(type)) {
         // Declare the type
         unsigned long id = (unsigned long) ptr;
         print_fact(PTR_TY, id);
 
         // Component type
-        string comp = processType(ptr->getElementType());
+        unsigned long comp = processType(ptr->getElementType());
         print_fact(PTR_TY_COMP, id, comp);
 
         // Address space
@@ -108,21 +112,22 @@ inline string processPointer(Type *type) {
 
         ostringstream addr;
         addr << (unsigned long) ptr;
-        return addr.str();
+        //return addr.str();
+        return (unsigned long) ptr;
     }
     else {
         return ERROR;
     }
 }
 
-inline string processVector(Type *type) {
+inline unsigned long processVector(Type *type) {
     if (VectorType *vec = dyn_cast<VectorType>(type)) {
          unsigned long id = (unsigned long) vec;
         // Declare the type
         print_fact(VECTOR_TY, id);
 
         // Component type
-        string comp = processType(vec->getElementType());
+        unsigned long comp = processType(vec->getElementType());
         print_fact(VECTOR_TY_COMP, id, comp);
 
         // Size
@@ -131,21 +136,22 @@ inline string processVector(Type *type) {
 
         ostringstream addr;
         addr << id;
-        return addr.str();
+        //return addr.str();
+        return id;
     }
     else {
         return ERROR;
     }
 }
 
-inline string processArray(Type *type) {
+inline unsigned long processArray(Type *type) {
     if (ArrayType *array = dyn_cast<ArrayType>(type)) {
         unsigned long id = (unsigned long) array;
         // Declare the type
         print_fact(ARRAY_TY, id);
 
         // Component type
-        string comp = processType(array->getElementType());
+        unsigned long comp = processType(array->getElementType());
         print_fact(ARRAY_TY_COMP, id, comp);
 
         // Size
@@ -154,14 +160,15 @@ inline string processArray(Type *type) {
 
         ostringstream addr;
         addr << id;
-        return addr.str();
+        //return addr.str();
+        return id;
     }
     else {
         return ERROR;
     }
 }
 
-inline string processStruct(Type *type) {
+inline unsigned long processStruct(Type *type) {
     if (StructType *struct_type = dyn_cast<StructType>(type)) {
         unsigned long id = (unsigned long) struct_type;
         // Declare the type
@@ -185,7 +192,7 @@ inline string processStruct(Type *type) {
         // For each element in the struct
         for (unsigned index = 0; index < num_elements; index++) {
             // Field type
-            string field = processType(struct_type->getElementType(index));
+            unsigned long field = processType(struct_type->getElementType(index));
             print_fact(STRUCT_TY_FIELD, id, index, field);
 
             // TODO: byte and bit offset per field
@@ -193,7 +200,8 @@ inline string processStruct(Type *type) {
 
         ostringstream addr;
         addr << (unsigned long) type;
-        return addr.str();
+        //return addr.str();
+        return id;
     }
     else {
         return ERROR;
@@ -201,24 +209,27 @@ inline string processStruct(Type *type) {
 
 }
 
-inline string processType(Type *type) {
+inline unsigned long processType(Type *type) {
     // Primitive types (integer, fp, void, label, x86mmk)
 
-    if (types.find((unsigned long) type) == types.end()) {
-        type_ids[(unsigned long) type] = type_id++;
-        types.insert((unsigned long) type);
+    unsigned long id = (unsigned long) type;
+    if (types.find(id) == types.end()) {
+        type_ids[id] = type_id++;
+        types.insert(id);
     }
 
-    print_fact("type", (unsigned long) type);
+    print_fact("type", id);
     if (type->isIntegerTy()) {
-        unsigned bits = type->getIntegerBitWidth();
-        ostringstream width;
-        width << bits;
+        //unsigned bits = type->getIntegerBitWidth();
+        //ostringstream width;
+        //width << bits;
         //return "i" + width.str();
-        ostringstream addr;
-        addr << (unsigned long) type;
-        return addr.str();
+        //ostringstream addr;
+        //addr << (unsigned long) type;
+        //return addr.str();
+        return processInteger(type);
     }
+    /*
     else if (type->isFloatingPointTy()) {
         return processFP(type);
     }
@@ -232,30 +243,31 @@ inline string processType(Type *type) {
         return X86_MMX;
     }
     
+    */
     // Derived types (function, pointer, vector, array, struct)
     else if (type->isFunctionTy()) {
-        print_fact("type", (unsigned long) type);
+        //print_fact("type", (unsigned long) type);
         return processFunction(type);
     }
     else if (type->isPointerTy()) {
-        print_fact("type", (unsigned long) type);
+        //print_fact("type", (unsigned long) type);
         return processPointer(type);
     } 
     else if (type->isVectorTy()) {
-        print_fact("type", (unsigned long) type);
+        //print_fact("type", (unsigned long) type);
         return processVector(type);
     }
     else if (type->isArrayTy()) {
-        print_fact("type", (unsigned long) type);
+        //print_fact("type", (unsigned long) type);
         return processArray(type);
     }
     else if (type->isStructTy()) {
-        print_fact("type", (unsigned long) type);
+        //print_fact("type", (unsigned long) type);
         return processStruct(type);
     }
 
-    // Otherwise, something went wrong
+    // Otherwise, just return the id
     else {
-        return ERROR;
+        return id;
     }
 }

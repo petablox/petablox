@@ -31,7 +31,8 @@ void translateAlloca(unsigned long id, AllocaInst *alloca_inst) {
     print_fact(ALLOCA_SIZE, id, (unsigned long) size);
 
     // Type
-    string type = processType(alloca_inst->getAllocatedType());
+    //string type = processType(alloca_inst->getAllocatedType());
+    unsigned long type = processType(alloca_inst->getAllocatedType());
     print_fact(ALLOCA_TYPE, id, type);
 
     print_new();
