@@ -204,11 +204,10 @@ void translateFunction(Function &F, unsigned long id) {
 
     // Iterate through all of this function's parameters
     for (auto &param : F.args()) {
-        print_fact(FUNCTION_PARAM, id, index, (unsigned long) &param);
-
-        // translate the operand
+       // translate the operand
         translateOperand(&param);
-
+        print_fact(FUNCTION_PARAM, id, index, (unsigned long) &param);
+        
         // Iterate through all of the attributes for this parameter.
         auto paramAttributes = attributes.getParamAttributes(index+1);
         for (unsigned i = 0; i < paramAttributes.getNumSlots(); i++) {
