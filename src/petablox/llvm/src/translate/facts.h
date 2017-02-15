@@ -469,7 +469,7 @@ inline void print_id(unsigned long id) {
         outs() << "B" << basicblock_ids[id];
     }
     else if (operands.find(id) != operands.end()) {
-        outs() << "Oper" << operand_ids[id];
+        outs() << "O" << operand_ids[id];
     }
     else if (types.find(id) != types.end()) {
         //outs() << "T" << type_ids[id];

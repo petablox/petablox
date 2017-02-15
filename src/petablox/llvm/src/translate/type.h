@@ -31,6 +31,7 @@ inline unsigned long processInteger(Type *type) {
     unsigned bits = type->getIntegerBitWidth();
     print_fact("integer_type", id);
     print_fact("integer_type_width", id, bits);
+    print_fact("integer", bits);
     return id; 
 }
 

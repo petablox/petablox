@@ -12,7 +12,7 @@ const string orderings[] = {
 
 inline string processOrder(AtomicOrdering id) {
     ostringstream val;
-    val << "O" << id;
+    val << "R" << id;
     print_fact("ordering", val.str());
     return val.str();
     //return orderings[id];
