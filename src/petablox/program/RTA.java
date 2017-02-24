@@ -217,10 +217,11 @@ public class RTA implements ScopeBuilder {
          
         entryClasses = new HashSet<SootClass>(); 
         entryMethods = new HashSet<SootMethod>();
-        if(Config.populate)
+        if(Config.populate) {
         	entryPointGen();
-		extractJUnitTests();
-        //prepEntrypoints(); 
+		//extractJUnitTests();
+	}
+       	prepEntrypoints(); 
         Scene.v().loadBasicClasses();
         
         for (int i = 0; repeat; i++) {
