@@ -111,18 +111,18 @@ public class OutDirUtils {
         }
     }
 
-    public static final void executeWithFailOnError(List<String> cmdlist) {
+    public static final void executeWithFailOnError(List<String> cmdlist, int timeout) {
         String[] cmdarray = new String[cmdlist.size()];
-        executeWithFailOnError(cmdlist.toArray(cmdarray));
+        executeWithFailOnError(cmdlist.toArray(cmdarray), timeout);
     }
 
-    public static final void executeWithFailOnError(String[] cmdarray) {
+    public static final void executeWithFailOnError(String[] cmdarray, int timeout) {
         String cmd = "";
         for (String s : cmdarray)
             cmd += s + " ";
         if (Config.verbose >= 1) Messages.log(PROCESS_STARTING, cmd);
         try {
-            int result = ProcessExecutor.execute(cmdarray);
+            int result = ProcessExecutor.execute(cmdarray, null, null, timeout);
             if (result != 0)
                 throw new RuntimeException("Return value=" + result);
         } catch (Throwable ex) {
