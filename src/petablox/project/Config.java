@@ -105,7 +105,7 @@ public class Config {
         check(instrKind, new String[] { "offline", "online" }, "petablox.instr.kind");
         check(traceKind, new String[] { "full", "pipe" }, "petablox.trace.kind");
     }
-    public final static boolean dynamicHaltOnErr = Utils.buildBoolProperty("petablox.dynamic.haltonerr", true);
+    public final static boolean dynamicHaltOnErr = Utils.buildBoolProperty("petablox.dynamic.haltonerr", false);
     public final static int dynamicTimeout = Integer.getInteger("petablox.dynamic.timeout", -1);
     public final static int maxConsSize = Integer.getInteger("petablox.max.cons.size", 50000000);
 
