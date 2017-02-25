@@ -110,6 +110,10 @@ public class Program {
     	Options.v().set_keep_offset(true);
     	Options.v().set_whole_program(true);
     	Options.v().set_allow_phantom_refs(true);
+
+        if (Config.sootIgnoreStatic) {
+            Options.v().setPhaseOption("jb.tr", "ignore-wrong-staticness:true");
+        }
     	
 		if (Config.reflectKind.equals("external")) {
 			ExtReflectResolver extReflectResolver = new ExtReflectResolver();

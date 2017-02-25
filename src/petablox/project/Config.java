@@ -171,6 +171,9 @@ public class Config {
         Utils.mkdirs(logicbloxWorkDirName);
     }
 
+    // Properties concerning Soot
+    public final static boolean sootIgnoreStatic = Utils.buildBoolProperty("soot.ignore.static", false);
+
     // commonly-used constants
 
     public final static String mainDirName = System.getProperty("petablox.main.dir");
