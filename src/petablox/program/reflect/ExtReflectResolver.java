@@ -126,7 +126,7 @@ public class ExtReflectResolver {
         boolean haltOnErr = haltOnErr();   
         try {
             if (haltOnErr)
-            	OutDirUtils.executeWithFailOnError(cmdList, timeout);
+            	OutDirUtils.executeWithFailOnError(cmdList);
             else
             	OutDirUtils.executeWithWarnOnError(cmdList, timeout);
         } catch(Throwable t) { //just log exceptions
