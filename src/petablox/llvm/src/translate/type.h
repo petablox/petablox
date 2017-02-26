@@ -158,6 +158,7 @@ inline unsigned long processArray(Type *type) {
         // Size
         uint64_t size = array->getNumElements();
         print_fact(ARRAY_TY_SIZE, id, size);
+        print_fact("integer", size);
 
         ostringstream addr;
         addr << id;
