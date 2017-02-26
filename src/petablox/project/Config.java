@@ -107,6 +107,8 @@ public class Config {
     }
     public final static boolean dynamicHaltOnErr = Utils.buildBoolProperty("petablox.dynamic.haltonerr", false);
     public final static int dynamicTimeout = Integer.getInteger("petablox.dynamic.timeout", -1);
+    public final static boolean reflectHaltOnErr = Utils.buildBoolProperty("petablox.reflection.haltonerr", false);
+    public final static int reflectTimeout = Integer.getInteger("petablox.reflection.timeout", -1);
     public final static int maxConsSize = Integer.getInteger("petablox.max.cons.size", 50000000);
 
     // properties dictating what is reused across Petablox runs

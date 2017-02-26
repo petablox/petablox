@@ -136,11 +136,11 @@ public class ExtReflectResolver {
     }
     
     private boolean haltOnErr() {
-        return Config.dynamicHaltOnErr;
+    	return Config.reflectHaltOnErr;
     }
 
     private int getTimeout() {
-        return Config.dynamicTimeout;
+    	return Config.reflectTimeout;
     }
  
     private void createDstDirForRefl(String dstDirName) {
