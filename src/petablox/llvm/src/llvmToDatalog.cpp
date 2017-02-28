@@ -99,12 +99,14 @@ namespace {
         
 
         void analyzeInstruction(Instruction &I, unsigned long id) {
-            outs() << "% (" << id << ")\n ";
-            errs() << "% (" << id << ")\n ";
-            errs() << *I.getType();
-            I.dump();
+            //outs() << "% (" << id << ")\n ";
+            //errs() << "% (" << id << ")\n ";
+            //errs() << *I.getType();
+            //I.dump();
             //errs() << id << " is " << instruction_ids[id] << "\n";
-            errs() << id << " is " << operand_ids[id] << "\n";
+            //errs() << id << " is " << operand_ids[id] << "\n";
+            errs() << "(" << operand_ids[id] << ") ";
+            errs() << *(&I) << "\n";
 
             //outs() << "instruction(" << instruction_ids[id] << ").\n";
             outs() << "instruction(" << operand_ids[id] << ").\n";
@@ -280,6 +282,7 @@ namespace {
         // Runs analysis on all functions in the program
         virtual bool runOnFunction(Function &F) {
             outs() << "%% Analyzing function: " << F.getName().str() << "\n";
+            errs() << F.getName().str() << ":\n";
             //F.dump();
 
             populate_binops();
@@ -315,6 +318,8 @@ namespace {
                     analyzeInstruction(I, inst_id);
                 }
             }
+
+            errs() << "\n";
 
             return false;
         }
