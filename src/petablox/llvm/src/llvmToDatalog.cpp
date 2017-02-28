@@ -103,13 +103,18 @@ namespace {
             errs() << "% (" << id << ")\n ";
             errs() << *I.getType();
             I.dump();
-            errs() << id << " is " << instruction_ids[id] << "\n";
+            //errs() << id << " is " << instruction_ids[id] << "\n";
+            errs() << id << " is " << operand_ids[id] << "\n";
 
-            outs() << "instruction(" << instruction_ids[id] << ").\n";
+            //outs() << "instruction(" << instruction_ids[id] << ").\n";
+            outs() << "instruction(" << operand_ids[id] << ").\n";
 
             for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
                 Value *oper = *operands;
                 translateOperand(oper);
+                if (!dyn_cast<BasicBlock>(oper)) {
+                    print_fact("instruction_uses", id, (unsigned long) oper);
+                }
             }
             /*
              * Terminator instructions:
@@ -282,8 +287,10 @@ namespace {
             for (auto &B : F) {
                 // For each instruction in a basic block
                 for (Instruction &I : B) {
-                    instruction_ids[(unsigned long) &I] = instruction_id++;
-                    instructions.insert((unsigned long) &I);
+                    //instruction_ids[(unsigned long) &I] = instruction_id++;
+                    //instructions.insert((unsigned long) &I);
+                    operand_ids[(unsigned long) &I] = operand_id++;
+                    operands.insert((unsigned long) &I);
                 }
             }
 

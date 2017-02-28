@@ -463,7 +463,7 @@ static const string FILTER_CLAUSE_ARG = "filter_clause_arg";
  */
 inline void print_id(unsigned long id) {
     if (instructions.find(id) != instructions.end()) {
-        outs() << "I" << instruction_ids[id];
+        outs() << "O" << instruction_ids[id];
     }
     else if (basicblocks.find(id) != basicblocks.end()) {
         outs() << "B" << basicblock_ids[id];
