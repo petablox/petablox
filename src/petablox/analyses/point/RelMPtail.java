@@ -3,6 +3,10 @@ package petablox.analyses.point;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
+import soot.toolkits.graph.Block;
+
+import java.util.List;
+
 import petablox.program.visitors.IMethodVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
@@ -21,7 +25,10 @@ public class RelMPtail extends ProgramRel implements IMethodVisitor {
         if (m.isAbstract())
             return;
         ICFG cfg = SootUtilities.getCFG(m);
-        Unit bx = cfg.getTails().get(0).getHead();
-        add(m, bx);
+        List<Block> ls =  cfg.getTails();
+        if(!ls.isEmpty()) {
+        	Unit bx = cfg.getTails().get(0).getHead();
+        	add(m, bx);
+        }
     }
 }
