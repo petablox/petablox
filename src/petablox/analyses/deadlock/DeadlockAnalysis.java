@@ -100,8 +100,9 @@ public class DeadlockAnalysis extends JavaAnalysis {
             ClassicProject.g().runTask("deadlock-nongrded-include-dlog");
         ClassicProject.g().runTask("deadlock-dlog");
 
-        if (Config.printResults){}
-            //printResults();
+        if (Config.printResults){
+            printResults();
+        }
     }
 
     private CIObj getPointsTo(int lIdx) {
