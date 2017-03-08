@@ -14,6 +14,7 @@ import soot.jimple.internal.JNewMultiArrayExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
 import soot.toolkits.graph.Block;
 import petablox.analyses.method.DomM;
 import petablox.program.PhantomClsVal;
@@ -161,8 +162,16 @@ public class DomH extends ProgramDom<Object> {
             Unit u = (Unit) o;
             Type t = getType(u);
             String type = (t != null) ? t.toString() : "null";
-            SootMethod m = SootUtilities.getMethod(u);                            
-            String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
+            SootMethod m = SootUtilities.getMethod(u);            
+            //String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
+            List<Tag> tags = m.getDeclaringClass().getTags();
+            String file = null;
+            for(Tag x : tags) {
+            	if( x instanceof SourceFileTag) {
+            		file = ((SourceFileTag)x).getSourceFile();
+            		break;
+            	}
+            }
             int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
             int mIdx = domM.indexOf(m);
             return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
