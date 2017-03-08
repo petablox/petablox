@@ -4,10 +4,14 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.tagkit.SourceFileTag;
+import soot.tagkit.Tag;
 import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.tagkit.LineNumberTag;
+
+import java.util.List;
+
 import petablox.analyses.method.DomM;
 import petablox.program.visitors.IInvokeInstVisitor;
 import petablox.project.Petablox;
@@ -76,7 +80,15 @@ public class DomI extends ProgramDom<Unit> implements IInvokeInstVisitor {
     	// which does not make much sense here
         SootMethod m = SootUtilities.getMethod(u);
         //JAssignStmt as = (JAssignStmt)u;
-        String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();              
+        //String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();              
+        List<Tag> tags = m.getDeclaringClass().getTags();
+        String file = null;
+        for(Tag x : tags) {
+        	if( x instanceof SourceFileTag) {
+        		file = ((SourceFileTag)x).getSourceFile();
+        		break;
+        	}
+        }
         int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
         int mIdx = domM.indexOf(m);
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
