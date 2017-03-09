@@ -89,10 +89,11 @@ public class DomI extends ProgramDom<Unit> implements IInvokeInstVisitor {
         		break;
         	}
         }
-        int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+        //int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
         int mIdx = domM.indexOf(m);
-        return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
-            "Mid=\"M" + mIdx + "\"" ;
+		return "file=\"" + file + "\" " + "Mid=\"M" + mIdx + "\" ";
+        //return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
+        //   "Mid=\"M" + mIdx + "\"" ;
             //" rdwr=\"" + ((SootUtilities.isFieldStore(as) || SootUtilities.isStaticPut(as) || SootUtilities.isStoreInst(as)) ? "Wr" : "Rd") + "\"";
     }
 }

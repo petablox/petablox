@@ -111,15 +111,15 @@ public class DomM extends ProgramDom<SootMethod> implements IMethodVisitor {
         else
             sign += methName;
         String desc = m.getBytecodeParms().toString();
-        String args = desc.substring(1, desc.indexOf(')'));
-        sign += "(" + Program.typesToStr(args) + ")";
+        //String args = desc.substring(1, desc.indexOf(')'));
+        //sign += "(" + Program.typesToStr(args) + ")";
         String file = "null";
         SourceFileTag sft = (SourceFileTag)m.getTag("SourceFileTag");
         if(sft!=null){
         	file = sft.getSourceFile();
         }
         int line = m.getNumber(); 
-        return "sign=\"" + sign + "\" file=\"" + file + "\" line=\"" + line + "\"";
+        return "sign=\"" + sign + "desc=" + desc + "\" file=\"" + file + "\" line=\"" + line + "\"";
     }
     
     public void parseAnnotations(SootMethod m, int indx){
