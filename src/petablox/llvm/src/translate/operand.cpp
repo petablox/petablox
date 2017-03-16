@@ -59,8 +59,14 @@ void translateOperand(Value *operand) {
                 print_fact(CONSTANT_VAL, id, val.getBoolValue());
             }
             else {
-                print_fact("integer", val);
-                print_fact(CONSTANT_VAL, id, val);
+                if (val.slt(APInt(val.getBitWidth(), 0))) {
+                    print_fact("negative_constant", id);
+                    print_fact("negative_constant_value", id, -val);
+                }
+                else {
+                    print_fact("integer", val);
+                    print_fact(CONSTANT_VAL, id, val);
+                }
             }
         }
 
