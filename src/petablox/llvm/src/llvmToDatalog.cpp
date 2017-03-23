@@ -99,6 +99,7 @@ namespace {
         
 
         void analyzeInstruction(Instruction &I, unsigned long id) {
+            
             //outs() << "% (" << id << ")\n ";
             //errs() << "% (" << id << ")\n ";
             //errs() << *I.getType();
@@ -110,7 +111,12 @@ namespace {
 
             //outs() << "instruction(" << instruction_ids[id] << ").\n";
             outs() << "instruction(" << operand_ids[id] << ").\n";
-
+            if (DILocation *loc = I.getDebugLoc()) {
+                string filename = loc->getFilename().str();
+                unsigned line = loc->getLine();
+                print_fact("instruction_line_number", id, line);
+                print_fact("integer", line);
+            }
             for (auto operands = I.value_op_begin(); operands != I.value_op_end(); operands++) {
                 Value *oper = *operands;
                 translateOperand(oper);

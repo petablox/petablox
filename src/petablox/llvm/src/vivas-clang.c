@@ -104,6 +104,7 @@ static void edit_params(int argc, char** argv) {
     cc_params[0] = alt_cc;
   }
 
+  cc_params[cc_par_cnt++] = "-g";
   cc_params[cc_par_cnt++] = "-fmodules";
   cc_params[cc_par_cnt++] = "-Xclang";
   cc_params[cc_par_cnt++] = "-load";
