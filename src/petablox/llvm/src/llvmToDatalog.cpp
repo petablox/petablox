@@ -110,7 +110,7 @@ namespace {
             errs() << *(&I) << "\n";
 
             //outs() << "instruction(" << instruction_ids[id] << ").\n";
-            outs() << "instruction(" << operand_ids[id] << ").\n";
+            print_fact("instruction", id);
             if (DILocation *loc = I.getDebugLoc()) {
                 string filename = loc->getFilename().str();
                 unsigned line = loc->getLine();
