@@ -172,7 +172,11 @@ public class DomH extends ProgramDom<Object> {
             		break;
             	}
             }
-            int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+            int line = -1; // ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
+            Tag tg = u.getTag("LineNumberTag");
+            if(tg != null && tg instanceof LineNumberTag) {
+            	line = ((LineNumberTag) tg).getLineNumber();
+            }
             int mIdx = domM.indexOf(m);
             return "file=\"" + file + "\" " + "line=\"" + line + "\" " +
             "Mid=\"M" + mIdx + "\"" + " type=\"" + type + "\"";
