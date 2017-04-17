@@ -241,9 +241,10 @@ public final class ProcessExecutor {
                 }
                 os.flush();
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            
+            	if(ex.toString().indexOf("Stream closed") == -1) {
+            		throw new RuntimeException(ex);
+            	}
+            }            
         }
     }
 
