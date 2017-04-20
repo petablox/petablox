@@ -60,6 +60,7 @@ public class Main {
             outStream.close();
         if (errStream != null && errStream != outStream)
             errStream.close();
+		System.exit(0);
     }
     
     private static void run() {
