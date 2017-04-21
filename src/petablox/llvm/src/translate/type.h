@@ -219,6 +219,9 @@ inline unsigned long processType(Type *type) {
         type_ids[id] = type_id++;
         types.insert(id);
     }
+    else {
+        return id;
+    }
 
     print_fact("type", id);
     if (type->isIntegerTy()) {
