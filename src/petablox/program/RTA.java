@@ -576,10 +576,10 @@ public class RTA implements ScopeBuilder {
         // this is also unsound because we are not visiting constrs in superclasses
         for (SootMethod m : meths) {
         	if(!m.isStatic()){
-        		if (m.getName().toString().equals("<init>")) {            
-                    visitMethod(m);
-                    reflectiveCtors.add(m);
-                }
+        		if (m.getName().toString().equals("<init>")) {
+                visitMethod(m);
+                reflectiveCtors.add(m);
+            }
         	}
         }
     }
@@ -718,17 +718,15 @@ public class RTA implements ScopeBuilder {
       queue.add(c);
       while(!queue.isEmpty()){
         SootClass tos = queue.remove(0);
-        try{
-          ret= tos.getMethod(subsign);
-          break;
-        }catch(Exception e){
+        ret= tos.getMethodUnsafe(subsign);
+        if(ret == null){
           for(SootClass inter : tos.getInterfaces()){
             queue.add(inter); 
           }
           if(tos.hasSuperclass()){
             queue.add(tos.getSuperclass());
           }
-        }
+        }else break;
       }
       if(ret == null)
         System.out.println("WARN: RTA method not found "+subsign);
@@ -789,17 +787,13 @@ public class RTA implements ScopeBuilder {
             assert (!d.isAbstract());
             boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
-            	try{
             		SootMethod m2 = this.getMethodItr(d,n.getSubSignature()); 
-                    if(m2 == null)
-                    	throw new Exception();
-            		visitMethod(m2);
-            	}catch(Exception e){
-            		// TODO : Verify, Soot shows the method only in the class
-            		// where it is defined and not in sub-classes
-            		Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
+                if(m2 == null){
+              		// TODO : Verify, Soot shows the method only in the class
+              		// where it is defined and not in sub-classes
+            	  	Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
                             n.getSubSignature(), d.getName(), c.getName());
-            	}
+                }else	visitMethod(m2);
             }
         }
     }
@@ -923,12 +917,10 @@ public class RTA implements ScopeBuilder {
 
     protected void visitClinits(SootClass c) {
         if (classesVisitedForClinit.add(c)) {
-        	try{
-	        	SootMethod m=c.getMethod("void <clinit>()");
+	        	SootMethod m=c.getMethodUnsafe("void <clinit>()");
 	            // m is null for classes without class initializer method
 	            if (m != null)
 	                visitMethod(m);
-        	}catch(Exception e){ } // TODO: Check that this is equivalent. Soot doesn't return null
         	if(c.hasSuperclass()){
 	            SootClass d = c.getSuperclass();
 	            visitClinits(d);
