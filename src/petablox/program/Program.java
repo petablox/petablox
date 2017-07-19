@@ -112,8 +112,23 @@ public class Program {
     	  Options.v().set_keep_offset(true);
     	  Options.v().set_whole_program(true);
     	  Options.v().set_allow_phantom_refs(true);
-    	
-		    if (Config.reflectKind.equals("external")) {
+        Options.v().setPhaseOption("jb", "enabled:true");
+        Options.v().setPhaseOption("jb", "use-original-names:true");
+        Options.v().setPhaseOption("jb.dtr", "enabled:false");
+        Options.v().setPhaseOption("jb.ese", "enabled:false");
+        Options.v().setPhaseOption("jb.ule", "enabled:false");
+        Options.v().setPhaseOption("jb.cp", "enabled:false");
+        Options.v().setPhaseOption("jb.dae", "enabled:false");
+        Options.v().setPhaseOption("jb.uce", "enabled:false");
+        Options.v().setPhaseOption("jb.jb.cp-ule", "enabled:false");
+        Options.v().setPhaseOption("jb.ne", "enabled:false");
+        Options.v().setPhaseOption("jap", "enabled:false");
+        Options.v().setPhaseOption("cg", "enabled:false");
+        Options.v().setPhaseOption("wjtp", "enabled:false");
+        Options.v().setPhaseOption("wjap", "enabled:false");
+        Options.v().setPhaseOption("shimple", "node-elim-opt:false");
+		   
+        if (Config.reflectKind.equals("external")) {
 			      ExtReflectResolver extReflectResolver = new ExtReflectResolver();
 			      if (Config.reuseScope == false)
 				        extReflectResolver.run();
