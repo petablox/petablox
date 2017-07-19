@@ -207,8 +207,7 @@ public class RTA implements ScopeBuilder {
         }
         System.out.println("Soot class path:"+Scene.v().getSootClassPath());
         reflect = new Reflect();   
-        Scene.v().addBasicClass("java.lang.Object", SootClass.BODIES);
-        Scene.v().loadBasicClasses();
+        Scene.v().loadNecessaryClasses();
         if(!Scene.v().containsClass("java.lang.Object")){
         	System.out.println("FATAL: Could not load java.lang.Ojbect");
         	throw new RuntimeException();
@@ -219,7 +218,7 @@ public class RTA implements ScopeBuilder {
         entryMethods = new HashSet<SootMethod>();
         if(Config.populate)
         	entryPointGen();
-	//extractJUnitTests();
+	      //extractJUnitTests();
         prepEntrypoints(); 
         Scene.v().loadBasicClasses();
         
@@ -334,8 +333,6 @@ public class RTA implements ScopeBuilder {
 			String cName = "RegressionTest" + r;
 			Scene.v().addBasicClass(cName, SootClass.BODIES);
 		}
-        Scene.v().loadBasicClasses();
-
 
 		ArrayList<SootMethod> res = new ArrayList<SootMethod>();
 
@@ -394,7 +391,6 @@ public class RTA implements ScopeBuilder {
 		        if (!Config.isExcludedFromScope(cName)) {
 		        	if (!addedClasses.contains(cName)) {
 		        		Scene.v().addBasicClass(cName, SootClass.BODIES);
-		        		Scene.v().loadBasicClasses();
 		        		addedClasses.add(cName);
 		        		cl = Scene.v().getSootClass(cName);
 		        		entryClasses.add(cl);
@@ -500,7 +496,6 @@ public class RTA implements ScopeBuilder {
         	SootClass c = r.getSootClass();
         	if(!c.isInScene()){
         		Scene.v().addBasicClass(c.getName(), SootClass.BODIES);
-        		Scene.v().loadBasicClasses();
         		if (!c.isInScene() || c.isPhantomClass())
         			return false;
         		else
@@ -753,7 +748,7 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedObjNewInstSites) {
                 	if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = loadClass(s);
+                        	SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedObjNewInstSite(u, r.getType());
                         }
@@ -767,7 +762,7 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedConNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = loadClass(s);
+                        	SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedConNewInstSite(u, r.getType());
                         }
@@ -813,7 +808,7 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = loadClass(s);
+                        	SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedClsForNameSite(u, r.getType());
                         }
@@ -828,7 +823,7 @@ public class RTA implements ScopeBuilder {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
                         	String sm = s.substring(0, s.indexOf('['));
-                        	SootClass r = loadClass(sm);
+                        	SootClass r = SootUtilities.loadClass(sm);
                         	int dim = s.split("\\[").length - 1;
                         	assert (dim > 0);
                             if(r!=null){
@@ -842,30 +837,6 @@ public class RTA implements ScopeBuilder {
                 }
             }
         }
-    }
-    
-    private SootClass loadClass(String cName){
-    	SootClass c = null;
-    	if(Scene.v().containsClass(cName)){
-    		c = Scene.v().getSootClass(cName);
-    		if(c.isPhantomClass())
-    			return null;
-    	}else{
-    		Scene.v().addBasicClass(cName,SootClass.BODIES);
-    		Scene.v().loadBasicClasses();
-    		if(!Scene.v().containsClass(cName)){
-    			System.out.println("WARN: RTA could not load class " + cName);
-    			return null;
-    		}else{
-    			c = Scene.v().getSootClass(cName);
-    			if (c.isPhantomClass()) {
-    				System.out.println("WARN: RTA: class " + cName + " is a phantom class.");
-    				return null;
-    			}
-    		}
-    	}
-    	c.setApplicationClass();
-    	return c;
     }
     
     private void prepareClass(RefLikeType r) {
@@ -885,7 +856,7 @@ public class RTA implements ScopeBuilder {
                 }
             	return;
             }
-            SootClass c = loadClass(((RefType)r).getSootClass().getName());
+            SootClass c = SootUtilities.loadClass(((RefType)r).getSootClass().getName());
             if(c==null)
             	return;
             if(c.hasSuperclass()){

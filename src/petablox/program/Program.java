@@ -92,7 +92,7 @@ public class Program {
 	};
 
     private Program() {
-    	if (Config.verbose >= 3)
+        if (Config.verbose >= 3)
         	soot.options.Options.v().set_verbose(true);
         String ssaKind = Config.ssaKind;
         if (ssaKind.equals("nophi"))
@@ -101,40 +101,37 @@ public class Program {
             SSAUtilities.doSSA(true, false);
         else if (ssaKind.equals("nomove")) 
             SSAUtilities.doSSA(false, true);
-		else if (ssaKind.equals("nomovephi"))
-			SSAUtilities.doSSA(true, true);
+		    else if (ssaKind.equals("nomovephi"))
+			      SSAUtilities.doSSA(true, true);
     	
-    	//List<String> excluded = new ArrayList<String>();
-    	//Options.v().set_coffi(true);
-    	//Options.v().set_exclude(excluded);
-    	Options.v().set_include_all(true);
-    	Options.v().set_keep_line_number(true);
-    	Options.v().set_keep_offset(true);
-    	Options.v().set_whole_program(true);
-    	Options.v().set_allow_phantom_refs(true);
+    	  //List<String> excluded = new ArrayList<String>();
+    	  //Options.v().set_coffi(true);
+    	  //Options.v().set_exclude(excluded);
+    	  Options.v().set_include_all(true);
+    	  Options.v().set_keep_line_number(true);
+    	  Options.v().set_keep_offset(true);
+    	  Options.v().set_whole_program(true);
+    	  Options.v().set_allow_phantom_refs(true);
     	
-		if (Config.reflectKind.equals("external")) {
-			ExtReflectResolver extReflectResolver = new ExtReflectResolver();
-			if (Config.reuseScope == false)
-				extReflectResolver.run();
-			else
-				extReflectResolver.setUserClassPath();
-		}
-		String stdlibClPath = System.getProperty("sun.boot.class.path");
-		Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
-				                       Scene.v().defaultClassPath() + File.pathSeparator +
-		                               stdlibClPath);
-		if(Config.mainClassName!=null)
-			Scene.v().addBasicClass(Config.mainClassName);
-    	Scene.v().loadBasicClasses();
-    	if(Config.mainClassName!=null){
-    		SootClass mainCl = Scene.v().getSootClass(Config.mainClassName);
-    		Scene.v().setMainClass(mainCl);
-    	}
-    	if(Config.verbose >= 1) {
-    		Chain<SootClass> chc = Scene.v().getClasses();
-    		System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
-    	}
+		    if (Config.reflectKind.equals("external")) {
+			      ExtReflectResolver extReflectResolver = new ExtReflectResolver();
+			      if (Config.reuseScope == false)
+				        extReflectResolver.run();
+			      else
+				        extReflectResolver.setUserClassPath();
+		    }
+		    String stdlibClPath = System.getProperty("sun.boot.class.path");
+		    Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
+				                           Scene.v().defaultClassPath() + File.pathSeparator +
+		                                   stdlibClPath);
+    	  if(Config.mainClassName!=null){
+    		    SootClass mainCl = Scene.v().loadClass(Config.mainClassName, SootClass.BODIES);
+    		    Scene.v().setMainClass(mainCl);
+    	  }
+    	  if(Config.verbose >= 1) {
+    		    Chain<SootClass> chc = Scene.v().getClasses();
+    		    System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
+    	  }
     }
 
     /**
@@ -183,8 +180,8 @@ public class Program {
         File reflectFile = new File(Config.reflectFileName);
         File typesFile = new File(Config.typesFileName);
         if (Config.reuseScope && methodsFile.exists() && reflectFile.exists() && typesFile.exists()) {
-        	// loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
-        	loadTypesFile(typesFile);
+        	  // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
+        	  loadTypesFile(typesFile);
             loadMethodsFile(methodsFile);
             loadReflectFile(reflectFile);
         } else {
@@ -443,7 +440,7 @@ public class Program {
         	if (isBasicType)
         		r = basicTypes[i];
         	else {
-        		r = loadClass(sm);
+        		r = SootUtilities.loadClass(sm).getType();
         		if (r != null) {
 	        		assert (r instanceof RefType);
 	        		scopeClasses.add((RefType) r);
@@ -454,7 +451,7 @@ public class Program {
         	if (r != null) arr = ArrayType.v(r, dim);
             return (RefLikeType)arr;
     	} else {
-    		r = loadClass(s);
+    		r = SootUtilities.loadClass(s).getType();
     		if (r != null) 
     			assert (r instanceof RefType);
     		return (RefLikeType)r;
@@ -640,37 +637,6 @@ public class Program {
         }
     };
 
-    /**
-     * Loads the given class, if it is not already loaded, and provides its quadcode representation.
-     *
-     * @param s The name of the class to be loaded.  It may be provided in any of several formats, e.g.,
-     *        "{@code [I}", "{@code int[]}", "{@code java.lang.String[]}", "{@code [Ljava/lang/String;}".
-     *
-     * @return The quadcode representation of the given class.
-     *
-     * @throws Error If the class loading failed.
-     */
-    public RefType loadClass(String s) throws Error {
-    	if (Config.verbose >= 2)
-            Messages.log(LOADING_CLASS, s);
-    	SootClass c = null;
-    	if(Scene.v().containsClass(s)){
-    		c = Scene.v().getSootClass(s);
-    	}else{
-    		Scene.v().addBasicClass(s,SootClass.BODIES);
-    		Scene.v().loadBasicClasses();
-    		if(!Scene.v().containsClass(s)){
-    			System.out.println("WARN: Could not load class " + s);
-    			return null;
-    		}else{
-    			c = Scene.v().getSootClass(s);
-    		}
-    	}
-    	c.setApplicationClass();
-        return c.getType();
-    }
-
-    
     public HashSet<SootMethod> getEntryMethods() {
     	if (methods == null)
             buildMethods();

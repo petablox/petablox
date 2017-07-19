@@ -46,7 +46,19 @@ public class SootUtilities {
 	private static HashMap <SootMethod,ICFG> methodToCFG = new HashMap<SootMethod,ICFG>();
 	private static HashMap <Unit, Block> unitToBlockMap = null;
 	public static Hierarchy h = null;
-	
+
+  public static SootClass loadClass(String s){
+    SootClass c = Scene.v().getSootClass(s);
+    if(c == null)
+      c = Scene.v().loadClass(s, SootClass.BODIES);
+    if(c.isPhantomClass())
+      return null;
+    else{
+      c.setApplicationClass();
+      return c;
+    }
+  }
+
 	public static ICFG getCFG(SootMethod m){
 		if(methodToCFG.containsKey(m)){
 			return methodToCFG.get(m);

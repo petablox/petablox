@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import petablox.util.IndexSet;
+import petablox.util.soot.SootUtilities;
 import soot.RefType;
 import soot.RefLikeType;
 import soot.SootClass;
@@ -36,7 +37,7 @@ public class DynamicBuilder implements ScopeBuilder {
         //HostedVM.initialize();
         methods = new IndexSet<SootMethod>();
         for (String s : classNames) {
-            RefType rc = (RefType) program.loadClass(s);
+            RefType rc = SootUtilities.loadClass(s).getType();
             SootClass c = rc.getSootClass();
             classes.add(rc);
             List<SootMethod> meths = c.getMethods();
