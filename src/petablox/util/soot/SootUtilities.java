@@ -297,25 +297,25 @@ public class SootUtilities {
 		return false;
 	}
 	
-	public static boolean extendsClass(SootClass j, SootClass k) {
-    	if (j.getName().equals(k.getName()))
-			return true;
-        if (!j.hasSuperclass() ) 
-			return false;
-		return extendsClass(j.getSuperclass(),k);
-	}
+	public static boolean extendsClass(SootClass c, SootClass sup){
+    while(!c.getName().equals(sup.getName())){
+      if (c.hasSuperclass())
+        c = c.getSuperclass();
+      else
+			  return false;
+	  }
+    return true;
+  }
 
 	public static boolean implementsInterface(SootClass c, SootClass inter){
-		if(c.implementsInterface(inter.getName()))
-			return true;
-		while(c.hasSuperclass()){
-			SootClass d = c.getSuperclass();
-			if(d.implementsInterface(inter.getName()))
-				return true;
-			c = d;
-		}
-		return false;
-	}
+    while(!c.implementsInterface(inter.getName())){
+      if(c.hasSuperclass())
+        c = c.getSuperclass();
+      else 
+        return false;
+    }
+    return true;
+  }
 
 	public static boolean isSubtypeOf(RefLikeType i, RefLikeType j){
 		if(i instanceof ArrayType && j instanceof ArrayType){
