@@ -444,15 +444,7 @@ public class RTA implements ScopeBuilder {
      */
     protected void visitAdditionalEntrypoints() {
     	
-    }
-
-    private boolean isExcluded(SootMethod m) {
-    	SootClass c = m.getDeclaringClass();
-    	if (Config.isExcludedFromScope(c.getName()))
-    		return true;
-    	return false;
-    }
-    
+    }   
     
     /**
      * Called whenever RTA sees a method.
@@ -460,34 +452,12 @@ public class RTA implements ScopeBuilder {
      * @param m
      */
     protected void visitMethod(SootMethod m) {
-    	SootMethod s = null;
-    	if(StubMethodSupport.methodToStub.containsKey(m)) {
-    		s = StubMethodSupport.methodToStub.get(m);
-    	}else if (StubMethodSupport.methodToStub.containsValue(m)) {
-    		s = m;
-    	}else{
-            if(m.getDeclaringClass().isPhantom())
-                return;
-	    	if(StubMethodSupport.toReplace(m)){
-	    		s = StubMethodSupport.getStub(m);
-	    	}else if(isExcluded(m)){
-	    		s = StubMethodSupport.emptyStub(m);
-	    	}else{
-	    		s = m;
-	    	}
-    	}
-        try{
-            if(!s.hasActiveBody() && s.isConcrete())
-                s.retrieveActiveBody();
-        }catch(Exception e){
-            Messages.log(METHOD_BODY_NOT_FOUND,m.getSubSignature(),m.getDeclaringClass().getName());
-            s = StubMethodSupport.emptyStub(s);
-        }
-        if (methods.add(s)) {
+    	  SootMethod s = StubMethodSupport.getStub(m);
+        if(s == null) s = m;
+        if (s.isConcrete() && methods.add(s)) {
             if (DEBUG) System.out.println("\tAdding method: " + s);
-            if (!s.isAbstract()) {
-                methodWorklist.add(s);
-            }
+                s.retrieveActiveBody();
+            methodWorklist.add(s);
         }
     }
 
@@ -739,12 +709,13 @@ public class RTA implements ScopeBuilder {
         SootClass c = nr.declaringClass();
         visitClass(c.getType());
         SootMethod n = invExpr.getMethod();
+        String subsig = n.getSubSignature();
         visitMethod(n);
         visitExceptions(n);
         String cName = c.getName();
         if (cName.equals("java.lang.Class")) {
             if (dynamicResolvedObjNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance()")){  
+            		subsig.equals("java.lang.Object newInstance()")){  
                 for (Pair<String, List<String>> p : dynamicResolvedObjNewInstSites) {
                 	if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -758,7 +729,7 @@ public class RTA implements ScopeBuilder {
             }
         } else if (cName.equals("java.lang.reflect.Constructor")) {
             if (dynamicResolvedConNewInstSites != null &&
-            		n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Object[])")) {
+            		subsig.equals("java.lang.Object newInstance(java.lang.Object[])")) {
                 for (Pair<String, List<String>> p : dynamicResolvedConNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -782,12 +753,12 @@ public class RTA implements ScopeBuilder {
             assert (!d.isAbstract());
             boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
-            		SootMethod m2 = this.getMethodItr(d,n.getSubSignature()); 
+            		SootMethod m2 = this.getMethodItr(d,subsig); 
                 if(m2 == null){
               		// TODO : Verify, Soot shows the method only in the class
               		// where it is defined and not in sub-classes
             	  	Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
-                            n.getSubSignature(), d.getName(), c.getName());
+                            subsig, d.getName(), c.getName());
                 }else	visitMethod(m2);
             }
         }

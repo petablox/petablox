@@ -113,14 +113,14 @@ public class Program {
     	  Options.v().set_whole_program(true);
     	  Options.v().set_allow_phantom_refs(true);
         Options.v().setPhaseOption("jb", "enabled:true");
-        Options.v().setPhaseOption("jb", "use-original-names:true");
-        Options.v().setPhaseOption("jb.dtr", "enabled:false");
-        Options.v().setPhaseOption("jb.ese", "enabled:false");
+        //Options.v().setPhaseOption("jb", "use-original-names:true");
+        //Options.v().setPhaseOption("jb.dtr", "enabled:false");
+        Options.v().setPhaseOption("jb.lns", "enabled:false");
         Options.v().setPhaseOption("jb.ule", "enabled:false");
         Options.v().setPhaseOption("jb.cp", "enabled:false");
         Options.v().setPhaseOption("jb.dae", "enabled:false");
         Options.v().setPhaseOption("jb.uce", "enabled:false");
-        Options.v().setPhaseOption("jb.jb.cp-ule", "enabled:false");
+        Options.v().setPhaseOption("jb.cp-ule", "enabled:false");
         Options.v().setPhaseOption("jb.ne", "enabled:false");
         Options.v().setPhaseOption("jap", "enabled:false");
         Options.v().setPhaseOption("cg", "enabled:false");
@@ -301,13 +301,6 @@ public class Program {
         buildNameToTypeMap();
     }
 
-    private boolean isExcluded(SootMethod m) {
-    	SootClass c = m.getDeclaringClass();
-    	if (Config.isExcludedFromScope(c.getName()))
-    		return true;
-    	return false;
-    }
-    
     private SootMethod getMethodItr(SootClass c,String subsign){
         SootMethod ret = null;
         while(true){
@@ -350,49 +343,39 @@ public class Program {
     }
 
     private void loadMethodsFile(File file) {
-    	List<String> l = Utils.readFileToList(file);
+        List<String> l = Utils.readFileToList(file);
         methods = new IndexSet<SootMethod>(l.size());
-    	String first = l.remove(0);
-    	// "first" is the scope exclude string
-    	String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
-    	String scopeExclStr;
-    	if (parts.length < 2)
-    		scopeExclStr = "";
-    	else
-    		scopeExclStr = parts[1];
+    	  String first = l.remove(0);
+    	  // "first" is the scope exclude string
+    	  String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
+    	  String scopeExclStr;
+    	  if (parts.length < 2)
+    		    scopeExclStr = "";
+    	  else
+    		    scopeExclStr = parts[1];
         setScopeExclusion(scopeExclStr);
         for (String s : l) {
-        	int colonIdx  = s.indexOf(':');
+        	  int colonIdx  = s.indexOf(':');
             String cName = s.substring(1, colonIdx); // exclude the initial '<' character
             int entryptIdx = s.indexOf("##entry");
             boolean isEntryPt = false;
             int methEndIdx;
             if (entryptIdx > 0) {
-            	isEntryPt = true;
-            	methEndIdx = entryptIdx;
+                isEntryPt = true;
+                methEndIdx = entryptIdx;
             } else {
-            	methEndIdx = s.length();
+            	  methEndIdx = s.length();
             }
             String msig = s.substring(colonIdx + 2, methEndIdx - 1); // get method signature and exclude end char '>'
             SootClass c = Scene.v().getSootClass(cName);
             SootMethod m = getMethodItr(c, msig);
             if (isEntryPt) {
-            	entryMethods.add(m);
-            	entryClasses.add(c);
+            	  entryMethods.add(m);
+            	  entryClasses.add(c);
             }
             assert (m != null);
-          	SootMethod sm = null;
-        	if(StubMethodSupport.methodToStub.containsKey(m) || StubMethodSupport.methodToStub.containsValue(m)){
-        		sm = m;
-        	}else{
-    	    	if(StubMethodSupport.toReplace(m)){
-    	    		sm = StubMethodSupport.getStub(m);
-    	    	}else if(isExcluded(m)){
-    	    		sm = StubMethodSupport.emptyStub(m);
-    	    	}else{
-    	    		sm = m;
-    	    	}
-        	}
+          	SootMethod sm = StubMethodSupport.getStub(m);
+            if (sm == null) sm = m;
             if (sm.isConcrete()) {
                 sm.retrieveActiveBody();
                 // This is required for methods to have their final bodies in case SSA is turned on.

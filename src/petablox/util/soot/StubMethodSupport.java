@@ -23,57 +23,88 @@ import soot.jimple.internal.JAssignStmt;
 import soot.util.Chain;
 
 public class StubMethodSupport {
-	public static String[] replWithStub = {"<java.lang.Thread: void start()>"};
-	public static HashMap <SootMethod,SootMethod> methodToStub = new HashMap<SootMethod,SootMethod>();
+	  public static HashMap <SootMethod,SootMethod> methodToStub = new HashMap<SootMethod,SootMethod>();
 
-	public static SootMethod getStub(SootMethod m) {
-		if (m.getSignature().equals("<java.lang.Thread: void start()>")) return getThreadStartEquiv(m);
-		else if (m.getSignature().equals("<java.lang.Object: java.lang.Object clone()>")) return getCloneEquiv(m);
-		else if (m.getSignature().equals("<java.lang.System: void arraycopy(java.lang.Object,int,java.lang.Object,int,int)>")) return getArrayCopyEquiv(m);
-		else if (m.getSignature().equals("<java.lang.reflect.Array: void set(java.lang.Object,int,java.lang.Object)>")) return getArraySetEquiv(m);
-		else if(m.getSignature().equals("<java.security.AccessController: java.lang.Object doPrivileged(java.security.PrivilegedAction)>")) return getDoPrivileged(m);
-		else if(m.getSignature().equals("<java.security.AccessController: java.lang.Object doPrivileged(java.security.PrivilegedExceptionAction)>")) return getDoPrivileged(m);
-		else if(m.getSignature().equals("<java.security.AccessController: java.lang.Object doPrivileged(java.security.PrivilegedAction,java.security.AccessControlContext)>")) return getDoPrivileged(m);
-		else if(m.getSignature().equals("<java.security.AccessController: java.lang.Object doPrivileged(java.security.PrivilegedExceptionAction,java.security.AccessControlContext)>")) return getDoPrivileged(m);
-		else return emptyStub(m);
-	}
+    private static boolean isExcluded(SootMethod m) {
+    	SootClass c = m.getDeclaringClass();
+    	if (Config.isExcludedFromScope(c.getName()))
+    		return true;
+    	return false;
+    }
+
+  	public static SootMethod getStub(SootMethod m) {
+        SootMethod s;
+        if (methodToStub.containsKey(m))
+    		    s = methodToStub.get(m);
+    	  else if (methodToStub.containsValue(m))
+    		    s = m;
+    	  else 
+            s = replace(m);
+    	  return s;
+    }
+
+    private static SootMethod replace(SootMethod m) {
+        String cls = m.getDeclaringClass().getName();
+        String name = m.getName();
+        String rtype = m.getReturnType().toString();
+        List<Type> ptypes = m.getParameterTypes();
+        /* Do not use m.getSignature() for the comparison. It is costly. */
+        if (cls.equals("java.lang.Thread") && name.equals("start") &&
+            rtype.equals("void") && ptypes.size() == 0)
+            return getThreadStartEquiv(m);
+        else if (cls.equals("java.lang.Object") && name.equals("clone") &&
+            rtype.equals("java.lang.Object") && ptypes.size() == 0)
+            return getCloneEquiv(m);
+		    else if (cls.equals("java.lang.System") && name.equals("arraycopy") &&
+            rtype.equals("void") &&
+            ptypes.toString().equals("[java.lang.Object, int, java.lang.Object, int, int]"))
+            return getArrayCopyEquiv(m);
+        else if (cls.equals("java.lang.reflect.Array") && name.equals("set") &&
+            rtype.equals("void") && ptypes.toString().equals("[java.lang.Object, int, java.lang.Object]"))
+		        return getArraySetEquiv(m);
+        else if (cls.equals("java.security.AccessController") && name.equals("doPrivileged") &&
+            rtype.equals("java.lang.Object")) {
+            String params = ptypes.toString();
+            if (params.equals("[java.security.PrivilegedAction]")) 
+                return getDoPrivileged(m);
+            else if (params.equals("[java.security.PrivilegedExceptionAction]")) 
+                return getDoPrivileged(m);
+		        else if (params.equals("[java.security.PrivilegedAction, java.security.AccessControlContext]")) 
+                return getDoPrivileged(m);
+    		    else if (params.equals("[java.security.PrivilegedExceptionAction, java.security.AccessControlContext]")) 
+                return getDoPrivileged(m);
+            else return emptyStub(m);
+        } else if (m.isNative() || isExcluded(m)) return emptyStub(m);
+        else return null;
+	  }
 	
-	public static boolean toReplace(SootMethod m) {
-		if (m.isNative()) return true;
-		for (int i = 0; i < replWithStub.length; i++) {
-			if (m.getSignature().equals(replWithStub[i]))
-				return true;		
-		}
-		return false;
-	}
-	
-	private static SootMethod genericMethod(SootMethod m, boolean removeSync) {
-		SootClass c = m.getDeclaringClass();
-		SootMethod s = new SootMethod(m.getName(), m.getParameterTypes(), m.getReturnType(), m.getModifiers() & ~Modifier.NATIVE);
-		if (removeSync) s.setModifiers(s.getModifiers() & ~Modifier.SYNCHRONIZED);
-		c.removeMethod(m);
-		c.addMethod(s);
-		if (s.isConcrete()) {
-			JimpleBody body = Jimple.v().newBody(s);
-			Chain<Unit> units = body.getUnits();
-			Chain<Local> locals = body.getLocals();
-			boolean isStatic = (s.getModifiers() & Modifier.STATIC) != 0;
-			if (!isStatic) {
-				Local thisLcl = Jimple.v().newLocal("this", c.getType());
-		        locals.add(thisLcl);
-		        units.add(Jimple.v().newIdentityStmt(thisLcl, Jimple.v().newThisRef(c.getType())));
-			}
-			int paramCnt = s.getParameterCount();
-			List<Type> paramTypeList = s.getParameterTypes();
-			for (int i = 0; i < paramCnt; i++) {
-				Local lcl = Jimple.v().newLocal("l" + i, paramTypeList.get(i));
-		        locals.add(lcl);
-		        units.add(Jimple.v().newIdentityStmt(lcl, Jimple.v().newParameterRef(paramTypeList.get(i), i)));
-			}
-			s.setActiveBody(body);
-		}
-		return s;
-	}
+	  private static SootMethod genericMethod(SootMethod m, boolean removeSync) {
+    		SootClass c = m.getDeclaringClass();
+    		SootMethod s = new SootMethod(m.getName(), m.getParameterTypes(), m.getReturnType(), m.getModifiers() & ~Modifier.NATIVE);
+    		if (removeSync) s.setModifiers(s.getModifiers() & ~Modifier.SYNCHRONIZED);
+    		c.removeMethod(m);
+    		c.addMethod(s);
+    		if (s.isConcrete()) {
+      			JimpleBody body = Jimple.v().newBody(s);
+      			Chain<Unit> units = body.getUnits();
+      			Chain<Local> locals = body.getLocals();
+      			boolean isStatic = (s.getModifiers() & Modifier.STATIC) != 0;
+      			if (!isStatic) {
+        				Local thisLcl = Jimple.v().newLocal("this", c.getType());
+    		        locals.add(thisLcl);
+    		        units.add(Jimple.v().newIdentityStmt(thisLcl, Jimple.v().newThisRef(c.getType())));
+      			}
+      			int paramCnt = s.getParameterCount();
+      			List<Type> paramTypeList = s.getParameterTypes();
+      			for (int i = 0; i < paramCnt; i++) {
+        				Local lcl = Jimple.v().newLocal("l" + i, paramTypeList.get(i));
+    		        locals.add(lcl);
+    		        units.add(Jimple.v().newIdentityStmt(lcl, Jimple.v().newParameterRef(paramTypeList.get(i), i)));
+      			}
+      			s.setActiveBody(body);
+  	  	}
+    		return s;
+  	}
 	
 	/**
 	 * Stub for instance method "void start()" in class java.lang.Thread.
@@ -228,27 +259,27 @@ public class StubMethodSupport {
 		return s;
 	}
 	
-	/**
-	 * Empty stub for unsupported native methods / excluded methods
-	 */
-	public static SootMethod emptyStub(SootMethod m) {
+  	/**
+	   * Empty stub for unsupported native methods / excluded methods
+  	 */
+  	private static SootMethod emptyStub(SootMethod m) {
         SootMethod s = genericMethod(m, false);
         if (s.isConcrete()) {
-			JimpleBody body =(JimpleBody) s.retrieveActiveBody();
-			SootClass c = s.getDeclaringClass();
-			Chain<Unit> units = body.getUnits();
-			if (s.getReturnType() instanceof VoidType)
-				units.add(Jimple.v().newReturnVoidStmt());
-			else {
-				Chain<Local> locals = body.getLocals();
-				Local lcl = Jimple.v().newLocal("retlcl", s.getReturnType());
-		        locals.add(lcl);
-		        units.add(Jimple.v().newReturnStmt(lcl));
-			}
+      			JimpleBody body =(JimpleBody) s.retrieveActiveBody();
+      			SootClass c = s.getDeclaringClass();
+      			Chain<Unit> units = body.getUnits();
+      			if (s.getReturnType() instanceof VoidType)
+        				units.add(Jimple.v().newReturnVoidStmt());
+      			else {
+        				Chain<Local> locals = body.getLocals();
+        				Local lcl = Jimple.v().newLocal("retlcl", s.getReturnType());
+    		        locals.add(lcl);
+    		        units.add(Jimple.v().newReturnStmt(lcl));
+      			}
         }
-		methodToStub.put(m, s);
-		if (Config.verbose >= 2)
-			System.out.println("Empty stub for method: " + s.getName() + ":" + s.getDeclaringClass());
-		return s;
-	}
+    		methodToStub.put(m, s);
+    		if (Config.verbose >= 2)
+      			System.out.println("Empty stub for method: " + s.getName() + ":" + s.getDeclaringClass());
+    		return s;
+	  }
 }
