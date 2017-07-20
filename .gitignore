@@ -1,4 +1,5 @@
 petablox.jar
+reflection-instr.jar
 classes
 libsrc/libs/*
 libsrc/heros/heros-trunk.jar
@@ -8,3 +9,5 @@ libsrc/soot/lib/*
 libsrc/tamiflex/Booster/lib/*
 /bin/
 /bin1/
+.*.swp
+.*.swo
