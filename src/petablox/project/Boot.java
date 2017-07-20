@@ -85,6 +85,7 @@ public class Boot {
         "ERROR: Boot: Directory '%s' specified by property petablox.work.dir not found.";
 
     public static boolean SPELLCHECK_ON = Utils.buildBoolProperty("petablox.useSpellcheck", false);
+    public static boolean PROFILER_ON = Utils.buildBoolProperty("petablox.useProfiler", false);
 
     static String mainDirName;
 
@@ -210,6 +211,8 @@ public class Boot {
         	cmdList.add(CPUID);
         }
         cmdList.add("java");
+        if (PROFILER_ON)
+            cmdList.add("-agentlib:hprof=cpu=samples,depth=15");
         for (String s : jvmargs.split(" "))
             cmdList.add(s);
         for (Map.Entry e : System.getProperties().entrySet()) {
