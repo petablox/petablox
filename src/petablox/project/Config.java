@@ -35,6 +35,7 @@ public class Config {
 
     // properties concerning how the program's analysis scope is constructed
 
+    public final static boolean ILOptimize = Utils.buildBoolProperty("petablox.il.optimize", false);
     public final static String scopeKind = System.getProperty("petablox.scope.kind", "rta");
     public final static String reflectKind = System.getProperty("petablox.reflect.kind", "none");
     public final static String CHkind = System.getProperty("petablox.ch.kind", "static");
@@ -244,6 +245,7 @@ public class Config {
         System.out.println("petablox.src.path: " + srcPathName);
         System.out.println("petablox.run.ids: " + runIDs);
         System.out.println("petablox.runtime.jvmargs: " + runtimeJvmargs);
+        System.out.println("petablox.il.optimize: " + ILOptimize);
         System.out.println("petablox.scope.kind: " + scopeKind);
         System.out.println("petablox.reflect.kind: " + reflectKind);
         System.out.println("petablox.ch.kind: " + CHkind);

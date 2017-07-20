@@ -112,22 +112,17 @@ public class Program {
     	  Options.v().set_keep_offset(true);
     	  Options.v().set_whole_program(true);
     	  Options.v().set_allow_phantom_refs(true);
-        Options.v().setPhaseOption("jb", "enabled:true");
-        //Options.v().setPhaseOption("jb", "use-original-names:true");
-        //Options.v().setPhaseOption("jb.dtr", "enabled:false");
-        Options.v().setPhaseOption("jb.lns", "enabled:false");
-        Options.v().setPhaseOption("jb.ule", "enabled:false");
-        Options.v().setPhaseOption("jb.cp", "enabled:false");
-        Options.v().setPhaseOption("jb.dae", "enabled:false");
-        Options.v().setPhaseOption("jb.uce", "enabled:false");
-        Options.v().setPhaseOption("jb.cp-ule", "enabled:false");
-        Options.v().setPhaseOption("jb.ne", "enabled:false");
-        Options.v().setPhaseOption("jap", "enabled:false");
         Options.v().setPhaseOption("cg", "enabled:false");
-        Options.v().setPhaseOption("wjtp", "enabled:false");
-        Options.v().setPhaseOption("wjap", "enabled:false");
-        Options.v().setPhaseOption("shimple", "node-elim-opt:false");
-		   
+        String optimize = Boolean.toString(Config.ILOptimize);
+        Options.v().setPhaseOption("jb.lns", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.ule", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.cp", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.dae", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.uce", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.cp-ule", "enabled:" + optimize);
+        Options.v().setPhaseOption("jb.ne", "enabled:" + optimize);
+        Options.v().setPhaseOption("shimple", "node-elim-opt:" + optimize);
+
         if (Config.reflectKind.equals("external")) {
 			      ExtReflectResolver extReflectResolver = new ExtReflectResolver();
 			      if (Config.reuseScope == false)
