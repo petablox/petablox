@@ -296,21 +296,13 @@ public class Program {
         buildNameToTypeMap();
     }
 
-    private SootMethod getMethodItr(SootClass c,String subsign){
-        SootMethod ret = null;
-        while(true){
-            try{
-                ret= c.getMethod(subsign);
-                break;
-            }catch(Exception e){
-                if(!c.hasSuperclass()){
-                    System.out.println("WARN: Method "+subsign+" not found");
-                    break;
-                }else{
-                    c = c.getSuperclass();
-                }
-            }
+    private SootMethod getMethodItr (SootClass c, String subsign) {
+        SootMethod ret = c.getMethodUnsafe(subsign);
+        while(ret == null && c.hasSuperclass()) {
+          c = c.getSuperclass();
+          ret = c.getMethodUnsafe(subsign);
         }
+        if (ret == null) System.out.println("WARN: Method "+subsign+" not found");
         return ret;
     }
     
