@@ -2,6 +2,7 @@ package petablox.program;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -548,7 +549,7 @@ public class RTA implements ScopeBuilder {
         	}
         }
     }
-
+    
     private void processMethod(SootMethod m) {
         if (staticReflectResolved != null && staticReflectResolved.add(m)) {
             /*staticReflectResolver.run(m);
@@ -583,7 +584,7 @@ public class RTA implements ScopeBuilder {
         		if (DEBUG) System.out.println("Unit: " + u);
                 if(SootUtilities.isInvoke(u)){
                 	if (SootUtilities.isVirtualInvoke(u) || SootUtilities.isInterfaceInvoke(u)
-                			|| SootUtilities.isSpecialInvoke(u))             
+                			|| SootUtilities.isSpecialInvoke(u)) 
                 		processVirtualInvk(m, u);
                 	else
                 		processStaticInvk(m, u);
@@ -678,18 +679,18 @@ public class RTA implements ScopeBuilder {
     }
     
     private SootMethod getMethodItr(SootClass c,String subsign){
-      ArrayList<SootClass> queue = new ArrayList<SootClass>();
+      LinkedList<SootClass> queue = new LinkedList<SootClass>();
       SootMethod ret = null;
-      queue.add(c);
+      queue.addLast(c);
       while(!queue.isEmpty()){
-        SootClass tos = queue.remove(0);
+        SootClass tos = queue.pop();
         ret= tos.getMethodUnsafe(subsign);
         if(ret == null){
           for(SootClass inter : tos.getInterfaces()){
             queue.add(inter); 
           }
           if(tos.hasSuperclass()){
-            queue.add(tos.getSuperclass());
+            queue.addLast(tos.getSuperclass());
           }
         }else break;
       }
@@ -699,13 +700,13 @@ public class RTA implements ScopeBuilder {
     }
 
     private void processVirtualInvk(SootMethod m, Unit u) {
-    	InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
-    	if(invExpr instanceof AbstractInstanceInvokeExpr){
-    		Value v = ((AbstractInstanceInvokeExpr)invExpr).getBase();
-    		RefLikeType vrt = (RefLikeType)v.getType();
-    		visitClass(vrt);
-    	}
-    	SootMethodRef nr = invExpr.getMethodRef();
+    	  InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
+    	  if(invExpr instanceof AbstractInstanceInvokeExpr){
+    		    Value v = ((AbstractInstanceInvokeExpr)invExpr).getBase();
+    		    RefLikeType vrt = (RefLikeType)v.getType();
+    		    visitClass(vrt);
+    	  }
+    	  SootMethodRef nr = invExpr.getMethodRef();
         SootClass c = nr.declaringClass();
         visitClass(c.getType());
         SootMethod n = invExpr.getMethod();
@@ -715,11 +716,11 @@ public class RTA implements ScopeBuilder {
         String cName = c.getName();
         if (cName.equals("java.lang.Class")) {
             if (dynamicResolvedObjNewInstSites != null &&
-            		subsig.equals("java.lang.Object newInstance()")){  
+                    subsig.equals("java.lang.Object newInstance()")) {  
                 for (Pair<String, List<String>> p : dynamicResolvedObjNewInstSites) {
-                	if (matches(p.val0, m, u)) {
+                	  if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = SootUtilities.loadClass(s);
+                        	  SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedObjNewInstSite(u, r.getType());
                         }
@@ -729,11 +730,11 @@ public class RTA implements ScopeBuilder {
             }
         } else if (cName.equals("java.lang.reflect.Constructor")) {
             if (dynamicResolvedConNewInstSites != null &&
-            		subsig.equals("java.lang.Object newInstance(java.lang.Object[])")) {
+            		    subsig.equals("java.lang.Object newInstance(java.lang.Object[])")) {
                 for (Pair<String, List<String>> p : dynamicResolvedConNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = SootUtilities.loadClass(s);
+                        	  SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedConNewInstSite(u, r.getType());
                         }
@@ -742,8 +743,8 @@ public class RTA implements ScopeBuilder {
                 }
             }
         }
-
- 
+        if (n.isPrivate() || n.isConstructor())
+            return;
         boolean isInterface = c.isInterface();
         for (RefLikeType r : reachableAllocClasses) {
             if (r instanceof ArrayType)                                         
@@ -753,21 +754,23 @@ public class RTA implements ScopeBuilder {
             assert (!d.isAbstract());
             boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
-            		SootMethod m2 = this.getMethodItr(d,subsig); 
-                if(m2 == null){
-              		// TODO : Verify, Soot shows the method only in the class
-              		// where it is defined and not in sub-classes
-            	  	Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
-                            subsig, d.getName(), c.getName());
-                }else	visitMethod(m2);
+            	  SootMethod m2 = getMethodItr(d,subsig); 
+                if(m2 == null) {
+                	  // TODO : Verify, Soot shows the method only in the class
+                	  // where it is defined and not in sub-classes
+              	    Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
+                              subsig, d.getName(), c.getName());
+                } else {
+                    visitMethod(m2);
+                }
             }
         }
     }
 
     private void processStaticInvk(SootMethod m, Unit u) {
-    	InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
-    	if(invExpr instanceof DynamicInvokeExpr) return; //TODO: May need to handle this in the future
-    	SootMethod n = invExpr.getMethod();
+    	  InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
+    	  if (invExpr instanceof DynamicInvokeExpr) return; //TODO: May need to handle this in the future
+    	  SootMethod n = invExpr.getMethod();
         SootClass c = n.getDeclaringClass();
         visitClass(c.getType());
         visitMethod(n);
@@ -779,7 +782,7 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	SootClass r = SootUtilities.loadClass(s);
+                        	  SootClass r = SootUtilities.loadClass(s);
                             if (r != null)
                                 processResolvedClsForNameSite(u, r.getType());
                         }
@@ -793,10 +796,10 @@ public class RTA implements ScopeBuilder {
                 for (Pair<String, List<String>> p : dynamicResolvedAryNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
-                        	String sm = s.substring(0, s.indexOf('['));
-                        	SootClass r = SootUtilities.loadClass(sm);
-                        	int dim = s.split("\\[").length - 1;
-                        	assert (dim > 0);
+                        	  String sm = s.substring(0, s.indexOf('['));
+                        	  SootClass r = SootUtilities.loadClass(sm);
+                        	  int dim = s.split("\\[").length - 1;
+                        	  assert (dim > 0);
                             if(r!=null){
                                 ArrayType arr = ArrayType.v(r.getType(), dim);
                                 if (arr != null)
