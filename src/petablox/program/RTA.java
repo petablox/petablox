@@ -569,7 +569,7 @@ public class RTA implements ScopeBuilder {
                 Unit u = uit.next();
                 if (DEBUG) System.out.println("Unit: " + u);
                 if(SootUtilities.isInvoke(u)){
-                    if (SootUtilities.isInstanceInvoke(u))
+                    if (SootUtilities.isVirtualInvoke(u) || SootUtilities.isInterfaceInvoke(u))
                         processVirtualInvk(m, u);
                     else
                         processStaticInvk(m, u);
@@ -713,8 +713,6 @@ public class RTA implements ScopeBuilder {
                 }
             }
         }
-        if (n.isPrivate() || n.isConstructor())
-            return;
         boolean isInterface = c.isInterface();
         for (RefLikeType r : reachableAllocClasses) {
             if (r instanceof ArrayType)
