@@ -313,7 +313,7 @@ public class SootUtilities {
     }
 
     public static boolean extendsClass(SootClass c, SootClass sup){
-        while(!c.getName().equals(sup.getName())){
+        while (c != sup) {
             if (c.hasSuperclass())
                 c = c.getSuperclass();
             else
@@ -322,9 +322,18 @@ public class SootUtilities {
         return true;
     }
 
+    private static boolean directlyImplementsInterface(SootClass c, SootClass inter) {
+        Iterator<SootClass> iter = c.getInterfaces().iterator();
+        while (iter.hasNext()) {
+            if (iter.next() == inter) 
+                return true;
+        }
+        return false;
+    }
+
     public static boolean implementsInterface(SootClass c, SootClass inter){
-        while(!c.implementsInterface(inter.getName())){
-            if(c.hasSuperclass())
+        while (!directlyImplementsInterface(c, inter)) {
+            if (c.hasSuperclass())
                 c = c.getSuperclass();
             else 
                 return false;
