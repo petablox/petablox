@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -207,7 +208,7 @@ public class RTA implements ScopeBuilder {
             // and Config.userClassPathName has been pointed to the application classes modified to inline reflective calls.
         }
         System.out.println("Soot class path:"+Scene.v().getSootClassPath());
-        reflect = new Reflect();   
+        reflect = new Reflect();
         Scene.v().loadNecessaryClasses();
         if(!Scene.v().containsClass("java.lang.Object")){
             System.out.println("FATAL: Could not load java.lang.Ojbect");
@@ -215,7 +216,7 @@ public class RTA implements ScopeBuilder {
         }
         javaLangObject = Scene.v().getSootClass("java.lang.Object");
 
-        entryClasses = new HashSet<SootClass>(); 
+        entryClasses = new HashSet<SootClass>();
         entryMethods = new HashSet<SootMethod>();
         if(Config.populate)
             entryPointGen();
@@ -456,7 +457,7 @@ public class RTA implements ScopeBuilder {
         }
     }
 
-    private static boolean isClassDefined(Unit u, RefType r) {  
+    private static boolean isClassDefined(Unit u, RefType r) {
         try {
             SootClass c = r.getSootClass();
             if(!c.isInScene()){
@@ -489,12 +490,12 @@ public class RTA implements ScopeBuilder {
 
     private void processResolvedObjNewInstSite(Unit u, RefType r) {
         if (!isClassDefined(u, r))
-            return; 
+            return;
         reflect.addResolvedObjNewInstSite(u, r);
         visitClass(r);
         if (reachableAllocClasses.add(r) ||
                 (staticReflectResolver != null && staticReflectResolver.needNewIter()))
-            repeat = true;                           
+            repeat = true;
         SootClass c = r.getSootClass();
 
         //two cases: call was Constructor.newInstance or call was Class.newInstance
@@ -583,7 +584,7 @@ public class RTA implements ScopeBuilder {
                         SootField f = as.getFieldRef().getField();
                         SootClass c = f.getDeclaringClass();
                         visitClass(c.getType());
-                    } else if (SootUtilities.isNewStmt(as)) {                         
+                    } else if (SootUtilities.isNewStmt(as)) {
                         RefType ref=((NewExpr)as.rightBox.getValue()).getBaseType();
                         visitClass(ref);
                         if (reachableAllocClasses.add(ref))
@@ -600,13 +601,13 @@ public class RTA implements ScopeBuilder {
     }
 
     // does qStr (in format bci!mName:mDesc@cName) correspond to unit u in method m?
-    private static boolean matches(String uStr, SootMethod m, Unit u) {   
+    private static boolean matches(String uStr, SootMethod m, Unit u) {
         MethodElem me = MethodElem.parse(uStr);
         int offset = SootUtilities.getBCI(u);
         boolean flag = me.mName.equals(m.getName().toString()) &&
             m.getBytecodeSignature().contains(me.mDesc) &&                                              
             me.cName.equals(m.getDeclaringClass().getName()) &&
-            offset == me.offset;  
+            offset == me.offset;
         if (flag) {
             if (Config.verbose >= 2) {
                 System.out.println("MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
@@ -625,7 +626,7 @@ public class RTA implements ScopeBuilder {
                         flag = me.mName.equals(m.getName().toString()) &&
                             m.getBytecodeSignature().contains(me.mDesc) &&                                              
                             me.cName.equals(m.getDeclaringClass().getName()) &&
-                            offset == me.offset;  
+                            offset == me.offset;
                         if (flag) {
                             if (Config.verbose >= 2) {
                                 System.out.println("MATCH (SUB): " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
@@ -648,45 +649,24 @@ public class RTA implements ScopeBuilder {
         return flag;
     }
 
-    private SootMethod getMethodItr(SootClass c,String subsign){
-        LinkedList<SootClass> queue = new LinkedList<SootClass>();
-        SootMethod ret = null;
-        queue.addLast(c);
-        while(!queue.isEmpty()){
-            SootClass tos = queue.pop();
-            ret= tos.getMethodUnsafe(subsign);
-            if(ret == null){
-                for(SootClass inter : tos.getInterfaces()){
-                    queue.add(inter); 
-                }
-                if(tos.hasSuperclass()){
-                    queue.addLast(tos.getSuperclass());
-                }
-            }else break;
-        }
-        if(ret == null)
-            System.out.println("WARN: RTA method not found "+subsign);
-        return ret;
-    }
-
     private void processVirtualInvk(SootMethod m, Unit u) {
         InvokeExpr invExpr = SootUtilities.getInvokeExpr(u);
-        if(invExpr instanceof AbstractInstanceInvokeExpr){
-            Value v = ((AbstractInstanceInvokeExpr)invExpr).getBase();
-            RefLikeType vrt = (RefLikeType)v.getType();
-            visitClass(vrt);
-        }
-        SootMethodRef nr = invExpr.getMethodRef();
-        SootClass c = nr.declaringClass();
-        visitClass(c.getType());
+        Value v = ((AbstractInstanceInvokeExpr)invExpr).getBase();
+        RefLikeType vrt = (RefLikeType)v.getType();
+        visitClass(vrt);
+        SootClass c = invExpr.getMethodRef().declaringClass();
         SootMethod n = invExpr.getMethod();
-        String subsig = n.getSubSignature();
         visitMethod(n);
         visitExceptions(n);
         String cName = c.getName();
+        String nName = n.getName();
+        Type returnType = n.getReturnType();
+        List<Type> paramTypes = n.getParameterTypes();
         if (cName.equals("java.lang.Class")) {
-            if (dynamicResolvedObjNewInstSites != null &&
-                    subsig.equals("java.lang.Object newInstance()")) {  
+            if (dynamicResolvedObjNewInstSites != null
+                    && nName.equals("newInstance")
+                    && returnType.toString().equals("java.lang.Object")
+                    && paramTypes.size() == 0) {
                 for (Pair<String, List<String>> p : dynamicResolvedObjNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -699,8 +679,11 @@ public class RTA implements ScopeBuilder {
                 }
             }
         } else if (cName.equals("java.lang.reflect.Constructor")) {
-            if (dynamicResolvedConNewInstSites != null &&
-                    subsig.equals("java.lang.Object newInstance(java.lang.Object[])")) {
+            if (dynamicResolvedConNewInstSites != null
+                    && nName.equals("newInstance")
+                    && returnType.toString().equals("java.lang.Object")
+                    && paramTypes.size() == 1
+                    && paramTypes.toString().equals("[java.lang.Object[]]")) {
                 for (Pair<String, List<String>> p : dynamicResolvedConNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -722,14 +705,13 @@ public class RTA implements ScopeBuilder {
             assert (!d.isAbstract());
             boolean matches = isInterface ? SootUtilities.implementsInterface(d,c) : SootUtilities.extendsClass(d,c);
             if (matches) {
-                SootMethod m2 = getMethodItr(d,subsig); 
+                SootMethod m2 = SootUtilities.getVirtualMethod(d,n);
                 if(m2 == null) {
-                    // TODO : Verify, Soot shows the method only in the class
-                    // where it is defined and not in sub-classes
                     Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
-                            subsig, d.getName(), c.getName());
-                } else
+                            n.getSubSignature(), d.getName(), c.getName());
+                } else {
                     visitMethod(m2);
+                }
             }
         }
     }
@@ -743,7 +725,10 @@ public class RTA implements ScopeBuilder {
         visitMethod(n);
         visitExceptions(n);
         String cName = c.getName();
-        if (cName.equals("java.lang.Class")) { 
+        String nName = n.getName();
+        Type returnType = n.getReturnType();
+        List<Type> paramTypes = n.getParameterTypes();
+        if (cName.equals("java.lang.Class")) {
             if (dynamicResolvedClsForNameSites != null &&
                     n.getSubSignature().equals("java.lang.Class forName(java.lang.String)")) {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
@@ -781,33 +766,34 @@ public class RTA implements ScopeBuilder {
     }
 
     private void prepareClass(RefLikeType r) {
-        if (classes.add(r)) {                             
+        if (classes.add(r)) {
             if (DEBUG) System.out.println("\tAdding class: " + r);
-            if(r instanceof ArrayType) {
+            if (r instanceof ArrayType) {
                 Type bType = ((ArrayType) r).baseType;
                 if (bType instanceof RefType) {
-                    SootClass d = ((RefType)bType).getSootClass();
+                    SootClass sup = ((RefType)bType).getSootClass();
                     visitClass((RefType)bType);
                     int numDimensions = ((ArrayType)r).numDimensions;
-                    if(d.hasSuperclass())
-                        visitClass(ArrayType.v(d.getSuperclass().getType(),numDimensions));
-                    for(SootClass i : d.getInterfaces())
+                    if (sup.hasSuperclass())
+                        visitClass(ArrayType.v(sup.getSuperclass().getType(),numDimensions));
+                    for (SootClass i : sup.getInterfaces())
                         visitClass(ArrayType.v(i.getType(),numDimensions));
                 }
                 return;
             }
             SootClass c = SootUtilities.loadClass(((RefType)r).getSootClass().getName());
-            if(c==null)
+            if(c == null)
                 return;
-            if(c.hasSuperclass()){
-                SootClass d = c.getSuperclass();
-                if (d == null)
-                    assert (c == javaLangObject);
-                else
-                    prepareClass(d.getType());
-            }
             for (SootClass i : c.getInterfaces())
                 prepareClass(i.getType());
+            if(c.hasSuperclass()) {
+                SootClass sup = c.getSuperclass();
+                prepareClass(sup.getType());
+                SootUtilities.cacheHierarchy(c, sup);
+            } else {
+                assert (c == javaLangObject);
+                SootUtilities.cacheHierarchy(c, null);
+            }
         }
     }
 

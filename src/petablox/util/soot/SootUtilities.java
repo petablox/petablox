@@ -2,8 +2,10 @@ package petablox.util.soot;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import petablox.project.ClassicProject;
@@ -44,8 +46,15 @@ import soot.util.Chain;
 
 public class SootUtilities {
     private static HashMap <Unit, SootMethod> PMMap = null;
-    private static HashMap <SootMethod,ICFG> methodToCFG = new HashMap<SootMethod,ICFG>();
+    private static HashMap <SootMethod,ICFG> methodToCFG
+        = new HashMap<SootMethod,ICFG>();
     private static HashMap <Unit, Block> unitToBlockMap = null;
+    private static HashMap<SootClass, LinkedList<SootMethod>> methodCache
+        = new HashMap<SootClass, LinkedList<SootMethod>>();
+    private static HashMap<SootClass, HashSet<SootClass>> classCache
+        = new HashMap<SootClass, HashSet<SootClass>>();
+    private static HashMap<SootClass, HashSet<SootClass>> interfaceCache
+        = new HashMap<SootClass, HashSet<SootClass>>();
     public static Hierarchy h = null;
 
     public static SootClass loadClass(String s){
@@ -312,35 +321,59 @@ public class SootUtilities {
         return false;
     }
 
-    public static boolean extendsClass(SootClass c, SootClass sup){
-        while (c != sup) {
-            if (c.hasSuperclass())
-                c = c.getSuperclass();
-            else
-                return false;
+    public static void cacheHierarchy(SootClass c, SootClass sup) {
+        LinkedList<SootMethod> mList = new LinkedList<SootMethod>();
+        for (SootMethod m : c.getMethods()) {
+            if (!m.isPrivate() && !m.isConstructor())
+                mList.addLast(m);
         }
-        return true;
+        HashSet<SootClass> cSet = null;
+        HashSet<SootClass> iSet = null;
+        if (sup != null) {
+            for (SootMethod m : methodCache.get(sup))
+                mList.addLast(m);
+            cSet = (HashSet<SootClass>)(classCache.get(sup).clone());
+            iSet = (HashSet<SootClass>)(interfaceCache.get(sup).clone());
+            cSet.add(sup);
+        } else {
+            cSet = new HashSet<SootClass>();
+            iSet = new HashSet<SootClass>();
+        }
+        for (SootClass i : c.getInterfaces())
+            iSet.add(i);
+
+        methodCache.put(c, mList);
+        classCache.put(c, cSet);
+        interfaceCache.put(c, iSet);
     }
 
-    private static boolean directlyImplementsInterface(SootClass c, SootClass inter) {
-        Iterator<SootClass> iter = c.getInterfaces().iterator();
-        while (iter.hasNext()) {
-            if (iter.next() == inter) 
-                return true;
+    public static SootMethod getVirtualMethod (SootClass c, SootMethod vm) {
+        for (SootMethod m : methodCache.get(c)) {
+            if (m.getName().equals(vm.getName())
+                    && m.getReturnType().equals(vm.getReturnType())
+                    && m.getParameterTypes().equals(vm.getParameterTypes()))
+                return m;
         }
-        return false;
+        System.out.println("WARN: RTA method not found "+vm.getName());
+        return null;
+    }
+
+    public static boolean extendsClass(SootClass c, SootClass sup){
+        HashSet<SootClass> sups = classCache.get(c);
+        if (sups == null)   // when c is a phantom class
+            return false;
+        else
+            return sups.contains(sup);
     }
 
     public static boolean implementsInterface(SootClass c, SootClass inter){
-        while (!directlyImplementsInterface(c, inter)) {
-            if (c.hasSuperclass())
-                c = c.getSuperclass();
-            else 
-                return false;
-        }
-        return true;
+        HashSet<SootClass> inters = interfaceCache.get(c);
+        if (inters == null) // when c is a phantom class
+            return false;
+        else
+            return inters.contains(inter);
     }
-
+ 
     public static boolean isSubtypeOf(RefLikeType i, RefLikeType j){
         if(i instanceof ArrayType && j instanceof ArrayType){
             ArrayType ia = (ArrayType)i;
@@ -418,6 +451,7 @@ public class SootUtilities {
             return true;
         return false;
     }
+
     public static boolean isPhiInst(JAssignStmt a){
         Value right = a.rightBox.getValue();
         if(right instanceof PhiExpr)
@@ -442,8 +476,8 @@ public class SootUtilities {
     public static Local[] getMethArgLocals(SootMethod m){
         int numLocals = m.getParameterCount();
         List<Local> regs;
-        try{ 
-            regs= m.getActiveBody().getParameterLocals(); 
+        try{
+            regs= m.getActiveBody().getParameterLocals();
             if(!m.isStatic()) {
                 numLocals++; // Done to consider the "this" parameter passed
                 regs.add(0,m.getActiveBody().getThisLocal());
@@ -453,8 +487,8 @@ public class SootUtilities {
                 locals[i] = regs.get(i);
             }
             return locals;
-        } catch(RuntimeException e){ 
-            System.out.println("Method body not found for method: "+m.getSignature()); 
+        } catch (RuntimeException e) {
+            System.out.println("Method body not found for method: "+m.getSignature());
         };
         return null;
     }
@@ -495,8 +529,8 @@ public class SootUtilities {
                         return (Local)retOp;
                 }
             }
-        }catch(RuntimeException e){ 
-            System.out.println("Method body not found for method: "+m.getSignature()); 
+        }catch(RuntimeException e){
+            System.out.println("Method body not found for method: "+m.getSignature());
         };
         return null;
     }
@@ -516,8 +550,8 @@ public class SootUtilities {
         return 0;
     }
 
-    public static String toByteLocStr(Unit u) {   
-        String x = Integer.toString(getBCI((Unit) u));                  
+    public static String toByteLocStr(Unit u) {
+        String x = Integer.toString(getBCI((Unit) u));
         return x + "!" + getMethod(u);
     }
 
