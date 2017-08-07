@@ -49,7 +49,7 @@ public class SootUtilities {
     private static HashMap <SootMethod,ICFG> methodToCFG
         = new HashMap<SootMethod,ICFG>();
     private static HashMap <Unit, Block> unitToBlockMap = null;
-    private static HashMap<SootClass, LinkedList<SootMethod>> methodCache
+    private static HashMap<SootClass, LinkedList<SootMethod>> virtualMethodCache
         = new HashMap<SootClass, LinkedList<SootMethod>>();
     private static HashMap<SootClass, HashSet<SootClass>> classCache
         = new HashMap<SootClass, HashSet<SootClass>>();
@@ -322,16 +322,16 @@ public class SootUtilities {
     }
 
     public static void cacheHierarchy(SootClass c, SootClass sup) {
-        LinkedList<SootMethod> mList = new LinkedList<SootMethod>();
+        LinkedList<SootMethod> vmList = new LinkedList<SootMethod>();
         for (SootMethod m : c.getMethods()) {
             if (!m.isPrivate() && !m.isConstructor())
-                mList.addLast(m);
+                vmList.addLast(m);
         }
         HashSet<SootClass> cSet = null;
         HashSet<SootClass> iSet = null;
         if (sup != null) {
-            for (SootMethod m : methodCache.get(sup))
-                mList.addLast(m);
+            for (SootMethod m : virtualMethodCache.get(sup))
+                vmList.addLast(m);
             cSet = (HashSet<SootClass>)(classCache.get(sup).clone());
             iSet = (HashSet<SootClass>)(interfaceCache.get(sup).clone());
             cSet.add(sup);
@@ -342,13 +342,13 @@ public class SootUtilities {
         for (SootClass i : c.getInterfaces())
             iSet.add(i);
 
-        methodCache.put(c, mList);
+        virtualMethodCache.put(c, vmList);
         classCache.put(c, cSet);
         interfaceCache.put(c, iSet);
     }
 
     public static SootMethod getVirtualMethod (SootClass c, SootMethod vm) {
-        for (SootMethod m : methodCache.get(c)) {
+        for (SootMethod m : virtualMethodCache.get(c)) {
             if (m.getName().equals(vm.getName())
                     && m.getReturnType().equals(vm.getReturnType())
                     && m.getParameterTypes().equals(vm.getParameterTypes()))
