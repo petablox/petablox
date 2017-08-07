@@ -729,8 +729,11 @@ public class RTA implements ScopeBuilder {
         Type returnType = n.getReturnType();
         List<Type> paramTypes = n.getParameterTypes();
         if (cName.equals("java.lang.Class")) {
-            if (dynamicResolvedClsForNameSites != null &&
-                    n.getSubSignature().equals("java.lang.Class forName(java.lang.String)")) {
+            if (dynamicResolvedClsForNameSites != null
+                    && nName.equals("forName")
+                    && returnType.toString().equals("java.lang.Class")
+                    && paramTypes.size() == 1
+                    && paramTypes.toString().equals("[java.lang.String]")) {
                 for (Pair<String, List<String>> p : dynamicResolvedClsForNameSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
@@ -743,8 +746,11 @@ public class RTA implements ScopeBuilder {
                 }
             }
         } else if (cName.equals("java.lang.reflect.Array")) {
-            if (dynamicResolvedAryNewInstSites != null &&
-                    n.getSubSignature().equals("java.lang.Object newInstance(java.lang.Class,int)")) {
+            if (dynamicResolvedAryNewInstSites != null
+                    && nName.equals("newInstance")
+                    && returnType.toString().equals("java.lang.Object")
+                    && paramTypes.size() == 2
+                    && paramTypes.toString().equals("[java.lang.Class,int]")) {
                 for (Pair<String, List<String>> p : dynamicResolvedAryNewInstSites) {
                     if (matches(p.val0, m, u)) {
                         for (String s : p.val1) {
