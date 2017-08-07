@@ -193,13 +193,6 @@ public class SootUtilities {
         return false;
     }
 
-    /* Soot has 4 call types: 
-     * 1) special = constructors + methods in supers + privates
-     * 2) virtual = regular calls
-     * 3) interface
-     * 4) static
-     * Petablox considers methods in supers and virtuals as "Virtual"
-     */
     public static boolean isVirtualInvoke(Unit q){
         assert (q instanceof JInvokeStmt || q instanceof JAssignStmt);
         InvokeExpr ie;
@@ -209,15 +202,7 @@ public class SootUtilities {
             ie = ((InvokeExpr)(((JAssignStmt)q).rightBox.getValue()));
         else
             ie = null;
-        if (ie != null)
-            if (ie instanceof JVirtualInvokeExpr) return true;
-            else if (ie instanceof JSpecialInvokeExpr) {
-                SootMethod m = ie.getMethod();
-                return (!m.isPrivate() && !m.isConstructor());
-            } else 
-                return false;
-        else
-            return false;
+        return ie != null && ie instanceof JVirtualInvokeExpr;
     }
 
     public static boolean isInterfaceInvoke(Unit q){
@@ -229,9 +214,7 @@ public class SootUtilities {
             ie = ((InvokeExpr)(((JAssignStmt)q).rightBox.getValue()));
         else
             ie = null;
-        if (ie != null && ie instanceof JInterfaceInvokeExpr)
-            return true;
-        return false;
+        return ie != null && ie instanceof JInterfaceInvokeExpr;
     }
 
     public static boolean isInstanceInvoke(Unit q){
