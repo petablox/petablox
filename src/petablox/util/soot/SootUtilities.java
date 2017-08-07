@@ -314,7 +314,8 @@ public class SootUtilities {
         HashSet<SootClass> iSet = null;
         if (sup != null) {
             for (SootMethod m : virtualMethodCache.get(sup))
-                vmList.addLast(m);
+                if (c.getMethodUnsafe(m.getSubSignature()) == null)
+                   vmList.addLast(m);
             cSet = (HashSet<SootClass>)(classCache.get(sup).clone());
             iSet = (HashSet<SootClass>)(interfaceCache.get(sup).clone());
             cSet.add(sup);
