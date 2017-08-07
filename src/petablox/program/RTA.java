@@ -658,6 +658,7 @@ public class RTA implements ScopeBuilder {
         SootMethod n = invExpr.getMethod();
         visitMethod(n);
         visitExceptions(n);
+        if(n.isFinal()) return;
         String cName = c.getName();
         String nName = n.getName();
         Type returnType = n.getReturnType();
