@@ -312,19 +312,24 @@ public class SootUtilities {
         }
         HashSet<SootClass> cSet = null;
         HashSet<SootClass> iSet = null;
-        if (sup != null) {
+        if (sup != null) {  /* normal classes */
             for (SootMethod m : virtualMethodCache.get(sup))
                 if (c.getMethodUnsafe(m.getSubSignature()) == null)
                    vmList.addLast(m);
             cSet = (HashSet<SootClass>)(classCache.get(sup).clone());
             iSet = (HashSet<SootClass>)(interfaceCache.get(sup).clone());
             cSet.add(sup);
-        } else {
+        } else {            /* java.lang.Object */
             cSet = new HashSet<SootClass>();
             iSet = new HashSet<SootClass>();
         }
-        for (SootClass i : c.getInterfaces())
+        for (SootClass i : c.getInterfaces()){
+            /* c also implements j where i extends j */
+            HashSet<SootClass> j = (HashSet<SootClass>) interfaceCache.get(i);
+            if (j != null)
+                iSet.addAll(j);
             iSet.add(i);
+        }
 
         virtualMethodCache.put(c, vmList);
         classCache.put(c, cSet);
