@@ -645,7 +645,7 @@ public class RTA implements ScopeBuilder {
                 System.out.println("NO MATCH: " + uStr + "  " + m.getName() + "  " + m.getDeclaringClass().getName());
                 System.out.println("dyn instr offset:" + me.offset + "  Soot offset:" + SootUtilities.getBCI(u));
             }
-                }
+        }
         return flag;
     }
 
@@ -832,4 +832,4 @@ public class RTA implements ScopeBuilder {
                 visitClinits(i);
         }
     }
-    }
+}

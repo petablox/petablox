@@ -78,22 +78,22 @@ public class Program {
     private boolean HTMLizedJavaSrcFiles;
     private ClassHierarchy ch;
     private Type[] basicTypes = {
-			BooleanType.v(),
-			ByteType.v(),
-			CharType.v(),
-			DoubleType.v(),
-			FloatType.v(),
-			Integer127Type.v(),
-			Integer1Type.v(),
-			Integer32767Type.v(),
-			IntType.v(),
-			LongType.v(),
-			ShortType.v()
-	};
+        BooleanType.v(),
+        ByteType.v(),
+        CharType.v(),
+        DoubleType.v(),
+        FloatType.v(),
+        Integer127Type.v(),
+        Integer1Type.v(),
+        Integer32767Type.v(),
+        IntType.v(),
+        LongType.v(),
+        ShortType.v()
+    };
 
     private Program() {
         if (Config.verbose >= 3)
-        	soot.options.Options.v().set_verbose(true);
+            soot.options.Options.v().set_verbose(true);
         String ssaKind = Config.ssaKind;
         if (ssaKind.equals("nophi"))
             SSAUtilities.doSSA(false, false);
@@ -101,17 +101,17 @@ public class Program {
             SSAUtilities.doSSA(true, false);
         else if (ssaKind.equals("nomove")) 
             SSAUtilities.doSSA(false, true);
-		    else if (ssaKind.equals("nomovephi"))
-			      SSAUtilities.doSSA(true, true);
-    	
-    	  //List<String> excluded = new ArrayList<String>();
-    	  //Options.v().set_coffi(true);
-    	  //Options.v().set_exclude(excluded);
-    	  Options.v().set_include_all(true);
-    	  Options.v().set_keep_line_number(true);
-    	  Options.v().set_keep_offset(true);
-    	  Options.v().set_whole_program(true);
-    	  Options.v().set_allow_phantom_refs(true);
+        else if (ssaKind.equals("nomovephi"))
+            SSAUtilities.doSSA(true, true);
+
+        //List<String> excluded = new ArrayList<String>();
+        //Options.v().set_coffi(true);
+        //Options.v().set_exclude(excluded);
+        Options.v().set_include_all(true);
+        Options.v().set_keep_line_number(true);
+        Options.v().set_keep_offset(true);
+        Options.v().set_whole_program(true);
+        Options.v().set_allow_phantom_refs(true);
         Options.v().setPhaseOption("cg", "enabled:false");
         String optimize = Boolean.toString(Config.ILOptimize);
         Options.v().setPhaseOption("jb.lns", "enabled:" + optimize);
@@ -124,24 +124,24 @@ public class Program {
         Options.v().setPhaseOption("shimple", "node-elim-opt:" + optimize);
 
         if (Config.reflectKind.equals("external")) {
-			      ExtReflectResolver extReflectResolver = new ExtReflectResolver();
-			      if (Config.reuseScope == false)
-				        extReflectResolver.run();
-			      else
-				        extReflectResolver.setUserClassPath();
-		    }
-		    String stdlibClPath = System.getProperty("sun.boot.class.path");
-		    Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator + 
-				                           Scene.v().defaultClassPath() + File.pathSeparator +
-		                                   stdlibClPath);
-    	  if(Config.mainClassName!=null){
-    		    SootClass mainCl = Scene.v().loadClass(Config.mainClassName, SootClass.BODIES);
-    		    Scene.v().setMainClass(mainCl);
-    	  }
-    	  if(Config.verbose >= 1) {
-    		    Chain<SootClass> chc = Scene.v().getClasses();
-    		    System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
-    	  }
+            ExtReflectResolver extReflectResolver = new ExtReflectResolver();
+            if (Config.reuseScope == false)
+                extReflectResolver.run();
+            else
+                extReflectResolver.setUserClassPath();
+        }
+        String stdlibClPath = System.getProperty("sun.boot.class.path");
+        Options.v().set_soot_classpath(Config.userClassPathName + File.pathSeparator +
+                Scene.v().defaultClassPath() + File.pathSeparator +
+                stdlibClPath);
+        if(Config.mainClassName!=null){
+            SootClass mainCl = Scene.v().loadClass(Config.mainClassName, SootClass.BODIES);
+            Scene.v().setMainClass(mainCl);
+        }
+        if(Config.verbose >= 1) {
+            Chain<SootClass> chc = Scene.v().getClasses();
+            System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
+        }
     }
 
     /**
@@ -190,8 +190,8 @@ public class Program {
         File reflectFile = new File(Config.reflectFileName);
         File typesFile = new File(Config.typesFileName);
         if (Config.reuseScope && methodsFile.exists() && reflectFile.exists() && typesFile.exists()) {
-        	  // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
-        	  loadTypesFile(typesFile);
+            // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
+            loadTypesFile(typesFile);
             loadMethodsFile(methodsFile);
             loadReflectFile(reflectFile);
         } else {
@@ -201,11 +201,11 @@ public class Program {
                 b = new RTA(Config.reflectKind);
             } else if (scopeKind.equals("dynamic")) {
                 //b = new DynamicBuilder();
-            	System.out.println("Unsupported kind of scope construction!!");
-            	throw new RuntimeException();
+                System.out.println("Unsupported kind of scope construction!!");
+                throw new RuntimeException();
             } else if (scopeKind.equals("cha")) {
-            	System.out.println("Unsupported kind of scope construction !!");
-            	throw new RuntimeException();
+                System.out.println("Unsupported kind of scope construction !!");
+                throw new RuntimeException();
                 //b = new CHA(getClassHierarchy());
             } else {
                 try {
@@ -234,46 +234,46 @@ public class Program {
     }
 
     private List<Type> getBasicTypes(){
-    	List<Type> types = new ArrayList<Type>();
-    	for(Type t : basicTypes){
-    		types.add(t);
-    		types.add(ArrayType.v(t, 1));
-    	}
-    	/*String[] basicClassNames = { "java.lang.Object",
-    	        "java.lang.Class",
-    	        "java.lang.String",
-    	        "java.lang.System",
-    	        "java.lang.Throwable",
-    	        //"java.lang.Address",
-    	        "java.lang.Exception",
-    	        "java.lang.ArrayStoreException",
-    	        "java.lang.Error",
-    	        "java.lang.RuntimeException",
-    	        "java.lang.NullPointerException",
-    	        "java.lang.IndexOutOfBoundsException",
-    	        "java.lang.NegativeArraySizeException",
-    	        "java.lang.ArithmeticException",
-    	        "java.lang.IllegalMonitorStateException",
-    	        "java.lang.ClassCastException",
-    	        "java.lang.ClassLoader",
-    	        "java.lang.reflect.Field",
-    	        "java.lang.reflect.Method",
-    	        "java.lang.reflect.Constructor",
-    	        "java.lang.Thread",
-    	        "java.lang.ref.Finalizer"};
-    	
-    	for (String className : basicClassNames){
-            types.add(SootResolver.v().makeClassRef(className).getType());
+        List<Type> types = new ArrayList<Type>();
+        for(Type t : basicTypes){
+            types.add(t);
+            types.add(ArrayType.v(t, 1));
+        }
+        /*String[] basicClassNames = { "java.lang.Object",
+          "java.lang.Class",
+          "java.lang.String",
+          "java.lang.System",
+          "java.lang.Throwable",
+        //"java.lang.Address",
+        "java.lang.Exception",
+        "java.lang.ArrayStoreException",
+        "java.lang.Error",
+        "java.lang.RuntimeException",
+        "java.lang.NullPointerException",
+        "java.lang.IndexOutOfBoundsException",
+        "java.lang.NegativeArraySizeException",
+        "java.lang.ArithmeticException",
+        "java.lang.IllegalMonitorStateException",
+        "java.lang.ClassCastException",
+        "java.lang.ClassLoader",
+        "java.lang.reflect.Field",
+        "java.lang.reflect.Method",
+        "java.lang.reflect.Constructor",
+        "java.lang.Thread",
+        "java.lang.ref.Finalizer"};
+
+        for (String className : basicClassNames){
+        types.add(SootResolver.v().makeClassRef(className).getType());
         }*/
-    	Iterator<RefLikeType> itr = scopeClasses.iterator();
-    	while(itr.hasNext()){
-    		types.add(itr.next());
-    	}
-    	return types;
+        Iterator<RefLikeType> itr = scopeClasses.iterator();
+        while(itr.hasNext()){
+            types.add(itr.next());
+        }
+        return types;
     }
-    
+
     private void buildClasses() {
-    	if (methods == null)
+        if (methods == null)
             buildMethods();
         assert (classes == null);
         assert (types == null);
@@ -288,7 +288,7 @@ public class Program {
             assert (t != null);
             types.add(t);
             if (t instanceof RefLikeType) {
-            	RefLikeType r = (RefLikeType)t;
+                RefLikeType r = (RefLikeType)t;
                 classes.add(r);
             }
         }
@@ -299,50 +299,50 @@ public class Program {
     private SootMethod getMethodItr (SootClass c, String subsign) {
         SootMethod ret = c.getMethodUnsafe(subsign);
         while(ret == null && c.hasSuperclass()) {
-          c = c.getSuperclass();
-          ret = c.getMethodUnsafe(subsign);
+            c = c.getSuperclass();
+            ret = c.getMethodUnsafe(subsign);
         }
         if (ret == null) System.out.println("WARN: Method "+subsign+" not found");
         return ret;
     }
-    
+
     private void setScopeExclusion(String excl) {
-    	// This method is called when petablox.reuse.scope = true
-    	String[] recordedScopeAry = Utils.toArray(excl);
-    	if (Config.scopeExcludeStr.equals("")) {
-    		//No explicitly-specified scope - since you are "reusing", use recorded scope and do vanilla reuse_scope actions.
-    		Config.scopeExcludeStr = excl;
-    		Config.scopeExcludeAry = recordedScopeAry;
-    	} else {
-    		Set<String> recorded = new HashSet<String>();
-    		for (int i = 0; i < recordedScopeAry.length; i++) recorded.add(recordedScopeAry[i]);
-    		Set<String> present = new HashSet<String>();
-    		for (int j = 0; j < Config.scopeExcludeAry.length; j++) present.add(Config.scopeExcludeAry[j]);
-    		if (present.equals(recorded)) {
-    			// Nothing extra needs to be done - just vanilla reuse_scope actions.
-    		} else {
-    			String str = excl;
-    			if (excl.equals("")) str = "\"\"";
-    			throw new PetabloxException("Not possible to reuse scope. Recorded scope exclusion " + str 
-    					 + " different from required scope exclusion " + Config.scopeExcludeStr );
-    		}
-    	}
+        // This method is called when petablox.reuse.scope = true
+        String[] recordedScopeAry = Utils.toArray(excl);
+        if (Config.scopeExcludeStr.equals("")) {
+            //No explicitly-specified scope - since you are "reusing", use recorded scope and do vanilla reuse_scope actions.
+            Config.scopeExcludeStr = excl;
+            Config.scopeExcludeAry = recordedScopeAry;
+        } else {
+            Set<String> recorded = new HashSet<String>();
+            for (int i = 0; i < recordedScopeAry.length; i++) recorded.add(recordedScopeAry[i]);
+            Set<String> present = new HashSet<String>();
+            for (int j = 0; j < Config.scopeExcludeAry.length; j++) present.add(Config.scopeExcludeAry[j]);
+            if (present.equals(recorded)) {
+                // Nothing extra needs to be done - just vanilla reuse_scope actions.
+            } else {
+                String str = excl;
+                if (excl.equals("")) str = "\"\"";
+                throw new PetabloxException("Not possible to reuse scope. Recorded scope exclusion " + str
+                        + " different from required scope exclusion " + Config.scopeExcludeStr );
+            }
+        }
     }
 
     private void loadMethodsFile(File file) {
         List<String> l = Utils.readFileToList(file);
         methods = new IndexSet<SootMethod>(l.size());
-    	  String first = l.remove(0);
-    	  // "first" is the scope exclude string
-    	  String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
-    	  String scopeExclStr;
-    	  if (parts.length < 2)
-    		    scopeExclStr = "";
-    	  else
-    		    scopeExclStr = parts[1];
+        String first = l.remove(0);
+        // "first" is the scope exclude string
+        String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
+        String scopeExclStr;
+        if (parts.length < 2)
+            scopeExclStr = "";
+        else
+            scopeExclStr = parts[1];
         setScopeExclusion(scopeExclStr);
         for (String s : l) {
-        	  int colonIdx  = s.indexOf(':');
+            int colonIdx  = s.indexOf(':');
             String cName = s.substring(1, colonIdx); // exclude the initial '<' character
             int entryptIdx = s.indexOf("##entry");
             boolean isEntryPt = false;
@@ -351,17 +351,17 @@ public class Program {
                 isEntryPt = true;
                 methEndIdx = entryptIdx;
             } else {
-            	  methEndIdx = s.length();
+                methEndIdx = s.length();
             }
             String msig = s.substring(colonIdx + 2, methEndIdx - 1); // get method signature and exclude end char '>'
             SootClass c = Scene.v().getSootClass(cName);
             SootMethod m = getMethodItr(c, msig);
             if (isEntryPt) {
-            	  entryMethods.add(m);
-            	  entryClasses.add(c);
+                entryMethods.add(m);
+                entryClasses.add(c);
             }
             assert (m != null);
-          	SootMethod sm = StubMethodSupport.getStub(m);
+            SootMethod sm = StubMethodSupport.getStub(m);
             if (sm == null) sm = m;
             if (sm.isConcrete()) {
                 sm.retrieveActiveBody();
@@ -377,72 +377,72 @@ public class Program {
             PrintWriter out = new PrintWriter(file);
             out.println("PETABLOX_SCOPE_EXCLUDE_STR=" + Config.scopeExcludeStr);
             for (SootMethod m : methods) {
-            	if (entryMethods.contains(m))
-            		out.println(m.getSignature() + "##entry");
-            	else
-            		out.println(m.getSignature());
+                if (entryMethods.contains(m))
+                    out.println(m.getSignature() + "##entry");
+                else
+                    out.println(m.getSignature());
             }
             out.close();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
-    
+
     private void saveTypesFile(File file) {
-    	 try {
-             PrintWriter out = new PrintWriter(file);
-             for (Type t : scopeClasses)
-                 out.println(t.toString());
-             out.close();
-         } catch (IOException ex) {
-             throw new RuntimeException(ex);
-         }
+        try {
+            PrintWriter out = new PrintWriter(file);
+            for (Type t : scopeClasses)
+                out.println(t.toString());
+            out.close();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
-    
+
     // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
     private void loadTypesFile(File file) {
-     	List<String> l = Utils.readFileToList(file);
-    	scopeClasses = new IndexSet<RefLikeType>(l.size());
-    	for (String s : l) {
-    		RefLikeType t = loadTypeString (s);
-    		if (t != null) scopeClasses.add(t);
-    	}
+        List<String> l = Utils.readFileToList(file);
+        scopeClasses = new IndexSet<RefLikeType>(l.size());
+        for (String s : l) {
+            RefLikeType t = loadTypeString (s);
+            if (t != null) scopeClasses.add(t);
+        }
     }
-    
+
     private RefLikeType loadTypeString(String s) {
-    	Type r = null;
-		int dimPos = s.indexOf('[');
-		if (dimPos > 0) {
-    		String sm = s.substring(0, dimPos);
-    		boolean isBasicType = false;
-    		int i;
-    		for (i = 0; i < basicTypes.length; i++) {
-    			if (sm.equals(basicTypes[i].toString())) {
-    				isBasicType = true;
-    				break;
-    			}	
-    		}
-        	if (isBasicType)
-        		r = basicTypes[i];
-        	else {
-        		r = SootUtilities.loadClass(sm).getType();
-        		if (r != null) {
-	        		assert (r instanceof RefType);
-	        		scopeClasses.add((RefType) r);
-        		}
-        	}
-        	int dim = s.split("\\[").length - 1;
-        	ArrayType arr = null;
-        	if (r != null) arr = ArrayType.v(r, dim);
+        Type r = null;
+        int dimPos = s.indexOf('[');
+        if (dimPos > 0) {
+            String sm = s.substring(0, dimPos);
+            boolean isBasicType = false;
+            int i;
+            for (i = 0; i < basicTypes.length; i++) {
+                if (sm.equals(basicTypes[i].toString())) {
+                    isBasicType = true;
+                    break;
+                }
+            }
+            if (isBasicType)
+                r = basicTypes[i];
+            else {
+                r = SootUtilities.loadClass(sm).getType();
+                if (r != null) {
+                    assert (r instanceof RefType);
+                    scopeClasses.add((RefType) r);
+                }
+            }
+            int dim = s.split("\\[").length - 1;
+            ArrayType arr = null;
+            if (r != null) arr = ArrayType.v(r, dim);
             return (RefLikeType)arr;
-    	} else {
-    		r = SootUtilities.loadClass(s).getType();
-    		if (r != null) 
-    			assert (r instanceof RefType);
-    		return (RefLikeType)r;
-    	}
+        } else {
+            r = SootUtilities.loadClass(s).getType();
+            if (r != null)
+                assert (r instanceof RefType);
+            return (RefLikeType)r;
+        }
     }
-    
+
     private List<Pair<Unit, List<RefLikeType>>> loadResolvedSites(BufferedReader in) {
         List<Pair<Unit, List<RefLikeType>>> l = new ArrayList<Pair<Unit, List<RefLikeType>>>();
         String s;
@@ -450,7 +450,7 @@ public class Program {
             while ((s = in.readLine()) != null) {
                 if (s.startsWith("#"))
                     break;
-                
+
                 if (Utils.buildBoolProperty("petablox.reflect.exclude", false)) {
                     boolean excludeLine = false;
                     String cName = strToClassName(s);
@@ -463,9 +463,9 @@ public class Program {
                     if (excludeLine)
                         continue;
                 }
-                
+
                 Pair<Unit, List<RefLikeType>> site = strToSite(s);
-                
+
                 l.add(site);
             }
         } catch (IOException ex) {
@@ -475,8 +475,8 @@ public class Program {
     }
 
     private void saveResolvedSites(List<Pair<Unit, List<RefLikeType>>> l, PrintWriter out) {
-    	if (l.size() > 0 && unitToMethodMap == null)
-    		buildUnitToMethodMap();
+        if (l.size() > 0 && unitToMethodMap == null)
+            buildUnitToMethodMap();
         for (Pair<Unit, List<RefLikeType>> p : l) {
             String s = siteToStr(p);
             out.println(s);
@@ -508,7 +508,7 @@ public class Program {
             resolvedAryNewInstSites = loadResolvedSites(in);
         }
         reflect = new Reflect(resolvedClsForNameSites, resolvedObjNewInstSites,
-            resolvedConNewInstSites, resolvedAryNewInstSites);
+                resolvedConNewInstSites, resolvedAryNewInstSites);
     }
 
     private void saveReflectFile(File file) {
@@ -536,7 +536,7 @@ public class Program {
         String clName = a[0].substring(clNameStart, clNameEnd);
         return clName;
     }
-    
+
     private Pair<Unit, List<RefLikeType>> strToSite(String s) {
         String[] a = s.split("->");
         assert (a.length == 2);
@@ -548,11 +548,11 @@ public class Program {
         String[] rNames = a[1].split(",");
         List<RefLikeType> rTypes = new ArrayList<RefLikeType>(rNames.length);
         for (String rName : rNames) {
-        	RefLikeType t = loadTypeString (rName);
-        	if (t != null) {
-	    		scopeClasses.add(t);
-	            rTypes.add(t);
-        	}
+            RefLikeType t = loadTypeString (rName);
+            if (t != null) {
+                scopeClasses.add(t);
+                rTypes.add(t);
+            }
         }
         return new Pair<Unit, List<RefLikeType>>(u, rTypes);
     }
@@ -586,7 +586,7 @@ public class Program {
         assert (classes != null);
         nameToClassMap = new HashMap<String, RefLikeType>();
         for (RefLikeType c : classes) {
-        	nameToClassMap.put(c.toString(), c);
+            nameToClassMap.put(c.toString(), c);
         }
     }
 
@@ -599,20 +599,20 @@ public class Program {
             signToMethodMap.put(sign, m);
         }
     }
-    
+
     private void buildUnitToMethodMap() {
-    	unitToMethodMap = new HashMap<Unit, SootMethod>();
-    	for (SootMethod m : methods) {
-    		if (m.isConcrete()) {
-	    		PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
-	    		Iterator<Unit> it = upc.iterator();
-	    		while (it.hasNext())
-	    			unitToMethodMap.put(it.next(), m);
-    		}
-    	}
-    	return;
+        unitToMethodMap = new HashMap<Unit, SootMethod>();
+        for (SootMethod m : methods) {
+            if (m.isConcrete()) {
+                PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
+                Iterator<Unit> it = upc.iterator();
+                while (it.hasNext())
+                    unitToMethodMap.put(it.next(), m);
+            }
+        }
+        return;
     }
-    
+
     private static Comparator<Type> comparator = new Comparator<Type>() {
         @Override
         public int compare(Type t1, Type t2) {
@@ -623,18 +623,18 @@ public class Program {
     };
 
     public HashSet<SootMethod> getEntryMethods() {
-    	if (methods == null)
+        if (methods == null)
             buildMethods();
         return entryMethods;
     }
-    
+
     public HashSet<SootClass> getEntryClasses() {
-    	if (methods == null)
+        if (methods == null)
             buildMethods();
         return entryClasses;
     }
-    
-    
+
+
     /**
      * Provides the quadcode representation of all types deemed reachable.
      * A type is deemed reachable if it is referenced in any loaded class.
@@ -709,8 +709,8 @@ public class Program {
      * Provides the quadcode representation of the main method of the program, if it exists, and exits otherwise.
      */
     public SootMethod getMainMethod() {
-    	if (methods == null)
-    		buildMethods();
+        if (methods == null)
+            buildMethods();
         if (mainMethod == null) {
             if (!Scene.v().hasMainClass())
                 Messages.fatal(MAIN_CLASS_NOT_DEFINED);
@@ -729,7 +729,7 @@ public class Program {
      * if it is deemed reachable, and null otherwise.
      */
     public SootMethod getThreadStartMethod() {
-    	return getMethod("<java.lang.Thread: void start()>");
+        return getMethod("<java.lang.Thread: void start()>");
     }
 
     /**
@@ -744,17 +744,17 @@ public class Program {
     }
 
     public Unit getUnit(SootMethod m, int bci) {
-    	Unit u = null;
-		PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
-		Iterator<Unit> it = upc.iterator();
-		while (it.hasNext()) {
-			u = it.next();
-			if (SootUtilities.getBCI(u) == bci)
-				break;
-		}
-    	return u;
+        Unit u = null;
+        PatchingChain<Unit> upc = m.retrieveActiveBody().getUnits();
+        Iterator<Unit> it = upc.iterator();
+        while (it.hasNext()) {
+            u = it.next();
+            if (SootUtilities.getBCI(u) == bci)
+                break;
+        }
+        return u;
     }
-   
+
     /**
      * Provides a human-readable string that corresponds to the given bytecode string encoding a list of zero
      * or more types, if it is well-formed, and null otherwise.
@@ -841,11 +841,11 @@ public class Program {
         assert(runIDs.length > 0);
         List<String> classNames = new ArrayList<String>();
         String fileName = Config.classesFileName;
-        
+
         String runBefore = System.getProperty("petablox.dynamic.runBeforeCmd");
         Process beforeProc = null;
-        try { 
-            
+        try {
+
             if (runBefore != null) {
                 System.out.println("for dynamic analysis, running pre-command " + runBefore);
                 beforeProc = ProcessExecutor.executeAsynch( new String[] {runBefore}, null, null);
@@ -853,7 +853,7 @@ public class Program {
         } catch(Throwable ex) {
             ex.printStackTrace();
         }
-        
+
         List<String> basecmd = new ArrayList<String>();
         basecmd.add("java");
         basecmd.addAll(Utils.tokenize(Config.runtimeJvmargs));
@@ -877,7 +877,7 @@ public class Program {
             }
         }
         basecmd.add(mainClassName);
-        
+
         for (String runID : runIDs) {
             String args = System.getProperty("petablox.args." + runID, "");
             List<String> fullcmd = new ArrayList<String>(basecmd);
@@ -924,7 +924,7 @@ public class Program {
             HTMLizedJavaSrcFiles = true;
         }
     }
-    
+
     /************************************************************************
      * Functions for printing methods and classes
      ************************************************************************/
@@ -938,14 +938,14 @@ public class Program {
             printMethod(m);
         }
         /*for (jq_Method m : c.getDeclaredStaticMethods()) {
-            printMethod(m);
-        }*/
+          printMethod(m);
+          }*/
     }
-    
+
     private void printMethod(SootMethod m) {
         System.out.println("Method: " + m);
         if (!m.isAbstract()) {
-        	Body b = m.retrieveActiveBody();
+            Body b = m.retrieveActiveBody();
             System.out.println(b.toString());
         }
     }
@@ -978,4 +978,3 @@ public class Program {
             printClass(c);
     }
 }
-
