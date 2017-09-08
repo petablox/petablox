@@ -19,6 +19,7 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
+import soot.jimple.IntConstant;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JAssignStmt;
@@ -33,6 +34,7 @@ import soot.jimple.internal.JLookupSwitchStmt;
 import soot.jimple.internal.JNopStmt;
 import soot.jimple.internal.JReturnStmt;
 import soot.jimple.internal.JReturnVoidStmt;
+import soot.jimple.internal.JTableSwitchStmt;
 import soot.jimple.internal.JThrowStmt;
 import soot.shimple.PhiExpr;
 import soot.toolkits.graph.Block;
@@ -43,6 +45,8 @@ import petablox.program.visitors.IAssignInstVisitor;
 import petablox.program.visitors.IBreakPointInstVisitor;
 import petablox.program.visitors.ICastInstVisitor;
 import petablox.program.visitors.IClassVisitor;
+import petablox.program.visitors.IEnterMonitorInstVisitor;
+import petablox.program.visitors.IExitMonitorInstVisitor;
 import petablox.program.visitors.IExprVisitor;
 import petablox.program.visitors.IFieldVisitor;
 import petablox.program.visitors.IGotoInstVisitor;
@@ -58,6 +62,8 @@ import petablox.program.visitors.INopInstVisitor;
 import petablox.program.visitors.IPhiInstVisitor;
 import petablox.program.visitors.IRelLockInstVisitor;
 import petablox.program.visitors.IReturnInstVisitor;
+import petablox.program.visitors.ITableSwitchInstVisitor;
+import petablox.program.visitors.IThrowInstVisitor;
 import petablox.project.ITask;
 import petablox.util.IndexSet;
 import petablox.util.soot.ICFG;
@@ -74,6 +80,8 @@ public class VisitorHandler {
     private Collection<IAssignInstVisitor> asvs;
     private Collection<IBreakPointInstVisitor> bpVisitors;
     private Collection<IClassVisitor> cvs;
+    private Collection<IEnterMonitorInstVisitor> enterMonitorVisitors;
+    private Collection<IExitMonitorInstVisitor> exitMonitorVisitors;
     private Collection<IFieldVisitor> fvs;
     private Collection<IGotoInstVisitor> gotoVisitors;
     private Collection<IHeapInstVisitor> hivs;
@@ -83,8 +91,10 @@ public class VisitorHandler {
     private Collection<INopInstVisitor> nopVisitors;
     private Collection<ILookupSwitchInstVisitor> lookupVisitors;
     private Collection<IReturnInstVisitor> rivs;
+    private Collection<IThrowInstVisitor> throwVisitors;
     private Collection<IAcqLockInstVisitor> acqivs;
     private Collection<IRelLockInstVisitor> relivs;
+    private Collection<ITableSwitchInstVisitor> tableVisitors;
     private Collection<IMoveInstVisitor> mivs;
     private Collection<ICastInstVisitor> civs;
     private Collection<IPhiInstVisitor> pivs;
@@ -93,16 +103,19 @@ public class VisitorHandler {
     private Collection<IMethodVisitor> mvs;
 
     private boolean doCFGs;
+
     public VisitorHandler(ITask task) {
         tasks = new ArrayList<ITask>(1);
         tasks.add(task);
     }
+
     public VisitorHandler(Collection<ITask> tasks) {
         this.tasks = tasks;
     }
+
     private void visitFields(SootClass c) {
-    	if(c.resolvingLevel()!=SootClass.BODIES)
-    		SootResolver.v().reResolve(c, SootClass.BODIES);
+        if(c.resolvingLevel()!=SootClass.BODIES)
+            SootResolver.v().reResolve(c, SootClass.BODIES);
         for (Object o : c.getFields()) {
             if (o instanceof SootField) {
                 SootField f = (SootField) o;
@@ -111,9 +124,10 @@ public class VisitorHandler {
             }
         }
     }
+
     private void visitMethods(SootClass c) {
-    	if(c.resolvingLevel()!=SootClass.BODIES)
-    		Scene.v().forceResolve(c.getName(), SootClass.BODIES);
+        if(c.resolvingLevel()!=SootClass.BODIES)
+            Scene.v().forceResolve(c.getName(), SootClass.BODIES);
         for (Object o : c.getMethods()) {
             if (o instanceof SootMethod) {
                 SootMethod m = (SootMethod) o;
@@ -132,7 +146,7 @@ public class VisitorHandler {
         }
     }
 
-    private void visitExpr(Unit q) {
+    private void visitExprs(Unit q) {
         if (evs != null){
             List<ValueBox> dubox = q.getUseAndDefBoxes();
             for (IExprVisitor ev : evs) {
@@ -142,8 +156,55 @@ public class VisitorHandler {
                     JLookupSwitchStmt s = (JLookupSwitchStmt) q;
                     for (Value v : s.getLookupValues())
                         ev.visit(v);
+                } else if (q instanceof JTableSwitchStmt) {
+                    JTableSwitchStmt s = (JTableSwitchStmt) q;
+                    for (int i = s.getLowIndex(); i <= s.getHighIndex(); i++)
+                        ev.visit(IntConstant.v(i));
                 }
             }
+        }
+    }
+
+    private void visitEnterMonitorInsts(JEnterMonitorStmt s) {
+        if (acqivs != null) {
+            for (IAcqLockInstVisitor acqiv : acqivs)
+                acqiv.visitAcqLockInst((Unit) s);
+        }
+        if (enterMonitorVisitors != null) {
+            for (IEnterMonitorInstVisitor v : enterMonitorVisitors)
+                v.visit(s);
+        }
+    }
+    
+    private void visitExitMonitorInsts(JExitMonitorStmt s) {
+        if (relivs != null) {
+            for (IRelLockInstVisitor reliv : relivs)
+                reliv.visitRelLockInst((Unit) s);
+        }
+        if (exitMonitorVisitors != null) {
+            for (IExitMonitorInstVisitor v : exitMonitorVisitors)
+                v.visit(s);
+        }
+    }
+    
+    private void visitGotoInsts(JGotoStmt s) {
+        if (gotoVisitors != null) {
+            for (IGotoInstVisitor v : gotoVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitIfInsts(JIfStmt s) {
+        if (ifVisitors != null) {
+            for (IIfInstVisitor v : ifVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitBreakPointInsts(JBreakpointStmt s) {
+        if (bpVisitors != null) {
+            for (IBreakPointInstVisitor v : bpVisitors)
+                v.visit(s);
         }
     }
 
@@ -156,7 +217,7 @@ public class VisitorHandler {
                     for (IInstVisitor iv : ivs)
                         iv.visit(q);
                 }
-                visitExpr(q);
+                visitExprs(q);
                 if (q instanceof Stmt) {
                     if(q instanceof JAssignStmt) {
                         JAssignStmt j = (JAssignStmt) q;
@@ -200,31 +261,15 @@ public class VisitorHandler {
                             }
                         }
                     } else if (q instanceof JBreakpointStmt) {
-                        System.out.println("bp");
-                        if (bpVisitors != null) {
-                            for (IBreakPointInstVisitor bpVisitor : bpVisitors)
-                                bpVisitor.visit((JBreakpointStmt) q);
-                        }
-                    } else if(q instanceof JEnterMonitorStmt){
-                        if (acqivs != null) {
-                            for (IAcqLockInstVisitor acqiv : acqivs)
-                                acqiv.visitAcqLockInst(q);
-                        }
+                        visitBreakPointInsts((JBreakpointStmt) q);
+                    } else if(q instanceof JEnterMonitorStmt) {
+                        visitEnterMonitorInsts((JEnterMonitorStmt) q);
                     } else if(q instanceof JExitMonitorStmt){
-                        if (relivs != null) {
-                            for (IRelLockInstVisitor reliv : relivs)
-                                reliv.visitRelLockInst(q);
-                        }
+                        visitExitMonitorInsts((JExitMonitorStmt) q);
                     } else if (q instanceof JGotoStmt) {
-                        if (gotoVisitors != null) {
-                            for (IGotoInstVisitor gotoVisitor : gotoVisitors)
-                                gotoVisitor.visit((JGotoStmt) q);
-                        }
+                        visitGotoInsts((JGotoStmt) q);
                     } else if (q instanceof JIfStmt) {
-                        if (ifVisitors != null) {
-                            for (IIfInstVisitor ifVisitor : ifVisitors)
-                                ifVisitor.visit((JIfStmt) q);
-                        }
+                        visitIfInsts((JIfStmt) q);
                     } else if (q instanceof JInvokeStmt) {
                         if (iivs != null) {
                             for (IInvokeInstVisitor iiv : iivs)
@@ -240,11 +285,21 @@ public class VisitorHandler {
                             for (ILookupSwitchInstVisitor lookupVisitor : lookupVisitors)
                                 lookupVisitor.visit((JLookupSwitchStmt) q);
                         }
-                    } else if(q instanceof JReturnStmt || q instanceof JReturnVoidStmt
+                    } else if (q instanceof JLookupSwitchStmt) {
+                        if (lookupVisitors != null) {
+                            for (ITableSwitchInstVisitor tableVisitor : tableVisitors)
+                                tableVisitor.visit((JTableSwitchStmt) q);
+                        }
+                    } else if (q instanceof JReturnStmt || q instanceof JReturnVoidStmt
                             && !(q instanceof JThrowStmt)){
                         if (rivs != null) {
                             for (IReturnInstVisitor riv : rivs)
                                 riv.visitReturnInst(q);
+                        }
+                    } else if (q instanceof JThrowStmt) {
+                        if (throwVisitors != null) {
+                            for (IThrowInstVisitor throwVisitor : throwVisitors)
+                                throwVisitor.visit((JThrowStmt) q);
                         }
                     }
                 }
@@ -287,7 +342,6 @@ public class VisitorHandler {
                 asvs.add((IAssignInstVisitor) task);
             }
             if (task instanceof IBreakPointInstVisitor) {
-                System.out.println("BP Task");
                 if (bpVisitors == null)
                     bpVisitors = new ArrayList<IBreakPointInstVisitor>();
                 bpVisitors.add((IBreakPointInstVisitor) task);
@@ -327,6 +381,11 @@ public class VisitorHandler {
                     lookupVisitors = new ArrayList<ILookupSwitchInstVisitor>();
                 lookupVisitors.add((ILookupSwitchInstVisitor) task);
             }
+            if (task instanceof ITableSwitchInstVisitor) {
+                if (tableVisitors == null)
+                    tableVisitors = new ArrayList<ITableSwitchInstVisitor>();
+                tableVisitors.add((ITableSwitchInstVisitor) task);
+            }
             if (task instanceof IMoveInstVisitor) {
                 if (mivs == null)
                     mivs = new ArrayList<IMoveInstVisitor>();
@@ -356,6 +415,11 @@ public class VisitorHandler {
                 if (relivs == null)
                     relivs = new ArrayList<IRelLockInstVisitor>();
                 relivs.add((IRelLockInstVisitor) task);
+            }
+            if (task instanceof IThrowInstVisitor){
+                if (throwVisitors == null)
+                    throwVisitors = new ArrayList<IThrowInstVisitor>();
+                throwVisitors.add((IThrowInstVisitor) task);
             }
         }
         Program program = Program.g();

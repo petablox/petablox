@@ -24,6 +24,7 @@ import soot.jimple.internal.JLookupSwitchStmt;
 import soot.jimple.internal.JNopStmt;
 import soot.jimple.internal.JRetStmt;
 import soot.jimple.internal.JTableSwitchStmt;
+import soot.jimple.internal.JThrowStmt;
 import petablox.analyses.method.DomM;
 import petablox.logicblox.LogicBloxAnnotExporter;
 import petablox.project.Petablox;
@@ -114,6 +115,8 @@ public class DomP extends ProgramDom<Unit> {
             type = "Return";
         else if(u instanceof JTableSwitchStmt) 
             type = "TablelSwitch";
+        else if(u instanceof JThrowStmt) 
+            type = "Throw";
         else
             type = "Other";
         sb.append(type);
