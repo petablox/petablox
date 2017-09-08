@@ -2065,7 +2065,7 @@ public class Rel {
                     Object o = tuple[i];
                     s += doms[i].toFIString(o);
                     if (i < n - 1)
-                        s += ",";
+                        s += ", ";
                 }
                 s += ">";
                 out.println(s);

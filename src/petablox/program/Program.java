@@ -114,6 +114,7 @@ public class Program {
         Options.v().set_allow_phantom_refs(true);
         Options.v().setPhaseOption("cg", "enabled:false");
         String optimize = Boolean.toString(Config.ILOptimize);
+        Options.v().setPhaseOption("jb.use-original-names", "enabled:true");
         Options.v().setPhaseOption("jb.lns", "enabled:" + optimize);
         Options.v().setPhaseOption("jb.ule", "enabled:" + optimize);
         Options.v().setPhaseOption("jb.cp", "enabled:" + optimize);

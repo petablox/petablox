@@ -15,9 +15,15 @@ import soot.tagkit.SourceFileTag;
 import soot.tagkit.Tag;
 import soot.tagkit.VisibilityAnnotationTag;
 import soot.jimple.internal.JAssignStmt;
+import soot.jimple.internal.JBreakpointStmt;
+import soot.jimple.internal.JGotoStmt;
+import soot.jimple.internal.JIfStmt;
 import soot.jimple.internal.JIdentityStmt;
 import soot.jimple.internal.JInvokeStmt;
+import soot.jimple.internal.JLookupSwitchStmt;
+import soot.jimple.internal.JNopStmt;
 import soot.jimple.internal.JRetStmt;
+import soot.jimple.internal.JTableSwitchStmt;
 import petablox.analyses.method.DomM;
 import petablox.logicblox.LogicBloxAnnotExporter;
 import petablox.project.Petablox;
@@ -65,42 +71,54 @@ public class DomP extends ProgramDom<Unit> {
                 continue;
             ICFG cfg = SootUtilities.getCFG(m);
             for (Block bb : cfg.reversePostOrder()) {
-            	Iterator<Unit> uit = bb.iterator();
-            	while(uit.hasNext()){
-            		Unit u = uit.next();
-            		int indx = getOrAdd(u);
-            		parseAnnotations(u, indx);
-            		unitToMethodMap.put(u, m);
-            	}  
+                Iterator<Unit> uit = bb.iterator();
+                while(uit.hasNext()){
+                    Unit u = uit.next();
+                    int indx = getOrAdd(u);
+                    parseAnnotations(u, indx);
+                    unitToMethodMap.put(u, m);
+                }  
             }
         }
     }
 
     @Override
     public String toUniqueString(Unit u) {
-        String x = Integer.toString(SootUtilities.getBCI((Unit) u));                  
+        String x = Integer.toString(SootUtilities.getBCI((Unit) u));
         return x + "!" + getMethod(u);
     }
     
     @Override
     public String toFIString(Unit u) {		 
-    	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
-    	if (printId) sb.append("(" + indexOf(u) + ")");
-    	String type;
-    	if(u instanceof JAssignStmt)
-        	type = "Assign";
+        StringBuilder sb = new StringBuilder();
+        boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+        if (printId) sb.append("(" + indexOf(u) + ")");
+        String type;
+        if(u instanceof JAssignStmt)
+            type = "Assign";
+        else if(u instanceof JBreakpointStmt)
+            type = "Breakpoint";
+        else if(u instanceof JGotoStmt)
+            type = "Goto";
+        else if(u instanceof JIfStmt) 
+            type = "If";
         else if(u instanceof JIdentityStmt) 
-        	type = "Identity";
+            type = "Identity";
         else if(u instanceof JInvokeStmt) 
-        	type = "Invoke";
+            type = "Invoke";
+        else if(u instanceof JLookupSwitchStmt) 
+            type = "LookupSwitch";
+        else if(u instanceof JNopStmt)
+            type = "Nop";
         else if(u instanceof JRetStmt) 
-        	type = "Return";
+            type = "Return";
+        else if(u instanceof JTableSwitchStmt) 
+            type = "TablelSwitch";
         else
-        	type = "Other";
-    	sb.append(type);
-    	sb.append(": " + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
-    	return sb.toString();
+            type = "Other";
+        sb.append(type);
+        sb.append(": " + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+        return sb.toString();
     }
 
     @Override
@@ -114,28 +132,27 @@ public class DomP extends ProgramDom<Unit> {
     }
     
     public void parseAnnotations(Unit u, int indx){
-    	Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
-    	Map<Integer, List<Trio<String, String, String>>> pgmPtAnnot = LogicBloxAnnotExporter.pgmPtAnnot;
-    	if(pgmPtAnnot.containsKey(indx))
-    		return;
-    	List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
-    	for(Tag t : u.getTags()){
-    		if(t instanceof VisibilityAnnotationTag){
-    			Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
-    			for(String annotName : parsed.keySet()){
-    				annotationName.add(annotName);
-    				List<Pair<String,String>> keyValues = parsed.get(annotName);
-    				for(Pair<String,String> p : keyValues){
-    					annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
-    				}
-    			}
-    		}else if(t instanceof LineNumberTag){
-    			LineNumberTag lnt = (LineNumberTag)t;
-    			annotationName.add("LineNumberTag");
-    			annots.add(new Trio<String,String,String>("LineNumberTag","LineNumber",Integer.toString(lnt.getLineNumber())) );
-    		}
-    	}
-    	pgmPtAnnot.put(indx, annots);
+        Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
+        Map<Integer, List<Trio<String, String, String>>> pgmPtAnnot = LogicBloxAnnotExporter.pgmPtAnnot;
+        if(pgmPtAnnot.containsKey(indx))
+            return;
+        List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
+        for(Tag t : u.getTags()){
+            if(t instanceof VisibilityAnnotationTag){
+                Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
+                for(String annotName : parsed.keySet()){
+                    annotationName.add(annotName);
+                    List<Pair<String,String>> keyValues = parsed.get(annotName);
+                    for(Pair<String,String> p : keyValues){
+                        annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
+                    }
+                }
+            }else if(t instanceof LineNumberTag){
+                LineNumberTag lnt = (LineNumberTag)t;
+                annotationName.add("LineNumberTag");
+                annots.add(new Trio<String,String,String>("LineNumberTag","LineNumber",Integer.toString(lnt.getLineNumber())) );
+            }
+        }
+        pgmPtAnnot.put(indx, annots);
     }
-    
 }

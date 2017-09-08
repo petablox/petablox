@@ -3,25 +3,8 @@ package petablox.project;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
-import petablox.program.Program;
-import petablox.program.visitors.IAcqLockInstVisitor;
-import petablox.program.visitors.ICastInstVisitor;
-import petablox.program.visitors.IClassVisitor;
-import petablox.program.visitors.IFieldVisitor;
-import petablox.program.visitors.IHeapInstVisitor;
-import petablox.program.visitors.IInstVisitor;
-import petablox.program.visitors.IInvokeInstVisitor;
-import petablox.program.visitors.IMethodVisitor;
-import petablox.program.visitors.IMoveInstVisitor;
-import petablox.program.visitors.INewInstVisitor;
-import petablox.program.visitors.IPhiInstVisitor;
-import petablox.program.visitors.IRelLockInstVisitor;
-import petablox.program.visitors.IReturnInstVisitor;
-import petablox.project.ITask;
-import petablox.util.IndexSet;
-import petablox.util.soot.ICFG;
-import petablox.util.soot.SootUtilities;
 import soot.ArrayType;
 import soot.Local;
 import soot.NullType;
@@ -34,16 +17,51 @@ import soot.SootMethod;
 import soot.SootResolver;
 import soot.Type;
 import soot.Unit;
+import soot.Value;
+import soot.ValueBox;
+import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JAssignStmt;
+import soot.jimple.internal.JBreakpointStmt;
 import soot.jimple.internal.JCastExpr;
 import soot.jimple.internal.JEnterMonitorStmt;
 import soot.jimple.internal.JExitMonitorStmt;
+import soot.jimple.internal.JGotoStmt;
+import soot.jimple.internal.JIfStmt;
+import soot.jimple.internal.JInvokeStmt;
+import soot.jimple.internal.JLookupSwitchStmt;
+import soot.jimple.internal.JNopStmt;
 import soot.jimple.internal.JReturnStmt;
 import soot.jimple.internal.JReturnVoidStmt;
 import soot.jimple.internal.JThrowStmt;
 import soot.shimple.PhiExpr;
 import soot.toolkits.graph.Block;
+
+import petablox.program.Program;
+import petablox.program.visitors.IAcqLockInstVisitor;
+import petablox.program.visitors.IAssignInstVisitor;
+import petablox.program.visitors.IBreakPointInstVisitor;
+import petablox.program.visitors.ICastInstVisitor;
+import petablox.program.visitors.IClassVisitor;
+import petablox.program.visitors.IExprVisitor;
+import petablox.program.visitors.IFieldVisitor;
+import petablox.program.visitors.IGotoInstVisitor;
+import petablox.program.visitors.IHeapInstVisitor;
+import petablox.program.visitors.IIfInstVisitor;
+import petablox.program.visitors.IInstVisitor;
+import petablox.program.visitors.IInvokeInstVisitor;
+import petablox.program.visitors.ILookupSwitchInstVisitor;
+import petablox.program.visitors.IMethodVisitor;
+import petablox.program.visitors.IMoveInstVisitor;
+import petablox.program.visitors.INewInstVisitor;
+import petablox.program.visitors.INopInstVisitor;
+import petablox.program.visitors.IPhiInstVisitor;
+import petablox.program.visitors.IRelLockInstVisitor;
+import petablox.program.visitors.IReturnInstVisitor;
+import petablox.project.ITask;
+import petablox.util.IndexSet;
+import petablox.util.soot.ICFG;
+import petablox.util.soot.SootUtilities;
 
 /**
  * Utility for registering and executing a set of tasks
@@ -53,12 +71,17 @@ import soot.toolkits.graph.Block;
  */
 public class VisitorHandler {
     private final Collection<ITask> tasks;
+    private Collection<IAssignInstVisitor> asvs;
+    private Collection<IBreakPointInstVisitor> bpVisitors;
     private Collection<IClassVisitor> cvs;
     private Collection<IFieldVisitor> fvs;
-    private Collection<IMethodVisitor> mvs;
+    private Collection<IGotoInstVisitor> gotoVisitors;
     private Collection<IHeapInstVisitor> hivs;
     private Collection<INewInstVisitor> nivs;
+    private Collection<IIfInstVisitor> ifVisitors;
     private Collection<IInvokeInstVisitor> iivs;
+    private Collection<INopInstVisitor> nopVisitors;
+    private Collection<ILookupSwitchInstVisitor> lookupVisitors;
     private Collection<IReturnInstVisitor> rivs;
     private Collection<IAcqLockInstVisitor> acqivs;
     private Collection<IRelLockInstVisitor> relivs;
@@ -66,6 +89,9 @@ public class VisitorHandler {
     private Collection<ICastInstVisitor> civs;
     private Collection<IPhiInstVisitor> pivs;
     private Collection<IInstVisitor> ivs;
+    private Collection<IExprVisitor> evs;
+    private Collection<IMethodVisitor> mvs;
+
     private boolean doCFGs;
     public VisitorHandler(ITask task) {
         tasks = new ArrayList<ITask>(1);
@@ -105,72 +131,127 @@ public class VisitorHandler {
             }
         }
     }
+
+    private void visitExpr(Unit q) {
+        if (evs != null){
+            List<ValueBox> dubox = q.getUseAndDefBoxes();
+            for (IExprVisitor ev : evs) {
+                for (ValueBox vb : dubox)
+                    ev.visit(vb.getValue());
+                if (q instanceof JLookupSwitchStmt) {
+                    JLookupSwitchStmt s = (JLookupSwitchStmt) q;
+                    for (Value v : s.getLookupValues())
+                        ev.visit(v);
+                }
+            }
+        }
+    }
+
     private void visitInsts(ICFG cfg) {
         for (Block bb : cfg.reversePostOrder()) {
-        	Iterator<Unit> uit = bb.iterator();
+            Iterator<Unit> uit = bb.iterator();
             while(uit.hasNext()){
-            	Unit q = uit.next();
+                Unit q = uit.next();
                 if (ivs != null) {
                     for (IInstVisitor iv : ivs)
                         iv.visit(q);
                 }
+                visitExpr(q);
                 if (q instanceof Stmt) {
-                    if (SootUtilities.isInvoke(q) && iivs != null) {
-                        for (IInvokeInstVisitor iiv : iivs)
-                            iiv.visitInvokeInst(q);
-                    }else if(q instanceof JAssignStmt){
-                    	JAssignStmt j =(JAssignStmt)q;
-                    	if(SootUtilities.isLoadInst(j) || SootUtilities.isFieldLoad(j) ||
-                    			SootUtilities.isStoreInst(j) || SootUtilities.isFieldStore(j) ||
-                    			SootUtilities.isStaticGet(j) || SootUtilities.isStaticPut(j)){
-                    		if (hivs != null) {
+                    if(q instanceof JAssignStmt) {
+                        JAssignStmt j = (JAssignStmt) q;
+                        if (asvs != null) {
+                            for (IAssignInstVisitor asv : asvs)
+                                asv.visit(j);
+                        }
+                        if ((j.rightBox.getValue()) instanceof InvokeExpr) {
+                            if (iivs != null) { 
+                                for (IInvokeInstVisitor iiv : iivs)
+                                    iiv.visitInvokeInst(q);
+                            }
+                        } else if(SootUtilities.isLoadInst(j) || SootUtilities.isFieldLoad(j) ||
+                                SootUtilities.isStoreInst(j) || SootUtilities.isFieldStore(j) ||
+                                SootUtilities.isStaticGet(j) || SootUtilities.isStaticPut(j)){
+                            if (hivs != null) {
                                 for (IHeapInstVisitor hiv : hivs)
                                     hiv.visitHeapInst(q);
                             }
-                    	} else if(SootUtilities.isNewStmt(j) || SootUtilities.isNewArrayStmt(j)
-                    			  || SootUtilities.isNewMultiArrayStmt(j)){
-                    		if (nivs != null) {
+                        } else if(SootUtilities.isNewStmt(j) || SootUtilities.isNewArrayStmt(j)
+                                || SootUtilities.isNewMultiArrayStmt(j)){
+                            if (nivs != null) {
                                 for (INewInstVisitor niv : nivs)
                                     niv.visitNewInst(q);
                             }
-                    	}else if(j.leftBox.getValue() instanceof Local &&
-                    			j.rightBox.getValue() instanceof Local){
-                    		if (mivs != null) {
+                        }else if(j.leftBox.getValue() instanceof Local &&
+                                j.rightBox.getValue() instanceof Local){
+                            if (mivs != null) {
                                 for (IMoveInstVisitor miv : mivs)
                                     miv.visitMoveInst(q);
                             }
-                    	} else if(j.rightBox.getValue() instanceof JCastExpr){
-                    		if (civs != null) {
+                        } else if(j.rightBox.getValue() instanceof JCastExpr){
+                            if (civs != null) {
                                 for (ICastInstVisitor civ : civs)
                                     civ.visitCastInst(q);
                             }
-                    	} else if(j.rightBox.getValue() instanceof PhiExpr){
-                    		if (pivs != null) {
+                        } else if(j.rightBox.getValue() instanceof PhiExpr){
+                            if (pivs != null) {
                                 for (IPhiInstVisitor piv : pivs)
                                     piv.visitPhiInst(q);
                             }
-                    	}
-                    } else if(q instanceof JReturnStmt || q instanceof JReturnVoidStmt
-                    		&& !(q instanceof JThrowStmt)){
-                    	if (rivs != null) {
-                            for (IReturnInstVisitor riv : rivs)
-                                riv.visitReturnInst(q);
+                        }
+                    } else if (q instanceof JBreakpointStmt) {
+                        System.out.println("bp");
+                        if (bpVisitors != null) {
+                            for (IBreakPointInstVisitor bpVisitor : bpVisitors)
+                                bpVisitor.visit((JBreakpointStmt) q);
                         }
                     } else if(q instanceof JEnterMonitorStmt){
-                    	if (acqivs != null) {
+                        if (acqivs != null) {
                             for (IAcqLockInstVisitor acqiv : acqivs)
                                 acqiv.visitAcqLockInst(q);
                         }
                     } else if(q instanceof JExitMonitorStmt){
-                    	if (relivs != null) {
+                        if (relivs != null) {
                             for (IRelLockInstVisitor reliv : relivs)
                                 reliv.visitRelLockInst(q);
+                        }
+                    } else if (q instanceof JGotoStmt) {
+                        if (gotoVisitors != null) {
+                            for (IGotoInstVisitor gotoVisitor : gotoVisitors)
+                                gotoVisitor.visit((JGotoStmt) q);
+                        }
+                    } else if (q instanceof JIfStmt) {
+                        if (ifVisitors != null) {
+                            for (IIfInstVisitor ifVisitor : ifVisitors)
+                                ifVisitor.visit((JIfStmt) q);
+                        }
+                    } else if (q instanceof JInvokeStmt) {
+                        if (iivs != null) {
+                            for (IInvokeInstVisitor iiv : iivs)
+                                iiv.visitInvokeInst(q);
+                        }
+                    } else if (q instanceof JNopStmt) {
+                        if (nopVisitors != null) {
+                            for (INopInstVisitor nopVisitor : nopVisitors)
+                                nopVisitor.visit((JNopStmt) q);
+                        }
+                    } else if (q instanceof JLookupSwitchStmt) {
+                        if (lookupVisitors != null) {
+                            for (ILookupSwitchInstVisitor lookupVisitor : lookupVisitors)
+                                lookupVisitor.visit((JLookupSwitchStmt) q);
+                        }
+                    } else if(q instanceof JReturnStmt || q instanceof JReturnVoidStmt
+                            && !(q instanceof JThrowStmt)){
+                        if (rivs != null) {
+                            for (IReturnInstVisitor riv : rivs)
+                                riv.visitReturnInst(q);
                         }
                     }
                 }
             }
         }
     }
+
     private IndexSet<SootMethod> reachableMethods;
 
     public void visitProgram() {
@@ -195,6 +276,32 @@ public class VisitorHandler {
                     ivs = new ArrayList<IInstVisitor>();
                 ivs.add((IInstVisitor) task);
             }
+            if (task instanceof IExprVisitor) {
+                if (evs == null)
+                    evs = new ArrayList<IExprVisitor>();
+                evs.add((IExprVisitor) task);
+            }
+            if (task instanceof IAssignInstVisitor) {
+                if (asvs == null)
+                    asvs = new ArrayList<IAssignInstVisitor>();
+                asvs.add((IAssignInstVisitor) task);
+            }
+            if (task instanceof IBreakPointInstVisitor) {
+                System.out.println("BP Task");
+                if (bpVisitors == null)
+                    bpVisitors = new ArrayList<IBreakPointInstVisitor>();
+                bpVisitors.add((IBreakPointInstVisitor) task);
+            }
+            if (task instanceof IGotoInstVisitor) {
+                if (gotoVisitors == null)
+                    gotoVisitors = new ArrayList<IGotoInstVisitor>();
+                gotoVisitors.add((IGotoInstVisitor) task);
+            }
+            if (task instanceof IIfInstVisitor) {
+                if (ifVisitors == null)
+                    ifVisitors = new ArrayList<IIfInstVisitor>();
+                ifVisitors.add((IIfInstVisitor) task);
+            }
             if (task instanceof IHeapInstVisitor) {
                 if (hivs == null)
                     hivs = new ArrayList<IHeapInstVisitor>();
@@ -209,6 +316,16 @@ public class VisitorHandler {
                 if (nivs == null)
                     nivs = new ArrayList<INewInstVisitor>();
                 nivs.add((INewInstVisitor) task);
+            }
+            if (task instanceof INopInstVisitor) {
+                if (nopVisitors == null)
+                    nopVisitors = new ArrayList<INopInstVisitor>();
+                nopVisitors.add((INopInstVisitor) task);
+            }
+            if (task instanceof ILookupSwitchInstVisitor) {
+                if (lookupVisitors == null)
+                    lookupVisitors = new ArrayList<ILookupSwitchInstVisitor>();
+                lookupVisitors.add((ILookupSwitchInstVisitor) task);
             }
             if (task instanceof IMoveInstVisitor) {
                 if (mivs == null)
@@ -243,7 +360,7 @@ public class VisitorHandler {
         }
         Program program = Program.g();
         reachableMethods = program.getMethods();
-        doCFGs = (ivs != null) || (hivs != null) ||
+        doCFGs = (asvs != null) || (evs != null) || (ivs != null) || (hivs != null) ||
             (iivs != null) || (nivs != null) || (mivs != null) ||
             (civs != null) || (pivs != null) || (rivs != null) ||
             (acqivs != null) || (relivs != null);
