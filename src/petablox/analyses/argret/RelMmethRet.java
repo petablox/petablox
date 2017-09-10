@@ -7,6 +7,7 @@ import soot.RefLikeType;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.internal.JReturnStmt;
+
 import petablox.program.visitors.IReturnInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
@@ -34,17 +35,13 @@ public class RelMmethRet extends ProgramRel implements IReturnInstVisitor {
     }
 
     @Override
-    public void visitReturnInst(Unit u) {
-    	if (u instanceof JReturnStmt){
-    		JReturnStmt rs = (JReturnStmt) u;
-    		Value op=rs.getOp();
-    		// note: op is null if this method returns void
-    		if (op instanceof Local){
-    			Local rx=(Local) op;
-    			if(rx.getType() instanceof RefLikeType){
-    				add(ctnrMethod, ZERO, op);
-    			}
-    		}
-    	}      
+    public void visit(JReturnStmt rs) {
+        Value op = rs.getOp();
+        if (op instanceof Local){
+            Local rx = (Local) op;
+            if(rx.getType() instanceof RefLikeType) {
+                add(ctnrMethod, ZERO, op);
+            }
+        }
     }
 }

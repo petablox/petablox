@@ -7,10 +7,11 @@ import petablox.project.analyses.JavaAnalysis;
 import petablox.project.analyses.ProgramRel;
 @Petablox(
     name = "test-ir", 
-    consumes = { "AssignInst", "IfInst", "NopInst", "BreakPointInst", "GotoInst",
+    consumes = { "AssignInst", "BreakPointInst",
+        "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
         "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
-        "TableSwitchCaseInst", "TableSwitchDefaultInst",
-        "ThrowInst", "EnterMonitorInst", "ExitMonitorInst"
+        "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
+        "TableSwitchCaseInst", "TableSwitchDefaultInst"
     }
 )
 public class TestIR extends JavaAnalysis {
@@ -19,11 +20,12 @@ public class TestIR extends JavaAnalysis {
 		    System.out.println("Printing relations in: " + printDir);
 	 
         ProgramRel rel;
-        String[] targets = { "AssignInst", "IfInst", "NopInst", "GotoInst",
-            // "BreakPointInst",
-            "LookupSwitchCaseInst", "LookupSwitchDefaultInst", 
+        String[] targets = { "AssignInst", //"BreakPointInst",
+            "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
+            "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
+            "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
             "TableSwitchCaseInst", "TableSwitchDefaultInst",
-            "ThrowInst", "EnterMonitorInst", "ExitMonitorInst" };
+            };
 
         for(int i = 0; i < targets.length; i ++){
             rel = (ProgramRel) ClassicProject.g().getTrgt(targets[i]);

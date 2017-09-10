@@ -32,6 +32,7 @@ import soot.jimple.internal.JIfStmt;
 import soot.jimple.internal.JInvokeStmt;
 import soot.jimple.internal.JLookupSwitchStmt;
 import soot.jimple.internal.JNopStmt;
+import soot.jimple.internal.JRetStmt;
 import soot.jimple.internal.JReturnStmt;
 import soot.jimple.internal.JReturnVoidStmt;
 import soot.jimple.internal.JTableSwitchStmt;
@@ -62,6 +63,8 @@ import petablox.program.visitors.INopInstVisitor;
 import petablox.program.visitors.IPhiInstVisitor;
 import petablox.program.visitors.IRelLockInstVisitor;
 import petablox.program.visitors.IReturnInstVisitor;
+import petablox.program.visitors.IReturnVoidInstVisitor;
+import petablox.program.visitors.IRetInstVisitor;
 import petablox.program.visitors.ITableSwitchInstVisitor;
 import petablox.program.visitors.IThrowInstVisitor;
 import petablox.project.ITask;
@@ -91,6 +94,8 @@ public class VisitorHandler {
     private Collection<INopInstVisitor> nopVisitors;
     private Collection<ILookupSwitchInstVisitor> lookupVisitors;
     private Collection<IReturnInstVisitor> rivs;
+    private Collection<IReturnVoidInstVisitor> returnVoidVisitors;
+    private Collection<IRetInstVisitor> retVisitors;
     private Collection<IThrowInstVisitor> throwVisitors;
     private Collection<IAcqLockInstVisitor> acqivs;
     private Collection<IRelLockInstVisitor> relivs;
@@ -208,6 +213,58 @@ public class VisitorHandler {
         }
     }
 
+    private void visitNopInsts(JNopStmt s) {
+        if (nopVisitors != null) {
+            for (INopInstVisitor v : nopVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitLookupSwitchInsts(JLookupSwitchStmt s) {
+        if (lookupVisitors != null) {
+            for (ILookupSwitchInstVisitor v : lookupVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitTableSwitchInsts(JTableSwitchStmt s) {
+        if (tableVisitors != null) {
+            for (ITableSwitchInstVisitor v : tableVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitRetInsts(JRetStmt s) {
+        if (retVisitors != null) {
+            for (IRetInstVisitor v : retVisitors) {
+                v.visit(s);
+            }
+        }
+    }
+
+    private void visitReturnInsts(JReturnStmt s) {
+        if (rivs != null) {
+            for (IReturnInstVisitor v : rivs) {
+                v.visit(s);
+            }
+        }
+    }
+
+    private void visitReturnVoidInsts(JReturnVoidStmt s) {
+        if (returnVoidVisitors != null) {
+            for (IReturnVoidInstVisitor v : returnVoidVisitors) {
+                v.visit(s);
+            }
+        }
+    }
+
+    private void visitThrowInsts(JThrowStmt s) {
+        if (throwVisitors != null) {
+            for (IThrowInstVisitor v : throwVisitors)
+                v.visit(s);
+        }
+    }
+
     private void visitInsts(ICFG cfg) {
         for (Block bb : cfg.reversePostOrder()) {
             Iterator<Unit> uit = bb.iterator();
@@ -275,32 +332,20 @@ public class VisitorHandler {
                             for (IInvokeInstVisitor iiv : iivs)
                                 iiv.visitInvokeInst(q);
                         }
+                    } else if (q instanceof JLookupSwitchStmt) {
+                        visitLookupSwitchInsts((JLookupSwitchStmt) q);
                     } else if (q instanceof JNopStmt) {
-                        if (nopVisitors != null) {
-                            for (INopInstVisitor nopVisitor : nopVisitors)
-                                nopVisitor.visit((JNopStmt) q);
-                        }
-                    } else if (q instanceof JLookupSwitchStmt) {
-                        if (lookupVisitors != null) {
-                            for (ILookupSwitchInstVisitor lookupVisitor : lookupVisitors)
-                                lookupVisitor.visit((JLookupSwitchStmt) q);
-                        }
-                    } else if (q instanceof JLookupSwitchStmt) {
-                        if (lookupVisitors != null) {
-                            for (ITableSwitchInstVisitor tableVisitor : tableVisitors)
-                                tableVisitor.visit((JTableSwitchStmt) q);
-                        }
-                    } else if (q instanceof JReturnStmt || q instanceof JReturnVoidStmt
-                            && !(q instanceof JThrowStmt)){
-                        if (rivs != null) {
-                            for (IReturnInstVisitor riv : rivs)
-                                riv.visitReturnInst(q);
-                        }
+                        visitNopInsts((JNopStmt) q);
+                    } else if (q instanceof JRetStmt) {
+                        visitRetInsts((JRetStmt) q);
+                    } else if (q instanceof JReturnStmt) {
+                        visitReturnInsts((JReturnStmt) q);
+                    } else if (q instanceof JReturnVoidStmt) {
+                        visitReturnVoidInsts((JReturnVoidStmt) q);
+                    } else if (q instanceof JTableSwitchStmt) {
+                        visitTableSwitchInsts((JTableSwitchStmt) q);
                     } else if (q instanceof JThrowStmt) {
-                        if (throwVisitors != null) {
-                            for (IThrowInstVisitor throwVisitor : throwVisitors)
-                                throwVisitor.visit((JThrowStmt) q);
-                        }
+                        visitThrowInsts((JThrowStmt) q);
                     }
                 }
             }
@@ -327,96 +372,139 @@ public class VisitorHandler {
                 mvs.add((IMethodVisitor) task);
             }
             if (task instanceof IInstVisitor) {
+                doCFGs = true;
                 if (ivs == null)
                     ivs = new ArrayList<IInstVisitor>();
                 ivs.add((IInstVisitor) task);
             }
             if (task instanceof IExprVisitor) {
+                doCFGs = true;
                 if (evs == null)
                     evs = new ArrayList<IExprVisitor>();
                 evs.add((IExprVisitor) task);
             }
             if (task instanceof IAssignInstVisitor) {
+                doCFGs = true;
                 if (asvs == null)
                     asvs = new ArrayList<IAssignInstVisitor>();
                 asvs.add((IAssignInstVisitor) task);
             }
             if (task instanceof IBreakPointInstVisitor) {
+                doCFGs = true;
                 if (bpVisitors == null)
                     bpVisitors = new ArrayList<IBreakPointInstVisitor>();
                 bpVisitors.add((IBreakPointInstVisitor) task);
             }
+            if (task instanceof IEnterMonitorInstVisitor) {
+                doCFGs = true;
+                if (enterMonitorVisitors == null)
+                    enterMonitorVisitors = new ArrayList<IEnterMonitorInstVisitor>();
+                enterMonitorVisitors.add((IEnterMonitorInstVisitor) task);
+            }
+            if (task instanceof IExitMonitorInstVisitor) {
+                doCFGs = true;
+                if (exitMonitorVisitors == null)
+                    exitMonitorVisitors = new ArrayList<IExitMonitorInstVisitor>();
+                exitMonitorVisitors.add((IExitMonitorInstVisitor) task);
+            }
             if (task instanceof IGotoInstVisitor) {
+                doCFGs = true;
                 if (gotoVisitors == null)
                     gotoVisitors = new ArrayList<IGotoInstVisitor>();
                 gotoVisitors.add((IGotoInstVisitor) task);
             }
             if (task instanceof IIfInstVisitor) {
+                doCFGs = true;
                 if (ifVisitors == null)
                     ifVisitors = new ArrayList<IIfInstVisitor>();
                 ifVisitors.add((IIfInstVisitor) task);
             }
             if (task instanceof IHeapInstVisitor) {
+                doCFGs = true;
                 if (hivs == null)
                     hivs = new ArrayList<IHeapInstVisitor>();
                 hivs.add((IHeapInstVisitor) task);
             }
             if (task instanceof IInvokeInstVisitor) {
+                doCFGs = true;
                 if (iivs == null)
                     iivs = new ArrayList<IInvokeInstVisitor>();
                 iivs.add((IInvokeInstVisitor) task);
             }
             if (task instanceof INewInstVisitor) {
+                doCFGs = true;
                 if (nivs == null)
                     nivs = new ArrayList<INewInstVisitor>();
                 nivs.add((INewInstVisitor) task);
             }
             if (task instanceof INopInstVisitor) {
+                doCFGs = true;
                 if (nopVisitors == null)
                     nopVisitors = new ArrayList<INopInstVisitor>();
                 nopVisitors.add((INopInstVisitor) task);
             }
             if (task instanceof ILookupSwitchInstVisitor) {
+                doCFGs = true;
                 if (lookupVisitors == null)
                     lookupVisitors = new ArrayList<ILookupSwitchInstVisitor>();
                 lookupVisitors.add((ILookupSwitchInstVisitor) task);
             }
             if (task instanceof ITableSwitchInstVisitor) {
+                doCFGs = true;
                 if (tableVisitors == null)
                     tableVisitors = new ArrayList<ITableSwitchInstVisitor>();
                 tableVisitors.add((ITableSwitchInstVisitor) task);
             }
             if (task instanceof IMoveInstVisitor) {
+                doCFGs = true;
                 if (mivs == null)
                     mivs = new ArrayList<IMoveInstVisitor>();
                 mivs.add((IMoveInstVisitor) task);
             }
             if (task instanceof ICastInstVisitor) {
+                doCFGs = true;
                 if (civs == null)
                     civs = new ArrayList<ICastInstVisitor>();
                 civs.add((ICastInstVisitor) task);
             }
             if (task instanceof IPhiInstVisitor) {
+                doCFGs = true;
                 if (pivs == null)
                     pivs = new ArrayList<IPhiInstVisitor>();
                 pivs.add((IPhiInstVisitor) task);
             }
+            if (task instanceof IRetInstVisitor) {
+                doCFGs = true;
+                if (retVisitors == null)
+                    retVisitors = new ArrayList<IRetInstVisitor>();
+                retVisitors.add((IRetInstVisitor) task);
+            }
             if (task instanceof IReturnInstVisitor) {
+                doCFGs = true;
                 if (rivs == null)
                     rivs = new ArrayList<IReturnInstVisitor>();
                 rivs.add((IReturnInstVisitor) task);
             }
+            if (task instanceof IReturnVoidInstVisitor) {
+                doCFGs = true;
+                if (returnVoidVisitors == null)
+                    returnVoidVisitors = new ArrayList<IReturnVoidInstVisitor>();
+                returnVoidVisitors.add((IReturnVoidInstVisitor) task);
+            }
             if (task instanceof IAcqLockInstVisitor) {
+                doCFGs = true;
                 if (acqivs == null)
                     acqivs = new ArrayList<IAcqLockInstVisitor>();
                 acqivs.add((IAcqLockInstVisitor) task);
             }
             if (task instanceof IRelLockInstVisitor) {
+                doCFGs = true;
                 if (relivs == null)
                     relivs = new ArrayList<IRelLockInstVisitor>();
                 relivs.add((IRelLockInstVisitor) task);
             }
             if (task instanceof IThrowInstVisitor){
+                doCFGs = true;
                 if (throwVisitors == null)
                     throwVisitors = new ArrayList<IThrowInstVisitor>();
                 throwVisitors.add((IThrowInstVisitor) task);
@@ -424,10 +512,6 @@ public class VisitorHandler {
         }
         Program program = Program.g();
         reachableMethods = program.getMethods();
-        doCFGs = (asvs != null) || (evs != null) || (ivs != null) || (hivs != null) ||
-            (iivs != null) || (nivs != null) || (mivs != null) ||
-            (civs != null) || (pivs != null) || (rivs != null) ||
-            (acqivs != null) || (relivs != null);
         if (cvs != null) {
             IndexSet<RefLikeType> classes = program.getClasses();
             for (Type r : classes) {

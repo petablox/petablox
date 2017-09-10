@@ -1,6 +1,7 @@
 package petablox.program.visitors;
 
 import soot.Unit;
+import soot.jimple.internal.JReturnStmt;
 
 /**
  * Visitor over all return statements in all methods in the program.
@@ -8,10 +9,5 @@ import soot.Unit;
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public interface IReturnInstVisitor extends IMethodVisitor {
-    /**
-     * Visits all return statements in all methods in the program.
-     * 
-     * @param q A return statement.
-     */
-    public void visitReturnInst(Unit q);
+    public void visit(JReturnStmt s);
 }
