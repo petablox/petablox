@@ -22,16 +22,13 @@ public class RelPobjRetInst extends ProgramRel implements IReturnInstVisitor {
     public void visit(SootMethod m) { }
     
     @Override
-    public void visitReturnInst(Unit q) {
-    	if(q instanceof JReturnStmt){
-    		JReturnStmt jrs = (JReturnStmt)q;
-    		if(jrs.getOp() instanceof Local){
-	    		Local v = (Local)jrs.getOp();
-	    		if(v.getType() instanceof RefLikeType){
-	    			add(q, v);
-	    		}
-    		}
-    	}
+    public void visit(JReturnStmt jrs) {
+        if(jrs.getOp() instanceof Local){
+            Local v = (Local)jrs.getOp();
+            if(v.getType() instanceof RefLikeType){
+                add((Unit) jrs, v);
+            }
+        }
     }
 }
 
