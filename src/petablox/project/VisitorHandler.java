@@ -44,7 +44,7 @@ import soot.toolkits.graph.Block;
 import petablox.program.Program;
 import petablox.program.visitors.IAcqLockInstVisitor;
 import petablox.program.visitors.IAssignInstVisitor;
-import petablox.program.visitors.IBreakPointInstVisitor;
+import petablox.program.visitors.IBreakInstVisitor;
 import petablox.program.visitors.ICastInstVisitor;
 import petablox.program.visitors.IClassVisitor;
 import petablox.program.visitors.IEnterMonitorInstVisitor;
@@ -83,7 +83,7 @@ import petablox.util.soot.SootUtilities;
 public class VisitorHandler {
     private final Collection<ITask> tasks;
     private Collection<IAssignInstVisitor> asvs;
-    private Collection<IBreakPointInstVisitor> bpVisitors;
+    private Collection<IBreakInstVisitor> bpVisitors;
     private Collection<IClassVisitor> cvs;
     private Collection<IEnterMonitorInstVisitor> enterMonitorVisitors;
     private Collection<IExitMonitorInstVisitor> exitMonitorVisitors;
@@ -216,9 +216,9 @@ public class VisitorHandler {
         }
     }
 
-    private void visitBreakPointInsts(JBreakpointStmt s) {
+    private void visitBreakInsts(JBreakpointStmt s) {
         if (bpVisitors != null) {
-            for (IBreakPointInstVisitor v : bpVisitors)
+            for (IBreakInstVisitor v : bpVisitors)
                 v.visit(s);
         }
     }
@@ -328,7 +328,7 @@ public class VisitorHandler {
                             }
                         }
                     } else if (q instanceof JBreakpointStmt) {
-                        visitBreakPointInsts((JBreakpointStmt) q);
+                        visitBreakInsts((JBreakpointStmt) q);
                     } else if(q instanceof JEnterMonitorStmt) {
                         visitEnterMonitorInsts((JEnterMonitorStmt) q);
                     } else if(q instanceof JExitMonitorStmt){
@@ -401,11 +401,11 @@ public class VisitorHandler {
                     asvs = new ArrayList<IAssignInstVisitor>();
                 asvs.add((IAssignInstVisitor) task);
             }
-            if (task instanceof IBreakPointInstVisitor) {
+            if (task instanceof IBreakInstVisitor) {
                 doCFGs = true;
                 if (bpVisitors == null)
-                    bpVisitors = new ArrayList<IBreakPointInstVisitor>();
-                bpVisitors.add((IBreakPointInstVisitor) task);
+                    bpVisitors = new ArrayList<IBreakInstVisitor>();
+                bpVisitors.add((IBreakInstVisitor) task);
             }
             if (task instanceof IEnterMonitorInstVisitor) {
                 doCFGs = true;

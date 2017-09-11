@@ -5,12 +5,12 @@ import soot.SootMethod;
 import soot.Unit;
 import soot.jimple.internal.JBreakpointStmt;
 
-import petablox.program.visitors.IBreakPointInstVisitor;
+import petablox.program.visitors.IBreakInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 
 @Petablox(name = "BreakInst", sign = "P0")
-public class RelBreakPointInst extends ProgramRel implements IBreakPointInstVisitor {
+public class RelBreakInst extends ProgramRel implements IBreakInstVisitor {
     @Override
     public void visit(SootClass m) { }
 
