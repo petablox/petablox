@@ -7,7 +7,9 @@ import petablox.project.analyses.JavaAnalysis;
 import petablox.project.analyses.ProgramRel;
 @Petablox(
     name = "test-ir", 
-    consumes = { "AssignInst", "BreakPointInst",
+    consumes = {
+        "Trap",
+        "AssignInst", "BreakPointInst",
         "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
         "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
         "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
@@ -20,7 +22,7 @@ public class TestIR extends JavaAnalysis {
 		    System.out.println("Printing relations in: " + printDir);
 	 
         ProgramRel rel;
-        String[] targets = { "AssignInst", //"BreakPointInst",
+        String[] targets = { "Trap", "AssignInst", //"BreakPointInst",
             "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
             "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
             "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
