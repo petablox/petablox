@@ -9,7 +9,7 @@ import petablox.program.visitors.IBreakPointInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 
-@Petablox(name = "BreakPointInst", sign = "P0")
+@Petablox(name = "BreakInst", sign = "P0")
 public class RelBreakPointInst extends ProgramRel implements IBreakPointInstVisitor {
     @Override
     public void visit(SootClass m) { }

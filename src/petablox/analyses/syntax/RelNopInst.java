@@ -9,7 +9,7 @@ import petablox.program.visitors.INopInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 
-@Petablox(name = "NopInst", sign = "P0:P0")
+@Petablox(name = "NopInst", sign = "P0")
 public class RelNopInst extends ProgramRel implements INopInstVisitor {
     @Override
     public void visit(SootClass m) { }

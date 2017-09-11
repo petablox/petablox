@@ -11,7 +11,7 @@ import petablox.project.analyses.ProgramRel;
         /* Method */
         "Trap", "LocalVar", "VarType",
         /* Statement */
-        "AssignInst", "BreakPointInst",
+        "AssignInst", "BreakInst",
         "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
         "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
         "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
@@ -30,7 +30,7 @@ public class TestIR extends JavaAnalysis {
 		    System.out.println("Printing relations in: " + printDir);
 	 
         ProgramRel rel;
-        String[] targets = { "Trap", "LocalVar", "VarType", "AssignInst", //"BreakPointInst",
+        String[] targets = { "Trap", "LocalVar", "VarType", "AssignInst", "BreakInst",
             "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
             "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
             "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
