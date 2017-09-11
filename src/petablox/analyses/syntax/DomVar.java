@@ -12,7 +12,7 @@ import petablox.util.soot.SootUtilities;
 /**
  * Domain of local vairables of all types.
  */
-@Petablox(name = "Var")
+@Petablox(name = "VAR")
 public class DomVar extends ProgramDom<Local> implements IMethodVisitor {
     @Override
     public void visit(SootClass c) { }

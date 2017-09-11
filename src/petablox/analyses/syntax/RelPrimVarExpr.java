@@ -8,9 +8,9 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
-import soot.jimple.IdentityRef;
+import soot.jimple.internal.JimpleLocal;
 
-@Petablox(name="PrimVarExpr", sign="EXPR0,V0:EXPR0_V0")
+@Petablox(name="PrimVarExpr", sign="EXPR0")
 public class RelPrimVarExpr extends ProgramRel implements IExprVisitor {
 
 	@Override
@@ -24,7 +24,7 @@ public class RelPrimVarExpr extends ProgramRel implements IExprVisitor {
 
 	@Override
 	public void visit(Value e) {
-		if (e instanceof IdentityRef && e.getType() instanceof PrimType) {
+		if (e instanceof JimpleLocal && e.getType() instanceof PrimType) {
 			add(e);
 		}
 	}
