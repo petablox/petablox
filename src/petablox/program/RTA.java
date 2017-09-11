@@ -558,9 +558,8 @@ public class RTA implements ScopeBuilder {
               processResolvedObjNewInstSite(p.val0, p.val1);*/
         }
         ICFG cfg = SootUtilities.getCFG(m);
-        Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
-        while(itr.hasNext()){
-            Type t = itr.next().getType();
+        for (Local l : SootUtilities.getLocals(m)) {
+            Type t = l.getType();
             if(t instanceof RefLikeType)
                 visitClass((RefLikeType)t);
         }

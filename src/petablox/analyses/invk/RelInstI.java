@@ -23,12 +23,12 @@ public class RelInstI extends ProgramRel {
         for (int iIdx = 0; iIdx < numI; iIdx++) {
             Unit q = (Unit) domI.get(iIdx);
             if(q instanceof Stmt){
-            	Stmt s = (Stmt)q;
-            	if(s.containsInvokeExpr()){
-            		SootMethod m = s.getInvokeExpr().getMethod();
-            		if(!m.isStatic())
-            			add(iIdx);
-            	}
+                Stmt s = (Stmt)q;
+                if(s.containsInvokeExpr()){
+                    SootMethod m = s.getInvokeExpr().getMethod();
+                    if(!m.isStatic())
+                        add(iIdx);
+                }
             }
         }
     }
