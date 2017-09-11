@@ -28,6 +28,7 @@ import soot.jimple.internal.JCastExpr;
 import soot.jimple.internal.JEnterMonitorStmt;
 import soot.jimple.internal.JExitMonitorStmt;
 import soot.jimple.internal.JGotoStmt;
+import soot.jimple.internal.JIdentityStmt;
 import soot.jimple.internal.JIfStmt;
 import soot.jimple.internal.JInvokeStmt;
 import soot.jimple.internal.JLookupSwitchStmt;
@@ -52,6 +53,7 @@ import petablox.program.visitors.IExprVisitor;
 import petablox.program.visitors.IFieldVisitor;
 import petablox.program.visitors.IGotoInstVisitor;
 import petablox.program.visitors.IHeapInstVisitor;
+import petablox.program.visitors.IIdentityInstVisitor;
 import petablox.program.visitors.IIfInstVisitor;
 import petablox.program.visitors.IInstVisitor;
 import petablox.program.visitors.IInvokeInstVisitor;
@@ -87,6 +89,7 @@ public class VisitorHandler {
     private Collection<IExitMonitorInstVisitor> exitMonitorVisitors;
     private Collection<IFieldVisitor> fvs;
     private Collection<IGotoInstVisitor> gotoVisitors;
+    private Collection<IIdentityInstVisitor> identityVisitors;
     private Collection<IHeapInstVisitor> hivs;
     private Collection<INewInstVisitor> nivs;
     private Collection<IIfInstVisitor> ifVisitors;
@@ -188,6 +191,13 @@ public class VisitorHandler {
         }
         if (exitMonitorVisitors != null) {
             for (IExitMonitorInstVisitor v : exitMonitorVisitors)
+                v.visit(s);
+        }
+    }
+
+    private void visitIdendityInsts(JIdentityStmt s) {
+        if (identityVisitors != null) {
+            for (IIdentityInstVisitor v : identityVisitors)
                 v.visit(s);
         }
     }
@@ -325,6 +335,8 @@ public class VisitorHandler {
                         visitExitMonitorInsts((JExitMonitorStmt) q);
                     } else if (q instanceof JGotoStmt) {
                         visitGotoInsts((JGotoStmt) q);
+                    } else if (q instanceof JIdentityStmt) {
+                        visitIdendityInsts((JIdentityStmt) q);
                     } else if (q instanceof JIfStmt) {
                         visitIfInsts((JIfStmt) q);
                     } else if (q instanceof JInvokeStmt) {
@@ -412,6 +424,12 @@ public class VisitorHandler {
                 if (gotoVisitors == null)
                     gotoVisitors = new ArrayList<IGotoInstVisitor>();
                 gotoVisitors.add((IGotoInstVisitor) task);
+            }
+            if (task instanceof IIdentityInstVisitor) {
+                doCFGs = true;
+                if (identityVisitors == null)
+                    identityVisitors = new ArrayList<IIdentityInstVisitor>();
+                identityVisitors.add((IIdentityInstVisitor) task);
             }
             if (task instanceof IIfInstVisitor) {
                 doCFGs = true;

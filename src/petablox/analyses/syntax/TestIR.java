@@ -9,9 +9,10 @@ import petablox.project.analyses.ProgramRel;
     name = "test-ir", 
     consumes = {
         "Trap",
+        /* Statement */
         "AssignInst", "BreakPointInst",
-        "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
-        "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
+        "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
+        "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
         "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
         "TableSwitchCaseInst", "TableSwitchDefaultInst"
     }
@@ -23,8 +24,8 @@ public class TestIR extends JavaAnalysis {
 	 
         ProgramRel rel;
         String[] targets = { "Trap", "AssignInst", //"BreakPointInst",
-            "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IfInst",
-            "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
+            "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
+            "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
             "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
             "TableSwitchCaseInst", "TableSwitchDefaultInst",
             };
