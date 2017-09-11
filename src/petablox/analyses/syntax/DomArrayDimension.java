@@ -9,7 +9,7 @@ import soot.Unit;
 import soot.Value;
 import soot.jimple.NewMultiArrayExpr;
 
-@Petablox(name="D")
+@Petablox(name="ArrayDimension")
 public class DomArrayDimension extends ProgramDom<Integer> implements IExprVisitor {
     public static int MAXZ = Integer.getInteger("petablox.domK.size", 32);
 

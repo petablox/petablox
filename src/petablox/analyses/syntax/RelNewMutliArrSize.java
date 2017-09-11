@@ -10,7 +10,7 @@ import soot.Value;
 import soot.jimple.NewMultiArrayExpr;
 
 // TODO: Make sure this sign is correct
-@Petablox(name = "NewMultiArrSize", sign = "EXPR0,D0,EXPR1:EXPR0_D0xEXPR1")
+@Petablox(name = "NewMultiArrSize", sign = "EXPR0,ArrayDimension0,EXPR1:EXPR0_ArrayDimension0xEXPR1")
 public class RelNewMutliArrSize extends ProgramRel implements IExprVisitor {
 
 	@Override
