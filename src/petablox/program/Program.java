@@ -34,6 +34,7 @@ import petablox.util.soot.SootUtilities;
 import petablox.util.soot.StubMethodSupport;
 import petablox.util.tuple.object.Pair;
 import soot.*;
+import soot.jimple.toolkits.typing.fast.BottomType;
 import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
@@ -79,6 +80,7 @@ public class Program {
     private ClassHierarchy ch;
     private Type[] basicTypes = {
         BooleanType.v(),
+        BottomType.v(),
         ByteType.v(),
         CharType.v(),
         DoubleType.v(),
@@ -236,9 +238,11 @@ public class Program {
 
     private List<Type> getBasicTypes(){
         List<Type> types = new ArrayList<Type>();
-        for(Type t : basicTypes){
+        for (Type t : basicTypes) {
             types.add(t);
-            types.add(ArrayType.v(t, 1));
+            if (t instanceof PrimType || t instanceof RefType) {
+                types.add(ArrayType.v(t, 1));
+            }
         }
         /*String[] basicClassNames = { "java.lang.Object",
           "java.lang.Class",

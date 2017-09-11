@@ -41,54 +41,18 @@ import soot.toolkits.graph.Block;
     sign = "V0,T0:T0_V0"
 )
 public class RelVT extends ProgramRel implements IMethodVisitor {
-    private RefLikeType javaLangObject;
-    public void init() {
-        javaLangObject = Program.g().getClass("java.lang.Object");
-        assert (javaLangObject != null);
-    }
     public void visit(SootClass c) { }
     public void visit(SootMethod m) {
         if (m.isAbstract())
             return;
-        /*ICFG cfg = SootUtilities.getCFG(m);
-        Local[] regs = SootUtilities.getMethArgLocals(m);
-        int numArgs = regs.length;
-        for(int i=0; i<numArgs; i++){
-        	Type t = regs[i].getType();
-        	if(t instanceof RefLikeType){
-        		Local v = regs[i];
-        		add(v,t);
-        	}
-        }
-        for (Block bb : cfg.reversePostOrder()) {
-        	Iterator<Unit> itr = bb.iterator();
-            while(itr.hasNext()) {
-            	Unit q = itr.next();
-                process(q);
-            }
-        }*/
         Iterator<Local> itr = SootUtilities.getLocals(m).iterator();
         while(itr.hasNext()){
-        	Local l = itr.next();
-        	Type t = l.getType();
-        	if(t instanceof RefLikeType){
-        		add(l,t);
-        	}
+            Local l = itr.next();
+            Type t = l.getType();
+            if(t instanceof RefLikeType){
+                add(l,t);
+            }
         }
-    }
-    private void process(Unit u) {
-    	List<ValueBox> vbl = u.getUseAndDefBoxes();
-    	for(ValueBox vb : vbl){
-    		Value v = vb.getValue();
-    		if(v instanceof Local){
-    			Type t = v.getType();
-    			if(t == null)
-    				t = javaLangObject;
-    			if(t instanceof RefLikeType){
-    				add(v,t);
-    			}
-    		}
-    	}
     }
 }
 
