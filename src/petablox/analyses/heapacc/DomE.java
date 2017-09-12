@@ -78,7 +78,11 @@ public class DomE extends ProgramDom<Unit> implements IHeapInstVisitor {
     public String toXMLAttrsString(Unit u) {
         SootMethod m = SootUtilities.getMethod(u);
         JAssignStmt as = (JAssignStmt)u;
-        String file = ((SourceFileTag)m.getDeclaringClass().getTags().get(0)).getSourceFile();
+        String file = ((SourceFileTag)m.getDeclaringClass().getTag("SourceFileTag")).getSourceFile();
+        System.out.println(m);
+        System.out.println(m.getDeclaringClass());
+        System.out.println(m.getDeclaringClass().getTag("SourceFileTag"));
+        System.out.println(((SourceFileTag)m.getDeclaringClass().getTag("SourceFileTag")).getSourceFile());
         int line = ((LineNumberTag)u.getTag("LineNumberTag")).getLineNumber();
         int mIdx = domM.indexOf(m);
         return "file=\"" + file + "\" " + "line=\"" + line + "\" " +

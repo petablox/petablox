@@ -13,9 +13,11 @@ import petablox.project.analyses.ProgramRel;
         /* Statement */
         "AssignInst", "BreakInst",
         "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
-        "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
-        "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
+        "IfInst", "InvokeInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
+        "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "MethodArg",
+        "SpecialInvoke", "InterfaceInvoke", "StaticInvoke", "VirtualInvoke", "ThrowInst",
         "TableSwitchCaseInst", "TableSwitchDefaultInst",
+        /* Expression */
         "AddExpr", "AndExpr", "ArrExpr", "CmpExpr", "CmpgExpr", "CmplExpr",
         "ConstExpr", "DivExpr", "EqExpr", "GeExpr", "GtExpr", "InstanceFieldExpr",
         "InvokeExpr", "LeExpr", "LengthExpr", "LtExpr", "MulExpr", "NeExpr",
@@ -32,8 +34,9 @@ public class TestIR extends JavaAnalysis {
         ProgramRel rel;
         String[] targets = { "Trap", "LocalVar", "VarType", "AssignInst", "BreakInst",
             "EnterMonitorInst", "ExitMonitorInst", "GotoInst", "IdentityInst",
-            "IfInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
-            "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", "ThrowInst",
+            "IfInst", "InvokeInst", "LookupSwitchCaseInst", "LookupSwitchDefaultInst",
+            "NopInst", "RetInst", "ReturnInst", "ReturnVoidInst", 
+            "SpecialInvoke", "InterfaceInvoke", "StaticInvoke", "VirtualInvoke", "ThrowInst",
             "TableSwitchCaseInst", "TableSwitchDefaultInst",
             "AddExpr", "AndExpr", "ArrExpr", "CmpExpr", "CmpgExpr", "CmplExpr",
             "ConstExpr", "DivExpr", "EqExpr", "GeExpr", "GtExpr", "InstanceFieldExpr",

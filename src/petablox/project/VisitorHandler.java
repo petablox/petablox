@@ -56,6 +56,7 @@ import petablox.program.visitors.IHeapInstVisitor;
 import petablox.program.visitors.IIdentityInstVisitor;
 import petablox.program.visitors.IIfInstVisitor;
 import petablox.program.visitors.IInstVisitor;
+import petablox.program.visitors.IInvokeExprVisitor;
 import petablox.program.visitors.IInvokeInstVisitor;
 import petablox.program.visitors.ILookupSwitchInstVisitor;
 import petablox.program.visitors.IMethodVisitor;
@@ -108,6 +109,7 @@ public class VisitorHandler {
     private Collection<IPhiInstVisitor> pivs;
     private Collection<IInstVisitor> ivs;
     private Collection<IExprVisitor> evs;
+    private Collection<IInvokeExprVisitor> invokeExprVisitors;
     private Collection<IMethodVisitor> mvs;
 
     private boolean doCFGs;
@@ -155,9 +157,9 @@ public class VisitorHandler {
     }
 
     private void visitExprs(Unit q) {
-        if (evs != null){
-            List<ValueBox> dubox = q.getUseAndDefBoxes();
+        if (evs != null) {
             for (IExprVisitor ev : evs) {
+                List<ValueBox> dubox = q.getUseAndDefBoxes();
                 for (ValueBox vb : dubox)
                     ev.visit(vb.getValue());
                 if (q instanceof JLookupSwitchStmt) {
@@ -168,6 +170,16 @@ public class VisitorHandler {
                     JTableSwitchStmt s = (JTableSwitchStmt) q;
                     for (int i = s.getLowIndex(); i <= s.getHighIndex(); i++)
                         ev.visit(IntConstant.v(i));
+                }
+            }
+        }
+        if (invokeExprVisitors != null) {
+            for (IInvokeExprVisitor v : invokeExprVisitors) {
+                List<ValueBox> dubox = q.getUseAndDefBoxes();
+                for (ValueBox vb : dubox) {
+                    Value value = vb.getValue();
+                    if (value instanceof InvokeExpr)
+                        v.visit((InvokeExpr) value);
                 }
             }
         }
@@ -331,7 +343,7 @@ public class VisitorHandler {
                         visitBreakInsts((JBreakpointStmt) q);
                     } else if(q instanceof JEnterMonitorStmt) {
                         visitEnterMonitorInsts((JEnterMonitorStmt) q);
-                    } else if(q instanceof JExitMonitorStmt){
+                    } else if(q instanceof JExitMonitorStmt) {
                         visitExitMonitorInsts((JExitMonitorStmt) q);
                     } else if (q instanceof JGotoStmt) {
                         visitGotoInsts((JGotoStmt) q);
@@ -341,8 +353,10 @@ public class VisitorHandler {
                         visitIfInsts((JIfStmt) q);
                     } else if (q instanceof JInvokeStmt) {
                         if (iivs != null) {
-                            for (IInvokeInstVisitor iiv : iivs)
+                            for (IInvokeInstVisitor iiv : iivs) {
                                 iiv.visitInvokeInst(q);
+                                iiv.visit((JInvokeStmt) q);
+                            }
                         }
                     } else if (q instanceof JLookupSwitchStmt) {
                         visitLookupSwitchInsts((JLookupSwitchStmt) q);
@@ -442,6 +456,12 @@ public class VisitorHandler {
                 if (hivs == null)
                     hivs = new ArrayList<IHeapInstVisitor>();
                 hivs.add((IHeapInstVisitor) task);
+            }
+            if (task instanceof IInvokeExprVisitor) {
+                doCFGs = true;
+                if (invokeExprVisitors == null)
+                    invokeExprVisitors = new ArrayList<IInvokeExprVisitor>();
+                invokeExprVisitors.add((IInvokeExprVisitor) task);
             }
             if (task instanceof IInvokeInstVisitor) {
                 doCFGs = true;

@@ -6,6 +6,8 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.internal.JInvokeStmt;
+
 import petablox.program.visitors.IInvokeInstVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
@@ -50,6 +52,9 @@ public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
         if (numActuals > maxArgs)
             grow(numActuals);
     }
+
+    @Override
+    public void visit(JInvokeStmt s) { }
 
     public void grow(int newSize) {
         int oldSize = maxArgs;
