@@ -4,14 +4,13 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
-import soot.jimple.IntConstant;
-
+import soot.jimple.StringConstant;
 import petablox.program.visitors.IExprVisitor;
 import petablox.project.Petablox;
-import petablox.project.analyses.ProgramDom;
+import petablox.project.analyses.ProgramRel;
 
-@Petablox(name = "IntConst")
-public class DomIntConst extends ProgramDom<Value> implements IExprVisitor {
+@Petablox(name = "StringExpr", sign="StringConst0")
+public class RelStringExpr extends ProgramRel implements IExprVisitor {
     @Override
     public void visit(SootClass c) { }
 
@@ -22,7 +21,7 @@ public class DomIntConst extends ProgramDom<Value> implements IExprVisitor {
     public void visit(Unit u) { }
 
     public void visit(Value e) {
-        if (e instanceof IntConstant)
+        if (e instanceof StringConstant)
             add(e);
     }
 }

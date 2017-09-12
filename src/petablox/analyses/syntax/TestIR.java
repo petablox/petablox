@@ -24,6 +24,8 @@ import petablox.project.analyses.ProgramRel;
         "NegExpr", "NewArrExpr", "NewExpr", "NewMultiArr", "NewMultiArrSize",
         "OrExpr", "PrimVarExpr", "RemExpr", "ShlExpr", "ShrExpr", "StaticFieldExpr",
         "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
+        "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
+        //"ClassConstant",
     }
 )
 public class TestIR extends JavaAnalysis {
@@ -44,6 +46,8 @@ public class TestIR extends JavaAnalysis {
             "NegExpr", "NewArrExpr", "NewExpr", "NewMultiArr", "NewMultiArrSize",
             "OrExpr", "PrimVarExpr", "RemExpr", "ShlExpr", "ShrExpr", "StaticFieldExpr",
             "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
+            "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
+            //"ClassConstant"
             };
 
         for(int i = 0; i < targets.length; i ++){

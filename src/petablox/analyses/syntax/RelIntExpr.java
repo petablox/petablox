@@ -8,10 +8,10 @@ import soot.jimple.IntConstant;
 
 import petablox.program.visitors.IExprVisitor;
 import petablox.project.Petablox;
-import petablox.project.analyses.ProgramDom;
+import petablox.project.analyses.ProgramRel;
 
-@Petablox(name = "IntConst")
-public class DomIntConst extends ProgramDom<Value> implements IExprVisitor {
+@Petablox(name = "IntExpr", sign="IntConst0")
+public class RelIntExpr extends ProgramRel implements IExprVisitor {
     @Override
     public void visit(SootClass c) { }
 

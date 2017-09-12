@@ -4,7 +4,6 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
-import soot.dexpler.typing.UntypedLongOrDoubleConstant;
 import soot.jimple.LongConstant;
 import petablox.program.visitors.IExprVisitor;
 import petablox.project.Petablox;
@@ -24,9 +23,5 @@ public class DomLongConst extends ProgramDom<Value> implements IExprVisitor {
     public void visit(Value e) {
         if (e instanceof LongConstant)
             add(e);
-        
-        // TODO: This may be incorrect?
-        if (e instanceof UntypedLongOrDoubleConstant) 
-        		add(e);
     }
 }
