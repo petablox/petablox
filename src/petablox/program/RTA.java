@@ -450,7 +450,7 @@ public class RTA implements ScopeBuilder {
     protected void visitMethod(SootMethod m) {
         SootMethod s = StubMethodSupport.getStub(m);
         if(s == null) s = m;
-        if (s.isConcrete() && methods.add(s)) {
+        if (methods.add(s) && s.isConcrete()) {
             if (DEBUG) System.out.println("\tAdding method: " + s);
             s.retrieveActiveBody();
             methodWorklist.add(s);
