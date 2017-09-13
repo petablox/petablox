@@ -4,6 +4,7 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.DynamicInvokeExpr;
 
 import petablox.program.visitors.IExprVisitor;
 import petablox.project.Petablox;
@@ -22,5 +23,10 @@ public class DomExpr extends ProgramDom<Value> implements IExprVisitor {
 
     public void visit(Value e) {
         add(e);
+        if (e instanceof DynamicInvokeExpr) {
+            DynamicInvokeExpr ex = (DynamicInvokeExpr) e;
+            for (Value arg : ex.getBootstrapArgs())
+                add(arg);
+        }
     }
 }

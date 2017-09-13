@@ -48,7 +48,7 @@ public class RelMgetClassInvkInst extends ProgramRel implements IInvokeInstVisit
                 int iIdx = domI.indexOf(q);
                 assert (iIdx >= 0);
                 add(mIdx, iIdx);
-                    }
+            }
         }
     }
 }

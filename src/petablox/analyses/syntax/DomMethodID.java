@@ -5,6 +5,7 @@ import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.InvokeExpr;
 
 import petablox.program.visitors.IInvokeExprVisitor;
@@ -27,5 +28,9 @@ public class DomMethodID extends ProgramDom<SootMethodRef> implements IInvokeExp
 
     public void visit(InvokeExpr e) {
         add(e.getMethodRef());
+        if (e instanceof DynamicInvokeExpr) {
+            DynamicInvokeExpr ex = (DynamicInvokeExpr) e;
+            add(ex.getBootstrapMethodRef());
+        }
     }
 }

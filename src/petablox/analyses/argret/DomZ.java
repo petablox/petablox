@@ -6,9 +6,11 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
-import soot.jimple.internal.JInvokeStmt;
+import soot.jimple.DynamicInvokeExpr;
+import soot.jimple.InvokeExpr;
+import soot.jimple.InstanceInvokeExpr;
 
-import petablox.program.visitors.IInvokeInstVisitor;
+import petablox.program.visitors.IInvokeExprVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 import petablox.util.soot.SootUtilities;
@@ -23,7 +25,7 @@ import petablox.util.Utils;
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 @Petablox(name = "Z")
-public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
+public class DomZ extends ProgramDom<Integer> implements IInvokeExprVisitor {
     private int maxArgs;
 
     @Override
@@ -40,11 +42,11 @@ public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
         if (numFormals > maxArgs)
             grow(numFormals);
     }
-
+/*
     @Override
     public void visitInvokeInst(Unit u) {
-    	List<Value> l = SootUtilities.getInvokeArgs(u); 
-    	if(SootUtilities.isInstanceInvoke(u)){
+        List<Value> l = SootUtilities.getInvokeArgs(u); 
+        if(SootUtilities.isInstanceInvoke(u)){
             Value thisV = SootUtilities.getInstanceInvkBase(u);
             l.add(0, thisV);
         }
@@ -52,9 +54,28 @@ public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
         if (numActuals > maxArgs)
             grow(numActuals);
     }
+*/
+    @Override
+    public void visit(Unit u) { }
 
     @Override
-    public void visit(JInvokeStmt s) { }
+    public void visit(Value v) { }
+
+    @Override
+    public void visit(InvokeExpr e) {
+        int numActuals = 0;
+        if (e instanceof InstanceInvokeExpr) {
+            numActuals = 1 + e.getArgs().size();
+        } else if (e instanceof DynamicInvokeExpr) {
+            DynamicInvokeExpr ex = (DynamicInvokeExpr) e;
+            int numBootstrapArgs = ex.getBootstrapArgs().size();
+            numActuals = Math.max(e.getArgs().size(), numBootstrapArgs);
+        } else {
+            numActuals = e.getArgs().size();
+        }
+        if (numActuals > maxArgs)
+            grow(numActuals);
+    }
 
     public void grow(int newSize) {
         int oldSize = maxArgs;
@@ -62,13 +83,13 @@ public class DomZ extends ProgramDom<Integer> implements IInvokeInstVisitor {
             getOrAdd(new Integer(i));
         maxArgs = newSize;
     }
-    
+
     @Override
     public String toFIString(Integer i) {	
-    	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
-    	if(printId) sb.append("(" + indexOf(i) +")");
-    	sb.append(i.toString());
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+        if(printId) sb.append("(" + indexOf(i) +")");
+        sb.append(i.toString());
+        return sb.toString();
     }
 }

@@ -5,13 +5,14 @@ import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.InvokeExpr;
+import soot.jimple.internal.JDynamicInvokeExpr;
 
 import petablox.program.visitors.IInvokeExprVisitor;
 import petablox.project.Petablox;
 import petablox.project.analyses.ProgramRel;
 
-@Petablox(name = "MethodArg", sign = "Invoke0,Z0,EXPR0:Invoke0_Z0xEXPR0")
-public class RelMethodArg extends ProgramRel implements IInvokeExprVisitor {
+@Petablox(name = "BootstrapMethodArg", sign = "Invoke0,Z0,EXPR0:Invoke0_Z0xEXPR0")
+public class RelBootstrapMethodArg extends ProgramRel implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass m) { }
 
@@ -26,10 +27,13 @@ public class RelMethodArg extends ProgramRel implements IInvokeExprVisitor {
 
     @Override
     public void visit(InvokeExpr e) {
-        int pos = 0;
-        for (Value arg : e.getArgs()) {
-            add(e, new Integer(pos), arg);
-            pos++;
+        if(e instanceof JDynamicInvokeExpr) {
+            JDynamicInvokeExpr ex = (JDynamicInvokeExpr) e;
+            int pos = 0;
+            for (Value arg : ex.getBootstrapArgs()) {
+                add(e, new Integer(pos), arg);
+                pos++;
+            }
         }
     }
 }
