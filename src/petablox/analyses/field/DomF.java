@@ -53,13 +53,13 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
 
     @Override
     public String toFIString(SootField f) {
-    	StringBuilder sb = new StringBuilder();
-    	boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
-    	if(printId) sb.append("(" + indexOf(f) + ")");
-    	if (f != null) sb.append(f.getName() + "@" + f.getDeclaringClass().getName());
-    	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        boolean printId = Utils.buildBoolProperty("petablox.printrel.printID", false);
+        if(printId) sb.append("(" + indexOf(f) + ")");
+        if (f != null) sb.append(f.getName() + "@" + f.getDeclaringClass().getName());
+        return sb.toString();
     }
-    
+
     @Override
     public String toXMLAttrsString(SootField f) {
         String sign;
@@ -72,32 +72,32 @@ public class DomF extends ProgramDom<SootField> implements IFieldVisitor {
         } else {
             SootClass c = f.getDeclaringClass();
             sign = c.getName() + "." + f.getName();
-            file = ((SourceFileTag)c.getTags().get(0)).getSourceFile();
+            file = ((SourceFileTag)c.getTag("SourceFileTag")).getSourceFile();
             line = 0; // TODO
         }
         return "sign=\"" + sign +
             "\" file=\"" + file +
             "\" line=\"" + line + "\"";
     }
-    
+
     public void parseAnnotations(SootField f, int indx){
-    	Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
-    	Map<Integer, List<Trio<String, String, String>>> fieldAnnot = LogicBloxAnnotExporter.fieldAnnot;
-    	if(fieldAnnot.containsKey(indx))
-    		return;
-    	List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
-    	for(Tag t : f.getTags()){
-    		if(t instanceof VisibilityAnnotationTag){
-    			Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
-    			for(String annotName : parsed.keySet()){
-    				annotationName.add(annotName);
-    				List<Pair<String,String>> keyValues = parsed.get(annotName);
-    				for(Pair<String,String> p : keyValues){
-    					annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
-    				}
-    			}
-    		}
-    	}
-    	fieldAnnot.put(indx, annots);
+        Set<String> annotationName = LogicBloxAnnotExporter.annotationName;
+        Map<Integer, List<Trio<String, String, String>>> fieldAnnot = LogicBloxAnnotExporter.fieldAnnot;
+        if(fieldAnnot.containsKey(indx))
+            return;
+        List<Trio<String, String, String>> annots = new ArrayList<Trio<String, String, String>>();
+        for(Tag t : f.getTags()){
+            if(t instanceof VisibilityAnnotationTag){
+                Map<String,List<Pair<String,String>>> parsed = SootUtilities.parseVisibilityAnnotationTag((VisibilityAnnotationTag)t);
+                for(String annotName : parsed.keySet()){
+                    annotationName.add(annotName);
+                    List<Pair<String,String>> keyValues = parsed.get(annotName);
+                    for(Pair<String,String> p : keyValues){
+                        annots.add(new Trio<String,String,String>(annotName,p.val0,p.val1));
+                    }
+                }
+            }
+        }
+        fieldAnnot.put(indx, annots);
     }
 }
