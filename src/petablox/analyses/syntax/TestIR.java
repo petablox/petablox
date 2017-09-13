@@ -26,6 +26,7 @@ import petablox.project.analyses.ProgramRel;
         "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
         "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
         //"ClassConstant",
+        "CaughtExceptionExpr"
     }
 )
 public class TestIR extends JavaAnalysis {
@@ -48,7 +49,8 @@ public class TestIR extends JavaAnalysis {
             "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
             "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
             //"ClassConstant"
-            };
+            "CaughtExceptionExpr"
+        };
 
         for(int i = 0; i < targets.length; i ++){
             rel = (ProgramRel) ClassicProject.g().getTrgt(targets[i]);
