@@ -25,8 +25,8 @@ import petablox.project.analyses.ProgramRel;
         "OrExpr", "PrimVarExpr", "RemExpr", "ShlExpr", "ShrExpr", "StaticFieldExpr",
         "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
         "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
-        //"ClassConstant",
-        "CaughtExceptionExpr"
+        "CaughtExceptionExpr",
+        "ClassConstant",
     }
 )
 public class TestIR extends JavaAnalysis {
@@ -48,9 +48,9 @@ public class TestIR extends JavaAnalysis {
             "OrExpr", "PrimVarExpr", "RemExpr", "ShlExpr", "ShrExpr", "StaticFieldExpr",
             "SubExpr", "UshrExpr", "VarExpr", "XorExpr",
             "IntExpr", "LongExpr", "FloatExpr", "DoubleExpr", "NullExpr", "StringExpr",
-            //"ClassConstant"
-            "CaughtExceptionExpr"
-        };
+            "CaughtExceptionExpr",
+            "ClassConstant",
+            };
 
         for(int i = 0; i < targets.length; i ++){
             rel = (ProgramRel) ClassicProject.g().getTrgt(targets[i]);
