@@ -1,0 +1,6 @@
+sudo: required
+language: java
+os:
+  - linux
+script:
+  ant

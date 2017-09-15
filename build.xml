@@ -102,7 +102,7 @@
 
 	<!--
 	==========================================================================
-		COMPILE CHORD
+		COMPILE PETABLOX
 	==========================================================================
 	-->
 
@@ -224,11 +224,11 @@
 
 	<!--
 	==========================================================================
-		RUN CHORD
+		RUN PETABLOX
 	==========================================================================
 	-->
 
-	<target name="run" description="Run Chord.">
+	<target name="run" description="Run Petablox.">
 		<java classname="petablox.project.Boot" failonerror="true" classpath="petablox.jar">
 			<syspropertyset>
 				<propertyref builtin="all"/>
