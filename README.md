@@ -1,4 +1,4 @@
-Petablox
+Petablox [![Build Status](https://travis-ci.org/petablox-project/petablox.svg?branch=master)](https://travis-ci.org/petablox-project/petablox)
 ========
 
 There are currently 2 ways of obtaining and using Petablox:
