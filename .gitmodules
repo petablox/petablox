@@ -16,4 +16,4 @@
 	branch = develop
 [submodule "libsrc/souffle"]
 	path = libsrc/souffle
-	url = git@github.com:souffle-lang/souffle.git
+  url = https://github.com/oracle/souffle.git
