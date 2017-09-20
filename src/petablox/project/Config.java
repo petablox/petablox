@@ -122,7 +122,8 @@ public class Config {
     public static enum DatalogEngineType {
         BDDBDDB,
         LOGICBLOX3,
-        LOGICBLOX4;
+        LOGICBLOX4,
+        SOUFFLE;
     }
 
     public final static DatalogEngineType datalogEngine =
@@ -166,6 +167,7 @@ public class Config {
     public final static String instrSchemeFileName = System.getProperty("petablox.instr.scheme.file", outRel2Abs("scheme.ser"));
     public final static String traceFileName = System.getProperty("petablox.trace.file", outRel2Abs("trace"));
     public final static String logicbloxWorkDirName = System.getProperty("petablox.logicblox.work.dir", outRel2Abs("logicblox"));
+    public final static String souffleWorkDirName = System.getProperty("petablox.souffle.work.dir", outRel2Abs("souffle"));
 
     // properties for multi-program support
     public final static String mode = System.getProperty("petablox.multipgm.mode", "none" );
@@ -290,6 +292,7 @@ public class Config {
         System.out.println("petablox.bddbddb.max.heap: " + bddbddbMaxHeap);
         System.out.println("petablox.datalog.engine: " + datalogEngine);
         System.out.println("petablox.logicblox.work.dir: " + logicbloxWorkDirName);
+        System.out.println("petablox.souffle.work.dir: " + souffleWorkDirName);
         System.out.println("petablox.multipgm.mode: " + mode);
         System.out.println("petablox.multipgm.taglist: " + tagList);   
         System.out.println("petablox.multipgm.tagname: " + multiTag);

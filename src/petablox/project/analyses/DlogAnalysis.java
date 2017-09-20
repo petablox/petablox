@@ -28,6 +28,7 @@ import petablox.project.IStepCollection;
 import petablox.project.Messages;
 import petablox.project.ModernProject;
 import petablox.project.Config.DatalogEngineType;
+import petablox.souffle.SouffleParser;
 import petablox.util.Utils;
 
 /**
@@ -58,6 +59,8 @@ public class DlogAnalysis extends JavaAnalysis {
         case LOGICBLOX4:
             parser = new LogicBloxParser();
             break;
+        case SOUFFLE:
+        		parser = new SouffleParser();
         default:
             throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
@@ -580,6 +583,10 @@ public class DlogAnalysis extends JavaAnalysis {
 	    case LOGICBLOX4:
 	        multiPrgmDlogGenLogic(origFile, newFile);
 	        break;
+	    case SOUFFLE:
+	    		// TODO: figure out what to do here
+	    		// Probably nothing?
+	    		break;
 	    default:
 	        throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
 	    }
@@ -601,6 +608,9 @@ public class DlogAnalysis extends JavaAnalysis {
     			if (Config.verbose >= 1)
     				Messages.log("Adding block from: %s", metadata.getFileName());
     			LogicBloxUtils.addBlock(new File(metadata.getFileName()));
+    			break;
+    		case SOUFFLE:
+    			// TODO: figure out what to do here
     			break;
     		default:
     			throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);

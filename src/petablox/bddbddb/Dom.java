@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import petablox.logicblox.LogicBloxExporter;
+import petablox.souffle.SouffleExporter;
 import petablox.util.IndexMap;
 
 /**
@@ -84,6 +85,15 @@ public class Dom<T> extends IndexMap<T> {
         LogicBloxExporter exporter = new LogicBloxExporter();
         exporter.setWorkDir(dirName);
         exporter.saveDomain(this);
+    }
+    
+    /**
+     * Saves this domain in a format suitable for loading into Souffle. 
+     */
+    public void saveToSouffle(String dirName) {
+    		SouffleExporter exporter = new SouffleExporter();
+    		exporter.setWorkDir(dirName);
+    		exporter.saveDomain(this);
     }
     
     // subclasses may override

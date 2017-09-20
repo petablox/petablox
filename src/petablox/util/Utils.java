@@ -635,6 +635,8 @@ public final class Utils {
 	    	//String tagPrefix = "T";
 	    	if (Config.datalogEngine == Config.DatalogEngineType.BDDBDDB)
 	    		workDir = Config.bddbddbWorkDirName;
+	    	else if (Config.datalogEngine == Config.DatalogEngineType.SOUFFLE)
+	    		workDir = Config.souffleWorkDirName;
 	    	else
 	    		workDir = Config.logicbloxWorkDirName;
 	    	int ndx = 0;

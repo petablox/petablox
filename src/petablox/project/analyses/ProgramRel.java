@@ -77,6 +77,9 @@ public class ProgramRel extends Rel implements ITask {
         case LOGICBLOX4:
             super.saveToLogicBlox(Config.logicbloxWorkDirName);
             break;
+        case SOUFFLE:
+        		super.saveToSouffle(Config.souffleWorkDirName);
+        		break;
         }
         if (Config.classic)
             ClassicProject.g().setTrgtDone(this);
@@ -90,6 +93,8 @@ public class ProgramRel extends Rel implements ITask {
         case LOGICBLOX4:
             super.loadFromLogicBlox(Config.logicbloxWorkspace);
             break;
+        case SOUFFLE:
+        		super.loadFromSouffle(Config.souffleWorkDirName);
         default:
             throw new PetabloxException("Unhandled datalog engine: " + Config.datalogEngine);
         }

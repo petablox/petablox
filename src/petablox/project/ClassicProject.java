@@ -82,6 +82,11 @@ public class ClassicProject extends Project {
             break;
         case BDDBDDB:
             break;
+		case SOUFFLE:
+			// TODO: I don't think I have to do anything here, but check later
+			break;
+		default:
+			break;
         }
         
         TaskParser taskParser = new TaskParser();

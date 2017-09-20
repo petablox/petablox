@@ -58,6 +58,9 @@ public class ProgramDom<T> extends Dom<T> implements ITask {
             case LOGICBLOX4:
                 super.saveToLogicBlox(Config.logicbloxWorkDirName);
                 break;
+            case SOUFFLE:
+            		super.saveToSouffle(Config.souffleWorkDirName);
+            		break;
             default:
                 throw new PetabloxException("Unrecognized datalog engine: " + Config.datalogEngine);
             }

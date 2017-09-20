@@ -21,6 +21,8 @@ import net.sf.javabdd.BDDFactory;
 import petablox.logicblox.LogicBloxExporter;
 import petablox.logicblox.LogicBloxImporter;
 import petablox.project.PetabloxException;
+import petablox.souffle.SouffleExporter;
+import petablox.souffle.SouffleImporter;
 import petablox.project.Config;
 import petablox.util.tuple.integer.*;
 import petablox.util.tuple.object.*;
@@ -289,6 +291,12 @@ public class Rel {
         importer.importRelation(this);
     }
     
+	public void loadFromSouffle(String souffleworkdirname) {
+		initialize();
+		SouffleImporter importer = new SouffleImporter();
+		importer.importRelation(this);
+	}
+    
     /**
      * Frees this relation from memory.
      */
@@ -337,6 +345,19 @@ public class Rel {
         LogicBloxExporter exporter = new LogicBloxExporter();
         exporter.setWorkDir(dirName);
         exporter.saveRelation(this);
+    }
+    
+    /**
+     * Saves the relation to disk in Souffle format
+     * 
+     * @param dirName the directory name
+     */
+    public void saveToSouffle(String dirName) {
+    		if (bdd == null)
+    			throw new PetabloxException("bdd not initialized");
+    		SouffleExporter exporter = new SouffleExporter();
+    		exporter.setWorkDir(dirName);
+    		exporter.saveRelation(this);
     }
     
     public void print(String dirName) {

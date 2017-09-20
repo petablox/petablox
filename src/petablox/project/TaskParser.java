@@ -61,6 +61,9 @@ public class TaskParser {
         case LOGICBLOX4:
             datalogFilePattern = Pattern.compile("\\.logic$", Pattern.CASE_INSENSITIVE);
             break;
+        case SOUFFLE:
+        		datalogFilePattern = Pattern.compile("\\.dl$", Pattern.CASE_INSENSITIVE);
+        		break;
         default:
             throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }
