@@ -1,0 +1,21 @@
+
+.number_type H
+.number_type E
+.number_type M
+
+
+
+.decl queryE(e:E)
+.input queryE()
+.decl reachableM(m:M)
+.input reachableM()
+.decl MH(m:M,h:H)
+.input MH()
+.decl reachableH(h:H)
+.decl locEH(e:E,h:H)
+.output locEH()
+
+
+reachableH(h) :- reachableM(m), MH(m,h).
+locEH(e,h) :- queryE(e), reachableH(h).
+

@@ -1,0 +1,19 @@
+
+
+.number_type H
+.number_type V
+.number_type C
+
+
+
+.decl VHfilter(v:V,h:H)
+.input VHfilter()
+.decl CH(c:C,h:H)
+.input CH()
+
+.decl VCfilter(v:V,c:C)
+.output VCfilter()
+
+
+VCfilter(v,c) :- VHfilter(v,h), CH(c,h).
+

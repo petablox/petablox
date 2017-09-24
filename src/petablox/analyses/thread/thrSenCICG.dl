@@ -1,0 +1,38 @@
+
+
+.number_type I
+.number_type M
+
+
+
+.decl rootM(m:M)
+.input rootM()
+.decl threadIM(i:I,m:M)
+.input threadIM()
+.decl threadStartI(i:I)
+.input threadStartI()
+.decl IM(i:I,m:M)
+.input IM()
+.decl MI(m:M,i:I)
+.input MI()
+
+.decl thrSenRootM(m:M)
+.output thrSenRootM()
+.decl thrSenReachableM(m:M)
+.output thrSenReachableM()
+.decl thrSenIM(i:I,m:M)
+.output thrSenIM()
+.decl thrSenMM(m:M,n:M)
+.output thrSenMM()
+
+
+thrSenRootM(m) :- rootM(m).
+thrSenRootM(m) :- threadIM(_,m).
+
+thrSenReachableM(m) :- thrSenRootM(m).
+thrSenReachableM(n) :- thrSenIM(_,n).
+
+thrSenIM(i,n) :- thrSenReachableM(m), MI(m,i), IM(i,n), !threadStartI(i).
+thrSenMM(m,n) :- thrSenIM(i,n), MI(m,i).
+
+

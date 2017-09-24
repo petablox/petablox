@@ -1,0 +1,64 @@
+
+
+.number_type M
+.number_type V
+.number_type A
+.number_type L
+.number_type I
+.number_type H
+
+
+
+.decl ML(m:M,l:L)
+.input ML()
+.decl MI(m:M,i:I)
+.input MI()
+.decl threadAM(a:A,m:M)
+.input threadAM()
+.decl IM(i:I,n:M)
+.input IM()
+.decl threadStartI(i:I)
+.input threadStartI()
+.decl syncLH(l:L,o:H)
+.input syncLH()
+.decl transLL(l1:L,l2:L)
+.input transLL()
+.decl transLI(l:L,i:I)
+.input transLI()
+
+.decl mayAliasedUptoL(n:L)
+.decl notAliasedUptoL(n:L)
+
+.decl mayAliasedUptoLI(n:L,i:I)
+.decl notAliasedUptoLI(n:L,i:I)
+
+.decl syncML(m:M,n:L)
+.decl syncIL(i:I,n:L)
+
+.decl syncMLL(m:M,l1:L,l2:L)
+.decl syncILL(i:I,l1:L,l2:L)
+.decl syncTLL(t:A,l1:L,l2:L)
+.output syncTLL()
+
+
+mayAliasedUptoLI(n,i) :- transLI(l2,i), syncLH(n,o), syncLH(l2,o).
+mayAliasedUptoL(n) :- transLL(l1,n), syncLH(l1,o), syncLH(n,o).
+
+notAliasedUptoLI(n,i) :- !mayAliasedUptoLI(n,i).
+notAliasedUptoL(n) :- !mayAliasedUptoL(n).
+
+syncML(m,l) :- notAliasedUptoL(l), ML(m,l).
+syncIL(i,l) :- IM(i,m), syncML(m,l), !threadStartI(i).
+syncML(m,l) :- syncIL(i,l), MI(m,i), notAliasedUptoLI(l,i).
+
+syncMLL(m,l1,l2) :- transLI(l1,i), MI(m,i), syncIL(i,l2), notAliasedUptoLI(l2,i), notAliasedUptoL(l1).
+
+syncMLL(m,l1,l2) :- transLL(l1,l2), ML(m,l1), ML(m,l2), notAliasedUptoL(l1), notAliasedUptoL(l2).
+
+syncILL(i,l1,l2) :- IM(i,m), syncMLL(m,l1,l2), !threadStartI(i).
+
+syncMLL(m,l1,l2) :- MI(m,i), syncILL(i,l1,l2), notAliasedUptoLI(l1,i), notAliasedUptoLI(l2,i).
+
+syncTLL(t,l1,l2) :- threadAM(t,m), syncMLL(m,l1,l2).
+
+

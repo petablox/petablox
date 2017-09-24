@@ -1,0 +1,60 @@
+
+
+.number_type I
+.number_type M
+.number_type K
+.number_type C
+.number_type H
+.number_type V
+
+
+
+.decl initCHC(c:C, h:H, c:C)
+.input initCHC()
+truncCKC(c:C, k:K, c:C) input 	# K is the domain of integers
+HK(h:H, k:K) input				#the parametric relation
+.decl roots(m:M)
+.input roots()
+.decl IM(i:I, m:M)
+.input IM()
+.decl VH(v:V, h:H)
+.input VH()
+.decl MI(m:M, i:I)
+.input MI()
+.decl MH(m:M, h:H)
+.input MH()
+.decl IinvkArg0(i:I,v:V)
+.input IinvkArg0()
+.decl statM(m:M)
+.input statM()
+
+.decl thisMV(m:M, v:V)
+.input thisMV()
+.decl HM(h:H, m:M)
+.decl CM_1(c:C, m:M)
+.decl CHC_1(c:C, h:H, c:C)
+.decl CHC_2(c:C, h:H, c:C)
+.decl CHC_3(c:C, h:H, c:C)
+
+.decl CM(c:C, m:M)
+.output CM()
+.decl CHC(c:C, h:H, c:C)
+.output CHC()
+
+
+HM(h,m) :- thisMV(m,v), VH(v,h).
+
+CM_1(0,m) :- roots(m).
+CM_1(c,m) :- CHC_1(_,h,c), HM(h,m).
+CM_1(c,m1) :- CM_1(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+
+CHC_1(c1,h,c3) :- MH(m,h), CM_1(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).
+CHC_2(c1,h,c2) :- CHC_1(c1,h,c2), initCHC(c1,h,c2).
+CHC_3(c1,h,c3) :- !CHC_2(c1,h,c3), CHC_1(c1,h,c3).
+
+CM(0,m) :- roots(m).
+CM(c,m) :- CHC(_,h,c), HM(h,m).
+CM(c,m1) :- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+
+CHC(c1,h,c3) :- CHC_2(c1,h,c3).
+CHC(c1,h,c3) :- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3), CHC_3(c1,h,c3).

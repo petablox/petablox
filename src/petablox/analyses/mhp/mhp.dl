@@ -1,0 +1,87 @@
+
+
+.number_type A
+.number_type I
+.number_type M
+.number_type P
+.number_type V
+.number_type Z
+
+
+
+.decl PP(p:P,q:P)
+.input PP()
+.decl MPhead(m:M,p:P)
+.input MPhead()
+.decl MPtail(m:M,p:P)
+.input MPtail()
+.decl PI(p:P,i:I)
+.input PI()
+.decl IM(i:I,m:M)
+.input IM()
+.decl threadAM(t:A,m:M)
+.input threadAM()
+.decl threadRunAM(t:A,m:M)
+.decl threadIM(i:I,m:M)
+.input threadIM()
+.decl threadStartI(i:I)
+.input threadStartI()
+
+.decl threadPM(p:P,m:M)
+.output threadPM()
+.decl threadPH(p:P,q:P)
+.output threadPH()
+.decl simpleIM(i:I,m:M)
+.output simpleIM()
+.decl simplePM(p:P,m:M)
+.output simplePM()
+.decl simplePH(p:P,q:P)
+.output simplePH()
+.decl simplePT(p:P,q:P)
+.output simplePT()
+
+.decl PathEdge(p:P,this:A,sThat:A,tThat:A)
+.output PathEdge()
+
+.decl SummEdge(p:P,this:A,sThat:A,tThat:A)
+.output SummEdge()
+
+.decl mhp(p:P,t1:A,t2:A)
+.output mhp()
+
+
+simpleIM(i,m) :- IM(i,m), !threadStartI(i).
+simplePM(p,m) :- simpleIM(i,m), PI(p,i).
+simplePH(p,h) :- simplePM(p,m), MPhead(m,h).
+simplePT(p,t) :- simplePM(p,m), MPtail(m,t).
+threadPM(p,m) :- threadIM(i,m), PI(p,i).
+threadPH(p,h) :- threadPM(p,m), MPhead(m,h).
+
+threadRunAM(t,m) :- threadAM(t,m), m!=0.
+threadRunAH(t,h) :- threadRunAM(t,m), MPhead(m,h).
+
+
+PathEdge(0,1,0,0).
+
+
+PathEdge(q,t,t1,t2) :- PathEdge(p,t,t1,t2), PP(p,q).
+
+
+PathEdge(q,t,t1,t2) :- simplePH(p,q), PathEdge(p,t,_ ,t2), t1=t2.
+SummEdge(p,t,t1,t2) :- simplePT(p,q), PathEdge(q,t,t1,t2).
+PathEdge(r,t,t1,t3) :- SummEdge(p,t,t2,t3), PathEdge(p,t,t1,t2), PP(p,r).
+
+
+
+PathEdge(r,t,t1,t2) :- threadPM(p,m), PathEdge(p,t,t1,_), PP(p,r), threadRunAM(t2,m).
+
+
+PathEdge(h,x,t1,t2) :- threadPH(p,h), PathEdge(p,t1,_,_), threadRunAH(x,h), t2=t1. split
+PathEdge(h,x,t3,t2) :- threadPH(p,h), PathEdge(p,_,_,t3), threadRunAH(x,h), t2=t3. split
+
+
+PathEdge(h,t3,t1,t2) :- threadPM(p,m), PathEdge(p,_,_,t3), threadRunAH(t3,h), threadRunAM(t2,m), t2=t1. split
+
+
+mhp(p,t1,t2) :- PathEdge(p,t1,_,t2), t1!=0, t2!=0.
+

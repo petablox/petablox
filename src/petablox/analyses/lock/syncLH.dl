@@ -1,0 +1,26 @@
+
+
+.number_type H
+.number_type M
+.number_type V
+.number_type L
+
+
+
+.decl VH(v:V,h:H)
+.input VH()
+.decl thisMV(m:M,v:V)
+.input thisMV()
+.decl syncLM(l:L,m:M)
+.input syncLM()
+.decl syncLV(l:L,v:V)
+.input syncLV()
+
+.decl syncLH(l:L,h:H)
+.output syncLH()
+
+
+
+syncLH(l,h) :- syncLM(l,m), thisMV(m,v), VH(v,h).
+syncLH(l,h) :- syncLV(l,v), VH(v,h).
+

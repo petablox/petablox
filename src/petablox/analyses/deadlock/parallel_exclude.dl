@@ -1,0 +1,13 @@
+
+
+.number_type A
+.number_type L
+
+
+
+.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L)
+.output mhpTLTL()
+
+
+mhpTLTL(_,_,_,_).
+

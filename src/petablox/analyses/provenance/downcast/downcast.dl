@@ -1,0 +1,40 @@
+
+
+.number_type H
+.number_type M
+.number_type T
+.number_type V
+.number_type C
+
+
+
+.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.input MobjVarAsgnInst()
+.decl reachableCM(c:C,m:M)
+.input reachableCM()
+.decl reachableCast(t:T,v:V)
+.decl CVC(c:C,v:V,o:C)
+.input CVC()
+.decl CH(c:C,h:H)
+.input CH()
+.decl sub(s:T,t:T)
+.input sub()
+.decl HT(h:H,t:T)
+.input HT()
+.decl McheckCastInst(m:M, v1:V, t:T, v2:V)
+.input McheckCastInst()
+.decl checkExcludedM(m:M)
+.input checkExcludedM()
+.decl ptsVH(v:V,h:H)
+.output ptsVH()
+.decl ptsVT(v:V,t:T)
+.output ptsVT()
+.decl unsafeDowncast(v:V,t:T)
+.output unsafeDowncast()
+
+reachableCast(t,v2) :- McheckCastInst(m,_,t,v2), reachableCM(_,m), !checkExcludedM(m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
+
+unsafeDowncast(v,t1) :- reachableCast(t1,v), ptsVT(v,t2), !sub(t2,t1).

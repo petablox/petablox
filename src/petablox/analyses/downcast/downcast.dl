@@ -1,0 +1,48 @@
+
+
+.number_type H
+.number_type M
+.number_type T
+.number_type V
+.number_type C
+
+
+
+.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.input MobjVarAsgnInst()
+.decl reachableCM(c:C,m:M)
+.input reachableCM()
+.decl reachableLR(l:V,r:V)
+.decl CVC(c:C,v:V,o:C)
+.input CVC()
+.decl CH(c:C,h:H)
+.input CH()
+.decl sub(s:T,t:T)
+.input sub()
+.decl VT(v:V,t:T)
+.input VT()
+.decl HT(h:H,t:T)
+.input HT()
+.decl checkExcludedM(m:M)
+.input checkExcludedM()
+.decl ptsVH(v:V,h:H)
+.output ptsVH()
+.decl ptsVT(v:V,t:T)
+.output ptsVT()
+.decl downcast(v:V,t:T)
+.output downcast()
+.decl unsafeDowncast(v:V,t:T)
+.output unsafeDowncast()
+.decl safeDowncast(v:V,t:T)
+.output safeDowncast()
+
+reachableLR(l,r) :- MobjVarAsgnInst(m,l,r), reachableCM(_,m), !checkExcludedM(m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
+
+downcast(r,t) :- reachableLR(l,r), \
+	VT(l,t), VT(r,t2), !sub(t2,t).
+
+unsafeDowncast(v,t) :- downcast(v,t), ptsVT(v,t2), !sub(t2,t).
+safeDowncast(v,t) :- downcast(v,t), !unsafeDowncast(v,t).

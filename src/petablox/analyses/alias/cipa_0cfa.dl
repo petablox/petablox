@@ -1,0 +1,173 @@
+
+
+
+.number_type T
+.number_type F
+.number_type M
+.number_type I
+.number_type H
+.number_type V
+.number_type Z
+
+
+
+.decl VT(v:V,t:T)
+.input VT()
+.decl HT(h:H,t:T)
+.input HT()
+.decl cha(n:M,t:T,m:M)
+.input cha()
+.decl sub(t1:T,t2:T)
+.input sub()
+.decl MmethArg(m:M,n:Z,v:V)
+.input MmethArg()
+.decl MmethRet(m:M,n:Z,v:V)
+.input MmethRet()
+.decl IinvkArg0(i:I,v:V)
+.input IinvkArg0()
+.decl IinvkArg(i:I,n:Z,v:V)
+.input IinvkArg()
+.decl IinvkRet(i:I,n:Z,v:V)
+.input IinvkRet()
+.decl MI(m:M,i:I)
+.input MI()
+.decl statIM(i:I,m:M)
+.input statIM()
+.decl specIM(i:I,m:M)
+.input specIM()
+.decl virtIM(i:I,m:M)
+.input virtIM()
+.decl MentPt(m:M)
+.input MentPt()
+
+.decl MobjValAsgnInst(m:M,l:V,h:H)
+.input MobjValAsgnInst()
+.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.input MobjVarAsgnInst()
+.decl MgetInstFldInst(m:M,l:V,b:V,f:F)
+.input MgetInstFldInst()
+.decl MputInstFldInst(m:M,b:V,f:F,r:V)
+.input MputInstFldInst()
+.decl MgetStatFldInst(m:M,l:V,f:F)
+.input MgetStatFldInst()
+.decl MputStatFldInst(m:M,f:F,r:V)
+.input MputStatFldInst()
+
+.decl clsForNameIT(i:I,t:T)
+.input clsForNameIT()
+.decl objNewInstIH(i:I,h:H)
+.input objNewInstIH()
+.decl objNewInstIM(i:I,m:M)
+.input objNewInstIM()
+.decl conNewInstIH(i:I,h:H)
+.input conNewInstIH()
+.decl conNewInstIM(i:I,m:M)
+.input conNewInstIM()
+.decl aryNewInstIH(i:I,h:H)
+.input aryNewInstIH()
+
+.decl classT(t:T)
+.input classT()
+.decl staticTM(t:T,m:M)
+.input staticTM()
+.decl staticTF(t:T,f:F)
+.input staticTF()
+.decl clinitTM(t:T,m:M)
+.input clinitTM()
+
+
+.decl IHM(i:I,h:H,m:M)
+.output IHM()
+.decl VV(v1:V,v2:V)
+.decl specIMV(i:I,m:M,v:V)
+
+.decl objValAsgnInst(l:V,h:H)
+.decl objVarAsgnInst(l:V,r:V)
+.decl getInstFldInst(l:V,b:V,f:F)
+.decl putInstFldInst(b:V,f:F,r:V)
+.decl getStatFldInst(l:V,f:F)
+.decl putStatFldInst(f:F,r:V)
+
+.decl reachableT(t:T)
+.output reachableT()
+.decl VHfilter(v:V,h:H)
+.output VHfilter()
+.decl VH(v:V,h:H)
+.output VH()
+.decl FH(f:F,h:H)
+.output FH()
+.decl HFH(h1:H,f:F,h2:H)
+.output HFH()
+.decl rootM(m:M)
+.output rootM()
+.decl reachableI(i:I)
+.output reachableI()
+.decl reachableM(m:M)
+.output reachableM()
+.decl IM(i:I,m:M)
+.output IM()
+.decl MM(m:M,n:M)
+.output MM()
+
+
+VHfilter(v,h) :- VT(v,t), HT(h,s), sub(s,t).
+VHfilter(_,0).
+
+IHM(i,h,m2) :- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
+
+reachableM(m) :- MentPt(m).
+reachableM(m) :- reachableT(t), clinitTM(t,m).
+reachableM(m) :- IM(_,m).
+
+reachableI(i) :- MI(m,i), reachableM(m).
+
+IM(i,m) :- reachableI(i), IinvkArg0(i,v), VH(v,h), IHM(i,h,m).
+specIMV(i,m,v) :- specIM(i,m), IinvkArg0(i,v).
+
+IM(i,m) :- reachableI(i), specIMV(i,m,v), VH(v,_).
+IM(i,m) :- reachableI(i), statIM(i,m).
+
+VV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
+VV(u,v) :- IinvkRet(i,z,u), IM(i,m), MmethRet(m,z,v).
+
+VH(u,h) :- VV(u,v), VH(v,h), VHfilter(u,h).
+
+objValAsgnInst(l,h)   :- reachableM(m), MobjValAsgnInst(m,l,h).
+objVarAsgnInst(l,r)   :- reachableM(m), MobjVarAsgnInst(m,l,r).
+getInstFldInst(l,b,f) :- reachableM(m), MgetInstFldInst(m,l,b,f).
+putInstFldInst(b,f,r) :- reachableM(m), MputInstFldInst(m,b,f,r).
+getStatFldInst(l,f)   :- reachableM(m), MgetStatFldInst(m,l,f).
+putStatFldInst(f,r)   :- reachableM(m), MputStatFldInst(m,f,r).
+
+reachableT(t) :- reachableI(i), conNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableI(i), objNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableI(i), clsForNameIT(i,t).
+
+reachableM(m) :- reachableI(i), objNewInstIM(i,m).
+reachableM(m) :- reachableI(i), conNewInstIM(i,m).
+
+VH(v,h)  :- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  :- reachableI(i), objNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+VH(v,h2) :- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,h2), VHfilter(v,h2).
+VH(v,h)  :- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), VHfilter(v,h).
+VH(v,h)  :- reachableI(i), conNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+VH(v,h)  :- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+
+VH(l,h) :- objValAsgnInst(l,h), VHfilter(l,h).
+VH(l,h) :- objVarAsgnInst(l,r), VH(r,h), VHfilter(l,h).
+VH(l,h2) :- getInstFldInst(l,b,f), VH(b,h1), HFH(h1,f,h2), VHfilter(l,h2). split
+HFH(h1,f,h2) :- putInstFldInst(b,f,r), VH(b,h1), VH(r,h2). split
+VH(l,h) :- getStatFldInst(l,f), FH(f,h), VHfilter(l,h).
+FH(f,h) :- putStatFldInst(f,r), VH(r,h).
+
+
+reachableT(t) :- objValAsgnInst(_,h), HT(h,t).
+reachableT(t) :- reachableM(m), staticTM(t,m).
+reachableT(t) :- putStatFldInst(f,_), staticTF(t,f).
+reachableT(t) :- getStatFldInst(_,f), staticTF(t,f).
+reachableT(t) :- classT(t), reachableT(s), sub(s,t).
+
+rootM(0).
+rootM(m) :- reachableT(t), clinitTM(t,m).
+MM(m,n) :- IM(i,n), MI(m,i).
+

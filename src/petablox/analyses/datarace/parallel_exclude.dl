@@ -1,0 +1,12 @@
+
+
+.number_type A
+.number_type E
+
+
+
+.decl mhe(e:E,t1:A,t2:A)
+.output mhe()
+
+mhe(_,_,_).
+

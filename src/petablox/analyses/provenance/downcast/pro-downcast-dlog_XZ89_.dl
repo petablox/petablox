@@ -1,0 +1,51 @@
+.number_type H
+.number_type M
+.number_type T
+.number_type V
+.number_type C
+
+
+.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.input MobjVarAsgnInst()
+.decl reachableCM(c:C,m:M)
+.input reachableCM()
+.decl CVC(c:C,v:V,o:C)
+.input CVC()
+.decl CH(c:C,h:H)
+.input CH()
+.decl sub(s:T,t:T)
+.input sub()
+.decl HT(h:H,t:T)
+.input HT()
+.decl McheckCastInst(m:M,v1:V,t:T,v2:V)
+.input McheckCastInst()
+.decl checkExcludedM(m:M)
+.input checkExcludedM()
+
+.decl reachableCast(t:T,v:V)
+.output reachableCast()
+.decl ptsVH(v:V,h:H)
+.output ptsVH()
+.decl ptsVT(v:V,t:T)
+.output ptsVT()
+.decl unsafeDowncast(v:V,t:T)
+.output unsafeDowncast()
+
+.decl unsafeDowncast_XZ89_3(v:V,t1:T,t2:T)
+.output unsafeDowncast_XZ89_3()
+.decl ptsVT_XZ89_2(v:V,t:T,h:H)
+.output ptsVT_XZ89_2()
+.decl reachableCast_XZ89_0(t:T,v2:V,m:M,v_XZ89_0:V,v_XZ89_1:C)
+.output reachableCast_XZ89_0()
+.decl ptsVH_XZ89_1(v:V,h:H,v_XZ89_0:C,o:C)
+.output ptsVH_XZ89_1()
+
+reachableCast(t,v2) :- McheckCastInst(m,_,t,v2), reachableCM(_,m), !checkExcludedM(m).
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h).
+ptsVT(v,t) :- ptsVH(v,h), HT(h,t).
+unsafeDowncast(v,t1) :- reachableCast(t1,v), ptsVT(v,t2), !sub(t2,t1).
+
+reachableCast_XZ89_0(t,v2,m,v_XZ89_0,v_XZ89_1) :- McheckCastInst(m,v_XZ89_0,t,v2), reachableCM(v_XZ89_1,m), !checkExcludedM(m).
+ptsVH_XZ89_1(v,h,v_XZ89_0,o) :- CVC(v_XZ89_0,v,o), CH(o,h).
+ptsVT_XZ89_2(v,t,h) :- ptsVH(v,h), HT(h,t).
+unsafeDowncast_XZ89_3(v,t1,t2) :- reachableCast(t1,v), ptsVT(v,t2), !sub(t2,t1).

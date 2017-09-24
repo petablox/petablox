@@ -1,0 +1,13 @@
+
+
+.number_type A
+.number_type L
+
+
+
+.decl guarded(t1:A,t2:A,l1:L,l3:L)
+.output guarded()
+
+
+guarded(t,_,_,_) :- t<0.
+

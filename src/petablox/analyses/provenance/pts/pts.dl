@@ -1,0 +1,34 @@
+
+.number_type H
+.number_type M
+.number_type T
+.number_type V
+.number_type C
+
+
+
+.decl reachableCM(c:C,m:M)
+.input reachableCM()
+.decl checkExcludedH(h:H)
+.input checkExcludedH()
+.decl checkExcludedV(v:V)
+.input checkExcludedV()
+.decl CVC(c:C,v:V,o:C)
+.input CVC()
+.decl CH(c:C,h:H)
+.input CH()
+.decl MV(m:M, v:V)
+.input MV()
+.decl MH(m:M, h:H)
+.input MH()
+
+.decl reachableV(v:V)
+.decl reachableH(h:H)
+
+.decl ptsVH(v:V,h:H)
+.output ptsVH()
+
+reachableV(v) :- MV(m,v),reachableCM(_,m).
+reachableH(h) :- MH(m,h),reachableCM(_,m).
+
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

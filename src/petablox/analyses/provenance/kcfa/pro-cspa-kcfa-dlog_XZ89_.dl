@@ -1,0 +1,347 @@
+.number_type F
+.number_type H
+.number_type I
+.number_type M
+.number_type T
+.number_type V
+.number_type Z
+.number_type C
+
+
+.decl HT(h:H,t:T)
+.input HT()
+.decl cha(n:M,t:T,m:M)
+.input cha()
+.decl sub(t1:T,t2:T)
+.input sub()
+.decl MI(m:M,i:I)
+.input MI()
+.decl statIM(i:I,m:M)
+.input statIM()
+.decl specIM(i:I,m:M)
+.input specIM()
+.decl virtIM(i:I,m:M)
+.input virtIM()
+.decl MobjValAsgnInst(m:M,l:V,h:H)
+.input MobjValAsgnInst()
+.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.input MobjVarAsgnInst()
+.decl MgetInstFldInst(m:M,l:V,b:V,f:F)
+.input MgetInstFldInst()
+.decl MputInstFldInst(m:M,b:V,f:F,r:V)
+.input MputInstFldInst()
+.decl MgetStatFldInst(m:M,l:V,f:F)
+.input MgetStatFldInst()
+.decl MputStatFldInst(m:M,f:F,r:V)
+.input MputStatFldInst()
+.decl clsForNameIT(i:I,t:T)
+.input clsForNameIT()
+.decl objNewInstIH(i:I,h:H)
+.input objNewInstIH()
+.decl objNewInstIM(i:I,m:M)
+.input objNewInstIM()
+.decl conNewInstIH(i:I,h:H)
+.input conNewInstIH()
+.decl conNewInstIM(i:I,m:M)
+.input conNewInstIM()
+.decl aryNewInstIH(i:I,h:H)
+.input aryNewInstIH()
+.decl classT(t:T)
+.input classT()
+.decl staticTM(t:T,m:M)
+.input staticTM()
+.decl staticTF(t:T,f:F)
+.input staticTF()
+.decl clinitTM(t:T,m:M)
+.input clinitTM()
+.decl MmethArg(m:M,n:Z,v:V)
+.input MmethArg()
+.decl IinvkArg(i:I,n:Z,v:V)
+.input IinvkArg()
+.decl IinvkArg0(i:I,v:V)
+.input IinvkArg0()
+.decl IinvkRet(i:I,n:Z,v:V)
+.input IinvkRet()
+.decl argCopy(i:I,u:V,m:M,v:V)
+.input argCopy()
+.decl retCopy(i:I,u:V,m:M,v:V)
+.input retCopy()
+.decl VCfilter(v:V,c:C)
+.input VCfilter()
+.decl CH(c:C,h:H)
+.input CH()
+.decl epsilonM(m:M)
+.input epsilonM()
+.decl kcfaSenM(m:M)
+.input kcfaSenM()
+.decl CIC(c:C,i:I,d:C)
+.input CIC()
+.decl CHC(c:C,h:H,d:C)
+.input CHC()
+
+.decl RobjValAsgnInst(c:C,l:V,h:H)
+.output RobjValAsgnInst()
+.decl RgetInstFldInst(c:C,l:V,b:V,f:F)
+.output RgetInstFldInst()
+.decl RobjVarAsgnInst(c:C,l:V,r:V)
+.output RobjVarAsgnInst()
+.decl RgetStatFldInst(c:C,l:V,f:F)
+.output RgetStatFldInst()
+.decl RputInstFldInst(c:C,b:V,f:F,r:V)
+.output RputInstFldInst()
+.decl RputStatFldInst(c:C,f:F,r:V)
+.output RputStatFldInst()
+.decl IHM(i:I,h:H,m:M)
+.output IHM()
+.decl DIC(c:C,i:I,c:C)
+.output DIC()
+.decl DIH(c:C,i:I,h:H)
+.output DIH()
+.decl reachableT(t:T)
+.output reachableT()
+.decl kcfaDIC(c:C,i:I,c:C)
+.output kcfaDIC()
+.decl ctxtInsIHM(i:I,h:H,m:M)
+.output ctxtInsIHM()
+.decl kcfaSenIHM(i:I,h:H,m:M)
+.output kcfaSenIHM()
+.decl DI(c:C,i:I)
+.output DI()
+.decl DVDV(c:C,u:V,d:C,v:V)
+.output DVDV()
+.decl kcfaSenStatIM(i:I,m:M)
+.output kcfaSenStatIM()
+.decl ctxtInsStatIM(i:I,m:M)
+.output ctxtInsStatIM()
+.decl kcfaSenSpecIM(i:I,m:M)
+.output kcfaSenSpecIM()
+.decl ctxtInsSpecIM(i:I,m:M)
+.output ctxtInsSpecIM()
+.decl CICM(c:C,i:I,d:C,m:M)
+.output CICM()
+.decl rootCM(c:C,m:M)
+.output rootCM()
+.decl reachableCM(c:C,m:M)
+.output reachableCM()
+.decl reachableCI(c:C,i:I)
+.output reachableCI()
+.decl CFC(c1:C,f:F,c2:C)
+.output CFC()
+.decl FC(f:F,c:C)
+.output FC()
+.decl CVC(c1:C,v:V,c2:C)
+.output CVC()
+.decl CMCM(c:C,m:M,d:C,n:M)
+.output CMCM()
+.decl CFC_34_0(_c:C,_f:F,_r:V,_c1:C)
+.output CFC_34_0()
+.decl CVC_30_0(_c:C,_l:V,_f:F,_c1:C)
+.output CVC_30_0()
+
+.decl CICM_XZ89_4(c:C,i:I,d:C,m:M)
+.output CICM_XZ89_4()
+.decl CICM_XZ89_5(c:C,i:I,m:M)
+.output CICM_XZ89_5()
+.decl CICM_XZ89_6(c:C,i:I,d:C,m:M)
+.output CICM_XZ89_6()
+.decl DVDV_XZ89_7(d:C,v:V,c:C,u:V,i:I,m:M)
+.output DVDV_XZ89_7()
+.decl kcfaDIC_XZ89_0(i:I,d:C,m:M)
+.output kcfaDIC_XZ89_0()
+.decl kcfaDIC_XZ89_1(c:C,i:I,d:C,m:M)
+.output kcfaDIC_XZ89_1()
+.decl CICM_XZ89_2(c:C,i:I,d:C,m:M,h:H)
+.output CICM_XZ89_2()
+.decl CICM_XZ89_3(c:C,i:I,m:M)
+.output CICM_XZ89_3()
+.decl CVC_XZ89_12(c:C,l:V,c2:C,f:F,c1:C)
+.output CVC_XZ89_12()
+.decl CVC_XZ89_13(c:C,l:V,o:C,f:F)
+.output CVC_XZ89_13()
+.decl CFC_XZ89_14(c1:C,f:F,c2:C,c:C,r:V)
+.output CFC_XZ89_14()
+.decl FC_XZ89_15(f:F,o:C,c:C,r:V)
+.output FC_XZ89_15()
+.decl DVDV_XZ89_8(c:C,u:V,d:C,v:V,i:I,m:M)
+.output DVDV_XZ89_8()
+.decl CVC_XZ89_9(c:C,u:V,o:C,d:C,v:V)
+.output CVC_XZ89_9()
+.decl CVC_XZ89_10(c:C,l:V,o:C,h:H)
+.output CVC_XZ89_10()
+.decl CVC_XZ89_11(c:C,l:V,c1:C,r:V)
+.output CVC_XZ89_11()
+.decl CVC_XZ89_21(c:C,v:V,o:C,i:I,h:H)
+.output CVC_XZ89_21()
+.decl CVC_XZ89_20(c:C,v:V,o:C,i:I,h:H)
+.output CVC_XZ89_20()
+.decl CVC_30_0_XZ89_23(c:C,l:V,f:F,c1:C,b:V)
+.output CVC_30_0_XZ89_23()
+.decl CMCM_XZ89_22(c:C,m:M,d:C,n:M,i:I)
+.output CMCM_XZ89_22()
+.decl CVC_XZ89_17(c:C,v:V,o:C,i:I,h:H)
+.output CVC_XZ89_17()
+.decl CVC_XZ89_16(c:C,v:V,o:C,i:I,m:M,h:H)
+.output CVC_XZ89_16()
+.decl CVC_XZ89_19(c:C,v:V,o:C,i:I,m:M,h:H)
+.output CVC_XZ89_19()
+.decl CVC_XZ89_18(c:C,v:V,o2:C,i:I,m:M,u:V,o:C)
+.output CVC_XZ89_18()
+.decl DI_XZ89_29(c:C,i:I,v_XZ89_0:H)
+.output DI_XZ89_29()
+.decl DIH_XZ89_28(c:C,i:I,h:H,o:C)
+.output DIH_XZ89_28()
+.decl RobjValAsgnInst_XZ89_31(c:C,l:V,h:H,m:M)
+.output RobjValAsgnInst_XZ89_31()
+.decl CICM_XZ89_30(c:C,i:I,m:M,h:H)
+.output CICM_XZ89_30()
+.decl reachableCM_XZ89_25(c:C,m:M,v_XZ89_0:C,v_XZ89_1:I)
+.output reachableCM_XZ89_25()
+.decl CFC_34_0_XZ89_24(c:C,f:F,r:V,c1:C,b:V)
+.output CFC_34_0_XZ89_24()
+.decl DIC_XZ89_27(c:C,i:I,o:C,v:V)
+.output DIC_XZ89_27()
+.decl reachableCI_XZ89_26(c:C,i:I,m:M)
+.output reachableCI_XZ89_26()
+.decl reachableCM_XZ89_38(c:C,m:M,i:I)
+.output reachableCM_XZ89_38()
+.decl reachableT_XZ89_39(t:T,v_XZ89_0:C,i:I,h:H)
+.output reachableT_XZ89_39()
+.decl RputStatFldInst_XZ89_36(c:C,f:F,r:V,m:M)
+.output RputStatFldInst_XZ89_36()
+.decl reachableCM_XZ89_37(c:C,m:M,i:I)
+.output reachableCM_XZ89_37()
+.decl RgetStatFldInst_XZ89_34(c:C,l:V,f:F,m:M)
+.output RgetStatFldInst_XZ89_34()
+.decl RputInstFldInst_XZ89_35(c:C,b:V,f:F,r:V,m:M)
+.output RputInstFldInst_XZ89_35()
+.decl RobjVarAsgnInst_XZ89_32(c:C,l:V,r:V,m:M)
+.output RobjVarAsgnInst_XZ89_32()
+.decl RgetInstFldInst_XZ89_33(c:C,l:V,b:V,f:F,m:M)
+.output RgetInstFldInst_XZ89_33()
+.decl reachableT_XZ89_46(t:T,s:T)
+.output reachableT_XZ89_46()
+.decl rootCM_XZ89_47(m:M,t:T)
+.output rootCM_XZ89_47()
+.decl reachableT_XZ89_44(t:T,v_XZ89_0:C,m:M,f:F,v_XZ89_1:V)
+.output reachableT_XZ89_44()
+.decl reachableT_XZ89_45(t:T,v_XZ89_0:C,m:M,v_XZ89_1:V,f:F)
+.output reachableT_XZ89_45()
+.decl reachableT_XZ89_42(t:T,v_XZ89_0:C,m:M,v_XZ89_1:V,h:H)
+.output reachableT_XZ89_42()
+.decl reachableT_XZ89_43(t:T,v_XZ89_0:C,m:M)
+.output reachableT_XZ89_43()
+.decl reachableT_XZ89_40(t:T,v_XZ89_0:C,i:I,h:H)
+.output reachableT_XZ89_40()
+.decl reachableT_XZ89_41(t:T,v_XZ89_0:C,i:I)
+.output reachableT_XZ89_41()
+.decl reachableCM_XZ89_49(m:M,t:T)
+.output reachableCM_XZ89_49()
+
+IHM(i,h,m2) :- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
+ctxtInsIHM(i,h,m) :- IHM(i,h,m), epsilonM(m).
+kcfaSenIHM(i,h,m) :- IHM(i,h,m), kcfaSenM(m).
+kcfaSenSpecIM(i,m) :- specIM(i,m), kcfaSenM(m).
+ctxtInsSpecIM(i,m) :- specIM(i,m), epsilonM(m).
+kcfaSenStatIM(i,m) :- statIM(i,m), kcfaSenM(m).
+ctxtInsStatIM(i,m) :- statIM(i,m), epsilonM(m).
+reachableCM(0,0).
+reachableCM(0,m) :- clinitTM(t,m), reachableT(t).
+reachableCM(c,m) :- CICM(_,_,c,m).
+reachableCI(c,i) :- MI(m,i), reachableCM(c,m).
+DIC(c,i,o) :- IinvkArg0(i,v), CVC(c,v,o).
+DIH(c,i,h) :- DIC(c,i,o), CH(o,h).
+DI(c,i) :- DIH(c,i,_).
+kcfaDIC(0,i,d) :- CIC(0,i,d), MI(m,i), epsilonM(m).
+kcfaDIC(c,i,d) :- CIC(c,i,d), MI(m,i), kcfaSenM(m).
+CICM(c,i,0,m) :- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+CICM(c,i,d,m) :- reachableCI(c,i), kcfaSenIHM(i,h,m), DIH(c,i,h), kcfaDIC(c,i,d).
+CICM(c,i,0,m) :- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM(c,i,d,m) :- reachableCI(c,i), kcfaSenSpecIM(i,m), DI(c,i), kcfaDIC(c,i,d).
+CICM(c,i,0,m) :- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM(c,i,d,m) :- reachableCI(c,i), kcfaSenStatIM(i,m), kcfaDIC(c,i,d).
+DVDV(d,v,c,u) :- argCopy(i,u,m,v), CICM(c,i,d,m).
+DVDV(c,u,d,v) :- retCopy(i,u,m,v), CICM(c,i,d,m).
+CVC(c,u,o) :- DVDV(c,u,d,v), CVC(d,v,o), VCfilter(u,o).
+RobjValAsgnInst(c,l,h) :- reachableCM(c,m), MobjValAsgnInst(m,l,h).
+CVC(c,l,o) :- RobjValAsgnInst(c,l,h), CHC(c,h,o).
+RobjVarAsgnInst(c,l,r) :- reachableCM(c,m), MobjVarAsgnInst(m,l,r).
+CVC(c,l,c1) :- RobjVarAsgnInst(c,l,r), CVC(c,r,c1), VCfilter(l,c1).
+RgetInstFldInst(c,l,b,f) :- reachableCM(c,m), MgetInstFldInst(m,l,b,f).
+CVC(c,l,c2) :- CVC_30_0(c,l,f,c1), CFC(c1,f,c2).
+RgetStatFldInst(c,l,f) :- reachableCM(c,m), MgetStatFldInst(m,l,f).
+CVC(c,l,o) :- RgetStatFldInst(c,l,f), FC(f,o).
+RputInstFldInst(c,b,f,r) :- reachableCM(c,m), MputInstFldInst(m,b,f,r).
+CFC(c1,f,c2) :- CFC_34_0(c,f,r,c1), CVC(c,r,c2).
+RputStatFldInst(c,f,r) :- reachableCM(c,m), MputStatFldInst(m,f,r).
+FC(f,o) :- RputStatFldInst(c,f,r), CVC(c,r,o).
+reachableCM(c,m) :- reachableCI(c,i), objNewInstIM(i,m).
+reachableCM(c,m) :- reachableCI(c,i), conNewInstIM(i,m).
+CVC(c,v,o) :- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
+CVC(c,v,o) :- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC(c,v,o2) :- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), CVC(c,u,o), CFC(o,0,o2).
+CVC(c,v,o) :- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
+CVC(c,v,o) :- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC(c,v,o) :- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+reachableT(t) :- reachableCI(_,i), conNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableCI(_,i), objNewInstIH(i,h), HT(h,t).
+reachableT(t) :- reachableCI(_,i), clsForNameIT(i,t).
+reachableT(t) :- reachableCM(_,m), MobjValAsgnInst(m,_,h), HT(h,t).
+reachableT(t) :- reachableCM(_,m), staticTM(t,m).
+reachableT(t) :- reachableCM(_,m), MputStatFldInst(m,f,_), staticTF(t,f).
+reachableT(t) :- reachableCM(_,m), MgetStatFldInst(m,_,f), staticTF(t,f).
+reachableT(t) :- classT(t), reachableT(s), sub(s,t).
+rootCM(0,0).
+rootCM(0,m) :- reachableT(t), clinitTM(t,m).
+CMCM(c,m,d,n) :- CICM(c,i,d,n), MI(m,i).
+CVC_30_0(c,l,f,c1) :- RgetInstFldInst(c,l,b,f), CVC(c,b,c1).
+CFC_34_0(c,f,r,c1) :- RputInstFldInst(c,b,f,r), CVC(c,b,c1).
+
+kcfaDIC_XZ89_0(i,d,m) :- CIC(0,i,d), MI(m,i), epsilonM(m).
+kcfaDIC_XZ89_1(c,i,d,m) :- CIC(c,i,d), MI(m,i), kcfaSenM(m).
+CICM_XZ89_2(c,i,d,m,h) :- reachableCI(c,i), kcfaSenIHM(i,h,m), DIH(c,i,h), kcfaDIC(c,i,d).
+CICM_XZ89_3(c,i,m) :- reachableCI(c,i), ctxtInsSpecIM(i,m), DI(c,i).
+CICM_XZ89_4(c,i,d,m) :- reachableCI(c,i), kcfaSenSpecIM(i,m), DI(c,i), kcfaDIC(c,i,d).
+CICM_XZ89_5(c,i,m) :- reachableCI(c,i), ctxtInsStatIM(i,m).
+CICM_XZ89_6(c,i,d,m) :- reachableCI(c,i), kcfaSenStatIM(i,m), kcfaDIC(c,i,d).
+DVDV_XZ89_7(d,v,c,u,i,m) :- argCopy(i,u,m,v), CICM(c,i,d,m).
+DVDV_XZ89_8(c,u,d,v,i,m) :- retCopy(i,u,m,v), CICM(c,i,d,m).
+CVC_XZ89_9(c,u,o,d,v) :- DVDV(c,u,d,v), CVC(d,v,o), VCfilter(u,o).
+CVC_XZ89_10(c,l,o,h) :- RobjValAsgnInst(c,l,h), CHC(c,h,o).
+CVC_XZ89_11(c,l,c1,r) :- RobjVarAsgnInst(c,l,r), CVC(c,r,c1), VCfilter(l,c1).
+CVC_XZ89_12(c,l,c2,f,c1) :- CVC_30_0(c,l,f,c1), CFC(c1,f,c2).
+CVC_XZ89_13(c,l,o,f) :- RgetStatFldInst(c,l,f), FC(f,o).
+CFC_XZ89_14(c1,f,c2,c,r) :- CFC_34_0(c,f,r,c1), CVC(c,r,c2).
+FC_XZ89_15(f,o,c,r) :- RputStatFldInst(c,f,r), CVC(c,r,o).
+CVC_XZ89_16(c,v,o,i,m,h) :- reachableCI(c,i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), CHC(c,h,o).
+CVC_XZ89_17(c,v,o,i,h) :- reachableCI(c,i), objNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC_XZ89_18(c,v,o2,i,m,u,o) :- reachableCI(c,i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), CVC(c,u,o), CFC(o,0,o2).
+CVC_XZ89_19(c,v,o,i,m,h) :- reachableCI(c,i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), CHC(c,h,o).
+CVC_XZ89_20(c,v,o,i,h) :- reachableCI(c,i), conNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CVC_XZ89_21(c,v,o,i,h) :- reachableCI(c,i), aryNewInstIH(i,h), IinvkRet(i,0,v), CHC(c,h,o).
+CMCM_XZ89_22(c,m,d,n,i) :- CICM(c,i,d,n), MI(m,i).
+CVC_30_0_XZ89_23(c,l,f,c1,b) :- RgetInstFldInst(c,l,b,f), CVC(c,b,c1).
+CFC_34_0_XZ89_24(c,f,r,c1,b) :- RputInstFldInst(c,b,f,r), CVC(c,b,c1).
+reachableCM_XZ89_25(c,m,v_XZ89_0,v_XZ89_1) :- CICM(v_XZ89_0,v_XZ89_1,c,m).
+reachableCI_XZ89_26(c,i,m) :- MI(m,i), reachableCM(c,m).
+DIC_XZ89_27(c,i,o,v) :- IinvkArg0(i,v), CVC(c,v,o).
+DIH_XZ89_28(c,i,h,o) :- DIC(c,i,o), CH(o,h).
+DI_XZ89_29(c,i,v_XZ89_0) :- DIH(c,i,v_XZ89_0).
+CICM_XZ89_30(c,i,m,h) :- reachableCI(c,i), ctxtInsIHM(i,h,m), DIH(c,i,h).
+RobjValAsgnInst_XZ89_31(c,l,h,m) :- reachableCM(c,m), MobjValAsgnInst(m,l,h).
+RobjVarAsgnInst_XZ89_32(c,l,r,m) :- reachableCM(c,m), MobjVarAsgnInst(m,l,r).
+RgetInstFldInst_XZ89_33(c,l,b,f,m) :- reachableCM(c,m), MgetInstFldInst(m,l,b,f).
+RgetStatFldInst_XZ89_34(c,l,f,m) :- reachableCM(c,m), MgetStatFldInst(m,l,f).
+RputInstFldInst_XZ89_35(c,b,f,r,m) :- reachableCM(c,m), MputInstFldInst(m,b,f,r).
+RputStatFldInst_XZ89_36(c,f,r,m) :- reachableCM(c,m), MputStatFldInst(m,f,r).
+reachableCM_XZ89_37(c,m,i) :- reachableCI(c,i), objNewInstIM(i,m).
+reachableCM_XZ89_38(c,m,i) :- reachableCI(c,i), conNewInstIM(i,m).
+reachableT_XZ89_39(t,v_XZ89_0,i,h) :- reachableCI(v_XZ89_0,i), conNewInstIH(i,h), HT(h,t).
+reachableT_XZ89_40(t,v_XZ89_0,i,h) :- reachableCI(v_XZ89_0,i), objNewInstIH(i,h), HT(h,t).
+reachableT_XZ89_41(t,v_XZ89_0,i) :- reachableCI(v_XZ89_0,i), clsForNameIT(i,t).
+reachableT_XZ89_42(t,v_XZ89_0,m,v_XZ89_1,h) :- reachableCM(v_XZ89_0,m), MobjValAsgnInst(m,v_XZ89_1,h), HT(h,t).
+reachableT_XZ89_43(t,v_XZ89_0,m) :- reachableCM(v_XZ89_0,m), staticTM(t,m).
+reachableT_XZ89_44(t,v_XZ89_0,m,f,v_XZ89_1) :- reachableCM(v_XZ89_0,m), MputStatFldInst(m,f,v_XZ89_1), staticTF(t,f).
+reachableT_XZ89_45(t,v_XZ89_0,m,v_XZ89_1,f) :- reachableCM(v_XZ89_0,m), MgetStatFldInst(m,v_XZ89_1,f), staticTF(t,f).
+reachableT_XZ89_46(t,s) :- classT(t), reachableT(s), sub(s,t).
+rootCM_XZ89_47(m,t) :- reachableT(t), clinitTM(t,m).
+reachableCM_XZ89_49(m,t) :- clinitTM(t,m), reachableT(t).

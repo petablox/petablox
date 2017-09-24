@@ -1,0 +1,18 @@
+
+
+.number_type E
+.number_type L
+.number_type P
+
+
+
+.decl LP(l:L,p:P)
+.input LP()
+.decl PE(p:P,e:E)
+.input PE()
+.decl LE(l:L,e:E)
+.output LE()
+
+
+LE(l,e) :- LP(l,p), PE(p,e).
+

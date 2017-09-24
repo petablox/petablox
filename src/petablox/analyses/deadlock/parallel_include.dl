@@ -1,0 +1,20 @@
+
+
+.number_type A
+.number_type L
+.number_type P
+
+
+
+.decl PL(p:P,l:L)
+.input PL()
+.decl mhp(p:P,t1:A,t2:A)
+.input mhp()
+.decl mhl(l:L,t1:A,t2:A)
+.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L)
+.output mhpTLTL()
+
+
+mhl(l,t1,t2) :- mhp(p,t1,t2), PL(p,l).
+mhpTLTL(t1,l1,t2,l2) :- mhl(l1,t1,t2), mhl(l2,t2,t1).
+

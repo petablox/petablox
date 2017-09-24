@@ -1,0 +1,14 @@
+
+
+.number_type A
+.number_type H
+.number_type E
+
+
+
+.decl unlockedE(t:A,e:E,h:H)
+.output unlockedE()
+
+
+unlockedE(_,_,_).
+

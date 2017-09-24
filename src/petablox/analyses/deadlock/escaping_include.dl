@@ -1,0 +1,34 @@
+
+
+.number_type M
+.number_type V
+.number_type L
+.number_type P
+.number_type T
+.number_type F
+.number_type H
+
+
+
+.decl PL(p:P,l:L)
+.input PL()
+.decl syncLV(l:L,v:V)
+.input syncLV()
+.decl syncLM(l:L,m:M)
+.input syncLM()
+.decl thisMV(m:M,v:V)
+.input thisMV()
+.decl MPhead(m:M,p:P)
+.input MPhead()
+.decl escPVH(p:P,v:V,o:H)
+.input escPVH()
+.decl TM(t:T,m:M)
+.input TM()
+.decl escLH(l:L,o:H)
+.output escLH()
+
+
+
+escLH(l,o) :- syncLV(l,v), PL(p,l), escPVH(p,v,o).
+escLH(l,o) :- syncLM(l,m), thisMV(m,v), MPhead(m,p), escPVH(p,v,o).
+

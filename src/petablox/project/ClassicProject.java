@@ -96,6 +96,8 @@ public class ClassicProject extends Project {
         // build nameToTaskMap
         Map<String, Class<ITask>> nameToJavaTaskMap = taskParser.getNameToJavaTaskMap();
         Map<String, DlogAnalysis> nameToDlogTaskMap = taskParser.getNameToDlogTaskMap();
+        System.out.println(nameToJavaTaskMap.size());
+        System.out.println(nameToDlogTaskMap.size());
         if (!buildNameToTaskMap(nameToJavaTaskMap, nameToDlogTaskMap))
             abort();
 

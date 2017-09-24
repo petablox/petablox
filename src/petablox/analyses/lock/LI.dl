@@ -1,0 +1,18 @@
+
+
+.number_type I
+.number_type L
+.number_type P
+
+
+
+.decl LP(l:L,p:P)
+.input LP()
+.decl PI(p:P,i:I)
+.input PI()
+.decl LI(l:L,i:I)
+.output LI()
+
+
+LI(l,i) :- LP(l,p), PI(p,i).
+

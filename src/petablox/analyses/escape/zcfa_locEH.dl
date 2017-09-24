@@ -1,0 +1,23 @@
+
+.number_type V
+.number_type H
+.number_type F
+.number_type E
+
+
+
+.decl queryE(e:E)
+.input queryE()
+.decl VH(v:V,h:H)
+.input VH()
+.decl HFH(h1:H,f:F,h2:H)
+.input HFH()
+.decl EV(e:E,v:V)
+.input EV()
+.decl locEH(e:E,h:H)
+.output locEH()
+
+
+locEH(e,h) :- queryE(e), EV(e,v), VH(v,h).
+locEH(e,h) :- locEH(e,h2), HFH(h,_,h2).
+

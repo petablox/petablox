@@ -1,0 +1,31 @@
+
+
+.number_type M
+.number_type V
+.number_type L
+.number_type T
+.number_type F
+.number_type P
+
+
+
+.decl PL(p:P,l:L)
+.input PL()
+.decl syncLV(l:L,v:V)
+.input syncLV()
+.decl syncLM(l:L,m:M)
+.input syncLM()
+.decl thisMV(m:M,v:V)
+.input thisMV()
+.decl VH(v:V,o:H)
+.input VH()
+.decl TM(t:T,m:M)
+.input TM()
+.decl escLH(l:L,o:H)
+.output escLH()
+
+
+
+escLH(l,o) :- syncLV(l,v), VH(v,o).
+escLH(l,o) :- syncLM(l,m), thisMV(m,v), VH(v,o).
+

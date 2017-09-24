@@ -1,0 +1,14 @@
+
+.number_type T
+.number_type M
+
+
+.decl checkIncludedT(t:T)
+.input checkIncludedT()
+.decl TM(t:T,m:M)
+.input TM()
+.decl checkIncludedM(m:M)
+.output checkIncludedM()
+
+checkIncludedM(m) :- TM(t,m), checkIncludedT(t).
+

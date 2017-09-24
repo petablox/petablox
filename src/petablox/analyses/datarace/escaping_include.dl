@@ -1,0 +1,20 @@
+
+
+.number_type H
+.number_type E
+.number_type V
+.number_type P
+
+
+
+.decl escPVH(p:P,v:V,h:H)
+.input escPVH()
+.decl PE(p:P,e:E)
+.input PE()
+.decl EV(e:E,v:V)
+.input EV()
+.decl EH(e:E,h:H)
+.output EH()
+
+EH(e,h) :- PE(p,e), EV(e,v), escPVH(p,v,h).
+

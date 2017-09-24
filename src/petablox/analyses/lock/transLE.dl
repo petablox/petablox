@@ -1,0 +1,19 @@
+
+
+.number_type E
+.number_type L
+
+
+
+.decl LE(l:L,e:E)
+.input LE()
+.decl LL(l1:L,l2:L)
+.input LL()
+
+.decl transLE(l:L,e:E)
+.output transLE()
+
+
+transLE(l,e) :- LE(l,e).
+transLE(l,e) :- LL(l,l2), transLE(l2,e).
+

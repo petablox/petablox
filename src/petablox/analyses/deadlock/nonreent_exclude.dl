@@ -1,0 +1,46 @@
+
+
+.number_type M
+.number_type V
+.number_type A
+.number_type L
+.number_type I
+
+
+
+.decl ML(m:M,l:L)
+.input ML()
+.decl MI(m:M,i:I)
+.input MI()
+.decl threadStartI(i:I)
+.input threadStartI()
+.decl threadAM(a:A,m:M)
+.input threadAM()
+.decl IM(i:I,n:M)
+.input IM()
+.decl transLI(l:L,i:I)
+.input transLI()
+.decl transLL(l1:L,l2:L)
+.input transLL()
+
+.decl syncMN(m:M,n:L)
+.decl syncIN(i:I,n:L)
+
+.decl syncMLL(m:M,l1:L,l2:L)
+.decl syncILL(i:I,l1:L,l2:L)
+.decl syncTLL(t:A,l1:L,l2:L)
+.output syncTLL()
+
+
+syncML(m,l) :- ML(m,l).
+syncIL(i,l) :- IM(i,m), syncML(m,l), !threadStartI(i).
+syncML(m,l) :- MI(m,i), syncIL(i,l).
+
+syncMLL(m,l1,l2) :- transLL(l1,l2), ML(m,l1), ML(m,l2).
+syncMLL(m,l1,l2) :- transLI(l1,i), MI(m,i), syncIL(i,l2).
+syncMLL(m,l1,l2) :- MI(m,i), syncILL(i,l1,l2).
+
+syncILL(i,l1,l2) :- IM(i,m), syncMLL(m,l1,l2), !threadStartI(i).
+
+syncTLL(t,l1,l2) :- threadAM(t,m), syncMLL(m,l1,l2).
+

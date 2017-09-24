@@ -1,0 +1,184 @@
+
+.number_type I
+.number_type M
+.number_type P
+.number_type V
+.number_type Z
+.number_type H
+.number_type M
+.number_type K
+.number_type F
+
+
+
+.decl PP(p:P,q:P)
+.input PP()
+.decl PI(p:P,i:I)
+.input PI()
+.decl IM(i:I,m:M)
+.input IM()
+.decl PobjValAsgnInst(p:P,v:V,h:H)
+.input PobjValAsgnInst()
+.decl PobjVarAsgnInst(p:P,v:V,u:V)
+.input PobjVarAsgnInst()
+.decl MPhead(m:M,p:P)
+.input MPhead()
+.decl rootM(m:M)
+.input rootM()
+.decl PobjNullAsgnInst(p:P,v:V)
+.input PobjNullAsgnInst()
+.decl PgetInstFldInst(p:P,v:V,u:V,f:F)
+.input PgetInstFldInst()
+.decl PgetStatFldInst(p:P,v:V,f:F)
+.input PgetStatFldInst()
+.decl MmethArg(m:M,n:Z,v:V)
+.input MmethArg()
+.decl IinvkArg(i:I,n:Z,v:V)
+.input IinvkArg()
+.decl MP(m:M,p:P)
+.input MP()
+.decl MPtail(m:M,p:P)
+.input MPtail()
+.decl IinvkRet(i:I,n:Z,v:V)
+.input IinvkRet()
+.decl MmethRet(m:M,n:Z,v:V)
+.input MmethRet()
+.decl MZfirst(m:M,z:Z)
+.input MZfirst()
+.decl MZlast(m:M,z:Z)
+.input MZlast()
+.decl MZZ(m:M,z:Z,z:Z)
+.input MZZ()
+.decl MK(m:M,k:K)
+.input MK()
+gen(ms1:MS,v:V,ms2:MS) input 		#ms2 = ms1+v
+kill(ms1:MS,v:V,ms2:MS) input 		#ms2 = ms1-v
+.decl contain(v:V,ms:MS)
+.input contain()
+.decl virtIM(i:I,m:M)
+.input virtIM()
+.decl specIM(i:I,m:M)
+.input specIM()
+.decl PobjRetInst(p:P,v:V)
+.input PobjRetInst()
+.decl checkExcludedH(h:H)
+.input checkExcludedH()
+.decl checkExcludedI(i:I)
+.input checkExcludedI()
+.decl VH(v:V, h:H)
+.input VH()
+.decl reachableM(m:M)
+.input reachableM()
+.decl trackedH(h:H)
+.input trackedH()
+
+.decl allow(v:V)
+.input allow()
+.decl deny(v:V)
+.input deny()
+
+path(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K) output #k=0 implies that return var is in must set
+.decl summary(m:M,h:H,ms1:MS,h2:H,k:K)
+.output summary()
+.decl pathArg(p:P,z:Z,m:M,ms1:MS,ms2:MS)
+.output pathArg()
+.decl PInvkInst(p:P,m:M,v:V,u:V,z:Z)
+.decl PInvkRetInst(p:P,m:M,v:V,u:V)
+.decl PInvkRetInstFilter(p:P,m:M)
+.decl PInvkRetInstNotFilter(p:P,m:M)
+.decl nonRelevantP(p:P)
+.output nonRelevantP()
+.decl relevantP(p:P)
+.output relevantP()
+.decl pathArgInit(p:P,ms1:MS,h:H)
+.decl pathArgLast(p:P,m:M,ms1:MS,ms2:MS)
+.decl PInvkSkip(p:P)
+.decl IMFilter(i:I)
+
+.decl unprovenQuery(p:P,h:H)
+.output unprovenQuery()
+
+
+
+PInvkInst(p,m,v,u,z) :- PI(p,i), IM(i,m), IinvkArg(i,z,u), MmethArg(m,z,v).
+PInvkRetInst(p,m,v,u) :- PI(p,i), IM(i,m), IinvkRet(i,z,v), MmethRet(m,z,u).
+PInvkRetInstFilter(p,m) :- PInvkRetInst(p,m,_,_).
+PInvkRetInstNotFilter(p,m) :- !PInvkRetInstFilter(p,m).
+IMFilter(i) :- IM(i,_).
+PInvkSkip(p) :- PI(p,i), !IMFilter(i).
+
+
+path(p,0,0,0,0,0) :- reachableM(m), MPhead(m,p).
+
+path(p,0,0,h,ms,0) :- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), allow(v), gen(0,v,ms), trackedH(h).split
+path(p,0,0,h,0,0) :- PobjValAsgnInst(p,v,h), PP(q,p), path(q,0,0,0,0,0), deny(v), trackedH(h).split
+path(p,h1,ms1,h2,ms3,0) :- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
+path(p,h1,ms1,h2,ms2,0) :- PobjValAsgnInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+
+path(p,h1,ms1,h2,ms3,0) :- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), contain(v,ms2), kill(ms2,v,ms3).split
+path(p,h1,ms1,h2,ms2,0) :- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(u,ms2), !contain(v,ms2).split
+path(p,h1,ms1,h2,ms2,0) :- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), deny(v).split
+path(p,h1,ms1,h2,ms3,0) :- PobjVarAsgnInst(p,v,u), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(u,ms2), allow(v), gen(ms2,v,ms3).split
+
+path(p,h1,ms1,h2,ms3,0) :- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
+path(p,h1,ms1,h2,ms2,0) :- PobjNullAsgnInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+
+path(p,h1,ms1,h2,ms3,0) :- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
+path(p,h1,ms1,h2,ms2,0) :- PgetInstFldInst(p,v,_,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+
+path(p,h1,ms1,h2,ms3,0) :- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2), kill(ms2,v,ms3).split
+path(p,h1,ms1,h2,ms2,0) :- PgetStatFldInst(p,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+
+pathArgInit(q,ms1,h1) :- PInvkInst(p,m,_,_,z), MZfirst(m,z), PP(q,p), path(q,_,_,h1,ms1,_).split
+									allow(v), gen(0,v,ms3).split
+pathArg(q,z,m,ms2,0) :- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), deny(v).split
+pathArg(q,z,m,ms2,0) :- PInvkInst(p,m,_,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), !contain(u,ms2).split
+
+								 	 contain(u,ms2), allow(v), gen(ms3,v,ms4).split
+								 	 contain(u,ms2), deny(v).split
+								 	 !contain(u,ms2).split
+
+pathArg(q,z,m,ms2,ms3) :- PInvkInst(p,m,v,u,z), PP(q,p), MZfirst(m,z), path(q,_,_,_,ms2,_), contain(u,ms2), \
+pathArg(q,z2,m,ms2,ms4) :- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
+pathArg(q,z2,m,ms2,ms3) :- PInvkInst(p,m,v,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
+pathArg(q,z2,m,ms2,ms3) :- PInvkInst(p,m,_,u,z2), PP(q,p), MZZ(m,z1,z2), pathArg(q,z1,m,ms2,ms3), \
+pathArgLast(q,m,ms1,ms2) :- pathArg(q,z,m,ms1,ms2), MZlast(m,z).
+
+path(p,h1,ms2,h2,ms3,0) :- pathArgLast(q,m,ms1,ms2), pathArgInit(q,ms1,h1), MPhead(m,p), ms2=ms3, h1=h2.split
+
+
+pathArgInit(q,ms1,h1) :- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,h1,ms1,_).split
+pathArgLast(q,m,ms1,0) :- PI(p,i), IM(i,m), PP(q,p), MK(m,k), k=0, path(q,_,_,_,ms1,_).split
+
+path(p,h1,ms2,h2,ms3,0) :- PInvkSkip(p), PP(q,p), path(q,h1,ms2,h2,ms3,0).split
+
+							 summary(m,h2,ms3,h3,0), contain(v,ms2), kill(ms2,v,ms5).split
+							 summary(m,h2,ms3,h3,0), !contain(v,ms2).split
+							 summary(m,h2,ms3,h3,1), allow(v), gen(ms2,v,ms5).split
+							 summary(m,h2,ms3,h3,1), deny(v).split
+
+							 summary(m,h2,ms3,h3,_).split
+
+path(p,h1,ms1,h2,ms2,1) :- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), contain(v,ms2).split
+path(p,h1,ms1,h2,ms2,0) :- PobjRetInst(p,v), PP(q,p), path(q,h1,ms1,h2,ms2,0), !contain(v,ms2).split
+summary(m,h1,ms1,h2,k) :- MPtail(m,p), path(p,h1,ms1,h2,_,k).split
+
+path(p,h1,ms1,h3,ms5,0) :- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3),  \
+path(p,h1,ms1,h3,ms2,0) :- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
+path(p,h1,ms1,h3,ms5,0) :- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
+path(p,h1,ms1,h3,ms2,0) :- PInvkRetInst(p,m,v,_), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
+path(p,h1,ms1,h3,ms2,0) :- PI(p,i), IM(i,m), PInvkRetInstNotFilter(p,m), PP(q,p), path(q,h1,ms1,h2,ms2,0), pathArgLast(q,m,ms2,ms3), \
+relevantP(p) :- PobjValAsgnInst(p,_,_).
+relevantP(p) :- PobjVarAsgnInst(p,_,_).
+relevantP(p) :- PobjNullAsgnInst(p,_).
+relevantP(p) :- PgetInstFldInst(p,_,_,_).
+relevantP(p) :- PgetStatFldInst(p,_,_).
+relevantP(p) :- PI(p,_).
+relevantP(p) :- PobjRetInst(p,_).
+relevantP(p) :- MPhead(_,p).
+
+nonRelevantP(p) :- PP(_,p), !relevantP(p).
+path(p,h1,ms1,h2,ms2,k) :- nonRelevantP(p), PP(q,p), path(q,h1,ms1,h2,ms2,k).split 
+
+
+unprovenQuery(q,h) :- PI(q,i), virtIM(i,_), PP(p,q), path(p,_,_,h,ms,_), IinvkArg(i,0,v), VH(v,h), !contain(v,ms), !checkExcludedI(i).split

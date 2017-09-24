@@ -1,0 +1,17 @@
+
+
+.number_type M
+.number_type L
+
+
+
+.decl threadReachableM(m:M)
+.input threadReachableM()
+.decl ML(m:M,l:L)
+.input ML()
+.decl threadReachableL(l:L)
+.output threadReachableL()
+
+
+threadReachableL(l) :- threadReachableM(m), ML(m,l).
+

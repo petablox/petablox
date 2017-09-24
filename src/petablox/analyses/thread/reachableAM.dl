@@ -1,0 +1,28 @@
+
+
+.number_type M
+.number_type I
+.number_type A
+
+
+
+.decl IM(i:I,m:M)
+.input IM()
+.decl threadAM(t:A,m:M)
+.input threadAM()
+.decl MI(m:M,i:I)
+.input MI()
+.decl threadStartI(i:I)
+.input threadStartI()
+
+.decl reachableAM(t:A,m:M)
+.output reachableAM()
+.decl threadReachableM(m:M)
+.output threadReachableM()
+
+
+reachableAM(t,m) :- threadAM(t,m).
+reachableAM(t,n) :- reachableAM(t,m), MI(m,i), IM(i,n), !threadStartI(i).
+
+threadReachableM(m) :- reachableAM(_,m).
+

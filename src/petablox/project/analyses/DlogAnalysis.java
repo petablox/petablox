@@ -61,6 +61,7 @@ public class DlogAnalysis extends JavaAnalysis {
             break;
         case SOUFFLE:
         		parser = new SouffleParser();
+        		break;
         default:
             throw new PetabloxException("Unhandled datalog engine type: " + Config.datalogEngine);
         }

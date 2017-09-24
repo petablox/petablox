@@ -1,0 +1,111 @@
+.number_type I
+.number_type M
+.number_type K
+.number_type C
+.number_type H
+.number_type V
+
+
+.decl initCOC(c:C,h:H,c:C)
+.input initCOC()
+.decl initCHC(c:C,h:H,c:C)
+.input initCHC()
+.decl truncCKC(c:C,k:K,c:C)
+.input truncCKC()
+.decl HK(h:H,k:K)
+.input HK()
+.decl OK(h:H,k:K)
+.input OK()
+.decl roots(m:M)
+.input roots()
+.decl IM(i:I,m:M)
+.input IM()
+.decl VH(v:V,h:H)
+.input VH()
+.decl MI(m:M,i:I)
+.input MI()
+.decl MH(m:M,h:H)
+.input MH()
+.decl CL(c:C,k:K)
+.input CL()
+.decl IinvkArg0(i:I,v:V)
+.input IinvkArg0()
+.decl statM(m:M)
+.input statM()
+.decl AllowH(h:H,k:K)
+.input AllowH()
+.decl DenyH(h:H,k:K)
+.input DenyH()
+.decl AllowO(h:H,k:K)
+.input AllowO()
+.decl DenyO(h:H,k:K)
+.input DenyO()
+.decl thisMV(m:M,v:V)
+.input thisMV()
+
+.decl CHC_1(c:C,h:H,c:C)
+.output CHC_1()
+.decl HM(h:H,m:M)
+.output HM()
+.decl CM(c:C,m:M)
+.output CM()
+.decl CHC_2(c:C,h:H,c:C)
+.output CHC_2()
+.decl COC(c:C,h:H,c:C)
+.output COC()
+.decl CHC(c:C,h:H,c:C)
+.output CHC()
+.decl COC_2(c1:C,h:H,c3:C)
+.output COC_2()
+.decl COC_1(c1:C,h:H,c2:C)
+.output COC_1()
+
+.decl CM_XZ89_8_11(c:C,m:M,v_XZ89_0:C,h:H)
+.output CM_XZ89_8_11()
+.decl CM_XZ89_9_11(c:C,m1:M,m0:M,i:I)
+.output CM_XZ89_9_11()
+.decl COC_2_XZ89_6_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.output COC_2_XZ89_6_11()
+.decl COC_XZ89_7_11(c1:C,h:H,c2:C,l:K)
+.output COC_XZ89_7_11()
+.decl CM_XZ89_12_11(m:M)
+.output CM_XZ89_12_11()
+.decl CHC_1_XZ89_10_11(c1:C,h:H,c2:C,m:M)
+.output CHC_1_XZ89_10_11()
+.decl COC_1_XZ89_11_11(c1:C,h:H,c2:C,m:M)
+.output COC_1_XZ89_11_11()
+.decl CHC_2_XZ89_2_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.output CHC_2_XZ89_2_11()
+.decl CHC_XZ89_1_11(c1:C,h:H,c2:C,l:K)
+.output CHC_XZ89_1_11()
+.decl COC_XZ89_5_11(c1:C,h:H,c2:C,l:K)
+.output COC_XZ89_5_11()
+.decl CHC_XZ89_3_11(c1:C,h:H,c2:C,l:K)
+.output CHC_XZ89_3_11()
+
+HM(h,m) :- thisMV(m,v), VH(v,h).
+CM(0,m) :- roots(m).
+CM(c,m) :- COC(_,h,c), HM(h,m).
+CM(c,m1) :- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+AllowH(_,0).
+CHC_1(c1,h,c2) :- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+CHC(c1,h,c2) :- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2(c1,h,c3) :- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC(c1,h,c2) :- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+AllowO(_,0).
+COC_1(c1,h,c2) :- MH(m,h), CM(c1,m), initCOC(c1,h,c2).
+COC(c1,h,c2) :- COC_1(c1,h,c2), CL(c2,l), AllowO(h,l).
+COC_2(c1,h,c3) :- COC_1(c1,h,c2), CL(c2,l1), DenyO(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+COC(c1,h,c2) :- COC_2(c1,h,c2), CL(c2,l), AllowO(h,l).
+
+CHC_XZ89_1_11(c1,h,c2,l) :- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2_XZ89_2_11(c1,h,c3,c2,l1,l2) :- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC_XZ89_3_11(c1,h,c2,l) :- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+COC_XZ89_5_11(c1,h,c2,l) :- COC_1(c1,h,c2), CL(c2,l), AllowO(h,l).
+COC_2_XZ89_6_11(c1,h,c3,c2,l1,l2) :- COC_1(c1,h,c2), CL(c2,l1), DenyO(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+COC_XZ89_7_11(c1,h,c2,l) :- COC_2(c1,h,c2), CL(c2,l), AllowO(h,l).
+CM_XZ89_8_11(c,m,v_XZ89_0,h) :- COC(v_XZ89_0,h,c), HM(h,m).
+CM_XZ89_9_11(c,m1,m0,i) :- CM(c,m0), IM(i,m1), statM(m1), MI(m0,i).
+CHC_1_XZ89_10_11(c1,h,c2,m) :- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+COC_1_XZ89_11_11(c1,h,c2,m) :- MH(m,h), CM(c1,m), initCOC(c1,h,c2).
+CM_XZ89_12_11(m) :- roots(m).

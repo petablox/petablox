@@ -1,0 +1,18 @@
+
+.number_type H
+.number_type M
+.number_type T
+
+
+.decl checkIncludedM(m:M)
+.input checkIncludedM()
+.decl HT(h:H,t:T)
+.input HT()
+.decl MH(m:M,h:H)
+.input MH()
+.decl reachableM(m:M)
+.input reachableM()
+.decl trackedT(t:T)
+.output trackedT()
+
+trackedT(t) :- reachableM(m),checkIncludedM(m),MH(m,h),HT(h,t).

@@ -1,0 +1,32 @@
+.number_type M
+.number_type I
+.number_type C
+
+
+.decl CICM(c:C,i:I,d:C,m:M)
+.input CICM()
+.decl virtIM(i:I,m:M)
+.input virtIM()
+.decl reachableCI(c:C,i:I)
+.input reachableCI()
+.decl checkExcludedI(i:I)
+.input checkExcludedI()
+
+.decl virtI(i:I)
+.output virtI()
+.decl polySite(i:I)
+.output polySite()
+.decl insvIM(i:I,m:M)
+.output insvIM()
+
+.decl insvIM_XZ89_0(i:I,m:M,v_XZ89_0:C,v_XZ89_1:C)
+.output insvIM_XZ89_0()
+.decl polySite_XZ89_3(i:I,m1:M,m2:M)
+.output polySite_XZ89_3()
+
+insvIM(i,m) :- CICM(_,i,_,m).
+virtI(i) :- virtIM(i,_).
+polySite(i) :- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.
+
+insvIM_XZ89_0(i,m,v_XZ89_0,v_XZ89_1) :- CICM(v_XZ89_0,i,v_XZ89_1,m).
+polySite_XZ89_3(i,m1,m2) :- virtI(i), insvIM(i,m1), insvIM(i,m2),!checkExcludedI(i), m1!=m2.

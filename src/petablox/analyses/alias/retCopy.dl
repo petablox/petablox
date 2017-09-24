@@ -1,0 +1,22 @@
+
+
+.number_type I
+.number_type M
+.number_type V
+.number_type Z
+
+
+
+.decl IM(i:I,m:M)
+.input IM()
+.decl IinvkRet(i:I,n:Z,v:V)
+.input IinvkRet()
+.decl MmethRet(m:M,n:Z,v:V)
+.input MmethRet()
+
+.decl retCopy(i:I,u:V,m:M,v:V)
+.output retCopy()
+
+
+retCopy(i,u,m,v) :- IM(i,m), IinvkRet(i,z,u), MmethRet(m,z,v).
+

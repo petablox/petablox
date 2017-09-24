@@ -1,0 +1,29 @@
+
+
+.number_type M
+.number_type I
+.number_type C
+
+
+
+.decl CICM(c:C,i:I,d:C,m:M)
+.input CICM()
+.decl virtIM(i:I,m:M)
+.input virtIM()
+.decl reachableCI(c:C,i:I)
+.input reachableCI()
+.decl checkExcludedI(i:I)
+.input checkExcludedI()
+.decl virtI(i:I)
+.output virtI()
+.decl polySite(i:I)
+.output polySite()
+.decl insvIM(i:I,m:M)
+.decl allQueries(i:I)
+.output allQueries()
+
+insvIM(i,m) :- CICM(_,i,_,m).
+
+virtI(i) :- virtIM(i,_).
+polySite(i) :- virtI(i), insvIM(i,m1), insvIM(i,m2), !checkExcludedI(i), m1!=m2.
+

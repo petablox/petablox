@@ -1,0 +1,35 @@
+
+
+.number_type I
+.number_type M
+.number_type V
+.number_type Z
+
+
+
+.decl IM(i:I,m:M)
+.input IM()
+.decl IinvkArg(i:I,n:Z,v:V)
+.input IinvkArg()
+.decl MmethArg(m:M,n:Z,v:V)
+.input MmethArg()
+.decl kobjSenM(m:M)
+.input kobjSenM()
+.decl epsilonV(v:V)
+.input epsilonV()
+
+.decl MspcMethArg(m:M,v:V)
+.output MspcMethArg()
+.decl MordMethArg(m:M,z:Z,v:V)
+.output MordMethArg()
+
+.decl argCopy(i:I,u:V,m:M,v:V)
+.output argCopy()
+
+
+MspcMethArg(m,v)   :- MmethArg(m,0,v), kobjSenM(m), !epsilonV(v).
+MordMethArg(m,0,v) :- MmethArg(m,0,v), !MspcMethArg(m,v).
+MordMethArg(m,z,v) :- MmethArg(m,z,v), z!=0.
+
+argCopy(i,u,m,v) :- IM(i,m), IinvkArg(i,z,u), MordMethArg(m,z,v).
+

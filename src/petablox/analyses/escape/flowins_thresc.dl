@@ -1,0 +1,43 @@
+
+
+.number_type M
+.number_type V
+.number_type H
+.number_type P
+.number_type Z
+.number_type F
+.number_type E
+
+
+
+.decl queryE(e:E)
+.input queryE()
+.decl VH(v:V,h:H)
+.input VH()
+.decl FH(f:F,h:H)
+.input FH()
+.decl HFH(h1:H,f:F,h2:H)
+.input HFH()
+.decl MmethArg(m:M,z:Z,v:V)
+.input MmethArg()
+.decl MV(m:M,v:V)
+.input MV()
+.decl MP(m:M,p:P)
+.input MP()
+.decl EV(e:E,v:V)
+.input EV()
+.decl escH(o:H)
+.output escH()
+.decl escPVH(p:P,v:V,h:H)
+.output escPVH()
+.decl escE(e:E)
+.output escE()
+
+
+escH(h) :- FH(_,h).
+escH(h) :- MmethArg(1,0,v), VH(v,h).
+escH(h2) :- HFH(h1,_,h2), escH(h1).
+
+escPVH(p,v,h) :- VH(v,h), MV(m,v), MP(m,p), escH(h). split
+escE(e) :- queryE(e), EV(e,v), VH(v,h), escH(h). 
+

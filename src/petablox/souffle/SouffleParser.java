@@ -6,15 +6,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import petablox.bddbddb.RelSign;
 import petablox.core.DatalogMetadata;
 import petablox.core.IDatalogParser;
 import petablox.project.PetabloxException;
+import petablox.util.Utils;
 
 public class SouffleParser implements IDatalogParser {
 
@@ -58,7 +61,7 @@ public class SouffleParser implements IDatalogParser {
 				if (outputRels.contains(s)) {
 					producedRels.put(s, rels.get(s));
 				} else {
-					consumedRels.put(s,  rels.get(s));
+					consumedRels.put(s, rels.get(s));
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -74,15 +77,32 @@ public class SouffleParser implements IDatalogParser {
 	}
 
 	private RelSign getRelSign(String substring) {
+		Map<String, Integer> index = new HashMap<String, Integer>(); 
 		List<String> l = new LinkedList<String>();
 		String[] fields = substring.split(",");
 		for (String s : fields) {
 			s = s.trim();
 			if (s.isEmpty()) continue;
 			
-			l.add(s.substring(s.indexOf(':')));
+			String domain = s.substring(s.indexOf(':') + 1);
+			if (index.containsKey(domain)) {
+				index.put(domain, index.get(domain) + 1);
+			} else {
+				index.put(domain, 0);
+			}
+			
+			l.add(domain + index.get(domain));
 		}
-		return new RelSign((String[]) l.toArray(), null);
+		String[] toReturn = new String[l.size()];
+		int i = 0;
+		for (String s : l) {
+			toReturn[i] = s;
+			i++;
+		}
+		// Souffle has no concept of var order, so we just make one up
+        String varOrder = Utils.join(Arrays.asList(toReturn), "x"); 
+		
+		return new RelSign(toReturn, varOrder);
 	}
 
 }

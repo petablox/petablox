@@ -1,0 +1,92 @@
+.number_type I
+.number_type M
+.number_type K
+.number_type C
+.number_type H
+
+
+.decl initCIC(c:C,i:I,c:C)
+.input initCIC()
+.decl initCHC(c:C,h:H,c:C)
+.input initCHC()
+.decl truncCKC(c:C,k:K,c:C)
+.input truncCKC()
+.decl IM(i:I,m:M)
+.input IM()
+.decl MI(m:M,i:I)
+.input MI()
+.decl MH(m:M,h:H)
+.input MH()
+.decl CL(c:C,k:K)
+.input CL()
+.decl AllowI(i:I,k:K)
+.input AllowI()
+.decl DenyI(i:I,k:K)
+.input DenyI()
+.decl AllowH(h:H,k:K)
+.input AllowH()
+.decl DenyH(h:H,k:K)
+.input DenyH()
+.decl roots(m:M)
+.input roots()
+
+.decl CIC(c:C,i:I,c:C)
+.output CIC()
+.decl CM(c:C,m:M)
+.output CM()
+.decl CHC(c:C,h:H,c:C)
+.output CHC()
+.decl CIC_1(c:C,i:I,c:C)
+.output CIC_1()
+.decl CIC_2(c:C,i:I,c:C)
+.output CIC_2()
+.decl CHC_1(c:C,h:H,c:C)
+.output CHC_1()
+.decl CHC_2(c:C,h:H,c:C)
+.output CHC_2()
+
+.decl CIC_XZ89_2(c1:C,i:I,c2:C,l:K)
+.output CIC_XZ89_2()
+.decl CIC_XZ89_4(c1:C,i:I,c2:C,l:K)
+.output CIC_XZ89_4()
+.decl CIC_2_XZ89_3(c1:C,i:I,c3:C,c2:C,l1:K,l2:K)
+.output CIC_2_XZ89_3()
+.decl CHC_2_XZ89_6(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.output CHC_2_XZ89_6()
+.decl CHC_XZ89_5(c1:C,h:H,c2:C,l:K)
+.output CHC_XZ89_5()
+.decl CM_XZ89_8(c:C,m:M,v_XZ89_0:C,i:I)
+.output CM_XZ89_8()
+.decl CHC_XZ89_7(c1:C,h:H,c2:C,l:K)
+.output CHC_XZ89_7()
+.decl CHC_1_XZ89_10(c1:C,h:H,c2:C,m:M)
+.output CHC_1_XZ89_10()
+.decl CIC_1_XZ89_9(c1:C,i:I,c2:C,m:M)
+.output CIC_1_XZ89_9()
+.decl CM_XZ89_11(m:M)
+.output CM_XZ89_11()
+
+CM(0,m) :- roots(m).
+CM(c,m) :- CIC(_,i,c), IM(i,m).
+AllowI(_,0).
+AllowH(_,0).
+AllowH(_,1).
+CIC_1(c1,i,c2) :- MI(m,i), CM(c1,m), initCIC(c1,i,c2).
+CIC(c1,i,c2) :- CIC_1(c1,i,c2), CL(c2,l), AllowI(i,l).
+CIC_2(c1,i,c3) :- CIC_1(c1,i,c2), CL(c2,l1), DenyI(i,l2), truncCKC(c2,l2,c3), l2<=l1.
+CIC(c1,i,c2) :- CIC_2(c1,i,c2), CL(c2,l), AllowI(i,l).
+CHC_1(c1,h,c2) :- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+CHC(c1,h,c2) :- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2(c1,h,c3) :- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC(c1,h,c2) :- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+
+CIC_XZ89_2(c1,i,c2,l) :- CIC_1(c1,i,c2), CL(c2,l), AllowI(i,l).
+CIC_2_XZ89_3(c1,i,c3,c2,l1,l2) :- CIC_1(c1,i,c2), CL(c2,l1), DenyI(i,l2), truncCKC(c2,l2,c3), l2<=l1.
+CIC_XZ89_4(c1,i,c2,l) :- CIC_2(c1,i,c2), CL(c2,l), AllowI(i,l).
+CHC_XZ89_5(c1,h,c2,l) :- CHC_1(c1,h,c2), CL(c2,l), AllowH(h,l).
+CHC_2_XZ89_6(c1,h,c3,c2,l1,l2) :- CHC_1(c1,h,c2), CL(c2,l1), DenyH(h,l2), truncCKC(c2,l2,c3), l2<=l1.
+CHC_XZ89_7(c1,h,c2,l) :- CHC_2(c1,h,c2), CL(c2,l), AllowH(h,l).
+CM_XZ89_8(c,m,v_XZ89_0,i) :- CIC(v_XZ89_0,i,c), IM(i,m).
+CIC_1_XZ89_9(c1,i,c2,m) :- MI(m,i), CM(c1,m), initCIC(c1,i,c2).
+CHC_1_XZ89_10(c1,h,c2,m) :- MH(m,h), CM(c1,m), initCHC(c1,h,c2).
+CM_XZ89_11(m) :- roots(m).

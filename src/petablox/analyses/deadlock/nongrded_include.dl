@@ -1,0 +1,55 @@
+
+
+.number_type I
+.number_type M
+.number_type V
+.number_type A
+.number_type L
+.number_type H
+
+
+
+.decl threadAM(a:A,m:M)
+.input threadAM()
+.decl reachableAM(a:A,m:M)
+.input reachableAM()
+.decl threadStartI(i:I)
+.input threadStartI()
+.decl MI(m:M,i:I)
+.input MI()
+.decl IM(i:I,m:M)
+.input IM()
+.decl ML(m:M,l:L)
+.input ML()
+.decl syncLH(l:L,h:H)
+.input syncLH()
+.decl transLL(l1:L,l2:L)
+.input transLL()
+.decl transLI(l:L,i:I)
+.input transLI()
+
+.decl syncH(h:H)
+.decl invkLock(i:I,o:H)
+.decl unguardedM(a:A,m:M,o:H)
+.decl unguardedI(a:A,i:I,o:H)
+.decl guardedM(a:A,m:M,o:H)
+.decl guardedL(a:A,n:L,o:H)
+
+.decl guarded(t1:A,t2:A,l1:L,l2:L)
+.output guarded()
+
+
+syncH(o) :- syncLH(_,o).
+invkLock(i,o) :- transLI(l,i), syncLH(l,o).
+
+unguardedM(t,m,o) :- syncH(o), threadAM(t,m).
+unguardedI(t,i,o) :- unguardedM(t,m,o), MI(m,i), !invkLock(i,o), !threadStartI(i).
+unguardedM(t,n,o) :- unguardedI(t,i,o), IM(i,n).
+
+guardedM(t,m,o) :- syncH(o), reachableAM(t,m), !unguardedM(t,m,o).
+
+guardedL(t,l,o) :- ML(m,l), guardedM(t,m,o).
+guardedL(_,l,o) :- transLL(l1,l), syncLH(l1,o).
+
+guarded(t1,t2,l1,l3) :- guardedL(t1,l1,o), guardedL(t2,l3,o).
+

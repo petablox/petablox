@@ -1,0 +1,44 @@
+
+
+.number_type I
+.number_type M
+.number_type K
+.number_type C
+.number_type H
+
+
+
+.decl initCIC(c:C, i:I, c:C)
+.input initCIC()
+.decl initCHC(c:C, h:H, c:C)
+.input initCHC()
+truncCKC(c:C, k:K, c:C) input 	# K is the domain of integers
+IK(i:I, k:K) input 				#the parametric relation
+.decl HK(h:H, k:K)
+.input HK()
+.decl IM(i:I, m:M)
+.input IM()
+.decl MI(m:M, i:I)
+.input MI()
+.decl MH(m:M, h:H)
+.input MH()
+.decl roots(m:M)
+.input roots()
+
+
+
+.decl CM(c:C, m:M)
+.output CM()
+.decl CIC(c:C, i:I, c:C)
+.output CIC()
+.decl CHC(c:C, h:H, c:C)
+.output CHC()
+
+
+
+CM(0,m) :- roots(m).
+CIC(c1,i,c3) :- MI(m,i), CM(c1,m), IK(i,k), initCIC(c1,i,c2), truncCKC(c2,k,c3).
+CM(c,m) :- CIC(_,i,c), IM(i,m).
+
+
+CHC(c1,h,c3) :- MH(m,h), CM(c1,m), HK(h,k), initCHC(c1,h,c2), truncCKC(c2,k,c3).

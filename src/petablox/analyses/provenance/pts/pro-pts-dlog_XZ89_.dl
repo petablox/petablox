@@ -1,0 +1,43 @@
+.number_type H
+.number_type M
+.number_type T
+.number_type V
+.number_type C
+
+
+.decl reachableCM(c:C,m:M)
+.input reachableCM()
+.decl checkExcludedH(h:H)
+.input checkExcludedH()
+.decl checkExcludedV(v:V)
+.input checkExcludedV()
+.decl CVC(c:C,v:V,o:C)
+.input CVC()
+.decl CH(c:C,h:H)
+.input CH()
+.decl MV(m:M,v:V)
+.input MV()
+.decl MH(m:M,h:H)
+.input MH()
+
+.decl reachableV(v:V)
+.output reachableV()
+.decl reachableH(h:H)
+.output reachableH()
+.decl ptsVH(v:V,h:H)
+.output ptsVH()
+
+.decl reachableV_XZ89_0_1(v:V,m:M,v_XZ89_0:C)
+.output reachableV_XZ89_0_1()
+.decl reachableH_XZ89_1_1(h:H,m:M,v_XZ89_0:C)
+.output reachableH_XZ89_1_1()
+.decl ptsVH_XZ89_2_1(v:V,h:H,v_XZ89_0:C,o:C)
+.output ptsVH_XZ89_2_1()
+
+reachableV(v) :- MV(m,v), reachableCM(_,m).
+reachableH(h) :- MH(m,h), reachableCM(_,m).
+ptsVH(v,h) :- CVC(_,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).
+
+reachableV_XZ89_0_1(v,m,v_XZ89_0) :- MV(m,v), reachableCM(v_XZ89_0,m).
+reachableH_XZ89_1_1(h,m,v_XZ89_0) :- MH(m,h), reachableCM(v_XZ89_0,m).
+ptsVH_XZ89_2_1(v,h,v_XZ89_0,o) :- CVC(v_XZ89_0,v,o), CH(o,h), !checkExcludedV(v), !checkExcludedH(h), reachableV(v), reachableH(h).

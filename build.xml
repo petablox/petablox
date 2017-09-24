@@ -178,6 +178,7 @@
 			<file file="lib/options.dict"/>
 			<fileset dir="src">
 				<include name="**/*.txt"/>
+				<include name="**/*.dl"/>
 				<include name="**/*.dlog"/>
 				<include name="**/*.datalog"/>
 				<include name="**/*.logic"/>

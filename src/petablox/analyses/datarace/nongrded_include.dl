@@ -1,0 +1,51 @@
+
+
+.number_type A
+.number_type H
+.number_type I
+.number_type M
+.number_type E
+.number_type L
+
+
+
+.decl MI(m:M,i:I)
+.input MI()
+.decl ME(m:M,e:E)
+.input ME()
+.decl IM(i:I,m:M)
+.input IM()
+.decl threadAM(t:A,m:M)
+.input threadAM()
+.decl transLI(l:L,i:I)
+.input transLI()
+.decl transLE(l:L,e:E)
+.input transLE()
+.decl threadStartI(i:I)
+.input threadStartI()
+
+.decl invkLock(i:I,h:H)
+.decl elemLock(e:E,h:H)
+.decl syncH(h:H)
+
+.decl syncLH(l:L,h:H)
+.input syncLH()
+
+.decl unlockedM(t:A,m:M,h:H)
+.decl unlockedI(t:A,i:I,h:H)
+.decl unlockedE(t:A,e:E,h:H)
+.output unlockedE()
+
+
+syncH(h) :- syncLH(_,h).
+
+invkLock(i,o) :- transLI(l,i), syncLH(l,o).
+elemLock(e,o) :- transLE(l,e), syncLH(l,o).
+
+unlockedM(t,m,o) :- syncH(o), threadAM(t,m).
+
+unlockedI(t,i,o) :- unlockedM(t,m,o), MI(m,i), !invkLock(i,o), !threadStartI(i).
+unlockedM(t,n,o) :- unlockedI(t,i,o), IM(i,n).
+
+unlockedE(t,e,o) :- unlockedM(t,m,o), ME(m,e), !elemLock(e,o).
+

@@ -1,0 +1,13 @@
+
+.number_type E
+
+
+
+.decl dynLocE(e:E)
+.input dynLocE()
+.decl queryE(e:E)
+.output queryE()
+
+
+queryE(e) :- dynLocE(e).
+

@@ -1,0 +1,46 @@
+
+
+.number_type A
+.number_type L
+.number_type M
+.number_type H
+
+
+
+.decl escLH(l:L,o:H)
+.input escLH()
+.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L)
+.input mhpTLTL()
+.decl syncTLL(t:A,l1:L,l2:L)
+.input syncTLL()
+.decl guarded(t1:A,t2:A,l1:L,l3:L)
+.input guarded()
+.decl escLL(l1:L,l2:L)
+.output escLL()
+
+.decl deadlock1(l1:L,l2:L,l3:L,l4:L)
+.output deadlock1()
+.decl deadlock2(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.output deadlock2()
+.decl deadlock3(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.output deadlock3()
+.decl deadlock4(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.output deadlock4()
+.decl deadlock (t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.output deadlock ()
+
+
+escLL(l1,l2) :- escLH(l1,o), escLH(l2,o).
+
+deadlock1(l1,l2,l3,l4) :- escLL(l1,l4), escLL(l2,l3).
+
+deadlock2(t1,l1,l2,t2,l3,l4) :- deadlock1(l1,l2,l3,l4), syncTLL(t1,l1,l2), syncTLL(t2,l3,l4).
+
+deadlock3(t1,l1,l2,t2,l3,l4) :- deadlock2(t1,l1,l2,t2,l3,l4), mhpTLTL(t2,l4,t1,l2).
+
+deadlock4(t1,l1,l2,t2,l3,l4) :- deadlock3(t1,l1,l2,t2,l3,l4), !guarded(t1,t2,l1,l3).
+
+deadlock(t1,l1,l2,t2,l3,l4) :- deadlock4(t1,l1,l2,t2,l3,l4), t1<t2.
+deadlock(t1,l1,l2,t2,l3,l4) :- deadlock4(t1,l1,l2,t2,l3,l4), t1=t2, l1<l3.
+deadlock(t1,l1,l2,t2,l3,l4) :- deadlock4(t1,l1,l2,t2,l3,l4), t1=t2, l1=l3, l2<=l4.
+

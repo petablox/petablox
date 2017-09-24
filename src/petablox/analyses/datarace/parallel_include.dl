@@ -1,0 +1,17 @@
+
+
+.number_type A
+.number_type E
+.number_type P
+
+
+
+.decl PE(p:P,e:E)
+.input PE()
+.decl mhp(p:P,t1:A,t2:A)
+.input mhp()
+.decl mhe(e:E,t1:A,t2:A)
+.output mhe()
+
+mhe(e,t1,t2) :- mhp(p,t1,t2), PE(p,e).
+

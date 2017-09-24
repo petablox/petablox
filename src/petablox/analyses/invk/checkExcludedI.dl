@@ -1,0 +1,14 @@
+
+.number_type I
+.number_type M
+
+
+.decl MI(m:M,i:I)
+.input MI()
+.decl checkExcludedM(m:M)
+.input checkExcludedM()
+.decl checkExcludedI(i:I)
+.output checkExcludedI()
+
+checkExcludedI(i) :- MI(m,i), checkExcludedM(m).
+

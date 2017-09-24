@@ -1,0 +1,24 @@
+
+.number_type Z
+.number_type V
+.number_type P
+
+
+
+.decl PobjVarMoveInst(p:P,l:V,r:V)
+.input PobjVarMoveInst()
+.decl PobjVarCastInst(p:P,l:V,r:V)
+.input PobjVarCastInst()
+.decl objPhiSrc(p:P,z:Z,v:V)
+.input objPhiSrc()
+.decl objPhiDst(p:P,v:V)
+.input objPhiDst()
+
+.decl PobjVarAsgnInst(p:P,l:V,r:V)
+.output PobjVarAsgnInst()
+
+
+PobjVarAsgnInst(p,l,r) :- PobjVarMoveInst(p,l,r).
+PobjVarAsgnInst(p,l,r) :- PobjVarCastInst(p,l,r).
+PobjVarAsgnInst(p,l,r) :- objPhiDst(p,l), objPhiSrc(p,_,r).
+

@@ -1,0 +1,17 @@
+
+
+.number_type H
+.number_type E
+.number_type V
+
+
+
+.decl VH(v:V,h:H)
+.input VH()
+.decl EV(e:E,v:V)
+.input EV()
+.decl EH(e:E,h:H)
+.output EH()
+
+EH(e,h) :- EV(e,v), VH(v,h).
+

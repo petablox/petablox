@@ -1,0 +1,15 @@
+
+
+.number_type L
+
+
+
+.decl LL(l1:L,l2:L)
+.input LL()
+.decl transLL(l1:L,l2:L)
+.output transLL()
+
+
+transLL(l1,l2) :- LL(l1,l2).
+transLL(l1,l2) :- transLL(l1,l3), transLL(l3,l2).
+

@@ -1,0 +1,19 @@
+
+
+.number_type I
+.number_type L
+
+
+
+.decl LI(l:L,i:I)
+.input LI()
+.decl LL(l1:L,l2:L)
+.input LL()
+
+.decl transLI(l:L,i:I)
+.output transLI()
+
+
+transLI(l,i) :- LI(l,i).
+transLI(l,i) :- LL(l,l2), transLI(l2,i).
+

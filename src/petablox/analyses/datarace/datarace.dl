@@ -1,0 +1,104 @@
+
+
+.number_type A
+.number_type F
+.number_type E
+.number_type H
+.number_type M
+.number_type L
+.number_type K
+
+
+
+.decl writeE(e:E)
+.input writeE()
+.decl ME(m:M,e:E)
+.input ME()
+.decl EF(e:E,f:F)
+.input EF()
+.decl statF(f:F)
+.input statF()
+.decl reachableAM(a:A,m:M)
+.input reachableAM()
+.decl checkExcludedM(m:M)
+.input checkExcludedM()
+.decl excludeInitMethods(k:K)
+.input excludeInitMethods()
+.decl initM(m:M)
+.input initM()
+
+.decl statE(e:E)
+.decl rdOrWrAEF(a:A,e:E,f:F)
+.decl onlyWrAEF(a:A,e:E,f:F)
+.decl relevantAM(a:A,m:M)
+.decl relevantAE(a:A,e:E)
+.decl excludeInitM(m:M)
+
+
+.decl startingRace(a1:A,e1:E,a2:A,e2:E)
+
+
+.decl EH(e:E,h:H)
+.input EH()
+.decl escapingRace(a1:A,e1:E,a2:A,e2:E)
+.output escapingRace()
+
+
+.decl mhe(e:E,a1:A,a2:A)
+.input mhe()
+.decl parallelRace(a1:A,e1:E,a2:A,e2:E)
+.output parallelRace()
+
+
+.decl syncLH(l:L,h:H)
+.input syncLH()
+.decl unlockedE(t:A,e:E,o:H)
+.input unlockedE()
+.decl excludeSameThread(k:K)
+.input excludeSameThread()
+.decl guardedE(t:A,e:E,o:H)
+.decl unlikelyRace(a1:A,e1:E,a2:A,e2:E)
+.output unlikelyRace()
+
+.decl ultimateRace(a1:A,e1:E,a2:A,e2:E)
+.output ultimateRace()
+.decl raceEEH(e1:E,e2:E,h:H)
+.output raceEEH()
+.decl racePairs(e1:E,e2:E)
+.output racePairs()
+
+
+excludeInitM(m) :- excludeInitMethods(1), initM(m).
+
+relevantAM(a,m) :- reachableAM(a,m), !checkExcludedM(m), !excludeInitM(m).
+
+relevantAE(a,e) :- relevantAM(a,m), ME(m,e).
+
+rdOrWrAEF(a,e,f) :- relevantAE(a,e), EF(e,f).
+onlyWrAEF(a,e,f) :- relevantAE(a,e), EF(e,f), writeE(e).
+
+startingRace(a1,e1,a2,e2) :- onlyWrAEF(a1,e1,f), rdOrWrAEF(a2,e2,f), e1 < e2.
+startingRace(a1,e1,a2,e2) :- rdOrWrAEF(a1,e1,f), onlyWrAEF(a2,e2,f), e1 < e2.
+startingRace(a1,e1,a2,e2) :- onlyWrAEF(a1,e1,f), onlyWrAEF(a2,e2,f), e1 = e2, a1 <= a2.
+
+
+statE(e) :- EF(e,f), statF(f).
+
+escapingRace(a1,e1,a2,e2) :- startingRace(a1,e1,a2,e2), EH(e1,h), EH(e2,h).
+escapingRace(a1,e1,a2,e2) :- startingRace(a1,e1,a2,e2), statE(e1), statE(e2).
+
+
+parallelRace(a1,e1,a2,e2) :- escapingRace(a1,e1,a2,e2), mhe(e1,a1,a2), mhe(e2,a2,a1).
+
+
+syncH(h) :- syncLH(_,h).
+guardedE(t,e,h) :- relevantAE(t,e), syncH(h), !unlockedE(t,e,h).
+
+unlikelyRace(a1,e1,a2,e2) :- parallelRace(a1,e1,a2,e2), guardedE(a1,e1,h), guardedE(a2,e2,h).
+unlikelyRace(a1,e1,a2,e2) :- parallelRace(a1,e1,a2,e2), excludeSameThread(1), a1=a2.
+
+ultimateRace(a1,e1,a2,e2) :- parallelRace(a1,e1,a2,e2), !unlikelyRace(a1,e1,a2,e2).
+
+raceEEH(e1,e2,h) :- ultimateRace(_,e1,_,e2), EH(e1,h), EH(e2,h).
+racePairs(e1,e2) :- ultimateRace(_,e1,_,e2).
+

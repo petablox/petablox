@@ -1,0 +1,50 @@
+
+
+.number_type M
+.number_type V
+.number_type H
+.number_type Z
+.number_type I
+.number_type T
+
+
+
+.decl IinvkArg(i:I,z:Z,v:V)
+.input IinvkArg()
+.decl cha(m:M,t:T,n:M)
+.input cha()
+.decl VH(v:V,h:H)
+.input VH()
+.decl HT(h:H,t:T)
+.input HT()
+.decl threadAllocI(i:I)
+.input threadAllocI()
+.decl threadStartI(i:I)
+.input threadStartI()
+.decl excludeThreadStartI(i:I)
+.input excludeThreadStartI()
+
+.decl runCHA(h:H,m:M)
+.decl threadRunM(m:M)
+.decl threadAllocIH0(i:I,h:H)
+.decl threadAllocIH1(i:I,h:H)
+.decl threadStartIH0(i:I,h:H)
+
+.decl threadIM(i:I,m:M)
+.output threadIM()
+.decl nonMainThreadM(m:M)
+.output nonMainThreadM()
+
+
+runCHA(h,n) :- cha("<java.lang.Runnable: void run()>",t,n), HT(h,t).
+
+threadRunM("<java.lang.Thread: void run()>").
+
+threadAllocIH0(i,h) :- threadAllocI(i), IinvkArg(i,0,v), VH(v,h).
+threadAllocIH1(i,h) :- threadAllocI(i), IinvkArg(i,1,v), VH(v,h).
+threadAllocIH1(i,h) :- threadAllocI(i), IinvkArg(i,2,v), VH(v,h).
+threadStartIH0(i,h) :- threadStartI(i), IinvkArg(i,0,v), VH(v,h), !excludeThreadStartI(i).
+
+threadIM(i,m) :- threadStartIH0(i,h), runCHA(h,m), !threadRunM(m).
+threadIM(i,n) :- threadStartIH0(i,h), runCHA(h,m), threadRunM(m), threadAllocIH0(i2,h), threadAllocIH1(i2,h2), runCHA(h2,n).
+nonMainThreadM(m) :- threadIM(_,m).
