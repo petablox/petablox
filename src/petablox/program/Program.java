@@ -107,7 +107,7 @@ public class Program {
             SSAUtilities.doSSA(true, true);
 
         //List<String> excluded = new ArrayList<String>();
-        //Options.v().set_coffi(true);
+        Options.v().set_coffi(true);
         //Options.v().set_exclude(excluded);
         Options.v().set_include_all(true);
         Options.v().set_keep_line_number(true);
@@ -380,7 +380,7 @@ public class Program {
     private void saveMethodsFile(File file) {
         try {
             PrintWriter out = new PrintWriter(file);
-            out.println("PETABLOX_SCOPE_EXCLUDE_STR=" + Config.scopeExcludeStr);
+//            out.println("PETABLOX_SCOPE_EXCLUDE_STR=" + Config.scopeExcludeStr);
             for (SootMethod m : methods) {
                 if (entryMethods.contains(m))
                     out.println(m.getSignature() + "##entry");

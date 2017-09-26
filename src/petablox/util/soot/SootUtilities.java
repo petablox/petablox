@@ -344,7 +344,6 @@ public class SootUtilities {
                     && m.getParameterTypes().equals(vm.getParameterTypes()))
                 return m;
         }
-        System.out.println("WARN: RTA method not found "+vm.getName());
         return null;
     }
 

@@ -707,8 +707,8 @@ public class RTA implements ScopeBuilder {
             if (matches) {
                 SootMethod m2 = SootUtilities.getVirtualMethod(d,n);
                 if(m2 == null) {
-                    Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
-                            n.getSubSignature(), d.getName(), c.getName());
+//                    Messages.log(METHOD_NOT_FOUND_IN_SUBTYPE,
+//                            n.getSubSignature(), d.getName(), c.getName());
                 } else {
                     visitMethod(m2);
                 }
