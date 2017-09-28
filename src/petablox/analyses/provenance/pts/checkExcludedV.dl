@@ -1,13 +1,14 @@
+// name=checkExcludedV-dlog
 
 .number_type M
 .number_type V
 
 
-.decl checkExcludedM(m:M)
+.decl checkExcludedM(m:M) //M0
 .input checkExcludedM()
-.decl MV(m:M,v:V)
+.decl MV(m:M,v:V) //M0,V0
 .input MV()
-.decl checkExcludedV(v:V)
+.decl checkExcludedV(v:V) //V0
 .output checkExcludedV()
 
 checkExcludedV(v) :- MV(m,v), checkExcludedM(m).

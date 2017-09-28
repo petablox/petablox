@@ -1,11 +1,12 @@
 
+// name=datarace-parallel-exclude-dlog
 
 .number_type A
 .number_type E
 
 
 
-.decl mhe(e:E,t1:A,t2:A)
+.decl mhe(e:E,t1:A,t2:A) //E0,A0,A1
 .output mhe()
 
 mhe(_,_,_).

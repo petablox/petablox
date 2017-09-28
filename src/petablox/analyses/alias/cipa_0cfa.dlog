@@ -42,7 +42,7 @@ MobjVarAsgnInst(m:M0,l:V0,r:V1) input
 MgetInstFldInst(m:M0,l:V0,b:V1,f:F0) input
 MputInstFldInst(m:M0,b:V0,f:F0,r:V1) input
 MgetStatFldInst(m:M0,l:V0,f:F0) input
-MputStatFldInst(m:M0,f:F0,r:V) input
+MputStatFldInst(m:M0,f:F0,r:V0) input
 
 clsForNameIT(i:I0,t:T0) input
 objNewInstIH(i:I0,h:H0) input

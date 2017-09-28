@@ -1,3 +1,4 @@
+// name=zcfa-locEH-dlog
 
 .number_type V
 .number_type H
@@ -6,15 +7,15 @@
 
 
 
-.decl queryE(e:E)
+.decl queryE(e:E) //E
 .input queryE()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl HFH(h1:H,f:F,h2:H)
+.decl HFH(h1:H,f:F,h2:H) //H,F,H
 .input HFH()
-.decl EV(e:E,v:V)
+.decl EV(e:E,v:V) //E,V
 .input EV()
-.decl locEH(e:E,h:H)
+.decl locEH(e:E,h:H) //E,H
 .output locEH()
 
 

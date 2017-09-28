@@ -1,4 +1,5 @@
 
+// name=syncLH-dlog
 
 .number_type H
 .number_type M
@@ -7,16 +8,16 @@
 
 
 
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl thisMV(m:M,v:V)
+.decl thisMV(m:M,v:V) //M0,V0
 .input thisMV()
-.decl syncLM(l:L,m:M)
+.decl syncLM(l:L,m:M) //L0,M0
 .input syncLM()
-.decl syncLV(l:L,v:V)
+.decl syncLV(l:L,v:V) //L0,V0
 .input syncLV()
 
-.decl syncLH(l:L,h:H)
+.decl syncLH(l:L,h:H) //L0,H0
 .output syncLH()
 
 

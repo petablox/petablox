@@ -11,17 +11,22 @@ def parse_declaration(s):
     for p in parts:
         decl = p.split(':')
         assert(len(decl) == 2)
-        domain = decl[1].strip(string.digits)
-        fields.append((decl[0], domain))
+        fields.append((decl[0], decl[1]))
 
     toReturn = [name[0], '(']
     for f in fields:
         toReturn.append(f[0])
         toReturn.append(':')
-        toReturn.append(f[1])
+        toReturn.append(f[1].strip(string.digits))
         toReturn.append(',')
     toReturn = toReturn[:-1]
     toReturn.append(')')
+
+    toReturn.append(' //')
+    for f in fields:
+        toReturn.append(f[1])
+        toReturn.append(',')
+    toReturn = toReturn[:-1]
 
     return name[0], ''.join(toReturn)
 
@@ -32,12 +37,14 @@ def read_file(f):
         current_line = []
         for line in lines:
             # bddbddb comments can be safely ignored
-            if line[0] == '#' or line.startswith('.bdd'):
+            if line.startswith("# name"):
+                output.append("// name=" + line[7:])
+            elif line[0] == '#' or line.startswith('.bdd'):
                 continue
-            if not line.strip():
+            elif not line.strip():
                 output.append('\n')
                 continue
-            if line.strip()[-1] == '.':
+            elif line.strip()[-1] == '.':
                 current_line.append(line)
                 output.append(''.join(current_line))
                 current_line = []

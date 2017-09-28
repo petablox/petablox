@@ -1,4 +1,5 @@
 
+// name=kobj-bit-init-dlog
 
 .number_type I
 .number_type M
@@ -9,53 +10,53 @@
 
 
 
-.decl initCOC(c:C, h:H, c:C)
+.decl initCOC(c:C, h:H, c:C) //C,H,C
 .input initCOC()
-.decl initCHC(c:C, h:H, c:C)
+.decl initCHC(c:C, h:H, c:C) //C,H,C
 .input initCHC()
 truncCKC(c:C, k:K, c:C) input 	# K is the domain of integers
 HK(h:H, k:K) input				#the parametric relation
 OK(h:H, k:K) input				#the parametric relation
-.decl roots(m:M)
+.decl roots(m:M) //M
 .input roots()
-.decl IM(i:I, m:M)
+.decl IM(i:I, m:M) //I,M
 .input IM()
-.decl VH(v:V, h:H)
+.decl VH(v:V, h:H) //V,H
 .input VH()
-.decl MI(m:M, i:I)
+.decl MI(m:M, i:I) //M,I
 .input MI()
-.decl MH(m:M, h:H)
+.decl MH(m:M, h:H) //M,H
 .input MH()
-.decl CL(c:C, k:K)
+.decl CL(c:C, k:K) //C,K
 .input CL()
-.decl IinvkArg0(i:I,v:V)
+.decl IinvkArg0(i:I,v:V) //I0,V1
 .input IinvkArg0()
-.decl statM(m:M)
+.decl statM(m:M) //M
 .input statM()
 
-.decl AllowH(h:H, k:K)
+.decl AllowH(h:H, k:K) //H,K
 .input AllowH()
-.decl DenyH(h:H, k:K)
+.decl DenyH(h:H, k:K) //H,K
 .input DenyH()
-.decl AllowO(h:H, k:K)
+.decl AllowO(h:H, k:K) //H,K
 .input AllowO()
-.decl DenyO(h:H, k:K)
+.decl DenyO(h:H, k:K) //H,K
 .input DenyO()
 
-.decl thisMV(m:M, v:V)
+.decl thisMV(m:M, v:V) //M,V
 .input thisMV()
-.decl HM(h:H, m:M)
+.decl HM(h:H, m:M) //H,M
 
-.decl CHC_1(c:C, h:H, c:C)
-.decl CHC_2(c:C, h:H, c:C)
-.decl COC_1(c:C, h:H, c:C)
-.decl COC_2(c:C, h:H, c:C)
+.decl CHC_1(c:C, h:H, c:C) //C,H,C
+.decl CHC_2(c:C, h:H, c:C) //C,H,C
+.decl COC_1(c:C, h:H, c:C) //C,H,C
+.decl COC_2(c:C, h:H, c:C) //C,H,C
 
-.decl CM(c:C, m:M)
+.decl CM(c:C, m:M) //C,M
 .output CM()
-.decl CHC(c:C, h:H, c:C)
+.decl CHC(c:C, h:H, c:C) //C,H,C
 .output CHC()
-.decl COC(c:C, h:H, c:C)
+.decl COC(c:C, h:H, c:C) //C,H,C
 .output COC()
 
 

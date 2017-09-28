@@ -1,12 +1,13 @@
 
+// name=transLL-dlog
 
 .number_type L
 
 
 
-.decl LL(l1:L,l2:L)
+.decl LL(l1:L,l2:L) //L0,L1
 .input LL()
-.decl transLL(l1:L,l2:L)
+.decl transLL(l1:L,l2:L) //L0,L1
 .output transLL()
 
 

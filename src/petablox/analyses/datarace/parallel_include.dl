@@ -1,4 +1,5 @@
 
+// name=datarace-parallel-include-dlog
 
 .number_type A
 .number_type E
@@ -6,11 +7,11 @@
 
 
 
-.decl PE(p:P,e:E)
+.decl PE(p:P,e:E) //P0,E0
 .input PE()
-.decl mhp(p:P,t1:A,t2:A)
+.decl mhp(p:P,t1:A,t2:A) //P0,A0,A1
 .input mhp()
-.decl mhe(e:E,t1:A,t2:A)
+.decl mhe(e:E,t1:A,t2:A) //E0,A0,A1
 .output mhe()
 
 mhe(e,t1,t2) :- mhp(p,t1,t2), PE(p,e).

@@ -1,3 +1,4 @@
+// name=typestate-dlog_XZ89_
 .number_type I
 .number_type M
 .number_type P
@@ -9,529 +10,529 @@
 .number_type F
 
 
-.decl PP(p:P,q:P)
+.decl PP(p:P,q:P) //P0,P1
 .input PP()
-.decl PI(p:P,i:I)
+.decl PI(p:P,i:I) //P0,I0
 .input PI()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl PobjValAsgnInst(p:P,v:V,h:H)
+.decl PobjValAsgnInst(p:P,v:V,h:H) //P0,V0,H0
 .input PobjValAsgnInst()
-.decl PobjVarAsgnInst(p:P,v:V,u:V)
+.decl PobjVarAsgnInst(p:P,v:V,u:V) //P0,V0,V1
 .input PobjVarAsgnInst()
-.decl MPhead(m:M,p:P)
+.decl MPhead(m:M,p:P) //M0,P0
 .input MPhead()
-.decl rootM(m:M)
+.decl rootM(m:M) //M0
 .input rootM()
-.decl PobjNullAsgnInst(p:P,v:V)
+.decl PobjNullAsgnInst(p:P,v:V) //P0,V0
 .input PobjNullAsgnInst()
-.decl PgetInstFldInst(p:P,v:V,u:V,f:F)
+.decl PgetInstFldInst(p:P,v:V,u:V,f:F) //P0,V0,V1,F0
 .input PgetInstFldInst()
-.decl PgetStatFldInst(p:P,v:V,f:F)
+.decl PgetStatFldInst(p:P,v:V,f:F) //P0,V0,F0
 .input PgetStatFldInst()
-.decl MmethArg(m:M,n:Z,v:V)
+.decl MmethArg(m:M,n:Z,v:V) //M0,Z0,V0
 .input MmethArg()
-.decl IinvkArg(i:I,n:Z,v:V)
+.decl IinvkArg(i:I,n:Z,v:V) //I0,Z0,V1
 .input IinvkArg()
-.decl MP(m:M,p:P)
+.decl MP(m:M,p:P) //M0,P0
 .input MP()
-.decl MPtail(m:M,p:P)
+.decl MPtail(m:M,p:P) //M0,P0
 .input MPtail()
-.decl IinvkRet(i:I,n:Z,v:V)
+.decl IinvkRet(i:I,n:Z,v:V) //I0,Z0,V0
 .input IinvkRet()
-.decl MmethRet(m:M,n:Z,v:V)
+.decl MmethRet(m:M,n:Z,v:V) //M0,Z0,V1
 .input MmethRet()
-.decl MZfirst(m:M,z:Z)
+.decl MZfirst(m:M,z:Z) //M0,Z0
 .input MZfirst()
-.decl MZlast(m:M,z:Z)
+.decl MZlast(m:M,z:Z) //M0,Z0
 .input MZlast()
-.decl MZZ(m:M,z:Z,z:Z)
+.decl MZZ(m:M,z:Z,z:Z) //M0,Z0,Z1
 .input MZZ()
-.decl MK(m:M,k:K)
+.decl MK(m:M,k:K) //M0,K0
 .input MK()
-.decl gen(ms1:MS,v:V,ms2:MS)
+.decl gen(ms1:MS,v:V,ms2:MS) //MS0,V0,MS1
 .input gen()
-.decl kill(ms1:MS,v:V,ms2:MS)
+.decl kill(ms1:MS,v:V,ms2:MS) //MS0,V0,MS1
 .input kill()
-.decl contain(v:V,ms:MS)
+.decl contain(v:V,ms:MS) //V0,MS0
 .input contain()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I0,M0
 .input virtIM()
-.decl specIM(i:I,m:M)
+.decl specIM(i:I,m:M) //I0,M0
 .input specIM()
-.decl PobjRetInst(p:P,v:V)
+.decl PobjRetInst(p:P,v:V) //P0,V0
 .input PobjRetInst()
-.decl checkExcludedH(h:H)
+.decl checkExcludedH(h:H) //H0
 .input checkExcludedH()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I0
 .input checkExcludedI()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M0
 .input reachableM()
-.decl trackedH(h:H)
+.decl trackedH(h:H) //H0
 .input trackedH()
-.decl allow(v:V)
+.decl allow(v:V) //V0
 .input allow()
-.decl deny(v:V)
+.decl deny(v:V) //V0
 .input deny()
 
-.decl summary(m:M,h:H,ms1:MS,h2:H,k:K)
+.decl summary(m:M,h:H,ms1:MS,h2:H,k:K) //M0,H0,MS0,H1,K0
 .output summary()
-.decl pathArg(p:P,z:Z,m:M,ms1:MS,ms2:MS)
+.decl pathArg(p:P,z:Z,m:M,ms1:MS,ms2:MS) //P0,Z0,M0,MS0,MS1
 .output pathArg()
-.decl path(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K)
+.decl path(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K) //P0,H0,MS0,H1,MS1,K0
 .output path()
-.decl PInvkRetInstFilter(p:P,m:M)
+.decl PInvkRetInstFilter(p:P,m:M) //P0,M0
 .output PInvkRetInstFilter()
-.decl PInvkRetInstNotFilter(p:P,m:M)
+.decl PInvkRetInstNotFilter(p:P,m:M) //P0,M0
 .output PInvkRetInstNotFilter()
-.decl PInvkInst(p:P,m:M,v:V,u:V,z:Z)
+.decl PInvkInst(p:P,m:M,v:V,u:V,z:Z) //P0,M0,V0,V1,Z0
 .output PInvkInst()
-.decl PInvkRetInst(p:P,m:M,v:V,u:V)
+.decl PInvkRetInst(p:P,m:M,v:V,u:V) //P0,M0,V0,V1
 .output PInvkRetInst()
-.decl pathArgInit(p:P,ms1:MS,h:H)
+.decl pathArgInit(p:P,ms1:MS,h:H) //P0,MS0,H0
 .output pathArgInit()
-.decl pathArgLast(p:P,m:M,ms1:MS,ms2:MS)
+.decl pathArgLast(p:P,m:M,ms1:MS,ms2:MS) //P0,M0,MS0,MS1
 .output pathArgLast()
-.decl nonRelevantP(p:P)
+.decl nonRelevantP(p:P) //P0
 .output nonRelevantP()
-.decl relevantP(p:P)
+.decl relevantP(p:P) //P0
 .output relevantP()
-.decl unprovenQuery(p:P,h:H)
+.decl unprovenQuery(p:P,h:H) //P0,H0
 .output unprovenQuery()
-.decl PInvkSkip(p:P)
+.decl PInvkSkip(p:P) //P0
 .output PInvkSkip()
-.decl IMFilter(i:I)
+.decl IMFilter(i:I) //I0
 .output IMFilter()
-.decl path_7_0(_p:P,_v:V,_h:H,_q:P)
+.decl path_7_0(_p:P,_v:V,_h:H,_q:P) //P0,V0,H0,P1
 .output path_7_0()
-.decl path_8_0(_p:P,_v:V,_h:H,_q:P)
+.decl path_8_0(_p:P,_v:V,_h:H,_q:P) //P0,V0,H0,P1
 .output path_8_0()
-.decl path_7_3(_p:P,_h:H,_ms:MS)
+.decl path_7_3(_p:P,_h:H,_ms:MS) //P0,H0,MS0
 .output path_7_3()
-.decl path_7_2(_p:P,_v:V,_h:H)
+.decl path_7_2(_p:P,_v:V,_h:H) //P0,V0,H0
 .output path_7_2()
-.decl path_7_1(_p:P,_v:V,_h:H)
+.decl path_7_1(_p:P,_v:V,_h:H) //P0,V0,H0
 .output path_7_1()
-.decl path_9_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_9_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_9_1()
-.decl path_9_0(_p:P,_v:V,_q:P)
+.decl path_9_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_9_0()
-.decl path_8_2(_p:P,_h:H)
+.decl path_8_2(_p:P,_h:H) //P0,H0
 .output path_8_2()
-.decl path_8_1(_p:P,_v:V,_h:H)
+.decl path_8_1(_p:P,_v:V,_h:H) //P0,V0,H0
 .output path_8_1()
-.decl path_11_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_11_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,V1,H0,MS0,H1,MS1
 .output path_11_1()
-.decl path_11_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_11_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_11_2()
-.decl path_11_3(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_11_3(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_11_3()
-.decl path_12_0(_p:P,_v:V,_u:V,_q:P)
+.decl path_12_0(_p:P,_v:V,_u:V,_q:P) //P0,V0,V1,P1
 .output path_12_0()
-.decl path_9_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_9_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_9_2()
-.decl path_10_0(_p:P,_v:V,_q:P)
+.decl path_10_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_10_0()
-.decl path_10_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_10_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_10_1()
-.decl path_11_0(_p:P,_v:V,_u:V,_q:P)
+.decl path_11_0(_p:P,_v:V,_u:V,_q:P) //P0,V0,V1,P1
 .output path_11_0()
-.decl path_13_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_13_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_13_2()
-.decl path_14_0(_p:P,_v:V,_u:V,_q:P)
+.decl path_14_0(_p:P,_v:V,_u:V,_q:P) //P0,V0,V1,P1
 .output path_14_0()
-.decl path_14_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_14_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,V1,H0,MS0,H1,MS1
 .output path_14_1()
-.decl path_14_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_14_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_14_2()
-.decl path_12_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_12_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,V1,H0,MS0,H1,MS1
 .output path_12_1()
-.decl path_12_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_12_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_12_2()
-.decl path_13_0(_p:P,_v:V,_u:V,_q:P)
+.decl path_13_0(_p:P,_v:V,_u:V,_q:P) //P0,V0,V1,P1
 .output path_13_0()
-.decl path_13_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_13_1(_p:P,_v:V,_u:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,V1,H0,MS0,H1,MS1
 .output path_13_1()
-.decl path_16_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_16_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_16_1()
-.decl path_16_0(_p:P,_v:V,_q:P)
+.decl path_16_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_16_0()
-.decl path_17_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_17_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_17_1()
-.decl path_17_0(_p:P,_v:V,_q:P)
+.decl path_17_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_17_0()
-.decl path_15_0(_p:P,_v:V,_q:P)
+.decl path_15_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_15_0()
-.decl path_14_3(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_14_3(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_14_3()
-.decl path_15_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_15_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_15_2()
-.decl path_15_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_15_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_15_1()
-.decl path_19_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_19_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_19_2()
-.decl path_19_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_19_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_19_1()
-.decl path_20_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_20_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_20_1()
-.decl path_20_0(_p:P,_v:V,_q:P)
+.decl path_20_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_20_0()
-.decl path_18_0(_p:P,_v:V,_q:P)
+.decl path_18_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_18_0()
-.decl path_17_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_17_2(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_17_2()
-.decl path_19_0(_p:P,_v:V,_q:P)
+.decl path_19_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_19_0()
-.decl path_18_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_18_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_18_1()
-.decl pathArg_22_4(_m:M,_v:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_22_4(_m:M,_v:V,_z:Z,_q:P,_ms2:MS) //M0,V0,Z0,P0,MS0
 .output pathArg_22_4()
-.decl pathArg_23_0(_m:M,_v:V,_u:V,_z:Z,_q:P)
+.decl pathArg_23_0(_m:M,_v:V,_u:V,_z:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_23_0()
-.decl pathArg_22_2(_m:M,_v:V,_u:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_22_2(_m:M,_v:V,_u:V,_z:Z,_q:P,_ms2:MS) //M0,V0,V1,Z0,P0,MS0
 .output pathArg_22_2()
-.decl pathArg_22_3(_m:M,_v:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_22_3(_m:M,_v:V,_z:Z,_q:P,_ms2:MS) //M0,V0,Z0,P0,MS0
 .output pathArg_22_3()
-.decl pathArg_22_0(_m:M,_v:V,_u:V,_z:Z,_q:P)
+.decl pathArg_22_0(_m:M,_v:V,_u:V,_z:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_22_0()
-.decl pathArg_22_1(_m:M,_v:V,_u:V,_z:Z,_q:P)
+.decl pathArg_22_1(_m:M,_v:V,_u:V,_z:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_22_1()
-.decl pathArgInit_21_0(_p:P)
+.decl pathArgInit_21_0(_p:P) //P0
 .output pathArgInit_21_0()
-.decl pathArgInit_21_1(_q:P)
+.decl pathArgInit_21_1(_q:P) //P0
 .output pathArgInit_21_1()
-.decl pathArg_25_0(_m:M,_v:V,_u:V,_z2:Z,_q:P)
+.decl pathArg_25_0(_m:M,_v:V,_u:V,_z2:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_25_0()
-.decl pathArg_25_1(_m:M,_v:V,_u:V,_z2:Z,_q:P,_z1:Z)
+.decl pathArg_25_1(_m:M,_v:V,_u:V,_z2:Z,_q:P,_z1:Z) //M0,V0,V1,Z0,P0,Z1
 .output pathArg_25_1()
-.decl pathArg_24_1(_m:M,_u:V,_z:Z,_q:P)
+.decl pathArg_24_1(_m:M,_u:V,_z:Z,_q:P) //M0,V0,Z0,P0
 .output pathArg_24_1()
-.decl pathArg_24_2(_m:M,_u:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_24_2(_m:M,_u:V,_z:Z,_q:P,_ms2:MS) //M0,V0,Z0,P0,MS0
 .output pathArg_24_2()
-.decl pathArg_23_3(_m:M,_v:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_23_3(_m:M,_v:V,_z:Z,_q:P,_ms2:MS) //M0,V0,Z0,P0,MS0
 .output pathArg_23_3()
-.decl pathArg_24_0(_m:M,_u:V,_z:Z,_q:P)
+.decl pathArg_24_0(_m:M,_u:V,_z:Z,_q:P) //M0,V0,Z0,P0
 .output pathArg_24_0()
-.decl pathArg_23_1(_m:M,_v:V,_u:V,_z:Z,_q:P)
+.decl pathArg_23_1(_m:M,_v:V,_u:V,_z:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_23_1()
-.decl pathArg_23_2(_m:M,_v:V,_u:V,_z:Z,_q:P,_ms2:MS)
+.decl pathArg_23_2(_m:M,_v:V,_u:V,_z:Z,_q:P,_ms2:MS) //M0,V0,V1,Z0,P0,MS0
 .output pathArg_23_2()
-.decl pathArg_27_0(_m:M,_u:V,_z2:Z,_q:P)
+.decl pathArg_27_0(_m:M,_u:V,_z2:Z,_q:P) //M0,V0,Z0,P0
 .output pathArg_27_0()
-.decl pathArg_26_3(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_26_3(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,Z0,P0,MS0,MS1
 .output pathArg_26_3()
-.decl pathArg_26_2(_m:M,_v:V,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_26_2(_m:M,_v:V,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,V1,Z0,P0,MS0,MS1
 .output pathArg_26_2()
-.decl pathArg_26_1(_m:M,_v:V,_u:V,_z2:Z,_q:P,_z1:Z)
+.decl pathArg_26_1(_m:M,_v:V,_u:V,_z2:Z,_q:P,_z1:Z) //M0,V0,V1,Z0,P0,Z1
 .output pathArg_26_1()
-.decl pathArg_26_0(_m:M,_v:V,_u:V,_z2:Z,_q:P)
+.decl pathArg_26_0(_m:M,_v:V,_u:V,_z2:Z,_q:P) //M0,V0,V1,Z0,P0
 .output pathArg_26_0()
-.decl pathArg_25_4(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_25_4(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,Z0,P0,MS0,MS1
 .output pathArg_25_4()
-.decl pathArg_25_3(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_25_3(_m:M,_v:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,Z0,P0,MS0,MS1
 .output pathArg_25_3()
-.decl pathArg_25_2(_m:M,_v:V,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_25_2(_m:M,_v:V,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,V1,Z0,P0,MS0,MS1
 .output pathArg_25_2()
-.decl pathArgInit_30_2(_q:P,_k:K)
+.decl pathArgInit_30_2(_q:P,_k:K) //P0,K0
 .output pathArgInit_30_2()
-.decl pathArgInit_30_1(_m:M,_q:P)
+.decl pathArgInit_30_1(_m:M,_q:P) //M0,P0
 .output pathArgInit_30_1()
-.decl pathArgInit_30_0(_p:P,_m:M)
+.decl pathArgInit_30_0(_p:P,_m:M) //P0,M0
 .output pathArgInit_30_0()
-.decl path_29_2(_ms2:MS,_h1:H,_p:P,_ms3:MS)
+.decl path_29_2(_ms2:MS,_h1:H,_p:P,_ms3:MS) //MS0,H0,P0,MS1
 .output path_29_2()
-.decl path_29_1(_ms2:MS,_h1:H,_p:P)
+.decl path_29_1(_ms2:MS,_h1:H,_p:P) //MS0,H0,P0
 .output path_29_1()
-.decl path_29_0(_m:M,_ms2:MS,_h1:H)
+.decl path_29_0(_m:M,_ms2:MS,_h1:H) //M0,MS0,H0
 .output path_29_0()
-.decl pathArg_27_2(_m:M,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS)
+.decl pathArg_27_2(_m:M,_u:V,_z2:Z,_q:P,_ms2:MS,_ms3:MS) //M0,V0,Z0,P0,MS0,MS1
 .output pathArg_27_2()
-.decl pathArg_27_1(_m:M,_u:V,_z2:Z,_q:P,_z1:Z)
+.decl pathArg_27_1(_m:M,_u:V,_z2:Z,_q:P,_z1:Z) //M0,V0,Z0,P0,Z1
 .output pathArg_27_1()
-.decl path_33_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_33_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_33_3()
-.decl path_33_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS)
+.decl path_33_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS) //P0,M0,V0,H0,MS0,H1,MS1,MS2
 .output path_33_2()
-.decl path_34_0(_p:P,_m:M,_v:V,_q:P)
+.decl path_34_0(_p:P,_m:M,_v:V,_q:P) //P0,M0,V0,P1
 .output path_34_0()
-.decl path_33_4(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_33_4(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_33_4()
-.decl path_34_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS)
+.decl path_34_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS) //P0,M0,V0,H0,MS0,H1,MS1,MS2
 .output path_34_2()
-.decl path_34_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_34_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_34_1()
-.decl path_35_0(_p:P,_m:M,_v:V,_q:P)
+.decl path_35_0(_p:P,_m:M,_v:V,_q:P) //P0,M0,V0,P1
 .output path_35_0()
-.decl path_34_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_34_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_34_3()
-.decl pathArgLast_31_0(_p:P,_m:M)
+.decl pathArgLast_31_0(_p:P,_m:M) //P0,M0
 .output pathArgLast_31_0()
-.decl pathArgInit_30_3(_q:P)
+.decl pathArgInit_30_3(_q:P) //P0
 .output pathArgInit_30_3()
-.decl pathArgLast_31_2(_m:M,_q:P,_k:K)
+.decl pathArgLast_31_2(_m:M,_q:P,_k:K) //M0,P0,K0
 .output pathArgLast_31_2()
-.decl pathArgLast_31_1(_m:M,_q:P)
+.decl pathArgLast_31_1(_m:M,_q:P) //M0,P0
 .output pathArgLast_31_1()
-.decl path_32_0(_p:P,_q:P)
+.decl path_32_0(_p:P,_q:P) //P0,P1
 .output path_32_0()
-.decl pathArgLast_31_3(_m:M,_q:P)
+.decl pathArgLast_31_3(_m:M,_q:P) //M0,P0
 .output pathArgLast_31_3()
-.decl path_33_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_33_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_33_1()
-.decl path_33_0(_p:P,_m:M,_v:V,_q:P)
+.decl path_33_0(_p:P,_m:M,_v:V,_q:P) //P0,M0,V0,P1
 .output path_33_0()
-.decl path_37_0(_p:P,_m:M)
+.decl path_37_0(_p:P,_m:M) //P0,M0
 .output path_37_0()
-.decl path_37_1(_p:P,_m:M)
+.decl path_37_1(_p:P,_m:M) //P0,M0
 .output path_37_1()
-.decl path_37_2(_p:P,_m:M,_q:P)
+.decl path_37_2(_p:P,_m:M,_q:P) //P0,M0,P1
 .output path_37_2()
-.decl path_37_3(_p:P,_m:M,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_37_3(_p:P,_m:M,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,M0,P1,H0,MS0,H1,MS1
 .output path_37_3()
-.decl path_37_4(_p:P,_m:M,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS)
+.decl path_37_4(_p:P,_m:M,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS) //P0,M0,H0,MS0,H1,MS1,MS2
 .output path_37_4()
-.decl path_38_0(_p:P,_v:V,_q:P)
+.decl path_38_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_38_0()
-.decl path_38_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_38_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_38_1()
-.decl path_39_0(_p:P,_v:V,_q:P)
+.decl path_39_0(_p:P,_v:V,_q:P) //P0,V0,P1
 .output path_39_0()
-.decl path_35_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_35_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_35_1()
-.decl path_35_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS)
+.decl path_35_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS) //P0,M0,V0,H0,MS0,H1,MS1,MS2
 .output path_35_2()
-.decl path_35_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_35_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_35_3()
-.decl path_35_4(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_35_4(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_35_4()
-.decl path_36_0(_p:P,_m:M,_v:V,_q:P)
+.decl path_36_0(_p:P,_m:M,_v:V,_q:P) //P0,M0,V0,P1
 .output path_36_0()
-.decl path_36_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_36_1(_p:P,_m:M,_v:V,_q:P,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_36_1()
-.decl path_36_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS)
+.decl path_36_2(_p:P,_m:M,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS,_ms3:MS) //P0,M0,V0,H0,MS0,H1,MS1,MS2
 .output path_36_2()
-.decl path_36_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H)
+.decl path_36_3(_p:P,_v:V,_h1:H,_ms1:MS,_ms2:MS,_h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_36_3()
-.decl unprovenQuery_51_1(_q:P,_i:I,_p:P)
+.decl unprovenQuery_51_1(_q:P,_i:I,_p:P) //P0,I0,P1
 .output unprovenQuery_51_1()
-.decl unprovenQuery_51_0(_q:P,_i:I)
+.decl unprovenQuery_51_0(_q:P,_i:I) //P0,I0
 .output unprovenQuery_51_0()
-.decl path_50_0(_p:P,_q:P)
+.decl path_50_0(_p:P,_q:P) //P0,P1
 .output path_50_0()
-.decl path_39_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS)
+.decl path_39_1(_p:P,_v:V,_h1:H,_ms1:MS,_h2:H,_ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_39_1()
-.decl unprovenQuery_51_5(_q:P,_i:I,_h:H)
+.decl unprovenQuery_51_5(_q:P,_i:I,_h:H) //P0,I0,H0
 .output unprovenQuery_51_5()
-.decl unprovenQuery_51_4(_q:P,_i:I,_h:H,_ms:MS,_v:V)
+.decl unprovenQuery_51_4(_q:P,_i:I,_h:H,_ms:MS,_v:V) //P0,I0,H0,MS0,V1
 .output unprovenQuery_51_4()
-.decl unprovenQuery_51_3(_q:P,_i:I,_h:H,_ms:MS,_v:V)
+.decl unprovenQuery_51_3(_q:P,_i:I,_h:H,_ms:MS,_v:V) //P0,I0,H0,MS0,V1
 .output unprovenQuery_51_3()
-.decl unprovenQuery_51_2(_q:P,_i:I,_h:H,_ms:MS)
+.decl unprovenQuery_51_2(_q:P,_i:I,_h:H,_ms:MS) //P0,I0,H0,MS0
 .output unprovenQuery_51_2()
 
-.decl unprovenQuery_51_4_XZ89_90(q:P,i:I,h:H,ms:MS,v:V)
+.decl unprovenQuery_51_4_XZ89_90(q:P,i:I,h:H,ms:MS,v:V) //P0,I0,H0,MS0,V0
 .output unprovenQuery_51_4_XZ89_90()
-.decl unprovenQuery_51_5_XZ89_91(q:P,i:I,h:H,ms:MS,v:V)
+.decl unprovenQuery_51_5_XZ89_91(q:P,i:I,h:H,ms:MS,v:V) //P0,I0,H0,MS0,V0
 .output unprovenQuery_51_5_XZ89_91()
-.decl unprovenQuery_51_2_XZ89_88(q:P,i:I,h:H,ms:MS,p:P,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K)
+.decl unprovenQuery_51_2_XZ89_88(q:P,i:I,h:H,ms:MS,p:P,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K) //P0,I0,H0,MS0,P1,H1,MS1,K0
 .output unprovenQuery_51_2_XZ89_88()
-.decl unprovenQuery_51_3_XZ89_89(q:P,i:I,h:H,ms:MS,v:V)
+.decl unprovenQuery_51_3_XZ89_89(q:P,i:I,h:H,ms:MS,v:V) //P0,I0,H0,MS0,V0
 .output unprovenQuery_51_3_XZ89_89()
-.decl path_XZ89_94(p:P,h:H)
+.decl path_XZ89_94(p:P,h:H) //P0,H0
 .output path_XZ89_94()
-.decl path_XZ89_95(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_95(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_95()
-.decl path_XZ89_92(p:P,m:M)
+.decl path_XZ89_92(p:P,m:M) //P0,M0
 .output path_XZ89_92()
-.decl path_XZ89_93(p:P,h:H,ms:MS)
+.decl path_XZ89_93(p:P,h:H,ms:MS) //P0,H0,MS0
 .output path_XZ89_93()
-.decl path_XZ89_98(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_98(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_98()
-.decl pathArg_XZ89_99(q:P,z:Z,m:M,ms2:MS,ms3:MS,v:V)
+.decl pathArg_XZ89_99(q:P,z:Z,m:M,ms2:MS,ms3:MS,v:V) //P0,Z0,M0,MS0,MS1,V0
 .output pathArg_XZ89_99()
-.decl path_XZ89_96(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_96(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_96()
-.decl path_XZ89_97(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_97(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_97()
-.decl unprovenQuery_XZ89_100(q:P,h:H,i:I)
+.decl unprovenQuery_XZ89_100(q:P,h:H,i:I) //P0,H0,I0
 .output unprovenQuery_XZ89_100()
-.decl path_XZ89_3(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_3(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_3()
-.decl path_XZ89_2(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_2(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_2()
-.decl path_XZ89_1(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_1(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_1()
-.decl path_XZ89_0(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_0(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_0()
-.decl path_XZ89_7(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_7(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_7()
-.decl path_XZ89_6(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_6(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_6()
-.decl path_XZ89_5(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_5(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_5()
-.decl path_XZ89_4(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS)
+.decl path_XZ89_4(p:P,h1:H,ms1:MS,h2:H,ms3:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_4()
-.decl path_XZ89_18(p:P,h1:H,ms2:MS,h2:H,ms3:MS,q:P)
+.decl path_XZ89_18(p:P,h1:H,ms2:MS,h2:H,ms3:MS,q:P) //P0,H0,MS0,H1,MS1,P1
 .output path_XZ89_18()
-.decl path_XZ89_19(p:P,h1:H,ms1:MS,h3:H,ms5:MS,v:V,ms2:MS)
+.decl path_XZ89_19(p:P,h1:H,ms1:MS,h3:H,ms5:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_19()
-.decl pathArgInit_XZ89_16(q:P,ms1:MS,h1:H,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K)
+.decl pathArgInit_XZ89_16(q:P,ms1:MS,h1:H,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K) //P0,MS0,H0,H1,MS1,K0
 .output pathArgInit_XZ89_16()
-.decl pathArgLast_XZ89_17(q:P,m:M,ms1:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K)
+.decl pathArgLast_XZ89_17(q:P,m:M,ms1:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K) //P0,M0,MS0,H0,MS1,H1,K0
 .output pathArgLast_XZ89_17()
-.decl path_XZ89_22(p:P,h1:H,ms1:MS,h3:H,ms2:MS,v:V)
+.decl path_XZ89_22(p:P,h1:H,ms1:MS,h3:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_22()
-.decl path_XZ89_23(p:P,h1:H,ms1:MS,h3:H,ms2:MS,m:M,h2:H,ms3:MS,v_XZ89_0:K)
+.decl path_XZ89_23(p:P,h1:H,ms1:MS,h3:H,ms2:MS,m:M,h2:H,ms3:MS,v_XZ89_0:K) //P0,H0,MS0,H1,MS1,M0,H2,MS2,K0
 .output path_XZ89_23()
-.decl path_XZ89_20(p:P,h1:H,ms1:MS,h3:H,ms2:MS,v:V)
+.decl path_XZ89_20(p:P,h1:H,ms1:MS,h3:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_20()
-.decl path_XZ89_21(p:P,h1:H,ms1:MS,h3:H,ms5:MS,v:V,ms2:MS)
+.decl path_XZ89_21(p:P,h1:H,ms1:MS,h3:H,ms5:MS,v:V,ms2:MS) //P0,H0,MS0,H1,MS1,V0,MS2
 .output path_XZ89_21()
-.decl pathArg_XZ89_10(q:P,z:Z,m:M,ms2:MS,u:V)
+.decl pathArg_XZ89_10(q:P,z:Z,m:M,ms2:MS,u:V) //P0,Z0,M0,MS0,V0
 .output pathArg_XZ89_10()
-.decl pathArg_XZ89_11(q:P,z2:Z,m:M,ms2:MS,ms4:MS,v:V,ms3:MS)
+.decl pathArg_XZ89_11(q:P,z2:Z,m:M,ms2:MS,ms4:MS,v:V,ms3:MS) //P0,Z0,M0,MS0,MS1,V0,MS2
 .output pathArg_XZ89_11()
-.decl pathArgInit_XZ89_8(q:P,ms1:MS,h1:H,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K)
+.decl pathArgInit_XZ89_8(q:P,ms1:MS,h1:H,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:K) //P0,MS0,H0,H1,MS1,K0
 .output pathArgInit_XZ89_8()
-.decl pathArg_XZ89_9(q:P,z:Z,m:M,ms2:MS,v:V)
+.decl pathArg_XZ89_9(q:P,z:Z,m:M,ms2:MS,v:V) //P0,Z0,M0,MS0,V0
 .output pathArg_XZ89_9()
-.decl pathArgLast_XZ89_14(q:P,m:M,ms1:MS,ms2:MS,z:Z)
+.decl pathArgLast_XZ89_14(q:P,m:M,ms1:MS,ms2:MS,z:Z) //P0,M0,MS0,MS1,Z0
 .output pathArgLast_XZ89_14()
-.decl path_XZ89_15(p:P,h1:H,ms2:MS,h2:H,ms3:MS)
+.decl path_XZ89_15(p:P,h1:H,ms2:MS,h2:H,ms3:MS) //P0,H0,MS0,H1,MS1
 .output path_XZ89_15()
-.decl pathArg_XZ89_12(q:P,z2:Z,m:M,ms2:MS,ms3:MS,v:V)
+.decl pathArg_XZ89_12(q:P,z2:Z,m:M,ms2:MS,ms3:MS,v:V) //P0,Z0,M0,MS0,MS1,V0
 .output pathArg_XZ89_12()
-.decl pathArg_XZ89_13(q:P,z2:Z,m:M,ms2:MS,ms3:MS,u:V)
+.decl pathArg_XZ89_13(q:P,z2:Z,m:M,ms2:MS,ms3:MS,u:V) //P0,Z0,M0,MS0,MS1,V0
 .output pathArg_XZ89_13()
-.decl path_11_2_XZ89_37(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V)
+.decl path_11_2_XZ89_37(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V) //P0,V0,H0,MS0,H1,MS1,V1
 .output path_11_2_XZ89_37()
-.decl path_11_1_XZ89_36(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_11_1_XZ89_36(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,V1,H0,MS0,H1,MS1,P1
 .output path_11_1_XZ89_36()
-.decl path_12_1_XZ89_39(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_12_1_XZ89_39(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,V1,H0,MS0,H1,MS1,P1
 .output path_12_1_XZ89_39()
-.decl path_11_3_XZ89_38(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_11_3_XZ89_38(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_11_3_XZ89_38()
-.decl path_9_1_XZ89_33(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_9_1_XZ89_33(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_9_1_XZ89_33()
-.decl path_8_2_XZ89_32(p:P,h:H,v:V)
+.decl path_8_2_XZ89_32(p:P,h:H,v:V) //P0,H0,V0
 .output path_8_2_XZ89_32()
-.decl path_10_1_XZ89_35(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_10_1_XZ89_35(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_10_1_XZ89_35()
-.decl path_9_2_XZ89_34(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_9_2_XZ89_34(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_9_2_XZ89_34()
-.decl path_7_2_XZ89_29(p:P,v:V,h:H)
+.decl path_7_2_XZ89_29(p:P,v:V,h:H) //P0,V0,H0
 .output path_7_2_XZ89_29()
-.decl path_7_1_XZ89_28(p:P,v:V,h:H,q:P)
+.decl path_7_1_XZ89_28(p:P,v:V,h:H,q:P) //P0,V0,H0,P1
 .output path_7_1_XZ89_28()
-.decl path_8_1_XZ89_31(p:P,v:V,h:H,q:P)
+.decl path_8_1_XZ89_31(p:P,v:V,h:H,q:P) //P0,V0,H0,P1
 .output path_8_1_XZ89_31()
-.decl path_7_3_XZ89_30(p:P,h:H,ms:MS,v:V)
+.decl path_7_3_XZ89_30(p:P,h:H,ms:MS,v:V) //P0,H0,MS0,V0
 .output path_7_3_XZ89_30()
-.decl path_XZ89_25(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_25(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_25()
-.decl path_XZ89_24(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V)
+.decl path_XZ89_24(p:P,h1:H,ms1:MS,h2:H,ms2:MS,v:V) //P0,H0,MS0,H1,MS1,V0
 .output path_XZ89_24()
-.decl path_XZ89_27(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K,q:P)
+.decl path_XZ89_27(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K,q:P) //P0,H0,MS0,H1,MS1,K0,P1
 .output path_XZ89_27()
-.decl summary_XZ89_26(m:M,h1:H,ms1:MS,h2:H,k:K,p:P,v_XZ89_0:MS)
+.decl summary_XZ89_26(m:M,h1:H,ms1:MS,h2:H,k:K,p:P,v_XZ89_0:MS) //M0,H0,MS0,H1,K0,P0,MS1
 .output summary_XZ89_26()
-.decl path_19_1_XZ89_52(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_19_1_XZ89_52(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_19_1_XZ89_52()
-.decl path_19_2_XZ89_53(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_19_2_XZ89_53(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_19_2_XZ89_53()
-.decl path_20_1_XZ89_54(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_20_1_XZ89_54(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_20_1_XZ89_54()
-.decl pathArg_22_2_XZ89_55(m:M,v:V,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K)
+.decl pathArg_22_2_XZ89_55(m:M,v:V,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K) //M0,V0,V1,Z0,P0,MS0,H0,MS1,H1,K0
 .output pathArg_22_2_XZ89_55()
-.decl path_16_1_XZ89_48(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_16_1_XZ89_48(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_16_1_XZ89_48()
-.decl path_17_1_XZ89_49(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_17_1_XZ89_49(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_17_1_XZ89_49()
-.decl path_17_2_XZ89_50(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_17_2_XZ89_50(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_17_2_XZ89_50()
-.decl path_18_1_XZ89_51(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_18_1_XZ89_51(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_18_1_XZ89_51()
-.decl path_14_2_XZ89_44(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V)
+.decl path_14_2_XZ89_44(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V) //P0,V0,H0,MS0,H1,MS1,V1
 .output path_14_2_XZ89_44()
-.decl path_14_3_XZ89_45(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_14_3_XZ89_45(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_14_3_XZ89_45()
-.decl path_15_1_XZ89_46(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_15_1_XZ89_46(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_15_1_XZ89_46()
-.decl path_15_2_XZ89_47(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_15_2_XZ89_47(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS) //P0,V0,H0,MS0,H1,MS1
 .output path_15_2_XZ89_47()
-.decl path_12_2_XZ89_40(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V)
+.decl path_12_2_XZ89_40(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V) //P0,V0,H0,MS0,H1,MS1,V1
 .output path_12_2_XZ89_40()
-.decl path_13_1_XZ89_41(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_13_1_XZ89_41(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,V1,H0,MS0,H1,MS1,P1
 .output path_13_1_XZ89_41()
-.decl path_13_2_XZ89_42(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V)
+.decl path_13_2_XZ89_42(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,u:V) //P0,V0,H0,MS0,H1,MS1,V1
 .output path_13_2_XZ89_42()
-.decl path_14_1_XZ89_43(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_14_1_XZ89_43(p:P,v:V,u:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,V1,H0,MS0,H1,MS1,P1
 .output path_14_1_XZ89_43()
-.decl path_33_2_XZ89_71(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P)
+.decl path_33_2_XZ89_71(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P) //P0,M0,V0,H0,MS0,H1,MS1,MS2,P1
 .output path_33_2_XZ89_71()
-.decl path_33_1_XZ89_70(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_33_1_XZ89_70(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_33_1_XZ89_70()
-.decl path_29_2_XZ89_69(ms2:MS,h1:H,p:P,ms3:MS)
+.decl path_29_2_XZ89_69(ms2:MS,h1:H,p:P,ms3:MS) //MS0,H0,P0,MS1
 .output path_29_2_XZ89_69()
-.decl path_29_1_XZ89_68(ms2:MS,h1:H,p:P,m:M)
+.decl path_29_1_XZ89_68(ms2:MS,h1:H,p:P,m:M) //MS0,H0,P0,M0
 .output path_29_1_XZ89_68()
-.decl path_29_0_XZ89_67(m:M,ms2:MS,h1:H,q:P,ms1:MS)
+.decl path_29_0_XZ89_67(m:M,ms2:MS,h1:H,q:P,ms1:MS) //M0,MS0,H0,P0,MS1
 .output path_29_0_XZ89_67()
-.decl pathArg_27_2_XZ89_66(m:M,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z)
+.decl pathArg_27_2_XZ89_66(m:M,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z) //M0,V0,Z0,P0,MS0,MS1,Z1
 .output pathArg_27_2_XZ89_66()
-.decl pathArg_26_3_XZ89_65(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS,u:V)
+.decl pathArg_26_3_XZ89_65(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS,u:V) //M0,V0,Z0,P0,MS0,MS1,V1
 .output pathArg_26_3_XZ89_65()
-.decl pathArg_26_2_XZ89_64(m:M,v:V,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z)
+.decl pathArg_26_2_XZ89_64(m:M,v:V,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z) //M0,V0,V1,Z0,P0,MS0,MS1,Z1
 .output pathArg_26_2_XZ89_64()
-.decl pathArg_25_4_XZ89_63(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS)
+.decl pathArg_25_4_XZ89_63(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS) //M0,V0,Z0,P0,MS0,MS1
 .output pathArg_25_4_XZ89_63()
-.decl pathArg_25_3_XZ89_62(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS,u:V)
+.decl pathArg_25_3_XZ89_62(m:M,v:V,z2:Z,q:P,ms2:MS,ms3:MS,u:V) //M0,V0,Z0,P0,MS0,MS1,V1
 .output pathArg_25_3_XZ89_62()
-.decl pathArg_25_2_XZ89_61(m:M,v:V,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z)
+.decl pathArg_25_2_XZ89_61(m:M,v:V,u:V,z2:Z,q:P,ms2:MS,ms3:MS,z1:Z) //M0,V0,V1,Z0,P0,MS0,MS1,Z1
 .output pathArg_25_2_XZ89_61()
-.decl pathArg_24_2_XZ89_60(m:M,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K)
+.decl pathArg_24_2_XZ89_60(m:M,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K) //M0,V0,Z0,P0,MS0,H0,MS1,H1,K0
 .output pathArg_24_2_XZ89_60()
-.decl pathArg_23_3_XZ89_59(m:M,v:V,z:Z,q:P,ms2:MS,u:V)
+.decl pathArg_23_3_XZ89_59(m:M,v:V,z:Z,q:P,ms2:MS,u:V) //M0,V0,Z0,P0,MS0,V1
 .output pathArg_23_3_XZ89_59()
-.decl pathArg_23_2_XZ89_58(m:M,v:V,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K)
+.decl pathArg_23_2_XZ89_58(m:M,v:V,u:V,z:Z,q:P,ms2:MS,v_XZ89_0:H,v_XZ89_1:MS,v_XZ89_2:H,v_XZ89_3:K) //M0,V0,V1,Z0,P0,MS0,H0,MS1,H1,K0
 .output pathArg_23_2_XZ89_58()
-.decl pathArg_22_4_XZ89_57(m:M,v:V,z:Z,q:P,ms2:MS)
+.decl pathArg_22_4_XZ89_57(m:M,v:V,z:Z,q:P,ms2:MS) //M0,V0,Z0,P0,MS0
 .output pathArg_22_4_XZ89_57()
-.decl pathArg_22_3_XZ89_56(m:M,v:V,z:Z,q:P,ms2:MS,u:V)
+.decl pathArg_22_3_XZ89_56(m:M,v:V,z:Z,q:P,ms2:MS,u:V) //M0,V0,Z0,P0,MS0,V1
 .output pathArg_22_3_XZ89_56()
-.decl path_38_1_XZ89_86(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_38_1_XZ89_86(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_38_1_XZ89_86()
-.decl path_39_1_XZ89_87(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P)
+.decl path_39_1_XZ89_87(p:P,v:V,h1:H,ms1:MS,h2:H,ms2:MS,q:P) //P0,V0,H0,MS0,H1,MS1,P1
 .output path_39_1_XZ89_87()
-.decl path_37_3_XZ89_84(p:P,m:M,q:P,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_37_3_XZ89_84(p:P,m:M,q:P,h1:H,ms1:MS,h2:H,ms2:MS) //P0,M0,P1,H0,MS0,H1,MS1
 .output path_37_3_XZ89_84()
-.decl path_37_4_XZ89_85(p:P,m:M,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P)
+.decl path_37_4_XZ89_85(p:P,m:M,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P) //P0,M0,H0,MS0,H1,MS1,MS2,P1
 .output path_37_4_XZ89_85()
-.decl path_36_2_XZ89_82(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P)
+.decl path_36_2_XZ89_82(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P) //P0,M0,V0,H0,MS0,H1,MS1,MS2,P1
 .output path_36_2_XZ89_82()
-.decl path_36_3_XZ89_83(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS)
+.decl path_36_3_XZ89_83(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS) //P0,V0,H0,MS0,MS1,H1,M0,H2,MS2
 .output path_36_3_XZ89_83()
-.decl path_35_4_XZ89_80(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H)
+.decl path_35_4_XZ89_80(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_35_4_XZ89_80()
-.decl path_36_1_XZ89_81(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_36_1_XZ89_81(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_36_1_XZ89_81()
-.decl path_35_2_XZ89_78(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P)
+.decl path_35_2_XZ89_78(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P) //P0,M0,V0,H0,MS0,H1,MS1,MS2,P1
 .output path_35_2_XZ89_78()
-.decl path_35_3_XZ89_79(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS)
+.decl path_35_3_XZ89_79(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS) //P0,V0,H0,MS0,MS1,H1,M0,H2,MS2
 .output path_35_3_XZ89_79()
-.decl path_34_3_XZ89_76(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS)
+.decl path_34_3_XZ89_76(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS) //P0,V0,H0,MS0,MS1,H1,M0,H2,MS2
 .output path_34_3_XZ89_76()
-.decl path_35_1_XZ89_77(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_35_1_XZ89_77(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_35_1_XZ89_77()
-.decl path_34_1_XZ89_74(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS)
+.decl path_34_1_XZ89_74(p:P,m:M,v:V,q:P,h1:H,ms1:MS,h2:H,ms2:MS) //P0,M0,V0,P1,H0,MS0,H1,MS1
 .output path_34_1_XZ89_74()
-.decl path_34_2_XZ89_75(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P)
+.decl path_34_2_XZ89_75(p:P,m:M,v:V,h1:H,ms1:MS,h2:H,ms2:MS,ms3:MS,q:P) //P0,M0,V0,H0,MS0,H1,MS1,MS2,P1
 .output path_34_2_XZ89_75()
-.decl path_33_3_XZ89_72(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS)
+.decl path_33_3_XZ89_72(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H,m:M,h2:H,ms3:MS) //P0,V0,H0,MS0,MS1,H1,M0,H2,MS2
 .output path_33_3_XZ89_72()
-.decl path_33_4_XZ89_73(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H)
+.decl path_33_4_XZ89_73(p:P,v:V,h1:H,ms1:MS,ms2:MS,h3:H) //P0,V0,H0,MS0,MS1,H1
 .output path_33_4_XZ89_73()
 
 PInvkInst(p,m,v,u,z) :- PI(p,i), IM(i,m), IinvkArg(i,z,u), MmethArg(m,z,v).

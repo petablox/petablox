@@ -1,4 +1,5 @@
 
+// name=argCopy-dlog
 
 .number_type I
 .number_type M
@@ -7,23 +8,23 @@
 
 
 
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I,M
 .input IM()
-.decl IinvkArg(i:I,n:Z,v:V)
+.decl IinvkArg(i:I,n:Z,v:V) //I0,Z0,V1
 .input IinvkArg()
-.decl MmethArg(m:M,n:Z,v:V)
+.decl MmethArg(m:M,n:Z,v:V) //M0,Z0,V0
 .input MmethArg()
-.decl kobjSenM(m:M)
+.decl kobjSenM(m:M) //M
 .input kobjSenM()
-.decl epsilonV(v:V)
+.decl epsilonV(v:V) //V
 .input epsilonV()
 
-.decl MspcMethArg(m:M,v:V)
+.decl MspcMethArg(m:M,v:V) //M,V
 .output MspcMethArg()
-.decl MordMethArg(m:M,z:Z,v:V)
+.decl MordMethArg(m:M,z:Z,v:V) //M,Z,V
 .output MordMethArg()
 
-.decl argCopy(i:I,u:V,m:M,v:V)
+.decl argCopy(i:I,u:V,m:M,v:V) //I0,V1,M0,V0
 .output argCopy()
 
 

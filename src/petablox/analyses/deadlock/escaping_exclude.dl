@@ -1,4 +1,5 @@
 
+// name=deadlock-escaping-exclude-dlog
 
 .number_type M
 .number_type V
@@ -9,19 +10,19 @@
 
 
 
-.decl PL(p:P,l:L)
+.decl PL(p:P,l:L) //P0,L0
 .input PL()
-.decl syncLV(l:L,v:V)
+.decl syncLV(l:L,v:V) //L0,V0
 .input syncLV()
-.decl syncLM(l:L,m:M)
+.decl syncLM(l:L,m:M) //L0,M0
 .input syncLM()
-.decl thisMV(m:M,v:V)
+.decl thisMV(m:M,v:V) //M0,V0
 .input thisMV()
-.decl VH(v:V,o:H)
+.decl VH(v:V,o:H) //V0,H0
 .input VH()
-.decl TM(t:T,m:M)
+.decl TM(t:T,m:M) //T0,M0
 .input TM()
-.decl escLH(l:L,o:H)
+.decl escLH(l:L,o:H) //L0,H0
 .output escLH()
 
 

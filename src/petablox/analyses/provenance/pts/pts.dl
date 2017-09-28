@@ -1,3 +1,4 @@
+// name=pro-pts-dlog
 
 .number_type H
 .number_type M
@@ -7,25 +8,25 @@
 
 
 
-.decl reachableCM(c:C,m:M)
+.decl reachableCM(c:C,m:M) //C,M
 .input reachableCM()
-.decl checkExcludedH(h:H)
+.decl checkExcludedH(h:H) //H
 .input checkExcludedH()
-.decl checkExcludedV(v:V)
+.decl checkExcludedV(v:V) //V
 .input checkExcludedV()
-.decl CVC(c:C,v:V,o:C)
+.decl CVC(c:C,v:V,o:C) //C,V,C
 .input CVC()
-.decl CH(c:C,h:H)
+.decl CH(c:C,h:H) //C,H
 .input CH()
-.decl MV(m:M, v:V)
+.decl MV(m:M, v:V) //M,V
 .input MV()
-.decl MH(m:M, h:H)
+.decl MH(m:M, h:H) //M,H
 .input MH()
 
-.decl reachableV(v:V)
-.decl reachableH(h:H)
+.decl reachableV(v:V) //V
+.decl reachableH(h:H) //H
 
-.decl ptsVH(v:V,h:H)
+.decl ptsVH(v:V,h:H) //V,H
 .output ptsVH()
 
 reachableV(v) :- MV(m,v),reachableCM(_,m).

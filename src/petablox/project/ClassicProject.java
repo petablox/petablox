@@ -83,6 +83,8 @@ public class ClassicProject extends Project {
         case BDDBDDB:
             break;
 		case SOUFFLE:
+			System.out.println(Config.bddbddbWorkDirName);
+	        System.out.println(Config.souffleWorkDirName);
 			// TODO: I don't think I have to do anything here, but check later
 			break;
 		default:
@@ -96,8 +98,6 @@ public class ClassicProject extends Project {
         // build nameToTaskMap
         Map<String, Class<ITask>> nameToJavaTaskMap = taskParser.getNameToJavaTaskMap();
         Map<String, DlogAnalysis> nameToDlogTaskMap = taskParser.getNameToDlogTaskMap();
-        System.out.println(nameToJavaTaskMap.size());
-        System.out.println(nameToDlogTaskMap.size());
         if (!buildNameToTaskMap(nameToJavaTaskMap, nameToDlogTaskMap))
             abort();
 
@@ -372,8 +372,10 @@ public class ClassicProject extends Project {
     public ITask getTask(String name) {
         build();
         ITask task = nameToTaskMap.get(name);
-        if (task == null) 
-            Messages.fatal(TASK_NOT_FOUND, name);
+        if (task == null) {
+        		System.out.println(nameToTaskMap);
+        		Messages.fatal(TASK_NOT_FOUND, name);    
+        }
         return task;
     }
 

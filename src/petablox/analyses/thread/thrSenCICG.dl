@@ -1,28 +1,29 @@
 
+// name=thrSenCICG-dlog
 
 .number_type I
 .number_type M
 
 
 
-.decl rootM(m:M)
+.decl rootM(m:M) //M
 .input rootM()
-.decl threadIM(i:I,m:M)
+.decl threadIM(i:I,m:M) //I,M
 .input threadIM()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I
 .input threadStartI()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I,M
 .input IM()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M,I
 .input MI()
 
-.decl thrSenRootM(m:M)
+.decl thrSenRootM(m:M) //M
 .output thrSenRootM()
-.decl thrSenReachableM(m:M)
+.decl thrSenReachableM(m:M) //M
 .output thrSenReachableM()
-.decl thrSenIM(i:I,m:M)
+.decl thrSenIM(i:I,m:M) //I,M
 .output thrSenIM()
-.decl thrSenMM(m:M,n:M)
+.decl thrSenMM(m:M,n:M) //M,M
 .output thrSenMM()
 
 

@@ -1,3 +1,4 @@
+// name=pro-pts-dlog_XZ89_
 .number_type H
 .number_type M
 .number_type T
@@ -5,33 +6,33 @@
 .number_type C
 
 
-.decl reachableCM(c:C,m:M)
+.decl reachableCM(c:C,m:M) //C0,M0
 .input reachableCM()
-.decl checkExcludedH(h:H)
+.decl checkExcludedH(h:H) //H0
 .input checkExcludedH()
-.decl checkExcludedV(v:V)
+.decl checkExcludedV(v:V) //V0
 .input checkExcludedV()
-.decl CVC(c:C,v:V,o:C)
+.decl CVC(c:C,v:V,o:C) //C0,V0,C1
 .input CVC()
-.decl CH(c:C,h:H)
+.decl CH(c:C,h:H) //C0,H0
 .input CH()
-.decl MV(m:M,v:V)
+.decl MV(m:M,v:V) //M0,V0
 .input MV()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M0,H0
 .input MH()
 
-.decl reachableV(v:V)
+.decl reachableV(v:V) //V0
 .output reachableV()
-.decl reachableH(h:H)
+.decl reachableH(h:H) //H0
 .output reachableH()
-.decl ptsVH(v:V,h:H)
+.decl ptsVH(v:V,h:H) //V0,H0
 .output ptsVH()
 
-.decl reachableV_XZ89_0_1(v:V,m:M,v_XZ89_0:C)
+.decl reachableV_XZ89_0_1(v:V,m:M,v_XZ89_0:C) //V0,M0,C0
 .output reachableV_XZ89_0_1()
-.decl reachableH_XZ89_1_1(h:H,m:M,v_XZ89_0:C)
+.decl reachableH_XZ89_1_1(h:H,m:M,v_XZ89_0:C) //H0,M0,C0
 .output reachableH_XZ89_1_1()
-.decl ptsVH_XZ89_2_1(v:V,h:H,v_XZ89_0:C,o:C)
+.decl ptsVH_XZ89_2_1(v:V,h:H,v_XZ89_0:C,o:C) //V0,H0,C0,C1
 .output ptsVH_XZ89_2_1()
 
 reachableV(v) :- MV(m,v), reachableCM(_,m).

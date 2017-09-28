@@ -1,4 +1,5 @@
 
+// name=mhp-dlog
 
 .number_type A
 .number_type I
@@ -9,44 +10,44 @@
 
 
 
-.decl PP(p:P,q:P)
+.decl PP(p:P,q:P) //P,P
 .input PP()
-.decl MPhead(m:M,p:P)
+.decl MPhead(m:M,p:P) //M,P
 .input MPhead()
-.decl MPtail(m:M,p:P)
+.decl MPtail(m:M,p:P) //M,P
 .input MPtail()
-.decl PI(p:P,i:I)
+.decl PI(p:P,i:I) //P,I
 .input PI()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I,M
 .input IM()
-.decl threadAM(t:A,m:M)
+.decl threadAM(t:A,m:M) //A,M
 .input threadAM()
-.decl threadRunAM(t:A,m:M)
-.decl threadIM(i:I,m:M)
+.decl threadRunAM(t:A,m:M) //A,M
+.decl threadIM(i:I,m:M) //I,M
 .input threadIM()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I
 .input threadStartI()
 
-.decl threadPM(p:P,m:M)
+.decl threadPM(p:P,m:M) //P,M
 .output threadPM()
-.decl threadPH(p:P,q:P)
+.decl threadPH(p:P,q:P) //P,P
 .output threadPH()
-.decl simpleIM(i:I,m:M)
+.decl simpleIM(i:I,m:M) //I,M
 .output simpleIM()
-.decl simplePM(p:P,m:M)
+.decl simplePM(p:P,m:M) //P,M
 .output simplePM()
-.decl simplePH(p:P,q:P)
+.decl simplePH(p:P,q:P) //P,P
 .output simplePH()
-.decl simplePT(p:P,q:P)
+.decl simplePT(p:P,q:P) //P,P
 .output simplePT()
 
-.decl PathEdge(p:P,this:A,sThat:A,tThat:A)
+.decl PathEdge(p:P,this:A,sThat:A,tThat:A) //P,A,A,A
 .output PathEdge()
 
-.decl SummEdge(p:P,this:A,sThat:A,tThat:A)
+.decl SummEdge(p:P,this:A,sThat:A,tThat:A) //P,A,A,A
 .output SummEdge()
 
-.decl mhp(p:P,t1:A,t2:A)
+.decl mhp(p:P,t1:A,t2:A) //P,A,A
 .output mhp()
 
 

@@ -27,7 +27,7 @@ IM(i:I, m:M) input
 VH(v:V, h:H) input
 MI(m:M, i:I) input
 MH(m:M, h:H) input
-IinvkArg0(i:I,v:V1) input
+IinvkArg0(i:I0,v:V1) input
 statM(m:M) input
 
 thisMV(m:M, v:V) input

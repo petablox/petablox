@@ -1,4 +1,5 @@
 
+// name=polysite-dlog
 
 .number_type M
 .number_type I
@@ -6,20 +7,20 @@
 
 
 
-.decl CICM(c:C,i:I,d:C,m:M)
+.decl CICM(c:C,i:I,d:C,m:M) //C,I,C,M
 .input CICM()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I,M
 .input virtIM()
-.decl reachableCI(c:C,i:I)
+.decl reachableCI(c:C,i:I) //C,I
 .input reachableCI()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I
 .input checkExcludedI()
-.decl virtI(i:I)
+.decl virtI(i:I) //I
 .output virtI()
-.decl polySite(i:I)
+.decl polySite(i:I) //I
 .output polySite()
-.decl insvIM(i:I,m:M)
-.decl allQueries(i:I)
+.decl insvIM(i:I,m:M) //I,M
+.decl allQueries(i:I) //I
 .output allQueries()
 
 insvIM(i,m) :- CICM(_,i,_,m).

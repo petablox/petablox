@@ -1,3 +1,4 @@
+// name=trivial-locEH-dlog
 
 .number_type H
 .number_type E
@@ -5,14 +6,14 @@
 
 
 
-.decl queryE(e:E)
+.decl queryE(e:E) //E
 .input queryE()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M
 .input reachableM()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M,H
 .input MH()
-.decl reachableH(h:H)
-.decl locEH(e:E,h:H)
+.decl reachableH(h:H) //H
+.decl locEH(e:E,h:H) //E,H
 .output locEH()
 
 

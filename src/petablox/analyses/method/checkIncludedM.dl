@@ -1,13 +1,14 @@
+// name=checkIncludedM-dlog
 
 .number_type T
 .number_type M
 
 
-.decl checkIncludedT(t:T)
+.decl checkIncludedT(t:T) //T0
 .input checkIncludedT()
-.decl TM(t:T,m:M)
+.decl TM(t:T,m:M) //T0,M0
 .input TM()
-.decl checkIncludedM(m:M)
+.decl checkIncludedM(m:M) //M0
 .output checkIncludedM()
 
 checkIncludedM(m) :- TM(t,m), checkIncludedT(t).

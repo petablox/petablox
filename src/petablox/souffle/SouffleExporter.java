@@ -66,7 +66,7 @@ public class SouffleExporter extends SouffleIOBase {
 	 */
 	public void saveRelation(Rel relation) {
 		String relName = relation.getName();
-        File factsFile = new File(workDir, relName + ".csv");
+        File factsFile = new File(workDir, relName + ".facts");
         saveRelationData(relation, factsFile);
         
         File domainFile = new File(workDir, relName + ".dl");

@@ -1,4 +1,5 @@
 
+// name=datarace-nongrded-include-dlog
 
 .number_type A
 .number_type H
@@ -9,31 +10,31 @@
 
 
 
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl ME(m:M,e:E)
+.decl ME(m:M,e:E) //M0,E0
 .input ME()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl threadAM(t:A,m:M)
+.decl threadAM(t:A,m:M) //A0,M0
 .input threadAM()
-.decl transLI(l:L,i:I)
+.decl transLI(l:L,i:I) //L0,I0
 .input transLI()
-.decl transLE(l:L,e:E)
+.decl transLE(l:L,e:E) //L0,E0
 .input transLE()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I
 .input threadStartI()
 
-.decl invkLock(i:I,h:H)
-.decl elemLock(e:E,h:H)
-.decl syncH(h:H)
+.decl invkLock(i:I,h:H) //I0,H0
+.decl elemLock(e:E,h:H) //E0,H0
+.decl syncH(h:H) //H0
 
-.decl syncLH(l:L,h:H)
+.decl syncLH(l:L,h:H) //L0,H0
 .input syncLH()
 
-.decl unlockedM(t:A,m:M,h:H)
-.decl unlockedI(t:A,i:I,h:H)
-.decl unlockedE(t:A,e:E,h:H)
+.decl unlockedM(t:A,m:M,h:H) //A0,M0,H0
+.decl unlockedI(t:A,i:I,h:H) //A0,I0,H0
+.decl unlockedE(t:A,e:E,h:H) //A0,E0,H0
 .output unlockedE()
 
 

@@ -1,4 +1,5 @@
 
+// name=deadlock-nongrded-include-dlog
 
 .number_type I
 .number_type M
@@ -9,33 +10,33 @@
 
 
 
-.decl threadAM(a:A,m:M)
+.decl threadAM(a:A,m:M) //A0,M0
 .input threadAM()
-.decl reachableAM(a:A,m:M)
+.decl reachableAM(a:A,m:M) //A0,M0
 .input reachableAM()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I0
 .input threadStartI()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl ML(m:M,l:L)
+.decl ML(m:M,l:L) //M0,L0
 .input ML()
-.decl syncLH(l:L,h:H)
+.decl syncLH(l:L,h:H) //L0,H0
 .input syncLH()
-.decl transLL(l1:L,l2:L)
+.decl transLL(l1:L,l2:L) //L0,L1
 .input transLL()
-.decl transLI(l:L,i:I)
+.decl transLI(l:L,i:I) //L0,I0
 .input transLI()
 
-.decl syncH(h:H)
-.decl invkLock(i:I,o:H)
-.decl unguardedM(a:A,m:M,o:H)
-.decl unguardedI(a:A,i:I,o:H)
-.decl guardedM(a:A,m:M,o:H)
-.decl guardedL(a:A,n:L,o:H)
+.decl syncH(h:H) //H0
+.decl invkLock(i:I,o:H) //I0,H0
+.decl unguardedM(a:A,m:M,o:H) //A0,M0,H0
+.decl unguardedI(a:A,i:I,o:H) //A0,I0,H0
+.decl guardedM(a:A,m:M,o:H) //A0,M0,H0
+.decl guardedL(a:A,n:L,o:H) //A0,L0,H0
 
-.decl guarded(t1:A,t2:A,l1:L,l2:L)
+.decl guarded(t1:A,t2:A,l1:L,l2:L) //A0,A1,L0,L1
 .output guarded()
 
 

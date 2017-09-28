@@ -1,11 +1,12 @@
 
+// name=deadlock-nongrded-exclude-dlog
 
 .number_type A
 .number_type L
 
 
 
-.decl guarded(t1:A,t2:A,l1:L,l3:L)
+.decl guarded(t1:A,t2:A,l1:L,l3:L) //A0,A1,L0,L1
 .output guarded()
 
 

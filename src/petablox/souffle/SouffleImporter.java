@@ -6,13 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import petablox.bddbddb.Rel;
+import petablox.project.Config;
 import petablox.project.PetabloxException;
 import petablox.util.Utils;
 
 public class SouffleImporter extends SouffleIOBase {
 
 	public void importRelation(Rel rel) {
-		File f = new File(rel.getName() + ".csv");
+		rel.zero();
+		File f = new File(Config.souffleWorkDirName + "/" + rel.getName() + ".facts");
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(f));
@@ -31,8 +33,9 @@ public class SouffleImporter extends SouffleIOBase {
 	private int[] parseIntRow(String line) {
         String[] parts = line.split("\\s+");
         int[] result = new int[parts.length];
-        for (int i = 0; i < parts.length; ++i)
+        for (int i = 0; i < parts.length; ++i) {
             result[i] = Integer.parseInt(parts[i], 10);
+        }
         return result;
     }
 

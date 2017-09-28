@@ -1,3 +1,4 @@
+// name=typestate-dlog
 
 .number_type I
 .number_type M
@@ -11,91 +12,91 @@
 
 
 
-.decl PP(p:P,q:P)
+.decl PP(p:P,q:P) //P,P
 .input PP()
-.decl PI(p:P,i:I)
+.decl PI(p:P,i:I) //P,I
 .input PI()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I,M
 .input IM()
-.decl PobjValAsgnInst(p:P,v:V,h:H)
+.decl PobjValAsgnInst(p:P,v:V,h:H) //P,V,H
 .input PobjValAsgnInst()
-.decl PobjVarAsgnInst(p:P,v:V,u:V)
+.decl PobjVarAsgnInst(p:P,v:V,u:V) //P,V,V
 .input PobjVarAsgnInst()
-.decl MPhead(m:M,p:P)
+.decl MPhead(m:M,p:P) //M,P
 .input MPhead()
-.decl rootM(m:M)
+.decl rootM(m:M) //M
 .input rootM()
-.decl PobjNullAsgnInst(p:P,v:V)
+.decl PobjNullAsgnInst(p:P,v:V) //P,V
 .input PobjNullAsgnInst()
-.decl PgetInstFldInst(p:P,v:V,u:V,f:F)
+.decl PgetInstFldInst(p:P,v:V,u:V,f:F) //P,V,V,F
 .input PgetInstFldInst()
-.decl PgetStatFldInst(p:P,v:V,f:F)
+.decl PgetStatFldInst(p:P,v:V,f:F) //P,V,F
 .input PgetStatFldInst()
-.decl MmethArg(m:M,n:Z,v:V)
+.decl MmethArg(m:M,n:Z,v:V) //M0,Z0,V0
 .input MmethArg()
-.decl IinvkArg(i:I,n:Z,v:V)
+.decl IinvkArg(i:I,n:Z,v:V) //I0,Z0,V1
 .input IinvkArg()
-.decl MP(m:M,p:P)
+.decl MP(m:M,p:P) //M,P
 .input MP()
-.decl MPtail(m:M,p:P)
+.decl MPtail(m:M,p:P) //M,P
 .input MPtail()
-.decl IinvkRet(i:I,n:Z,v:V)
+.decl IinvkRet(i:I,n:Z,v:V) //I0,Z0,V0
 .input IinvkRet()
-.decl MmethRet(m:M,n:Z,v:V)
+.decl MmethRet(m:M,n:Z,v:V) //M0,Z0,V1
 .input MmethRet()
-.decl MZfirst(m:M,z:Z)
+.decl MZfirst(m:M,z:Z) //M,Z
 .input MZfirst()
-.decl MZlast(m:M,z:Z)
+.decl MZlast(m:M,z:Z) //M,Z
 .input MZlast()
-.decl MZZ(m:M,z:Z,z:Z)
+.decl MZZ(m:M,z:Z,z:Z) //M,Z,Z
 .input MZZ()
-.decl MK(m:M,k:K)
+.decl MK(m:M,k:K) //M,K
 .input MK()
 gen(ms1:MS,v:V,ms2:MS) input 		#ms2 = ms1+v
 kill(ms1:MS,v:V,ms2:MS) input 		#ms2 = ms1-v
-.decl contain(v:V,ms:MS)
+.decl contain(v:V,ms:MS) //V,MS
 .input contain()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I,M
 .input virtIM()
-.decl specIM(i:I,m:M)
+.decl specIM(i:I,m:M) //I,M
 .input specIM()
-.decl PobjRetInst(p:P,v:V)
+.decl PobjRetInst(p:P,v:V) //P,V
 .input PobjRetInst()
-.decl checkExcludedH(h:H)
+.decl checkExcludedH(h:H) //H
 .input checkExcludedH()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I
 .input checkExcludedI()
-.decl VH(v:V, h:H)
+.decl VH(v:V, h:H) //V,H
 .input VH()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M
 .input reachableM()
-.decl trackedH(h:H)
+.decl trackedH(h:H) //H
 .input trackedH()
 
-.decl allow(v:V)
+.decl allow(v:V) //V
 .input allow()
-.decl deny(v:V)
+.decl deny(v:V) //V
 .input deny()
 
 path(p:P,h1:H,ms1:MS,h2:H,ms2:MS,k:K) output #k=0 implies that return var is in must set
-.decl summary(m:M,h:H,ms1:MS,h2:H,k:K)
+.decl summary(m:M,h:H,ms1:MS,h2:H,k:K) //M,H,MS,H,K
 .output summary()
-.decl pathArg(p:P,z:Z,m:M,ms1:MS,ms2:MS)
+.decl pathArg(p:P,z:Z,m:M,ms1:MS,ms2:MS) //P,Z,M,MS,MS
 .output pathArg()
-.decl PInvkInst(p:P,m:M,v:V,u:V,z:Z)
-.decl PInvkRetInst(p:P,m:M,v:V,u:V)
-.decl PInvkRetInstFilter(p:P,m:M)
-.decl PInvkRetInstNotFilter(p:P,m:M)
-.decl nonRelevantP(p:P)
+.decl PInvkInst(p:P,m:M,v:V,u:V,z:Z) //P,M,V,V,Z
+.decl PInvkRetInst(p:P,m:M,v:V,u:V) //P,M,V,V
+.decl PInvkRetInstFilter(p:P,m:M) //P,M
+.decl PInvkRetInstNotFilter(p:P,m:M) //P,M
+.decl nonRelevantP(p:P) //P
 .output nonRelevantP()
-.decl relevantP(p:P)
+.decl relevantP(p:P) //P
 .output relevantP()
-.decl pathArgInit(p:P,ms1:MS,h:H)
-.decl pathArgLast(p:P,m:M,ms1:MS,ms2:MS)
-.decl PInvkSkip(p:P)
-.decl IMFilter(i:I)
+.decl pathArgInit(p:P,ms1:MS,h:H) //P,MS,H
+.decl pathArgLast(p:P,m:M,ms1:MS,ms2:MS) //P,M,MS,MS
+.decl PInvkSkip(p:P) //P
+.decl IMFilter(i:I) //I
 
-.decl unprovenQuery(p:P,h:H)
+.decl unprovenQuery(p:P,h:H) //P,H
 .output unprovenQuery()
 
 

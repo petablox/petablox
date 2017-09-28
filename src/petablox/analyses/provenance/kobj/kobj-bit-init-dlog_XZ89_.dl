@@ -1,3 +1,4 @@
+// name=kobj-bit-init-dlog_XZ89_
 .number_type I
 .number_type M
 .number_type K
@@ -6,81 +7,81 @@
 .number_type V
 
 
-.decl initCOC(c:C,h:H,c:C)
+.decl initCOC(c:C,h:H,c:C) //C0,H0,C1
 .input initCOC()
-.decl initCHC(c:C,h:H,c:C)
+.decl initCHC(c:C,h:H,c:C) //C0,H0,C1
 .input initCHC()
-.decl truncCKC(c:C,k:K,c:C)
+.decl truncCKC(c:C,k:K,c:C) //C0,K0,C1
 .input truncCKC()
-.decl HK(h:H,k:K)
+.decl HK(h:H,k:K) //H0,K0
 .input HK()
-.decl OK(h:H,k:K)
+.decl OK(h:H,k:K) //H0,K0
 .input OK()
-.decl roots(m:M)
+.decl roots(m:M) //M0
 .input roots()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M0,H0
 .input MH()
-.decl CL(c:C,k:K)
+.decl CL(c:C,k:K) //C0,K0
 .input CL()
-.decl IinvkArg0(i:I,v:V)
+.decl IinvkArg0(i:I,v:V) //I0,V1
 .input IinvkArg0()
-.decl statM(m:M)
+.decl statM(m:M) //M0
 .input statM()
-.decl AllowH(h:H,k:K)
+.decl AllowH(h:H,k:K) //H0,K0
 .input AllowH()
-.decl DenyH(h:H,k:K)
+.decl DenyH(h:H,k:K) //H0,K0
 .input DenyH()
-.decl AllowO(h:H,k:K)
+.decl AllowO(h:H,k:K) //H0,K0
 .input AllowO()
-.decl DenyO(h:H,k:K)
+.decl DenyO(h:H,k:K) //H0,K0
 .input DenyO()
-.decl thisMV(m:M,v:V)
+.decl thisMV(m:M,v:V) //M0,V0
 .input thisMV()
 
-.decl CHC_1(c:C,h:H,c:C)
+.decl CHC_1(c:C,h:H,c:C) //C0,H0,C1
 .output CHC_1()
-.decl HM(h:H,m:M)
+.decl HM(h:H,m:M) //H0,M0
 .output HM()
-.decl CM(c:C,m:M)
+.decl CM(c:C,m:M) //C0,M0
 .output CM()
-.decl CHC_2(c:C,h:H,c:C)
+.decl CHC_2(c:C,h:H,c:C) //C0,H0,C1
 .output CHC_2()
-.decl COC(c:C,h:H,c:C)
+.decl COC(c:C,h:H,c:C) //C0,H0,C1
 .output COC()
-.decl CHC(c:C,h:H,c:C)
+.decl CHC(c:C,h:H,c:C) //C0,H0,C1
 .output CHC()
-.decl COC_2(c1:C,h:H,c3:C)
+.decl COC_2(c1:C,h:H,c3:C) //C0,H0,C1
 .output COC_2()
-.decl COC_1(c1:C,h:H,c2:C)
+.decl COC_1(c1:C,h:H,c2:C) //C0,H0,C1
 .output COC_1()
 
-.decl CM_XZ89_8_11(c:C,m:M,v_XZ89_0:C,h:H)
+.decl CM_XZ89_8_11(c:C,m:M,v_XZ89_0:C,h:H) //C0,M0,C1,H0
 .output CM_XZ89_8_11()
-.decl CM_XZ89_9_11(c:C,m1:M,m0:M,i:I)
+.decl CM_XZ89_9_11(c:C,m1:M,m0:M,i:I) //C0,M0,M1,I0
 .output CM_XZ89_9_11()
-.decl COC_2_XZ89_6_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.decl COC_2_XZ89_6_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K) //C0,H0,C1,C2,K0,K1
 .output COC_2_XZ89_6_11()
-.decl COC_XZ89_7_11(c1:C,h:H,c2:C,l:K)
+.decl COC_XZ89_7_11(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output COC_XZ89_7_11()
-.decl CM_XZ89_12_11(m:M)
+.decl CM_XZ89_12_11(m:M) //M0
 .output CM_XZ89_12_11()
-.decl CHC_1_XZ89_10_11(c1:C,h:H,c2:C,m:M)
+.decl CHC_1_XZ89_10_11(c1:C,h:H,c2:C,m:M) //C0,H0,C1,M0
 .output CHC_1_XZ89_10_11()
-.decl COC_1_XZ89_11_11(c1:C,h:H,c2:C,m:M)
+.decl COC_1_XZ89_11_11(c1:C,h:H,c2:C,m:M) //C0,H0,C1,M0
 .output COC_1_XZ89_11_11()
-.decl CHC_2_XZ89_2_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.decl CHC_2_XZ89_2_11(c1:C,h:H,c3:C,c2:C,l1:K,l2:K) //C0,H0,C1,C2,K0,K1
 .output CHC_2_XZ89_2_11()
-.decl CHC_XZ89_1_11(c1:C,h:H,c2:C,l:K)
+.decl CHC_XZ89_1_11(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output CHC_XZ89_1_11()
-.decl COC_XZ89_5_11(c1:C,h:H,c2:C,l:K)
+.decl COC_XZ89_5_11(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output COC_XZ89_5_11()
-.decl CHC_XZ89_3_11(c1:C,h:H,c2:C,l:K)
+.decl CHC_XZ89_3_11(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output CHC_XZ89_3_11()
 
 HM(h,m) :- thisMV(m,v), VH(v,h).

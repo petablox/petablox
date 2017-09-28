@@ -1,18 +1,19 @@
+// name=trackedT-dlog
 
 .number_type H
 .number_type M
 .number_type T
 
 
-.decl checkIncludedM(m:M)
+.decl checkIncludedM(m:M) //M0
 .input checkIncludedM()
-.decl HT(h:H,t:T)
+.decl HT(h:H,t:T) //H0,T1
 .input HT()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M0,H0
 .input MH()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M0
 .input reachableM()
-.decl trackedT(t:T)
+.decl trackedT(t:T) //T1
 .output trackedT()
 
 trackedT(t) :- reachableM(m),checkIncludedM(m),MH(m,h),HT(h,t).

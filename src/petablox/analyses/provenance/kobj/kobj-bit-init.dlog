@@ -26,7 +26,7 @@ VH(v:V, h:H) input
 MI(m:M, i:I) input
 MH(m:M, h:H) input
 CL(c:C, k:K) input
-IinvkArg0(i:I,v:V1) input
+IinvkArg0(i:I0,v:V1) input
 statM(m:M) input
 
 AllowH(h:H, k:K) input

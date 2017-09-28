@@ -1,3 +1,4 @@
+// name=PobjVarAsgnInst-dlog
 
 .number_type Z
 .number_type V
@@ -5,16 +6,16 @@
 
 
 
-.decl PobjVarMoveInst(p:P,l:V,r:V)
+.decl PobjVarMoveInst(p:P,l:V,r:V) //P0,V0,V1
 .input PobjVarMoveInst()
-.decl PobjVarCastInst(p:P,l:V,r:V)
+.decl PobjVarCastInst(p:P,l:V,r:V) //P0,V0,V1
 .input PobjVarCastInst()
-.decl objPhiSrc(p:P,z:Z,v:V)
+.decl objPhiSrc(p:P,z:Z,v:V) //P0,Z0,V0
 .input objPhiSrc()
-.decl objPhiDst(p:P,v:V)
+.decl objPhiDst(p:P,v:V) //P0,V0
 .input objPhiDst()
 
-.decl PobjVarAsgnInst(p:P,l:V,r:V)
+.decl PobjVarAsgnInst(p:P,l:V,r:V) //P0,V0,V1
 .output PobjVarAsgnInst()
 
 

@@ -1,4 +1,5 @@
 
+// name=reachableAM-dlog
 
 .number_type M
 .number_type I
@@ -6,18 +7,18 @@
 
 
 
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl threadAM(t:A,m:M)
+.decl threadAM(t:A,m:M) //A0,M0
 .input threadAM()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I0
 .input threadStartI()
 
-.decl reachableAM(t:A,m:M)
+.decl reachableAM(t:A,m:M) //A0,M0
 .output reachableAM()
-.decl threadReachableM(m:M)
+.decl threadReachableM(m:M) //M0
 .output threadReachableM()
 
 

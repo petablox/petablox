@@ -1,4 +1,5 @@
 
+// name=kcfa-init-trunk-dlog
 
 .number_type I
 .number_type M
@@ -8,37 +9,37 @@
 
 
 
-.decl initCIC(c:C, i:I, c:C)
+.decl initCIC(c:C, i:I, c:C) //C,I,C
 .input initCIC()
-.decl initCHC(c:C, h:H, c:C)
+.decl initCHC(c:C, h:H, c:C) //C,H,C
 .input initCHC()
 truncCKC(c:C, k:K, c:C) input 	# K is the domain of integers
 IK(i:I, k:K) input 				#the parametric relation
-.decl HK(h:H, k:K)
+.decl HK(h:H, k:K) //H,K
 .input HK()
-.decl IM(i:I, m:M)
+.decl IM(i:I, m:M) //I,M
 .input IM()
-.decl MI(m:M, i:I)
+.decl MI(m:M, i:I) //M,I
 .input MI()
-.decl MH(m:M, h:H)
+.decl MH(m:M, h:H) //M,H
 .input MH()
-.decl roots(m:M)
+.decl roots(m:M) //M
 .input roots()
 
-.decl CM_1(c:C, m:M)
-.decl CIC_1(c:C, i:I, c:C)
-.decl CIC_2(c:C, i:I, c:C)
-.decl CIC_3(c:C, i:I, c:C)
+.decl CM_1(c:C, m:M) //C,M
+.decl CIC_1(c:C, i:I, c:C) //C,I,C
+.decl CIC_2(c:C, i:I, c:C) //C,I,C
+.decl CIC_3(c:C, i:I, c:C) //C,I,C
 
-.decl CHC_1(c:C, h:H, c:C)
-.decl CHC_2(c:C, h:H, c:C)
-.decl CHC_3(c:C, h:H, c:C)
+.decl CHC_1(c:C, h:H, c:C) //C,H,C
+.decl CHC_2(c:C, h:H, c:C) //C,H,C
+.decl CHC_3(c:C, h:H, c:C) //C,H,C
 
-.decl CM(c:C, m:M)
+.decl CM(c:C, m:M) //C,M
 .output CM()
-.decl CIC(c:C, i:I, c:C)
+.decl CIC(c:C, i:I, c:C) //C,I,C
 .output CIC()
-.decl CHC(c:C, h:H, c:C)
+.decl CHC(c:C, h:H, c:C) //C,H,C
 .output CHC()
 
 

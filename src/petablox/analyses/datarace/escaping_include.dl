@@ -1,4 +1,5 @@
 
+// name=datarace-escaping-include-dlog
 
 .number_type H
 .number_type E
@@ -7,13 +8,13 @@
 
 
 
-.decl escPVH(p:P,v:V,h:H)
+.decl escPVH(p:P,v:V,h:H) //P0,V0,H0
 .input escPVH()
-.decl PE(p:P,e:E)
+.decl PE(p:P,e:E) //P0,E0
 .input PE()
-.decl EV(e:E,v:V)
+.decl EV(e:E,v:V) //E0,V0
 .input EV()
-.decl EH(e:E,h:H)
+.decl EH(e:E,h:H) //E0,H0
 .output EH()
 
 EH(e,h) :- PE(p,e), EV(e,v), escPVH(p,v,h).

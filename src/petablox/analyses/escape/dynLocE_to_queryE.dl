@@ -1,11 +1,12 @@
+// name=dynLocE-queryE-dlog
 
 .number_type E
 
 
 
-.decl dynLocE(e:E)
+.decl dynLocE(e:E) //E0
 .input dynLocE()
-.decl queryE(e:E)
+.decl queryE(e:E) //E0
 .output queryE()
 
 

@@ -1,4 +1,5 @@
 
+// name=datarace-escaping-exclude-dlog
 
 .number_type H
 .number_type E
@@ -6,11 +7,11 @@
 
 
 
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl EV(e:E,v:V)
+.decl EV(e:E,v:V) //E0,V0
 .input EV()
-.decl EH(e:E,h:H)
+.decl EH(e:E,h:H) //E0,H0
 .output EH()
 
 EH(e,h) :- EV(e,v), VH(v,h).

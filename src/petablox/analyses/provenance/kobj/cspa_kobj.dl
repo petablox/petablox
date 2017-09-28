@@ -1,5 +1,6 @@
 
 
+// name=pro-cspa-kobj-dlog
 
 .number_type F
 .number_type H
@@ -12,154 +13,154 @@
 
 
 
-.decl HT(h:H,t:T)
+.decl HT(h:H,t:T) //H0,T1
 .input HT()
-.decl cha(n:M,t:T,m:M)
+.decl cha(n:M,t:T,m:M) //M1,T1,M0
 .input cha()
-.decl sub(t1:T,t2:T)
+.decl sub(t1:T,t2:T) //T1,T0
 .input sub()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M,I
 .input MI()
-.decl statIM(i:I,m:M)
+.decl statIM(i:I,m:M) //I,M
 .input statIM()
-.decl specIM(i:I,m:M)
+.decl specIM(i:I,m:M) //I,M
 .input specIM()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I,M
 .input virtIM()
 
-.decl MobjValAsgnInst(m:M,l:V,h:H)
+.decl MobjValAsgnInst(m:M,l:V,h:H) //M,V,H
 .input MobjValAsgnInst()
-.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.decl MobjVarAsgnInst(m:M,l:V,r:V) //M,V,V
 .input MobjVarAsgnInst()
-.decl MgetInstFldInst(m:M,l:V,b:V,f:F)
+.decl MgetInstFldInst(m:M,l:V,b:V,f:F) //M,V,V,F
 .input MgetInstFldInst()
-.decl MputInstFldInst(m:M,b:V,f:F,r:V)
+.decl MputInstFldInst(m:M,b:V,f:F,r:V) //M,V,F,V
 .input MputInstFldInst()
-.decl MgetStatFldInst(m:M,l:V,f:F)
+.decl MgetStatFldInst(m:M,l:V,f:F) //M,V,F
 .input MgetStatFldInst()
-.decl MputStatFldInst(m:M,f:F,r:V)
+.decl MputStatFldInst(m:M,f:F,r:V) //M,F,V
 .input MputStatFldInst()
 
-.decl clsForNameIT(i:I,t:T)
+.decl clsForNameIT(i:I,t:T) //I0,T0
 .input clsForNameIT()
-.decl objNewInstIH(i:I,h:H)
+.decl objNewInstIH(i:I,h:H) //I0,H0
 .input objNewInstIH()
-.decl objNewInstIM(i:I,m:M)
+.decl objNewInstIM(i:I,m:M) //I0,M0
 .input objNewInstIM()
-.decl conNewInstIH(i:I,h:H)
+.decl conNewInstIH(i:I,h:H) //I0,H0
 .input conNewInstIH()
-.decl conNewInstIM(i:I,m:M)
+.decl conNewInstIM(i:I,m:M) //I0,M0
 .input conNewInstIM()
-.decl aryNewInstIH(i:I,h:H)
+.decl aryNewInstIH(i:I,h:H) //I0,H0
 .input aryNewInstIH()
 
-.decl RobjValAsgnInst(c:C,l:V,h:H)
+.decl RobjValAsgnInst(c:C,l:V,h:H) //C,V,H
 .output RobjValAsgnInst()
-.decl RobjVarAsgnInst(c:C,l:V,r:V)
+.decl RobjVarAsgnInst(c:C,l:V,r:V) //C,V,V
 .output RobjVarAsgnInst()
-.decl RgetInstFldInst(c:C,l:V,b:V,f:F)
+.decl RgetInstFldInst(c:C,l:V,b:V,f:F) //C,V,V,F
 .output RgetInstFldInst()
-.decl RputInstFldInst(c:C,b:V,f:F,r:V)
+.decl RputInstFldInst(c:C,b:V,f:F,r:V) //C,V,F,V
 .output RputInstFldInst()
-.decl RgetStatFldInst(c:C,l:V,f:F)
+.decl RgetStatFldInst(c:C,l:V,f:F) //C,V,F
 .output RgetStatFldInst()
-.decl RputStatFldInst(c:C,f:F,r:V)
+.decl RputStatFldInst(c:C,f:F,r:V) //C,F,V
 .output RputStatFldInst()
 
-.decl classT(t:T)
+.decl classT(t:T) //T
 .input classT()
-.decl staticTM(t:T,m:M)
+.decl staticTM(t:T,m:M) //T,M
 .input staticTM()
-.decl staticTF(t:T,f:F)
+.decl staticTF(t:T,f:F) //T,F
 .input staticTF()
-.decl clinitTM(t:T,m:M)
+.decl clinitTM(t:T,m:M) //T,M
 .input clinitTM()
-.decl MmethArg(m:M,n:Z,v:V)
+.decl MmethArg(m:M,n:Z,v:V) //M0,Z0,V0
 .input MmethArg()
-.decl MspcMethArg(m:M,v:V)
+.decl MspcMethArg(m:M,v:V) //M0,V0
 .input MspcMethArg()
-.decl IinvkArg(i:I,n:Z,v:V)
+.decl IinvkArg(i:I,n:Z,v:V) //I0,Z0,V1
 .input IinvkArg()
-.decl IinvkArg0(i:I,v:V)
+.decl IinvkArg0(i:I,v:V) //I0,V1
 .input IinvkArg0()
-.decl IinvkRet(i:I,n:Z,v:V)
+.decl IinvkRet(i:I,n:Z,v:V) //I0,Z0,V0
 .input IinvkRet()
-.decl argCopy(i:I,u:V,m:M,v:V)
+.decl argCopy(i:I,u:V,m:M,v:V) //I0,V1,M0,V0
 .input argCopy()
-.decl retCopy(i:I,u:V,m:M,v:V)
+.decl retCopy(i:I,u:V,m:M,v:V) //I0,V0,M0,V1
 .input retCopy()
-.decl VCfilter(v:V,c:C)
+.decl VCfilter(v:V,c:C) //V,C
 .input VCfilter()
 
-.decl CH(c:C,h:H)
+.decl CH(c:C,h:H) //C,H
 .input CH()
-.decl epsilonM(m:M)
+.decl epsilonM(m:M) //M
 .input epsilonM()
-.decl kobjSenM(m:M)
+.decl kobjSenM(m:M) //M
 .input kobjSenM()
-.decl ctxtCpyM(m:M)
+.decl ctxtCpyM(m:M) //M
 .input ctxtCpyM()
 
-.decl IHM(i:I,h:H,m:M)
+.decl IHM(i:I,h:H,m:M) //I,H,M
 .output IHM()
-.decl reachableT(t:T)
+.decl reachableT(t:T) //T
 .output reachableT()
 
-.decl DIC(c:C,i:I,c:C)
+.decl DIC(c:C,i:I,c:C) //C,I,C
 .output DIC()
-.decl DIH(c:C,i:I,h:H)
+.decl DIH(c:C,i:I,h:H) //C,I,H
 .output DIH()
-.decl DI(c:C,i:I)
+.decl DI(c:C,i:I) //C,I
 .output DI()
 
-.decl DVDV(c:C,u:V,d:C,v:V)
+.decl DVDV(c:C,u:V,d:C,v:V) //C0,V0,C1,V1
 .output DVDV()
 
-.decl ctxtInsIHM(i:I,h:H,m:M)
+.decl ctxtInsIHM(i:I,h:H,m:M) //I,H,M
 .output ctxtInsIHM()
-.decl kobjSenIHM(i:I,h:H,m:M)
+.decl kobjSenIHM(i:I,h:H,m:M) //I,H,M
 .output kobjSenIHM()
 
-.decl kobjSenICM(i:I,c:C,m:M)
+.decl kobjSenICM(i:I,c:C,m:M) //I,C,M
 .output kobjSenICM()
 
-.decl ctxtInsSpecIM(i:I,m:M)
+.decl ctxtInsSpecIM(i:I,m:M) //I,M
 .output ctxtInsSpecIM()
-.decl kobjSenSpecIM(i:I,m:M)
+.decl kobjSenSpecIM(i:I,m:M) //I,M
 .output kobjSenSpecIM()
 
-.decl ctxtInsStatIM(i:I,m:M)
+.decl ctxtInsStatIM(i:I,m:M) //I,M
 .output ctxtInsStatIM()
-.decl ctxtCpyStatIM(i:I,m:M)
+.decl ctxtCpyStatIM(i:I,m:M) //I,M
 .output ctxtCpyStatIM()
 
-.decl reachableCI(c:C,i:I)
+.decl reachableCI(c:C,i:I) //C,I
 .output reachableCI()
-.decl reachableCM(c:C,m:M)
+.decl reachableCM(c:C,m:M) //C,M
 .output reachableCM()
 
-.decl rootCM(c:C,m:M)
+.decl rootCM(c:C,m:M) //C,M
 .output rootCM()
-.decl CICM(c:C,i:I,d:C,m:M)
+.decl CICM(c:C,i:I,d:C,m:M) //C,I,C,M
 .output CICM()
-.decl CMCM(c:C,m:M,d:C,n:M)
+.decl CMCM(c:C,m:M,d:C,n:M) //C,M,C,M
 .output CMCM()
 
-.decl CVC(c1:C,v:V,c2:C)
+.decl CVC(c1:C,v:V,c2:C) //C,V,C
 .output CVC()
 
-.decl FC(f:F,c:C)
+.decl FC(f:F,c:C) //F,C
 .output FC()
-.decl CFC(c1:C,f:F,c2:C)
+.decl CFC(c1:C,f:F,c2:C) //C,F,C
 .output CFC()
 
-.decl CHC(c:C,h:H,d:C)
+.decl CHC(c:C,h:H,d:C) //C,H,C
 .input CHC()
-.decl COC(c:C,h:H,d:C)
+.decl COC(c:C,h:H,d:C) //C,H,C
 .input COC()
 
-.decl CCMatch(c:C,d:C)
-.decl CCM(c:C,d:C,m:M)
+.decl CCMatch(c:C,d:C) //C,C
+.decl CCM(c:C,d:C,m:M) //C,C,M
 
 
 CCMatch(c2,c3) :- CHC(c1,h,c2), COC(c1,h,c3).

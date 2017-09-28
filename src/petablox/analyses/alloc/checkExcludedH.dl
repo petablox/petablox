@@ -1,13 +1,14 @@
+// name=checkExcludedH-dlog
 
 .number_type M
 .number_type H
 
 
-.decl checkExcludedM(m:M)
+.decl checkExcludedM(m:M) //M0
 .input checkExcludedM()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M0,H0
 .input MH()
-.decl checkExcludedH(h:H)
+.decl checkExcludedH(h:H) //H0
 .output checkExcludedH()
 
 checkExcludedH(h) :- MH(m,h), checkExcludedM(m).

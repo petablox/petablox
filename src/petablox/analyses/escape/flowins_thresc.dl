@@ -1,4 +1,5 @@
 
+// name=flowins-thresc-dlog
 
 .number_type M
 .number_type V
@@ -10,27 +11,27 @@
 
 
 
-.decl queryE(e:E)
+.decl queryE(e:E) //E
 .input queryE()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl FH(f:F,h:H)
+.decl FH(f:F,h:H) //F,H
 .input FH()
-.decl HFH(h1:H,f:F,h2:H)
+.decl HFH(h1:H,f:F,h2:H) //H0,F0,H1
 .input HFH()
-.decl MmethArg(m:M,z:Z,v:V)
+.decl MmethArg(m:M,z:Z,v:V) //M,Z,V
 .input MmethArg()
-.decl MV(m:M,v:V)
+.decl MV(m:M,v:V) //M,V
 .input MV()
-.decl MP(m:M,p:P)
+.decl MP(m:M,p:P) //M,P
 .input MP()
-.decl EV(e:E,v:V)
+.decl EV(e:E,v:V) //E,V
 .input EV()
-.decl escH(o:H)
+.decl escH(o:H) //H
 .output escH()
-.decl escPVH(p:P,v:V,h:H)
+.decl escPVH(p:P,v:V,h:H) //P,V,H
 .output escPVH()
-.decl escE(e:E)
+.decl escE(e:E) //E
 .output escE()
 
 

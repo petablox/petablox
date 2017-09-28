@@ -1,15 +1,16 @@
 
+// name=thread-reachableL-dlog
 
 .number_type M
 .number_type L
 
 
 
-.decl threadReachableM(m:M)
+.decl threadReachableM(m:M) //M0
 .input threadReachableM()
-.decl ML(m:M,l:L)
+.decl ML(m:M,l:L) //M0,L0
 .input ML()
-.decl threadReachableL(l:L)
+.decl threadReachableL(l:L) //L0
 .output threadReachableL()
 
 

@@ -1,4 +1,5 @@
 
+// name=datarace-dlog
 
 .number_type A
 .number_type F
@@ -10,61 +11,61 @@
 
 
 
-.decl writeE(e:E)
+.decl writeE(e:E) //E0
 .input writeE()
-.decl ME(m:M,e:E)
+.decl ME(m:M,e:E) //M0,E0
 .input ME()
-.decl EF(e:E,f:F)
+.decl EF(e:E,f:F) //E0,F0
 .input EF()
-.decl statF(f:F)
+.decl statF(f:F) //F0
 .input statF()
-.decl reachableAM(a:A,m:M)
+.decl reachableAM(a:A,m:M) //A0,M0
 .input reachableAM()
-.decl checkExcludedM(m:M)
+.decl checkExcludedM(m:M) //M0
 .input checkExcludedM()
-.decl excludeInitMethods(k:K)
+.decl excludeInitMethods(k:K) //K0
 .input excludeInitMethods()
-.decl initM(m:M)
+.decl initM(m:M) //M0
 .input initM()
 
-.decl statE(e:E)
-.decl rdOrWrAEF(a:A,e:E,f:F)
-.decl onlyWrAEF(a:A,e:E,f:F)
-.decl relevantAM(a:A,m:M)
-.decl relevantAE(a:A,e:E)
-.decl excludeInitM(m:M)
+.decl statE(e:E) //E0
+.decl rdOrWrAEF(a:A,e:E,f:F) //A0,E0,F0
+.decl onlyWrAEF(a:A,e:E,f:F) //A0,E0,F0
+.decl relevantAM(a:A,m:M) //A0,M0
+.decl relevantAE(a:A,e:E) //A0,E0
+.decl excludeInitM(m:M) //M0
 
 
-.decl startingRace(a1:A,e1:E,a2:A,e2:E)
+.decl startingRace(a1:A,e1:E,a2:A,e2:E) //A0,E0,A1,E1
 
 
-.decl EH(e:E,h:H)
+.decl EH(e:E,h:H) //E0,H0
 .input EH()
-.decl escapingRace(a1:A,e1:E,a2:A,e2:E)
+.decl escapingRace(a1:A,e1:E,a2:A,e2:E) //A0,E0,A1,E1
 .output escapingRace()
 
 
-.decl mhe(e:E,a1:A,a2:A)
+.decl mhe(e:E,a1:A,a2:A) //E0,A0,A1
 .input mhe()
-.decl parallelRace(a1:A,e1:E,a2:A,e2:E)
+.decl parallelRace(a1:A,e1:E,a2:A,e2:E) //A0,E0,A1,E1
 .output parallelRace()
 
 
-.decl syncLH(l:L,h:H)
+.decl syncLH(l:L,h:H) //L,H
 .input syncLH()
-.decl unlockedE(t:A,e:E,o:H)
+.decl unlockedE(t:A,e:E,o:H) //A0,E0,H0
 .input unlockedE()
-.decl excludeSameThread(k:K)
+.decl excludeSameThread(k:K) //K0
 .input excludeSameThread()
-.decl guardedE(t:A,e:E,o:H)
-.decl unlikelyRace(a1:A,e1:E,a2:A,e2:E)
+.decl guardedE(t:A,e:E,o:H) //A0,E0,H0
+.decl unlikelyRace(a1:A,e1:E,a2:A,e2:E) //A0,E0,A1,E1
 .output unlikelyRace()
 
-.decl ultimateRace(a1:A,e1:E,a2:A,e2:E)
+.decl ultimateRace(a1:A,e1:E,a2:A,e2:E) //A0,E0,A1,E1
 .output ultimateRace()
-.decl raceEEH(e1:E,e2:E,h:H)
+.decl raceEEH(e1:E,e2:E,h:H) //E0,E1,H0
 .output raceEEH()
-.decl racePairs(e1:E,e2:E)
+.decl racePairs(e1:E,e2:E) //E0,E1
 .output racePairs()
 
 

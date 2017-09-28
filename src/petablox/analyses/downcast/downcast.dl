@@ -1,4 +1,5 @@
 
+// name=downcast-dlog
 
 .number_type H
 .number_type M
@@ -8,32 +9,32 @@
 
 
 
-.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.decl MobjVarAsgnInst(m:M,l:V,r:V) //M,V,V
 .input MobjVarAsgnInst()
-.decl reachableCM(c:C,m:M)
+.decl reachableCM(c:C,m:M) //C,M
 .input reachableCM()
-.decl reachableLR(l:V,r:V)
-.decl CVC(c:C,v:V,o:C)
+.decl reachableLR(l:V,r:V) //V,V
+.decl CVC(c:C,v:V,o:C) //C,V,C
 .input CVC()
-.decl CH(c:C,h:H)
+.decl CH(c:C,h:H) //C,H
 .input CH()
-.decl sub(s:T,t:T)
+.decl sub(s:T,t:T) //T1,T0
 .input sub()
-.decl VT(v:V,t:T)
+.decl VT(v:V,t:T) //V0,T0
 .input VT()
-.decl HT(h:H,t:T)
+.decl HT(h:H,t:T) //H0,T1
 .input HT()
-.decl checkExcludedM(m:M)
+.decl checkExcludedM(m:M) //M
 .input checkExcludedM()
-.decl ptsVH(v:V,h:H)
+.decl ptsVH(v:V,h:H) //V,H
 .output ptsVH()
-.decl ptsVT(v:V,t:T)
+.decl ptsVT(v:V,t:T) //V,T
 .output ptsVT()
-.decl downcast(v:V,t:T)
+.decl downcast(v:V,t:T) //V,T
 .output downcast()
-.decl unsafeDowncast(v:V,t:T)
+.decl unsafeDowncast(v:V,t:T) //V,T
 .output unsafeDowncast()
-.decl safeDowncast(v:V,t:T)
+.decl safeDowncast(v:V,t:T) //V,T
 .output safeDowncast()
 
 reachableLR(l,r) :- MobjVarAsgnInst(m,l,r), reachableCM(_,m), !checkExcludedM(m).

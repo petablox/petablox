@@ -1,5 +1,6 @@
 
 
+// name=cipa-0cfa-dlog
 
 .number_type T
 .number_type F
@@ -11,107 +12,106 @@
 
 
 
-.decl VT(v:V,t:T)
+.decl VT(v:V,t:T) //V0,T0
 .input VT()
-.decl HT(h:H,t:T)
+.decl HT(h:H,t:T) //H0,T1
 .input HT()
-.decl cha(n:M,t:T,m:M)
+.decl cha(n:M,t:T,m:M) //M1,T1,M0
 .input cha()
-.decl sub(t1:T,t2:T)
+.decl sub(t1:T,t2:T) //T1,T0
 .input sub()
-.decl MmethArg(m:M,n:Z,v:V)
+.decl MmethArg(m:M,n:Z,v:V) //M0,Z0,V0
 .input MmethArg()
-.decl MmethRet(m:M,n:Z,v:V)
+.decl MmethRet(m:M,n:Z,v:V) //M0,Z0,V1
 .input MmethRet()
-.decl IinvkArg0(i:I,v:V)
+.decl IinvkArg0(i:I,v:V) //I0,V1
 .input IinvkArg0()
-.decl IinvkArg(i:I,n:Z,v:V)
+.decl IinvkArg(i:I,n:Z,v:V) //I0,Z0,V1
 .input IinvkArg()
-.decl IinvkRet(i:I,n:Z,v:V)
+.decl IinvkRet(i:I,n:Z,v:V) //I0,Z0,V0
 .input IinvkRet()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M,I
 .input MI()
-.decl statIM(i:I,m:M)
+.decl statIM(i:I,m:M) //I,M
 .input statIM()
-.decl specIM(i:I,m:M)
+.decl specIM(i:I,m:M) //I,M
 .input specIM()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I,M
 .input virtIM()
-.decl MentPt(m:M)
+.decl MentPt(m:M) //M
 .input MentPt()
 
-.decl MobjValAsgnInst(m:M,l:V,h:H)
+.decl MobjValAsgnInst(m:M,l:V,h:H) //M0,V0,H0
 .input MobjValAsgnInst()
-.decl MobjVarAsgnInst(m:M,l:V,r:V)
+.decl MobjVarAsgnInst(m:M,l:V,r:V) //M0,V0,V1
 .input MobjVarAsgnInst()
-.decl MgetInstFldInst(m:M,l:V,b:V,f:F)
+.decl MgetInstFldInst(m:M,l:V,b:V,f:F) //M0,V0,V1,F0
 .input MgetInstFldInst()
-.decl MputInstFldInst(m:M,b:V,f:F,r:V)
+.decl MputInstFldInst(m:M,b:V,f:F,r:V) //M0,V0,F0,V1
 .input MputInstFldInst()
-.decl MgetStatFldInst(m:M,l:V,f:F)
+.decl MgetStatFldInst(m:M,l:V,f:F) //M0,V0,F0
 .input MgetStatFldInst()
-.decl MputStatFldInst(m:M,f:F,r:V)
+.decl MputStatFldInst(m:M,f:F,r:V) //M0,F0,V0
 .input MputStatFldInst()
 
-.decl clsForNameIT(i:I,t:T)
+.decl clsForNameIT(i:I,t:T) //I0,T0
 .input clsForNameIT()
-.decl objNewInstIH(i:I,h:H)
+.decl objNewInstIH(i:I,h:H) //I0,H0
 .input objNewInstIH()
-.decl objNewInstIM(i:I,m:M)
+.decl objNewInstIM(i:I,m:M) //I0,M0
 .input objNewInstIM()
-.decl conNewInstIH(i:I,h:H)
+.decl conNewInstIH(i:I,h:H) //I0,H0
 .input conNewInstIH()
-.decl conNewInstIM(i:I,m:M)
+.decl conNewInstIM(i:I,m:M) //I0,M0
 .input conNewInstIM()
-.decl aryNewInstIH(i:I,h:H)
+.decl aryNewInstIH(i:I,h:H) //I0,H0
 .input aryNewInstIH()
 
-.decl classT(t:T)
+.decl classT(t:T) //T
 .input classT()
-.decl staticTM(t:T,m:M)
+.decl staticTM(t:T,m:M) //T,M
 .input staticTM()
-.decl staticTF(t:T,f:F)
+.decl staticTF(t:T,f:F) //T,F
 .input staticTF()
-.decl clinitTM(t:T,m:M)
+.decl clinitTM(t:T,m:M) //T,M
 .input clinitTM()
 
 
-.decl IHM(i:I,h:H,m:M)
+.decl IHM(i:I,h:H,m:M) //I,H,M
 .output IHM()
-.decl VV(v1:V,v2:V)
-.decl specIMV(i:I,m:M,v:V)
+.decl VV(v1:V,v2:V) //V,V
+.decl specIMV(i:I,m:M,v:V) //I,M,V
 
-.decl objValAsgnInst(l:V,h:H)
-.decl objVarAsgnInst(l:V,r:V)
-.decl getInstFldInst(l:V,b:V,f:F)
-.decl putInstFldInst(b:V,f:F,r:V)
-.decl getStatFldInst(l:V,f:F)
-.decl putStatFldInst(f:F,r:V)
+.decl objValAsgnInst(l:V,h:H) //V,H
+.decl objVarAsgnInst(l:V,r:V) //V,V
+.decl getInstFldInst(l:V,b:V,f:F) //V,V,F
+.decl putInstFldInst(b:V,f:F,r:V) //V,F,V
+.decl getStatFldInst(l:V,f:F) //V,F
+.decl putStatFldInst(f:F,r:V) //F,V
 
-.decl reachableT(t:T)
+.decl reachableT(t:T) //T
 .output reachableT()
-.decl VHfilter(v:V,h:H)
+.decl VHfilter(v:V,h:H) //V,H
 .output VHfilter()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V,H
 .output VH()
-.decl FH(f:F,h:H)
+.decl FH(f:F,h:H) //F,H
 .output FH()
-.decl HFH(h1:H,f:F,h2:H)
+.decl HFH(h1:H,f:F,h2:H) //H,F,H
 .output HFH()
-.decl rootM(m:M)
+.decl rootM(m:M) //M
 .output rootM()
-.decl reachableI(i:I)
+.decl reachableI(i:I) //I
 .output reachableI()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M
 .output reachableM()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I,M
 .output IM()
-.decl MM(m:M,n:M)
+.decl MM(m:M,n:M) //M,M
 .output MM()
 
 
 VHfilter(v,h) :- VT(v,t), HT(h,s), sub(s,t).
-VHfilter(_,0).
 
 IHM(i,h,m2) :- virtIM(i,m1), HT(h,t), cha(m1,t,m2).
 
@@ -131,6 +131,7 @@ VV(v,u) :- IinvkArg(i,z,u), IM(i,m), MmethArg(m,z,v).
 VV(u,v) :- IinvkRet(i,z,u), IM(i,m), MmethRet(m,z,v).
 
 VH(u,h) :- VV(u,v), VH(v,h), VHfilter(u,h).
+VH(u,0) :- VV(u,v), VH(v,0).
 
 objValAsgnInst(l,h)   :- reachableM(m), MobjValAsgnInst(m,l,h).
 objVarAsgnInst(l,r)   :- reachableM(m), MobjVarAsgnInst(m,l,r).
@@ -147,17 +148,29 @@ reachableM(m) :- reachableI(i), objNewInstIM(i,m).
 reachableM(m) :- reachableI(i), conNewInstIM(i,m).
 
 VH(v,h)  :- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,h), VHfilter(v,h).
+VH(v,0)  :- reachableI(i), objNewInstIM(i,m), MmethArg(m,0,v), objNewInstIH(i,0).
 VH(v,h)  :- reachableI(i), objNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
 VH(v,h2) :- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,h2), VHfilter(v,h2).
 VH(v,h)  :- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,h), VHfilter(v,h).
 VH(v,h)  :- reachableI(i), conNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
 VH(v,h)  :- reachableI(i), aryNewInstIH(i,h), IinvkRet(i,0,v), VHfilter(v,h).
+VH(v,0)  :- reachableI(i), objNewInstIH(i,0), IinvkRet(i,0,v).
+VH(v,0) :- reachableI(i), conNewInstIM(i,m), IinvkArg(i,1,u), MmethArg(m,1,v), VH(u,h), HFH(h,0,0), VHfilter(v,0).
+VH(v,0)  :- reachableI(i), conNewInstIM(i,m), MmethArg(m,0,v), conNewInstIH(i,0), VHfilter(v,0).
+VH(v,0)  :- reachableI(i), conNewInstIH(i,0), IinvkRet(i,0,v), VHfilter(v,0).
+VH(v,0)  :- reachableI(i), aryNewInstIH(i,0), IinvkRet(i,0,v), VHfilter(v,0).
+
 
 VH(l,h) :- objValAsgnInst(l,h), VHfilter(l,h).
 VH(l,h) :- objVarAsgnInst(l,r), VH(r,h), VHfilter(l,h).
-VH(l,h2) :- getInstFldInst(l,b,f), VH(b,h1), HFH(h1,f,h2), VHfilter(l,h2). split
-HFH(h1,f,h2) :- putInstFldInst(b,f,r), VH(b,h1), VH(r,h2). split
+VH(l,h2) :- getInstFldInst(l,b,f), VH(b,h1), HFH(h1,f,h2), VHfilter(l,h2).
+VH(l,0) :- objValAsgnInst(l,0).
+VH(l,0) :- objVarAsgnInst(l,r), VH(r,0).
+VH(l,0) :- getInstFldInst(l,b,f), VH(b,h1), HFH(h1,f,0).
+
+HFH(h1,f,h2) :- putInstFldInst(b,f,r), VH(b,h1), VH(r,h2).
 VH(l,h) :- getStatFldInst(l,f), FH(f,h), VHfilter(l,h).
+VH(l,0) :- getStatFldInst(l,f), FH(f,0).
 FH(f,h) :- putStatFldInst(f,r), VH(r,h).
 
 

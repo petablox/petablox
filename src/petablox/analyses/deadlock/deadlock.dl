@@ -1,4 +1,5 @@
 
+// name=deadlock-dlog
 
 .number_type A
 .number_type L
@@ -7,26 +8,26 @@
 
 
 
-.decl escLH(l:L,o:H)
+.decl escLH(l:L,o:H) //L0,H0
 .input escLH()
-.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L)
+.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L) //A0,L0,A1,L1
 .input mhpTLTL()
-.decl syncTLL(t:A,l1:L,l2:L)
+.decl syncTLL(t:A,l1:L,l2:L) //A0,L0,L1
 .input syncTLL()
-.decl guarded(t1:A,t2:A,l1:L,l3:L)
+.decl guarded(t1:A,t2:A,l1:L,l3:L) //A0,A1,L0,L1
 .input guarded()
-.decl escLL(l1:L,l2:L)
+.decl escLL(l1:L,l2:L) //L0,L3
 .output escLL()
 
-.decl deadlock1(l1:L,l2:L,l3:L,l4:L)
+.decl deadlock1(l1:L,l2:L,l3:L,l4:L) //L0,L1,L2,L3
 .output deadlock1()
-.decl deadlock2(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.decl deadlock2(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L) //A0,L0,L1,A1,L2,L3
 .output deadlock2()
-.decl deadlock3(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.decl deadlock3(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L) //A0,L0,L1,A1,L2,L3
 .output deadlock3()
-.decl deadlock4(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.decl deadlock4(t1:A,l1:L,l2:L,t2:A,l3:L,l4:L) //A0,L0,L1,A1,L2,L3
 .output deadlock4()
-.decl deadlock (t1:A,l1:L,l2:L,t2:A,l3:L,l4:L)
+.decl deadlock (t1:A,l1:L,l2:L,t2:A,l3:L,l4:L) //A0,L0,L1,A1,L2,L3
 .output deadlock ()
 
 

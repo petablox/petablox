@@ -1,5 +1,6 @@
 
 
+// name=cspa-0cfa-dlog
 
 .number_type F
 .number_type H
@@ -10,40 +11,40 @@
 
 
 
-.decl CH(c:C,h:H)
+.decl CH(c:C,h:H) //C0,H0
 .input CH()
-.decl VH(v:V,h:H)
+.decl VH(v:V,h:H) //V0,H0
 .input VH()
-.decl FH(f:F,h:H)
+.decl FH(f:F,h:H) //F0,H0
 .input FH()
-.decl HFH(h1:H,f:F,h2:H)
+.decl HFH(h1:H,f:F,h2:H) //H0,F0,H1
 .input HFH()
-.decl rootM(m:M)
+.decl rootM(m:M) //M0
 .input rootM()
-.decl reachableI(i:I)
+.decl reachableI(i:I) //I0
 .input reachableI()
-.decl reachableM(m:M)
+.decl reachableM(m:M) //M0
 .input reachableM()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl MM(m:M,n:M)
+.decl MM(m:M,n:M) //M0,M1
 .input MM()
 
-.decl CVC(c1:C,v:V,c2:C)
+.decl CVC(c1:C,v:V,c2:C) //C0,V0,C1
 .output CVC()
-.decl FC(f:F,c:C)
+.decl FC(f:F,c:C) //F0,C0
 .output FC()
-.decl CFC(c1:C,f:F,c2:C)
+.decl CFC(c1:C,f:F,c2:C) //C0,F0,C1
 .output CFC()
-.decl rootCM(c:C,m:M)
+.decl rootCM(c:C,m:M) //C,M
 .output rootCM()
-.decl reachableCI(c:C,i:I)
+.decl reachableCI(c:C,i:I) //C0,I0
 .output reachableCI()
-.decl reachableCM(c:C,m:M)
+.decl reachableCM(c:C,m:M) //C0,M0
 .output reachableCM()
-.decl CICM(c:C,i:I,d:C,m:M)
+.decl CICM(c:C,i:I,d:C,m:M) //C0,I0,C1,M0
 .output CICM()
-.decl CMCM(c:C,m:M,d:C,n:M)
+.decl CMCM(c:C,m:M,d:C,n:M) //C0,M0,C1,M1
 .output CMCM()
 
 

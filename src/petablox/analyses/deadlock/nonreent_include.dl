@@ -1,4 +1,5 @@
 
+// name=deadlock-nonreent-include-dlog
 
 .number_type M
 .number_type V
@@ -9,35 +10,35 @@
 
 
 
-.decl ML(m:M,l:L)
+.decl ML(m:M,l:L) //M0,L0
 .input ML()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl threadAM(a:A,m:M)
+.decl threadAM(a:A,m:M) //A0,M0
 .input threadAM()
-.decl IM(i:I,n:M)
+.decl IM(i:I,n:M) //I0,M0
 .input IM()
-.decl threadStartI(i:I)
+.decl threadStartI(i:I) //I0
 .input threadStartI()
-.decl syncLH(l:L,o:H)
+.decl syncLH(l:L,o:H) //L0,H0
 .input syncLH()
-.decl transLL(l1:L,l2:L)
+.decl transLL(l1:L,l2:L) //L0,L1
 .input transLL()
-.decl transLI(l:L,i:I)
+.decl transLI(l:L,i:I) //L0,I0
 .input transLI()
 
-.decl mayAliasedUptoL(n:L)
-.decl notAliasedUptoL(n:L)
+.decl mayAliasedUptoL(n:L) //L0
+.decl notAliasedUptoL(n:L) //L0
 
-.decl mayAliasedUptoLI(n:L,i:I)
-.decl notAliasedUptoLI(n:L,i:I)
+.decl mayAliasedUptoLI(n:L,i:I) //L0,I0
+.decl notAliasedUptoLI(n:L,i:I) //L0,I0
 
-.decl syncML(m:M,n:L)
-.decl syncIL(i:I,n:L)
+.decl syncML(m:M,n:L) //M0,L0
+.decl syncIL(i:I,n:L) //I0,L0
 
-.decl syncMLL(m:M,l1:L,l2:L)
-.decl syncILL(i:I,l1:L,l2:L)
-.decl syncTLL(t:A,l1:L,l2:L)
+.decl syncMLL(m:M,l1:L,l2:L) //M0,L0,L1
+.decl syncILL(i:I,l1:L,l2:L) //I0,L0,L1
+.decl syncTLL(t:A,l1:L,l2:L) //A0,L0,L1
 .output syncTLL()
 
 

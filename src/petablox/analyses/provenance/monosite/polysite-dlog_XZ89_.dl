@@ -1,27 +1,28 @@
+// name=polysite-dlog_XZ89_
 .number_type M
 .number_type I
 .number_type C
 
 
-.decl CICM(c:C,i:I,d:C,m:M)
+.decl CICM(c:C,i:I,d:C,m:M) //C0,I0,C1,M0
 .input CICM()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I0,M0
 .input virtIM()
-.decl reachableCI(c:C,i:I)
+.decl reachableCI(c:C,i:I) //C0,I0
 .input reachableCI()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I0
 .input checkExcludedI()
 
-.decl virtI(i:I)
+.decl virtI(i:I) //I0
 .output virtI()
-.decl polySite(i:I)
+.decl polySite(i:I) //I0
 .output polySite()
-.decl insvIM(i:I,m:M)
+.decl insvIM(i:I,m:M) //I0,M0
 .output insvIM()
 
-.decl insvIM_XZ89_0(i:I,m:M,v_XZ89_0:C,v_XZ89_1:C)
+.decl insvIM_XZ89_0(i:I,m:M,v_XZ89_0:C,v_XZ89_1:C) //I0,M0,C0,C1
 .output insvIM_XZ89_0()
-.decl polySite_XZ89_3(i:I,m1:M,m2:M)
+.decl polySite_XZ89_3(i:I,m1:M,m2:M) //I0,M0,M1
 .output polySite_XZ89_3()
 
 insvIM(i,m) :- CICM(_,i,_,m).

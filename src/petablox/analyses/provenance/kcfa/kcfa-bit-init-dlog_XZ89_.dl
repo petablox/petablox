@@ -1,3 +1,4 @@
+// name=kcfa-bit-init-dlog_XZ89_
 .number_type I
 .number_type M
 .number_type K
@@ -5,65 +6,65 @@
 .number_type H
 
 
-.decl initCIC(c:C,i:I,c:C)
+.decl initCIC(c:C,i:I,c:C) //C0,I0,C1
 .input initCIC()
-.decl initCHC(c:C,h:H,c:C)
+.decl initCHC(c:C,h:H,c:C) //C0,H0,C1
 .input initCHC()
-.decl truncCKC(c:C,k:K,c:C)
+.decl truncCKC(c:C,k:K,c:C) //C0,K0,C1
 .input truncCKC()
-.decl IM(i:I,m:M)
+.decl IM(i:I,m:M) //I0,M0
 .input IM()
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl MH(m:M,h:H)
+.decl MH(m:M,h:H) //M0,H0
 .input MH()
-.decl CL(c:C,k:K)
+.decl CL(c:C,k:K) //C0,K0
 .input CL()
-.decl AllowI(i:I,k:K)
+.decl AllowI(i:I,k:K) //I0,K0
 .input AllowI()
-.decl DenyI(i:I,k:K)
+.decl DenyI(i:I,k:K) //I0,K0
 .input DenyI()
-.decl AllowH(h:H,k:K)
+.decl AllowH(h:H,k:K) //H0,K0
 .input AllowH()
-.decl DenyH(h:H,k:K)
+.decl DenyH(h:H,k:K) //H0,K0
 .input DenyH()
-.decl roots(m:M)
+.decl roots(m:M) //M0
 .input roots()
 
-.decl CIC(c:C,i:I,c:C)
+.decl CIC(c:C,i:I,c:C) //C0,I0,C1
 .output CIC()
-.decl CM(c:C,m:M)
+.decl CM(c:C,m:M) //C0,M0
 .output CM()
-.decl CHC(c:C,h:H,c:C)
+.decl CHC(c:C,h:H,c:C) //C0,H0,C1
 .output CHC()
-.decl CIC_1(c:C,i:I,c:C)
+.decl CIC_1(c:C,i:I,c:C) //C0,I0,C1
 .output CIC_1()
-.decl CIC_2(c:C,i:I,c:C)
+.decl CIC_2(c:C,i:I,c:C) //C0,I0,C1
 .output CIC_2()
-.decl CHC_1(c:C,h:H,c:C)
+.decl CHC_1(c:C,h:H,c:C) //C0,H0,C1
 .output CHC_1()
-.decl CHC_2(c:C,h:H,c:C)
+.decl CHC_2(c:C,h:H,c:C) //C0,H0,C1
 .output CHC_2()
 
-.decl CIC_XZ89_2(c1:C,i:I,c2:C,l:K)
+.decl CIC_XZ89_2(c1:C,i:I,c2:C,l:K) //C0,I0,C1,K0
 .output CIC_XZ89_2()
-.decl CIC_XZ89_4(c1:C,i:I,c2:C,l:K)
+.decl CIC_XZ89_4(c1:C,i:I,c2:C,l:K) //C0,I0,C1,K0
 .output CIC_XZ89_4()
-.decl CIC_2_XZ89_3(c1:C,i:I,c3:C,c2:C,l1:K,l2:K)
+.decl CIC_2_XZ89_3(c1:C,i:I,c3:C,c2:C,l1:K,l2:K) //C0,I0,C1,C2,K0,K1
 .output CIC_2_XZ89_3()
-.decl CHC_2_XZ89_6(c1:C,h:H,c3:C,c2:C,l1:K,l2:K)
+.decl CHC_2_XZ89_6(c1:C,h:H,c3:C,c2:C,l1:K,l2:K) //C0,H0,C1,C2,K0,K1
 .output CHC_2_XZ89_6()
-.decl CHC_XZ89_5(c1:C,h:H,c2:C,l:K)
+.decl CHC_XZ89_5(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output CHC_XZ89_5()
-.decl CM_XZ89_8(c:C,m:M,v_XZ89_0:C,i:I)
+.decl CM_XZ89_8(c:C,m:M,v_XZ89_0:C,i:I) //C0,M0,C1,I0
 .output CM_XZ89_8()
-.decl CHC_XZ89_7(c1:C,h:H,c2:C,l:K)
+.decl CHC_XZ89_7(c1:C,h:H,c2:C,l:K) //C0,H0,C1,K0
 .output CHC_XZ89_7()
-.decl CHC_1_XZ89_10(c1:C,h:H,c2:C,m:M)
+.decl CHC_1_XZ89_10(c1:C,h:H,c2:C,m:M) //C0,H0,C1,M0
 .output CHC_1_XZ89_10()
-.decl CIC_1_XZ89_9(c1:C,i:I,c2:C,m:M)
+.decl CIC_1_XZ89_9(c1:C,i:I,c2:C,m:M) //C0,I0,C1,M0
 .output CIC_1_XZ89_9()
-.decl CM_XZ89_11(m:M)
+.decl CM_XZ89_11(m:M) //M0
 .output CM_XZ89_11()
 
 CM(0,m) :- roots(m).

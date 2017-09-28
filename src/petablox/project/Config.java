@@ -185,6 +185,7 @@ public class Config {
         Utils.mkdirs(outDirName);
         Utils.mkdirs(bddbddbWorkDirName);
         Utils.mkdirs(logicbloxWorkDirName);
+        Utils.mkdirs(souffleWorkDirName);
         check(mode, new String[] { "none", "populate", "analyze" }, "petablox.multipgm.mode");
         if (mode.equals("populate")) populate = true;
         else if (mode.equals("analyze")) analyze = true;

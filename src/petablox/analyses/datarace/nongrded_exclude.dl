@@ -1,4 +1,5 @@
 
+// name=datarace-nongrded-exclude-dlog
 
 .number_type A
 .number_type H
@@ -6,7 +7,7 @@
 
 
 
-.decl unlockedE(t:A,e:E,h:H)
+.decl unlockedE(t:A,e:E,h:H) //A0,E0,H0
 .output unlockedE()
 
 

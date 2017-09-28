@@ -20,7 +20,7 @@ import petablox.project.PetabloxException;
 import petablox.util.Utils;
 
 public class SouffleParser implements IDatalogParser {
-
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see petablox.core.IDatalogParser#parseMetadata(java.io.File)
@@ -33,35 +33,43 @@ public class SouffleParser implements IDatalogParser {
 		
 		DatalogMetadata metadata = new DatalogMetadata();
         metadata.setFileName(file.getAbsolutePath());
+        // TODO: may want to actually put a comment with this in the file
+        metadata.setDlogName(getFileName(file).replaceAll("\\.|_", "-") + "og");
         
         HashSet<String> domNames = new HashSet<String>();
 
         HashMap<String, RelSign> consumedRels = new HashMap<String, RelSign>(),
                                  producedRels = new HashMap<String, RelSign>();
 		try {
-			HashMap<String, RelSign> rels = new HashMap<String, RelSign>();
+			HashMap<String, String> rels = new HashMap<String, String>();
 			HashSet<String> outputRels = new HashSet<String>();
+			HashSet<String> inputRels = new HashSet<String>();
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			
 			String line;
 			while (null != (line = in.readLine())) {
 				line = line.trim();
-				if (line.startsWith(".symbol_type")) {
+				if (line.startsWith(".symbol_type") || line.startsWith(".number_type")) {
 					domNames.add(line.substring(13));
+				} else if (line.startsWith(".type")) {
+					domNames.add(line.substring(6));
 				} else if (line.startsWith(".output")) {
-					outputRels.add(line.substring(8, line.indexOf('(')));
+					outputRels.add(line.substring(8, line.indexOf('(')));	
+				} else if (line.startsWith(".input")) {
+					inputRels.add(line.substring(7, line.indexOf('(')));
 				} else if (line.startsWith(".decl")) {
-					String name = line.substring(5, line.indexOf('('));
-					RelSign r = getRelSign(line.substring(line.indexOf('(') + 1, line.length() - 1));
-					rels.put(name, r);
+					String name = line.substring(6, line.indexOf('('));
+					rels.put(name, line.substring(line.indexOf('(') + 1));
+				} else if (line.startsWith("// name=")) {
+					metadata.setDlogName(line.substring(8));
 				}
 			}
 			
 			for (String s : rels.keySet()) {
 				if (outputRels.contains(s)) {
-					producedRels.put(s, rels.get(s));
-				} else {
-					consumedRels.put(s, rels.get(s));
+					producedRels.put(s, getRelSign(rels.get(s)));
+				} else if (inputRels.contains(s)) {
+					consumedRels.put(s, getRelSign(rels.get(s)));
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -70,6 +78,7 @@ public class SouffleParser implements IDatalogParser {
 		} finally {
 			in.close();
 		}
+
 		metadata.setMajorDomNames(domNames);
 		metadata.setConsumedRels(consumedRels);
 		metadata.setProducedRels(producedRels);
@@ -79,19 +88,26 @@ public class SouffleParser implements IDatalogParser {
 	private RelSign getRelSign(String substring) {
 		Map<String, Integer> index = new HashMap<String, Integer>(); 
 		List<String> l = new LinkedList<String>();
-		String[] fields = substring.split(",");
+		String domain_names = substring.substring(substring.indexOf("//") + 2);
+		String[] fields = domain_names.split(",");
+		boolean hasMinors = areMinorsSpecified(fields);
 		for (String s : fields) {
 			s = s.trim();
 			if (s.isEmpty()) continue;
 			
-			String domain = s.substring(s.indexOf(':') + 1);
-			if (index.containsKey(domain)) {
-				index.put(domain, index.get(domain) + 1);
-			} else {
-				index.put(domain, 0);
+			if (!hasMinors) {
+				if (index.containsKey(s)) {
+					index.put(s, index.get(s) + 1);
+				} else {
+					index.put(s, 0);
+				}
 			}
 			
-			l.add(domain + index.get(domain));
+			if (!hasMinors) {
+				l.add(s + index.get(s));
+			} else {
+				l.add(s);
+			}
 		}
 		String[] toReturn = new String[l.size()];
 		int i = 0;
@@ -105,4 +121,26 @@ public class SouffleParser implements IDatalogParser {
 		return new RelSign(toReturn, varOrder);
 	}
 
+	/**
+     * Checks whether all or no minor numbers are specified.  If they 
+     * are only partially specified an exception is thrown.
+     * 
+     * @param domains the domain specs to check
+     * @return <code>true</code> if some minor is specified or <code>false</code> is none are
+     */
+    private boolean areMinorsSpecified(String[] domains) {
+        boolean hasMinors = false;
+        for (int i = 0; i < domains.length; ++i) {
+            String sigPart = domains[i];
+            hasMinors = hasMinors || Character.isDigit(sigPart.charAt(sigPart.length() - 1));
+        }
+        return hasMinors;
+    }
+	
+    private String getFileName(File f) {
+    		String s = f.getName();
+    		int slash = s.indexOf('/');
+    		if (slash < 0) return s;
+    		else return s.substring(s.indexOf("/"));
+    }
 }

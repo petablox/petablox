@@ -1,13 +1,14 @@
+// name=checkExcludedI-dlog
 
 .number_type I
 .number_type M
 
 
-.decl MI(m:M,i:I)
+.decl MI(m:M,i:I) //M0,I0
 .input MI()
-.decl checkExcludedM(m:M)
+.decl checkExcludedM(m:M) //M0
 .input checkExcludedM()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I0
 .output checkExcludedI()
 
 checkExcludedI(i) :- MI(m,i), checkExcludedM(m).

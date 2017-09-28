@@ -1,4 +1,5 @@
 
+// name=monosite-dlog
 
 .number_type M
 .number_type I
@@ -6,18 +7,18 @@
 
 
 
-.decl CICM(c:C,i:I,d:C,m:M)
+.decl CICM(c:C,i:I,d:C,m:M) //C,I,C,M
 .input CICM()
-.decl virtIM(i:I,m:M)
+.decl virtIM(i:I,m:M) //I,M
 .input virtIM()
-.decl checkExcludedI(i:I)
+.decl checkExcludedI(i:I) //I
 .input checkExcludedI()
-.decl virtI(i:I)
-.decl polySite(i:I)
+.decl virtI(i:I) //I
+.decl polySite(i:I) //I
 .output polySite()
-.decl monoSite(i:I)
+.decl monoSite(i:I) //I
 .output monoSite()
-.decl insvIM(i:I,m:M)
+.decl insvIM(i:I,m:M) //I,M
 
 insvIM(i,m) :- CICM(_,i,_,m).
 

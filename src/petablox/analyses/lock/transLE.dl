@@ -1,16 +1,17 @@
 
+// name=transLE-dlog
 
 .number_type E
 .number_type L
 
 
 
-.decl LE(l:L,e:E)
+.decl LE(l:L,e:E) //L0,E0
 .input LE()
-.decl LL(l1:L,l2:L)
+.decl LL(l1:L,l2:L) //L0,L1
 .input LL()
 
-.decl transLE(l:L,e:E)
+.decl transLE(l:L,e:E) //L0,E0
 .output transLE()
 
 

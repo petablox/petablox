@@ -1,16 +1,17 @@
 
+// name=transLI-dlog
 
 .number_type I
 .number_type L
 
 
 
-.decl LI(l:L,i:I)
+.decl LI(l:L,i:I) //L0,I0
 .input LI()
-.decl LL(l1:L,l2:L)
+.decl LL(l1:L,l2:L) //L0,L1
 .input LL()
 
-.decl transLI(l:L,i:I)
+.decl transLI(l:L,i:I) //L0,I0
 .output transLI()
 
 

@@ -95,6 +95,7 @@ public class ProgramRel extends Rel implements ITask {
             break;
         case SOUFFLE:
         		super.loadFromSouffle(Config.souffleWorkDirName);
+        		break;
         default:
             throw new PetabloxException("Unhandled datalog engine: " + Config.datalogEngine);
         }

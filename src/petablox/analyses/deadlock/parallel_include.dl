@@ -1,4 +1,5 @@
 
+// name=deadlock-parallel-include-dlog
 
 .number_type A
 .number_type L
@@ -6,12 +7,12 @@
 
 
 
-.decl PL(p:P,l:L)
+.decl PL(p:P,l:L) //P0,L0
 .input PL()
-.decl mhp(p:P,t1:A,t2:A)
+.decl mhp(p:P,t1:A,t2:A) //P0,A0,A1
 .input mhp()
-.decl mhl(l:L,t1:A,t2:A)
-.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L)
+.decl mhl(l:L,t1:A,t2:A) //L0,A0,A1
+.decl mhpTLTL(t1:A,l1:L,t2:A,l2:L) //A0,L0,A1,L1
 .output mhpTLTL()
 
 

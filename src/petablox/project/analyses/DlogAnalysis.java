@@ -611,7 +611,7 @@ public class DlogAnalysis extends JavaAnalysis {
     			LogicBloxUtils.addBlock(new File(metadata.getFileName()));
     			break;
     		case SOUFFLE:
-    			// TODO: figure out what to do here
+    			petablox.souffle.Solver.run(metadata.getFileName());
     			break;
     		default:
     			throw new PetabloxException("FIXME: Unhandled datalog engine type: " + datalogEngine);
