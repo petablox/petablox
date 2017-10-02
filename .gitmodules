@@ -14,6 +14,3 @@
 	path = libsrc/soot
 	url = https://github.com/petablox-project/soot.git
 	branch = develop
-[submodule "libsrc/souffle"]
-	path = libsrc/souffle
-  url = https://github.com/oracle/souffle.git
