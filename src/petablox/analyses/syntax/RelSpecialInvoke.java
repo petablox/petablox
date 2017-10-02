@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
  * Relation containing each tuple (i,v,x) such that instance method
  * invocation i is of the form of v.x(...).
  */
-@Petablox(name = "SpecialInvoke", sign = "Invoke0,Var0,MethodID0:Invoke0_Var0xMethodID0")
+@Petablox(name = "SpecialInvoke", sign = "Invoke0,EXPR0,MethodID0:Invoke0_EXPR0xMethodID0")
 public class RelSpecialInvoke extends ProgramRel implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass m) { }
