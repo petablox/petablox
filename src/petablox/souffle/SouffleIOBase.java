@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import petablox.bddbddb.Dom;
 import petablox.bddbddb.Rel;
@@ -51,12 +53,21 @@ public abstract class SouffleIOBase {
 		sb.append("(");
 		
 		int i = 0;
+		Map<String, Integer> m = new HashMap<String, Integer>();
 		for (Dom<?> d : rel.getDoms()) {
-			sb.append(rel.getName() + i);
+			String domainName = d.getName();
+			if (m.containsKey(domainName)) {
+				int index = m.get(domainName);
+				sb.append(domainName + index);
+				m.put(domainName, index + 1);
+			} else {
+				sb.append(domainName + 0);
+				m.put(domainName, 1);
+			}
 			sb.append(":");
 			sb.append(d.getName());
-			i++;
 			
+			i++;
 			if (i != rel.getDoms().length) sb.append(",");
 		}
 		
