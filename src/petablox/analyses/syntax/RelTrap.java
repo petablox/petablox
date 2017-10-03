@@ -18,14 +18,10 @@ public class RelTrap extends ProgramRel implements IMethodVisitor {
     @Override
     public void visit(SootMethod m) {
         if (m.isConcrete()) {
-            for (Trap trap : m.retrieveActiveBody().getTraps()){
+            for (Trap trap : m.getActiveBody().getTraps()){
                 if (trap instanceof JTrap) {
-                    try {
-                        add(m, trap.getException().getType(), trap.getBeginUnit(), trap.getEndUnit(),
-                                trap.getHandlerUnit());
-                    } catch (Exception e) {
-                        System.out.println("WARN: Trap not found " + trap);
-                    }
+                    add(m, trap.getException().getType(), trap.getBeginUnit(), trap.getEndUnit(),
+                            trap.getHandlerUnit());
                 }
             }
         }
