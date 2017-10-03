@@ -32,6 +32,7 @@ public class Config {
     public final static String srcPathName = System.getProperty("petablox.src.path");
     public final static String runIDs = System.getProperty("petablox.run.ids", "0");
     public final static String runtimeJvmargs = System.getProperty("petablox.runtime.jvmargs", "-ea -Xmx1024m");
+    public final static String bytecodeKind = System.getProperty("petablox.bytecode.kind", "none");
 
     // properties concerning how the program's analysis scope is constructed
 

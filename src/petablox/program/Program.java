@@ -107,7 +107,7 @@ public class Program {
             SSAUtilities.doSSA(true, true);
 
         //List<String> excluded = new ArrayList<String>();
-        //Options.v().set_coffi(true);
+
         //Options.v().set_exclude(excluded);
         Options.v().set_include_all(true);
         Options.v().set_keep_line_number(true);
@@ -125,6 +125,9 @@ public class Program {
         Options.v().setPhaseOption("jb.cp-ule", "enabled:" + optimize);
         Options.v().setPhaseOption("jb.ne", "enabled:" + optimize);
         Options.v().setPhaseOption("shimple", "node-elim-opt:" + optimize);
+
+        if (Config.bytecodeKind.equals("coffi"))
+            Options.v().set_coffi(true);
 
         if (Config.reflectKind.equals("external")) {
             ExtReflectResolver extReflectResolver = new ExtReflectResolver();
