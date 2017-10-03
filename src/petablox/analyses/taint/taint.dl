@@ -1,0 +1,58 @@
+// name=taint-dlog
+
+.number_type M
+.number_type MethodID
+.number_type EXPR
+.number_type Invoke
+.number_type P
+.number_type Z
+.number_type Var 
+
+.decl reachableM(m:M) // M
+.input reachableM()
+
+.decl MP(m:M,p:P) // M0,P0
+.input MP()
+.decl AssignInst(p:P,e0:EXPR,e1:EXPR)  // P0,EXPR0,EXPR1
+.input AssignInst()
+.decl InvokeInst(p:P,i:Invoke)  // P0,Invoke0
+.input InvokeInst()
+.decl InterfaceInvoke(i:Invoke,e:EXPR,f:MethodID) // Invoke0,EXPR0,MethodID0
+.input InterfaceInvoke()
+.decl VirtualInvoke(i:Invoke,e:EXPR,f:MethodID) // Invoke0,EXPR0,MethodID0
+.input VirtualInvoke()
+.decl StaticInvoke(i:Invoke,f:MethodID) // Invoke0,MethodID0
+.input StaticInvoke()
+.decl VarExpr(e:EXPR,v:Var) // EXPR0,Var0
+.input VarExpr()
+.decl InvokeExpr(e:EXPR,i:Invoke) // EXPR0,Invoke0
+.input InvokeExpr()
+.decl SpecialInvoke(i:Invoke,e:EXPR,f:MethodID) // Invoke0,EXPR0,MethodID0
+.input SpecialInvoke()
+.decl MethodArg(i:Invoke,z:Z,e:EXPR)   // Invoke0,Z0,EXPR0
+.input MethodArg()
+.decl AddExpr(e0:EXPR,e1:EXPR,e2:EXPR) // EXPR0,EXPR1,EXPR2
+.input AddExpr()
+
+.decl source(f:MethodID)  // MethodID
+.output source()
+.decl sink(f:MethodID)  // MethodID
+.output sink()
+.decl taint_exp(e:EXPR,p:P) // EXPR0,P0
+.output taint_exp()
+.decl taint_var(v:Var,p:P)  // Var0,P0
+.output taint_var()
+
+.decl sql_injection(p0:P,p1:P,e:EXPR) // P0,P1,EXPR0
+.output sql_injection()
+
+source(3).
+sink(3).
+//source("<test.C: int source()>").
+//sink("<test.C: void sink(int)>").
+taint_var(v,p) :- AssignInst(p,e,e0), VarExpr(e,v), InvokeExpr(e0,i), VirtualInvoke(i,_,f), source(f).
+taint_var(v,p) :- AssignInst(_,e,e0), VarExpr(e,v), taint_exp(e0,p).                  
+taint_exp(e,p) :- taint_var(v,p), VarExpr(e,v).
+taint_exp(e,p) :- AddExpr(e,e0,_), taint_exp(e0,p).
+
+sql_injection(p0,p1,e) :- taint_exp(e,p0), InvokeInst(p1,i), VirtualInvoke(i,_,f), sink(f), MethodArg(i,0,e).

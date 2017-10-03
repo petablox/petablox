@@ -1,0 +1,41 @@
+# name=taint-dlog
+
+.include "M.dom"
+.include "MethodID.dom"
+.include "EXPR.dom"
+.include "Invoke.dom"
+.include "P.dom"
+.include "Z.dom"
+.include "Var.dom"
+
+.bddvarorder M0_P0xP1_Invoke0_EXPR0xEXPR1xEXPR2_MethodID0_Var0_Z0
+
+reachableM(m:M) input
+
+# Relational IR
+MP(m:M,p:P) input
+AssignInst(p:P,e0:EXPR0,e1:EXPR1) input
+InvokeInst(p:P,i:Invoke) input
+InterfaceInvoke(i:Invoke,e:EXPR,f:MethodID) input
+VirtualInvoke(i:Invoke,e:EXPR,f:MethodID) input
+StaticInvoke(i:Invoke,f:MethodID) input
+VarExpr(e:EXPR,v:Var) input
+InvokeExpr(e:EXPR,i:Invoke) input
+SpecialInvoke(i:Invoke,e:EXPR,f:MethodID) input
+MethodArg(i:Invoke,z:Z,e:EXPR) input
+AddExpr(e0:EXPR0,e1:EXPR1,e2:EXPR2) input
+
+source(f:MethodID) output
+sink(f:MethodID) output
+taint_exp(e:EXPR,p:P) output
+taint_var(v:Var,p:P) output
+
+sql_injection(p0:P0,p1:P1,e:EXPR) output
+
+source("<test.C: int source()>").
+sink("<test.C: void sink(int)>").
+taint_var(v,p) :- AssignInst(p,e,e0), VarExpr(e,v), InvokeExpr(e0,i), VirtualInvoke(i,_,f), source(f).
+taint_var(v,p) :- AssignInst(_,e,e0), VarExpr(e,v), taint_exp(e0,p).                  
+taint_exp(e,p) :- taint_var(v,p), VarExpr(e,v).
+taint_exp(e,p) :- AddExpr(e,e0,_), taint_exp(e0,p).
+sql_injection(p0,p1,e) :- taint_exp(e,p0), InvokeInst(p1,i), VirtualInvoke(i,_,f), sink(f), MethodArg(i,0,e).
