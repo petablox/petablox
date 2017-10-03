@@ -35,7 +35,7 @@ public class RelSpecialInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JSpecialInvokeExpr) {
             JSpecialInvokeExpr ex = (JSpecialInvokeExpr) e;
-            add(e, ex.getBase(), ex.getMethodRef());
+            add(e, ex.getBase(), ex.getMethodRef().getSignature());
         }
     }
 }

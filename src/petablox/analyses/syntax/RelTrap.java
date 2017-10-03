@@ -20,8 +20,12 @@ public class RelTrap extends ProgramRel implements IMethodVisitor {
         if (m.isConcrete()) {
             for (Trap trap : m.retrieveActiveBody().getTraps()){
                 if (trap instanceof JTrap) {
-                    add(m, trap.getException().getType(), trap.getBeginUnit(), trap.getEndUnit(),
-                            trap.getHandlerUnit());
+                    try {
+                        add(m, trap.getException().getType(), trap.getBeginUnit(), trap.getEndUnit(),
+                                trap.getHandlerUnit());
+                    } catch (Exception e) {
+                        System.out.println("WARN: Trap not found " + trap);
+                    }
                 }
             }
         }

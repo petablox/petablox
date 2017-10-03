@@ -35,7 +35,7 @@ public class RelVirtualInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JVirtualInvokeExpr) {
             JVirtualInvokeExpr ex = (JVirtualInvokeExpr) e;
-            add(e, ex.getBase(), ex.getMethodRef());
+            add(e, ex.getBase(), ex.getMethodRef().getSignature());
         }
     }
 }

@@ -28,7 +28,7 @@ public class RelDynamicInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JDynamicInvokeExpr) {
             JDynamicInvokeExpr ex = (JDynamicInvokeExpr) e;
-            add(e, ex.getBootstrapMethodRef(), ex.getMethodRef());
+            add(e, ex.getBootstrapMethodRef().getSignature(), ex.getMethodRef().getSignature());
         }
     }
 }

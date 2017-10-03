@@ -13,7 +13,7 @@ import petablox.project.Petablox;
 import petablox.project.analyses.ProgramDom;
 
 @Petablox(name = "MethodID")
-public class DomMethodID extends ProgramDom<SootMethodRef> implements IInvokeExprVisitor {
+public class DomMethodID extends ProgramDom<String> implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass c) { }
 
@@ -27,10 +27,10 @@ public class DomMethodID extends ProgramDom<SootMethodRef> implements IInvokeExp
     public void visit(Value e) { }
 
     public void visit(InvokeExpr e) {
-        add(e.getMethodRef());
+        add(e.getMethodRef().getSignature());
         if (e instanceof DynamicInvokeExpr) {
             DynamicInvokeExpr ex = (DynamicInvokeExpr) e;
-            add(ex.getBootstrapMethodRef());
+            add(ex.getBootstrapMethodRef().getSignature());
         }
     }
 }

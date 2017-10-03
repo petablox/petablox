@@ -35,7 +35,7 @@ public class RelStaticInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JStaticInvokeExpr) {
             JStaticInvokeExpr ex = (JStaticInvokeExpr) e;
-            add(e, ex.getMethodRef());
+            add(e, ex.getMethodRef().getSignature());
         }
     }
 }
