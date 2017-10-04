@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
  * Relation containing each tuple (i,v,x) such that static method
  * invocation i is of the form of v.x(...).
  */
-@Petablox(name = "StaticInvoke", sign = "Invoke0,MethodID0:Invoke0_MethodID0")
+@Petablox(name = "StaticInvoke", sign = "Invoke0,M0:Invoke0_M0")
 public class RelStaticInvoke extends ProgramRel implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass m) { }
@@ -35,7 +35,7 @@ public class RelStaticInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JStaticInvokeExpr) {
             JStaticInvokeExpr ex = (JStaticInvokeExpr) e;
-            add(e, ex.getMethodRef().getSignature());
+            add(e, ex.getMethod());
         }
     }
 }

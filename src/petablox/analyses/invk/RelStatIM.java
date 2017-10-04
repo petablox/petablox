@@ -33,21 +33,19 @@ public class RelStatIM extends ProgramRel {
         for (int iIdx = 0; iIdx < numI; iIdx++) {
             Unit i = (Unit) domI.get(iIdx);
             if(SootUtilities.isInvoke(i)){
-            	InvokeExpr ie = SootUtilities.getInvokeExpr(i);
-            	if(ie instanceof StaticInvokeExpr){
-            		SootMethod m = ie.getMethod();
-            		if(m.isStatic()){
-            			m = StubRewrite.maybeReplaceCallDest(SootUtilities.getMethod(i), m);
+                InvokeExpr ie = SootUtilities.getInvokeExpr(i);
+                if(ie instanceof StaticInvokeExpr){
+                    SootMethod m = ie.getMethod();
+                    if(m.isStatic()){
+                        m = StubRewrite.maybeReplaceCallDest(SootUtilities.getMethod(i), m);
                         int mIdx = domM.indexOf(m);
                         if (mIdx >= 0)
                             add(iIdx, mIdx);
                         else if (Config.verbose >= 2)
                             Messages.log(NOT_FOUND, m, SootUtilities.toLocStr(i));
-            		}
-            	}
+                    }
+                }
             }
         }
     }
-    
-
 }

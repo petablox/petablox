@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
  * Relation containing each tuple (i,v,x) such that interface method
  * invocation i is of the form of v.x(...).
  */
-@Petablox(name = "InterfaceInvoke", sign = "Invoke0,EXPR0,MethodID0:Invoke0_EXPR0xMethodID0")
+@Petablox(name = "InterfaceInvoke", sign = "Invoke0,EXPR0,M0:Invoke0_EXPR0xM0")
 public class RelInterfaceInvoke extends ProgramRel implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass m) { }
@@ -35,7 +35,7 @@ public class RelInterfaceInvoke extends ProgramRel implements IInvokeExprVisitor
     public void visit(InvokeExpr e) {
         if (e instanceof JInterfaceInvokeExpr) {
             JInterfaceInvokeExpr ex = (JInterfaceInvokeExpr) e;
-            add(e, ex.getBase(), ex.getMethodRef().getSignature());
+            add(e, ex.getBase(), ex.getMethod());
         }
     }
 }

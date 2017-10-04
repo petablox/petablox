@@ -18,7 +18,7 @@ import petablox.util.soot.SootUtilities;
  * Relation containing each tuple (i,v,x) such that virtual method
  * invocation i is of the form of v.x(...).
  */
-@Petablox(name = "VirtualInvoke", sign = "Invoke0,EXPR0,MethodID0:Invoke0_EXPR0xMethodID0")
+@Petablox(name = "VirtualInvoke", sign = "Invoke0,EXPR0,M0:Invoke0_EXPR0xM0")
 public class RelVirtualInvoke extends ProgramRel implements IInvokeExprVisitor {
     @Override
     public void visit(SootClass m) { }
@@ -35,7 +35,7 @@ public class RelVirtualInvoke extends ProgramRel implements IInvokeExprVisitor {
     public void visit(InvokeExpr e) {
         if (e instanceof JVirtualInvokeExpr) {
             JVirtualInvokeExpr ex = (JVirtualInvokeExpr) e;
-            add(e, ex.getBase(), ex.getMethodRef().getSignature());
+            add(e, ex.getBase(), ex.getMethod());
         }
     }
 }
