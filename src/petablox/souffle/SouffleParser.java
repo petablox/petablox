@@ -49,7 +49,8 @@ public class SouffleParser implements IDatalogParser {
 			String line;
 			while (null != (line = in.readLine())) {
 				line = line.trim();
-				if (line.startsWith(".symbol_type") || line.startsWith(".number_type")) {
+				if (line.startsWith(".number_type")) { 
+					// We don't consider symbol types because BDDBDDB's intermediate output is numbers.
 					domNames.add(line.substring(13));
 				} else if (line.startsWith(".type")) {
 					domNames.add(line.substring(6));
@@ -59,7 +60,11 @@ public class SouffleParser implements IDatalogParser {
 					inputRels.add(line.substring(7, line.indexOf('(')));
 				} else if (line.startsWith(".decl")) {
 					String name = line.substring(6, line.indexOf('('));
-					rels.put(name, line.substring(line.indexOf('(') + 1));
+					if (!name.endsWith("Map")) {
+						// Special case here: Map should only be used for 
+						// mapping from bddbddb indexes to strings
+						rels.put(name, line.substring(line.indexOf('(') + 1));
+					}
 				} else if (line.startsWith("// name=")) {
 					metadata.setDlogName(line.substring(8));
 				}

@@ -1,12 +1,34 @@
 // name=taint-dlog
 
+.symbol_type Name
+
 .number_type M
+.decl MMap(m:M, n:Name) //M,Name
+.input MMap()
+
 .number_type MethodID
+.decl MethodIDMap(m:MethodID, n:Name) //methodID,Name
+.input MethodIDMap()
+
 .number_type EXPR
+.decl EXPRMap(e:EXPR, n:Name) //EXPR,Name
+.input EXPRMap()
+
 .number_type Invoke
+.decl InvokeMap(i:Invoke, n:Name) //Invoke,Name
+.input InvokeMap()
+
 .number_type P
+.decl PMap(p:P, n:Name) //P,Name
+.input PMap()
+
 .number_type Z
+.decl ZMap(z:Z, n:Name) //Z,Name
+.input ZMap()
+
 .number_type Var 
+.decl VarMap(v:Var, n:Name) //Var,Name
+.input VarMap()
 
 .decl reachableM(m:M) // M
 .input reachableM()
@@ -46,13 +68,16 @@
 .decl sql_injection(p0:P,p1:P,e:EXPR) // P0,P1,EXPR0
 .output sql_injection()
 
-source(3).
-sink(3).
-//source("<test.C: int source()>").
-//sink("<test.C: void sink(int)>").
+.decl sql_injectionMap(p0:Name, p1:Name, e:Name) // P0,P1,EXPR0
+.output sql_injectionMap()
+
+source(x) :- MethodIDMap(x, "<test.C: int source()>").
+sink(x) :- MethodIDMap(x, "<test.C: void sink(int)>").
 taint_var(v,p) :- AssignInst(p,e,e0), VarExpr(e,v), InvokeExpr(e0,i), VirtualInvoke(i,_,f), source(f).
 taint_var(v,p) :- AssignInst(_,e,e0), VarExpr(e,v), taint_exp(e0,p).                  
 taint_exp(e,p) :- taint_var(v,p), VarExpr(e,v).
 taint_exp(e,p) :- AddExpr(e,e0,_), taint_exp(e0,p).
 
 sql_injection(p0,p1,e) :- taint_exp(e,p0), InvokeInst(p1,i), VirtualInvoke(i,_,f), sink(f), MethodArg(i,0,e).
+
+sql_injectionMap(p0s,p1s,es) :- sql_injection(p0,p1,e), PMap(p0, p0s), PMap(p1, p1s), EXPRMap(e, es).

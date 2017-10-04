@@ -23,7 +23,7 @@ public class SouffleExporter extends SouffleIOBase {
 	 */
 	public void saveDomain(Dom<?> dom) {
 		String domName = dom.getName();
-		File factsFile = new File(workDir, domName + ".facts");
+		File factsFile = new File(workDir, domName + "Map.facts");
 		saveDomainData(dom, factsFile);
 		
 		File domainFile = new File(workDir, domName + ".dl");
