@@ -147,7 +147,7 @@ public class VisitorHandler {
                     mv.visit(m);
                     if (!doCFGs)
                         continue;
-                    if (m.isAbstract())
+                    if (!m.isConcrete())
                         continue;
                     ICFG cfg = SootUtilities.getCFG(m);
                     visitInsts(cfg);
