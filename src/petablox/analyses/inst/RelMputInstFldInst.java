@@ -45,15 +45,15 @@ public class RelMputInstFldInst extends ProgramRel implements IHeapInstVisitor {
     }
     public void visitHeapInst(Unit q) {
         if(q instanceof JAssignStmt){
-        	JAssignStmt j = (JAssignStmt)q;
-        	if(SootUtilities.isStoreInst(j)){
-        		Value left = j.leftBox.getValue();
-        		Value right = j.rightBox.getValue();
-        		if(right.getType() instanceof RefLikeType && right instanceof Local){
-        			JArrayRef jar = (JArrayRef)left;
-            		Local b = (Local)jar.getBase();
-            		Local r = (Local)right;
-            		int mIdx = domM.indexOf(ctnrMethod);
+            JAssignStmt j = (JAssignStmt)q;
+            if(SootUtilities.isStoreInst(j)){
+                Value left = j.leftBox.getValue();
+                Value right = j.rightBox.getValue();
+                if(right.getType() instanceof RefLikeType && right instanceof Local){
+                    JArrayRef jar = (JArrayRef)left;
+                    Local b = (Local)jar.getBase();
+                    Local r = (Local)right;
+                    int mIdx = domM.indexOf(ctnrMethod);
                     assert (mIdx >= 0);
                     int bIdx = domV.indexOf(b);
                     assert (bIdx >= 0);
@@ -61,17 +61,17 @@ public class RelMputInstFldInst extends ProgramRel implements IHeapInstVisitor {
                     assert (rIdx >= 0);
                     int fIdx = 0;
                     add(mIdx, bIdx, fIdx, rIdx);
-        		}
-        		return;
-        	} else if(SootUtilities.isFieldStore(j)){
-        		SootField f = j.getFieldRef().getField();
-        		Value right = j.rightBox.getValue();
-        		if(j.leftBox.getValue().getType() instanceof RefLikeType && j.leftBox.getValue() instanceof InstanceFieldRef 
-        				&& right instanceof Local){
-        			JInstanceFieldRef jifr = (JInstanceFieldRef)j.leftBox.getValue();
-        			Local b = (Local)jifr.getBase();
-        			Local r = (Local)j.rightBox.getValue();
-        			int mIdx = domM.indexOf(ctnrMethod);
+                }
+                return;
+            } else if(SootUtilities.isFieldStore(j)){
+                SootField f = j.getFieldRef().getField();
+                Value right = j.rightBox.getValue();
+                if(j.leftBox.getValue().getType() instanceof RefLikeType && j.leftBox.getValue() instanceof InstanceFieldRef 
+                        && right instanceof Local){
+                    JInstanceFieldRef jifr = (JInstanceFieldRef)j.leftBox.getValue();
+                    Local b = (Local)jifr.getBase();
+                    Local r = (Local)j.rightBox.getValue();
+                    int mIdx = domM.indexOf(ctnrMethod);
                     assert (mIdx >= 0);
                     int bIdx = domV.indexOf(b);
                     assert (bIdx >= 0);
@@ -80,8 +80,8 @@ public class RelMputInstFldInst extends ProgramRel implements IHeapInstVisitor {
                     int fIdx = domF.indexOf(f);
                     assert (fIdx >= 0);
                     add(mIdx, bIdx, fIdx, rIdx);
-        		}
-        	}
+                        }
+            }
         }
     }
 }

@@ -44,13 +44,13 @@ public class RelMgetInstFldInst extends ProgramRel implements IHeapInstVisitor {
     }
     public void visitHeapInst(Unit q) {
         if (q instanceof JAssignStmt) {
-        	JAssignStmt j = (JAssignStmt)q;
-        	if(SootUtilities.isLoadInst(j)){
-        		Type right = j.rightBox.getValue().getType();
-        		if(!(right instanceof PrimType)){
-        			Local l = (Local)j.leftBox.getValue();
-        			Local b = (Local)((JArrayRef)j.rightBox.getValue()).getBase();
-        			int mIdx = domM.indexOf(ctnrMethod);
+            JAssignStmt j = (JAssignStmt)q;
+            if(SootUtilities.isLoadInst(j)){
+                Type right = j.rightBox.getValue().getType();
+                if(!(right instanceof PrimType)){
+                    Local l = (Local)j.leftBox.getValue();
+                    Local b = (Local)((JArrayRef)j.rightBox.getValue()).getBase();
+                    int mIdx = domM.indexOf(ctnrMethod);
                     assert (mIdx >= 0);
                     int lIdx = domV.indexOf(l);
                     assert (lIdx >= 0);
@@ -58,15 +58,15 @@ public class RelMgetInstFldInst extends ProgramRel implements IHeapInstVisitor {
                     assert (bIdx >= 0);
                     int fIdx = 0;
                     add(mIdx, lIdx, bIdx, fIdx);
-        		}
-        	}else if(SootUtilities.isFieldLoad(j)){
-        		Type right = j.rightBox.getValue().getType();
-        		if(!(right instanceof PrimType)&&(j.rightBox.getValue() instanceof JInstanceFieldRef)){
-        			JInstanceFieldRef jifr = (JInstanceFieldRef)j.rightBox.getValue();
-        			Local l = (Local)j.leftBox.getValue();
-        			Local b = (Local)jifr.getBase();
-        			SootField f = j.getFieldRef().getField();
-        			int mIdx = domM.indexOf(ctnrMethod);
+                }
+            }else if(SootUtilities.isFieldLoad(j)){
+                Type right = j.rightBox.getValue().getType();
+                if(!(right instanceof PrimType)&&(j.rightBox.getValue() instanceof JInstanceFieldRef)){
+                    JInstanceFieldRef jifr = (JInstanceFieldRef)j.rightBox.getValue();
+                    Local l = (Local)j.leftBox.getValue();
+                    Local b = (Local)jifr.getBase();
+                    SootField f = j.getFieldRef().getField();
+                    int mIdx = domM.indexOf(ctnrMethod);
                     assert (mIdx >= 0);
                     int bIdx = domV.indexOf(b);
                     assert (bIdx >= 0);
@@ -75,8 +75,8 @@ public class RelMgetInstFldInst extends ProgramRel implements IHeapInstVisitor {
                     int fIdx = domF.indexOf(f);
                     assert (fIdx >= 0);
                     add(mIdx, lIdx, bIdx, fIdx);
-        		}
-        	}
+                }
+            }
         }
     }
 }

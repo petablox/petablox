@@ -41,20 +41,20 @@ public class RelMgetStatFldInst extends ProgramRel implements IHeapInstVisitor {
         ctnrMethod = m;
     }
     public void visitHeapInst(Unit q) {
-    	if(q instanceof JAssignStmt){
-    		JAssignStmt j = (JAssignStmt)q;
-    		Type right = j.rightBox.getValue().getType();
-    		if(SootUtilities.isStaticGet(j) && !(right instanceof PrimType)){
-    			SootField f = j.getFieldRef().getField();
-    			Local l = (Local)j.leftBox.getValue();
-    			int mIdx = domM.indexOf(ctnrMethod);
+        if(q instanceof JAssignStmt){
+            JAssignStmt j = (JAssignStmt)q;
+            Type right = j.rightBox.getValue().getType();
+            if(SootUtilities.isStaticGet(j) && !(right instanceof PrimType)){
+                SootField f = j.getFieldRef().getField();
+                Local l = (Local)j.leftBox.getValue();
+                int mIdx = domM.indexOf(ctnrMethod);
                 assert (mIdx >= 0);
                 int lIdx = domV.indexOf(l);
                 assert (lIdx >= 0);
                 int fIdx = domF.indexOf(f);
                 assert (fIdx >= 0);
                 add(mIdx, lIdx, fIdx);
-    		}
-    	}
+            }
+        }
     }
 }
