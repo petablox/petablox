@@ -114,7 +114,8 @@ public class Program {
         Options.v().set_keep_offset(true);
         Options.v().set_whole_program(true);
         Options.v().set_allow_phantom_refs(true);
-        Options.v().setPhaseOption("cg", "enabled:false");
+        Options.v().setPhaseOption("jb", "use-original-names:true");
+/*        Options.v().setPhaseOption("cg", "enabled:false");
         String optimize = Boolean.toString(Config.ILOptimize);
         Options.v().setPhaseOption("jb", "use-original-names:true");
         Options.v().setPhaseOption("jb.lns", "enabled:" + optimize);
@@ -125,7 +126,7 @@ public class Program {
         Options.v().setPhaseOption("jb.cp-ule", "enabled:" + optimize);
         Options.v().setPhaseOption("jb.ne", "enabled:" + optimize);
         Options.v().setPhaseOption("shimple", "node-elim-opt:" + optimize);
-
+*/
         if (Config.bytecodeKind.equals("coffi"))
             Options.v().set_coffi(true);
 

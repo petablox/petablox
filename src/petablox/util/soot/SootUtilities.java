@@ -37,6 +37,9 @@ import soot.tagkit.AnnotationElem;
 import soot.tagkit.AnnotationStringElem;
 import soot.tagkit.AnnotationTag;
 import soot.tagkit.BytecodeOffsetTag;
+import soot.tagkit.LineNumberTag;
+import soot.tagkit.SourceFileTag;
+import soot.tagkit.SourceLnNamePosTag;
 import soot.tagkit.VisibilityAnnotationTag;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JNewExpr;
@@ -553,8 +556,14 @@ public class SootUtilities {
         return "";
     }
 
-    public static String toJavaLocStr(Unit u) {                              //TODO 
-        return "";
+    public static String toJavaLocStr(Unit u) {
+        SootClass c = SootUtilities.getMethod(u).getDeclaringClass();
+        SourceFileTag filetag = (SourceFileTag) c.getTag("SourceFileTag");
+        LineNumberTag linetag = ((LineNumberTag)u.getTag("LineNumberTag"));
+        if (filetag == null || linetag == null)
+            return "UNKNOWN location";
+        else
+            return filetag.getSourceFile() + ":" + linetag.getLineNumber();
     }
 
     public static String toVerboseStr(Unit u) {                              //TODO 
