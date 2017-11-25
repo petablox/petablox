@@ -62,12 +62,10 @@ public class SootUtilities {
     public static Hierarchy h = null;
 
     public static SootClass loadClass(String s){
-        SootClass c = Scene.v().getSootClass(s);
-        if(c == null)
-            c = Scene.v().loadClass(s, SootClass.BODIES);
-        if(c.isPhantomClass())
+        SootClass c = Scene.v().forceResolve(s, SootClass.BODIES);
+        if(c.isPhantomClass()) {
             return null;
-        else{
+        } else {
             c.setApplicationClass();
             return c;
         }
