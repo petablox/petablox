@@ -68,7 +68,7 @@ public class DomI extends ProgramDom<Unit> implements IInvokeInstVisitor {
         else if (SootUtilities.isStaticInvoke(u)) sb.append("STATICINVK:");
         else if (SootUtilities.isInstanceInvoke(u)) sb.append("SPECINVK:");
         SootMethod m = SootUtilities.getInvokeExpr(u).getMethod();
-        sb.append(m.getName() + "@" + m.getDeclaringClass().getName());
+        sb.append(m.getName() + "@" + m.getDeclaringClass().getName() + "@" + SootUtilities.toJavaLocStr(u));
         return sb.toString();
     }
 

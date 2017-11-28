@@ -152,7 +152,7 @@ public class DomH extends ProgramDom<Object> {
     		sb.append(t.toString());
     	else
     		sb.append("primitive");
-    	sb.append(":" + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.getMethod(u).getDeclaringClass().getName());
+    	sb.append(":" + SootUtilities.getMethod(u).getName() + "@" + SootUtilities.toJavaLocStr(u));
     	return sb.toString();
     }
     

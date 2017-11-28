@@ -1,7 +1,6 @@
 # name=taint-dlog
 
 .include "M.dom"
-.include "MethodID.dom"
 .include "EXPR.dom"
 .include "Invoke.dom"
 .include "P.dom"
@@ -16,17 +15,17 @@ reachableM(m:M) input
 MP(m:M,p:P) input
 AssignInst(p:P,e0:EXPR0,e1:EXPR1) input
 InvokeInst(p:P,i:Invoke) input
-InterfaceInvoke(i:Invoke,e:EXPR,f:MethodID) input
-VirtualInvoke(i:Invoke,e:EXPR,f:MethodID) input
-StaticInvoke(i:Invoke,f:MethodID) input
+InterfaceInvoke(i:Invoke,e:EXPR,f:M) input
+VirtualInvoke(i:Invoke,e:EXPR,f:M) input
+StaticInvoke(i:Invoke,f:M) input
 VarExpr(e:EXPR,v:Var) input
 InvokeExpr(e:EXPR,i:Invoke) input
-SpecialInvoke(i:Invoke,e:EXPR,f:MethodID) input
+SpecialInvoke(i:Invoke,e:EXPR,f:M) input
 MethodArg(i:Invoke,z:Z,e:EXPR) input
 AddExpr(e0:EXPR0,e1:EXPR1,e2:EXPR2) input
 
-source(f:MethodID) output
-sink(f:MethodID) output
+source(f:M) output
+sink(f:M) output
 taint_exp(e:EXPR,p:P) output
 taint_var(v:Var,p:P) output
 
