@@ -47,8 +47,6 @@ import soot.util.Chain;
  * @author Mayur Naik (mhn@cs.stanford.edu)
  */
 public class Program {
-    private static final String LOADING_CLASS =
-        "INFO: Program: Loading class %s.";
     private static final String MAIN_CLASS_NOT_DEFINED =
         "ERROR: Program: Property petablox.main.class must be set to specify the main class of program to be analyzed.";
     private static final String MAIN_METHOD_NOT_FOUND =
@@ -106,28 +104,15 @@ public class Program {
         else if (ssaKind.equals("nomovephi"))
             SSAUtilities.doSSA(true, true);
 
-        //List<String> excluded = new ArrayList<String>();
-
-        //Options.v().set_exclude(excluded);
         Options.v().set_include_all(true);
         Options.v().set_keep_line_number(true);
         Options.v().set_keep_offset(true);
         Options.v().set_whole_program(true);
         Options.v().set_allow_phantom_refs(true);
         Options.v().setPhaseOption("jb", "use-original-names:true");
-/*        Options.v().setPhaseOption("cg", "enabled:false");
-        String optimize = Boolean.toString(Config.ILOptimize);
-        Options.v().setPhaseOption("jb", "use-original-names:true");
-        Options.v().setPhaseOption("jb.lns", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.ule", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.cp", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.dae", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.uce", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.cp-ule", "enabled:" + optimize);
-        Options.v().setPhaseOption("jb.ne", "enabled:" + optimize);
-        Options.v().setPhaseOption("shimple", "node-elim-opt:" + optimize);
-*/
-        if (Config.bytecodeKind.equals("coffi"))
+        if (Config.bytecodeKind.equals("asm"))
+            Options.v().set_coffi(false);
+        else
             Options.v().set_coffi(true);
 
         if (Config.reflectKind.equals("external")) {
@@ -145,6 +130,7 @@ public class Program {
             SootClass mainCl = Scene.v().loadClass(Config.mainClassName, SootClass.BODIES);
             Scene.v().setMainClass(mainCl);
         }
+        Scene.v().loadNecessaryClasses();
         if(Config.verbose >= 1) {
             Chain<SootClass> chc = Scene.v().getClasses();
             System.out.println("NUMBER OF CLASSES IN SCENE: " + chc.size());
@@ -193,9 +179,9 @@ public class Program {
     private void buildMethods() {
         assert (methods == null);
         assert (reflect == null);
+        File typesFile = new File(Config.typesFileName);
         File methodsFile = new File(Config.methodsFileName);
         File reflectFile = new File(Config.reflectFileName);
-        File typesFile = new File(Config.typesFileName);
         if (Config.reuseScope && methodsFile.exists() && reflectFile.exists() && typesFile.exists()) {
             // loadTypesFile needs to be called before loadMethodsFile and loadReflectFile
             loadTypesFile(typesFile);
@@ -341,6 +327,8 @@ public class Program {
     private void loadMethodsFile(File file) {
         List<String> l = Utils.readFileToList(file);
         methods = new IndexSet<SootMethod>(l.size());
+        entryClasses = new HashSet<SootClass>();
+        entryMethods = new HashSet<SootMethod>();
         String first = l.remove(0);
         // "first" is the scope exclude string
         String[] parts = first.split("PETABLOX_SCOPE_EXCLUDE_STR=");
@@ -854,7 +842,6 @@ public class Program {
         String runBefore = System.getProperty("petablox.dynamic.runBeforeCmd");
         Process beforeProc = null;
         try {
-
             if (runBefore != null) {
                 System.out.println("for dynamic analysis, running pre-command " + runBefore);
                 beforeProc = ProcessExecutor.executeAsynch( new String[] {runBefore}, null, null);

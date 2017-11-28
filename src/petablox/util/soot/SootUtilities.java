@@ -11,6 +11,7 @@ import java.util.Map;
 
 import petablox.project.ClassicProject;
 import petablox.project.Config;
+import petablox.project.Messages;
 import petablox.project.analyses.ProgramDom;
 import petablox.project.analyses.ProgramRel;
 import petablox.util.tuple.object.Pair;
@@ -49,6 +50,8 @@ import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
 public class SootUtilities {
+    private static final String LOADING_CLASS =
+        "INFO: Program: Loading class %s.";
     private static HashMap <Unit, SootMethod> PMMap = null;
     private static HashMap <SootMethod,ICFG> methodToCFG
         = new HashMap<SootMethod,ICFG>();
@@ -62,6 +65,8 @@ public class SootUtilities {
     public static Hierarchy h = null;
 
     public static SootClass loadClass(String s){
+        if (Config.verbose >= 2)
+            Messages.log(LOADING_CLASS, s);
         SootClass c = Scene.v().forceResolve(s, SootClass.BODIES);
         if(c.isPhantomClass()) {
             return null;
